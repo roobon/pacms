@@ -39,6 +39,11 @@ export default defineConfig({
         },
     },
     server: {
+        // Bind to IPv4: the dev-server origin is added to the Content-Security-Policy, and CSP
+        // source expressions cannot contain IPv6 literals such as http://[::1]:5173.
+        host: '127.0.0.1',
+        port: 5173,
+        strictPort: true,
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
