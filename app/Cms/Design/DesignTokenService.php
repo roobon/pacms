@@ -114,7 +114,13 @@ class DesignTokenService
             $path = $this->publish();
         }
 
-        return Storage::disk('public')->url($path);
+        $url = Storage::disk('public')->url($path);
+
+        // Same-site files are linked root-relative so the stylesheet loads on whatever host
+        // the site is opened with (e.g. localhost vs. APP_URL); a CDN/absolute disk URL is kept.
+        $appUrl = rtrim((string) config('app.url'), '/');
+
+        return $appUrl !== '' && str_starts_with($url, $appUrl.'/') ? substr($url, strlen($appUrl)) : $url;
     }
 
     public function compile(): string

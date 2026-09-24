@@ -123,7 +123,12 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     --bs-btn-border-radius: var(--pa-button-radius);
     --bs-btn-font-weight: var(--pa-button-font-weight);
     --bs-btn-focus-box-shadow: 0 0 0 3px color-mix(in srgb, var(--pa-color-focus) 35%, transparent);
+    // 44px minimum touch target; flex keeps the label vertically centred at any size.
     min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .375rem;
     transition: background-color var(--pa-motion-duration-base) var(--pa-motion-easing),
                 border-color var(--pa-motion-duration-base) var(--pa-motion-easing),
                 transform var(--pa-motion-duration-base) var(--pa-motion-easing);
