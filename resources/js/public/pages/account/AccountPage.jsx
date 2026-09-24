@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { authHttp, ensureCsrfCookie } from '../../api/client.js';
 import { useMe } from '../../hooks/useMe.js';
@@ -9,7 +9,9 @@ export default function AccountPage() {
     const { data: me, isPending } = useMe();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const [notice, setNotice] = useState('');
+    const [searchParams] = useSearchParams();
+    // Fortify redirects here with ?verified=1 after the e-mail link is clicked.
+    const [notice, setNotice] = useState(searchParams.get('verified') === '1' ? 'Thank you — your e-mail address is verified.' : '');
 
     if (isPending) return <PageSkeleton />;
     if (!me) return <Navigate to="/account/login" replace />;
