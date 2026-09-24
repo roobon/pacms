@@ -130,6 +130,24 @@ Settings are cached per group. The token stylesheet is a static, content-hashed 
 | Token font choices limited to a fixed list | Prevents CSS injection through free-text font stacks |
 | Server-rendered `<title>`/robots removed on SPA boot | React 19 renders page metadata itself. Crawlers still read the server tags |
 
+## Team review round (2026-09-24)
+
+Manual review by the team lead in the browser, following the Phase 2 review checklist.
+
+| Finding | Type | Resolution | Commit |
+|---|---|---|---|
+| Small buttons: label not vertically centred | Bug (UI) | `.btn` uses inline-flex centring with the 44px touch target | `907d883` |
+| Token stylesheet linked through `APP_URL` broke on other hosts | Bug | Same-site stylesheet URL is now root-relative | `907d883` |
+| `php`/Vite failed on the dev machine (PATH pointed to `php.exe`; Node 21.0) | Environment | User PATH fixed; Node ≥20.19/22.12 declared (`engines`, `.nvmrc`, `engine-strict`) | `f2f2001` |
+| No feedback after clicking the e-mail verification link | UX | Success notice on `/account?verified=1` | `e8bb2e0` |
+| Open tab showed "Something went wrong" after a rebuild (stale chunk) | Bug (deploys) | `lazyWithReload`: one guarded reload when a lazy chunk is missing, with 4 tests | `5636968` |
+| Admin sidebar white on large screens (Bootstrap `.offcanvas-lg` override) | Bug (UI) | Explicit background at ≥lg | `974fcbd` |
+| Sidebar version text 3.75:1 contrast | Accessibility | Raised to 6.96:1 | `a04589a` |
+| **A6/A7: two-factor could not be enabled** | Bug (security) | Security page now requires password confirmation first. End-to-end 2FA test added | `51b718b` |
+
+Checks after fixes: **Pest 89 passed**, **Vitest 9 passed**, Larastan, Pint and ESLint clean, and the build succeeds. Items confirmed in the browser by the reviewer: D1, D4, D5, B3, the admin dashboard and navigation, and the other checklist items reported as tested. **A6/A7 needs a re-test after `51b718b`.**
+Section F decisions: the proposed defaults are accepted unless the team objects (role matrix, Super-Admin-only role editing, 2FA for privileged roles, public registration on, default palette).
+
 ## Next phase
 
 **Phase 3 — CMS Core + Media core** (per D-04): pages with hierarchy and staged publishing, workflow, scheduling, secure preview, revisions, SEO metadata and redirects, taxonomy, and the media library core (upload guard, image variants, media picker).
