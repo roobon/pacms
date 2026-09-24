@@ -76,6 +76,11 @@ $sidebar-bg: #0F172A;
         height: 100vh;
         width: $sidebar-width;
         flex-shrink: 0;
+
+        // Bootstrap's .offcanvas-lg forces a transparent background (!important) on large screens.
+        &.offcanvas-lg {
+            background-color: $sidebar-bg !important;
+        }
     }
 
     &__brand {
