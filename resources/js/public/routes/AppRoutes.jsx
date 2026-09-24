@@ -1,14 +1,15 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
+import { lazyWithReload } from '../utils/lazyWithReload.js';
 import SiteShell from '../components/layout/SiteShell.jsx';
 import PageSkeleton from '../components/common/PageSkeleton.jsx';
 import HomePage from '../pages/HomePage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 // Account pages are only needed by visitors who sign in — keep them out of the initial bundle.
-const LoginPage = lazy(() => import('../pages/account/LoginPage.jsx'));
-const RegisterPage = lazy(() => import('../pages/account/RegisterPage.jsx'));
-const AccountPage = lazy(() => import('../pages/account/AccountPage.jsx'));
+const LoginPage = lazyWithReload(() => import('../pages/account/LoginPage.jsx'));
+const RegisterPage = lazyWithReload(() => import('../pages/account/RegisterPage.jsx'));
+const AccountPage = lazyWithReload(() => import('../pages/account/AccountPage.jsx'));
 
 /**
  * Route table. Must stay in sync with App\Http\Controllers\Public\SpaController::ROUTES,
