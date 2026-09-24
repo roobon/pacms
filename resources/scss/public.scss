@@ -1,0 +1,300 @@
+// ---------------------------------------------------------------------------
+// PACMS public theme (UI-DESIGN-SYSTEM.md §3–4)
+//
+// Bootstrap is compiled once with the default token values as fallbacks. At
+// runtime, the generated tokens.<hash>.css defines --pa-* custom properties and
+// this bridge maps Bootstrap's own CSS variables onto them, so branding changes
+// need no rebuild.
+// ---------------------------------------------------------------------------
+
+
+// Build-time fallbacks (mirror app/Cms/Design/TokenCatalog.php defaults).
+$primary: #0A6B66;
+$secondary: #23305E;
+$success: #1B7A4B;
+$warning: #F4B740;
+$danger: #B8322A;
+$body-color: #334155;
+$headings-color: #0F1B2D;
+$border-color: #D5DEE4;
+$input-border-color: #7D8EA3;
+$font-family-sans-serif: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+$headings-font-family: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, sans-serif;
+$headings-font-weight: 700;
+$border-radius: .625rem;
+$border-radius-sm: .375rem;
+$border-radius-lg: 1rem;
+$btn-font-weight: 600;
+$btn-padding-y: .625rem;
+$btn-padding-x: 1.25rem;
+$focus-ring-width: 3px;
+$focus-ring-color: rgba(#1B64D1, .35);
+$input-btn-focus-color: rgba(#1B64D1, .35);
+$container-max-widths: (sm: 540px, md: 720px, lg: 960px, xl: 1140px, xxl: 1280px);
+$enable-shadows: false;
+
+@import "vendor/bootstrap-subset";
+
+// Self-hosted variable fonts (latin subsets; no third-party font CDN).
+@import "@fontsource-variable/inter/index";
+@import "@fontsource-variable/plus-jakarta-sans/index";
+
+// Zero-specificity fallbacks: the runtime token stylesheet (:root) always wins.
+:where(:root) {
+    --pa-color-primary: #{$primary};
+    --pa-color-primary-rgb: 10, 107, 102;
+    --pa-color-primary-strong: #08564F;
+    --pa-color-secondary: #{$secondary};
+    --pa-color-accent: #F2A93B;
+    --pa-color-heading: #{$headings-color};
+    --pa-color-body: #{$body-color};
+    --pa-color-muted: #5B6B7F;
+    --pa-color-bg-light: #F4F7F8;
+    --pa-color-bg-dark: #0B1628;
+    --pa-color-border: #{$border-color};
+    --pa-color-border-strong: #{$input-border-color};
+    --pa-color-focus: #1B64D1;
+    --pa-color-white: #FFFFFF;
+    --pa-color-on-primary: #FFFFFF;
+    --pa-color-on-primary-strong: #FFFFFF;
+    --pa-color-on-secondary: #FFFFFF;
+    --pa-color-on-accent: #0F1B2D;
+    --pa-color-on-bg-dark: #FFFFFF;
+    --pa-font-heading: #{$headings-font-family};
+    --pa-font-body: #{$font-family-sans-serif};
+    --pa-radius-sm: .375rem;
+    --pa-radius-md: .625rem;
+    --pa-radius-lg: 1rem;
+    --pa-button-radius: .625rem;
+    --pa-button-font-weight: 600;
+    --pa-form-radius: .375rem;
+    --pa-shadow-sm: 0 1px 2px rgb(15 27 45 / .06), 0 1px 3px rgb(15 27 45 / .08);
+    --pa-shadow-md: 0 4px 12px rgb(15 27 45 / .08);
+    --pa-motion-duration-base: 200ms;
+    --pa-motion-easing: cubic-bezier(.2, .7, .2, 1);
+    --pa-space-section: clamp(3rem, 6vw, 6rem);
+    --pa-font-size-base: clamp(1rem, .98rem + .1vw, 1.0625rem);
+}
+
+// Bridge: Bootstrap variables → PACMS tokens -------------------------------------
+:root {
+    --bs-body-font-family: var(--pa-font-body);
+    --bs-body-font-size: var(--pa-font-size-base);
+    --bs-body-color: var(--pa-color-body);
+    --bs-emphasis-color: var(--pa-color-heading);
+    --bs-secondary-color: var(--pa-color-muted);
+    --bs-heading-color: var(--pa-color-heading);
+    --bs-link-color: var(--pa-color-primary);
+    --bs-link-color-rgb: var(--pa-color-primary-rgb);
+    --bs-link-hover-color: var(--pa-color-primary-strong);
+    --bs-border-color: var(--pa-color-border);
+    --bs-border-radius: var(--pa-radius-md);
+    --bs-border-radius-sm: var(--pa-radius-sm);
+    --bs-border-radius-lg: var(--pa-radius-lg);
+    --bs-focus-ring-color: color-mix(in srgb, var(--pa-color-focus) 35%, transparent);
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--pa-font-heading);
+    letter-spacing: -.01em;
+}
+
+:focus-visible {
+    outline: 3px solid var(--pa-color-focus);
+    outline-offset: 2px;
+}
+
+@mixin pa-button($bg, $bg-strong, $fg) {
+    --bs-btn-bg: #{$bg};
+    --bs-btn-border-color: #{$bg};
+    --bs-btn-color: #{$fg};
+    --bs-btn-hover-bg: #{$bg-strong};
+    --bs-btn-hover-border-color: #{$bg-strong};
+    --bs-btn-hover-color: #{$fg};
+    --bs-btn-active-bg: #{$bg-strong};
+    --bs-btn-active-border-color: #{$bg-strong};
+    --bs-btn-active-color: #{$fg};
+    --bs-btn-disabled-bg: #{$bg};
+    --bs-btn-disabled-border-color: #{$bg};
+    --bs-btn-disabled-color: #{$fg};
+}
+
+.btn {
+    --bs-btn-border-radius: var(--pa-button-radius);
+    --bs-btn-font-weight: var(--pa-button-font-weight);
+    --bs-btn-focus-box-shadow: 0 0 0 3px color-mix(in srgb, var(--pa-color-focus) 35%, transparent);
+    min-height: 44px;
+    transition: background-color var(--pa-motion-duration-base) var(--pa-motion-easing),
+                border-color var(--pa-motion-duration-base) var(--pa-motion-easing),
+                transform var(--pa-motion-duration-base) var(--pa-motion-easing);
+}
+
+.btn-primary {
+    @include pa-button(var(--pa-color-primary), var(--pa-color-primary-strong), var(--pa-color-on-primary));
+}
+
+.btn-secondary {
+    @include pa-button(var(--pa-color-secondary), color-mix(in srgb, var(--pa-color-secondary) 85%, black), var(--pa-color-on-secondary));
+}
+
+.btn-accent {
+    @include pa-button(var(--pa-color-accent), color-mix(in srgb, var(--pa-color-accent) 88%, black), var(--pa-color-on-accent));
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--pa-color-primary);
+    --bs-btn-border-color: var(--pa-color-primary);
+    --bs-btn-hover-bg: var(--pa-color-primary);
+    --bs-btn-hover-border-color: var(--pa-color-primary);
+    --bs-btn-hover-color: var(--pa-color-on-primary);
+    --bs-btn-active-bg: var(--pa-color-primary-strong);
+    --bs-btn-active-color: var(--pa-color-on-primary);
+}
+
+.form-control,
+.form-select {
+    border-color: var(--pa-color-border-strong);
+    border-radius: var(--pa-form-radius);
+
+    &:focus {
+        border-color: var(--pa-color-focus);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--pa-color-focus) 35%, transparent);
+    }
+}
+
+// Components ------------------------------------------------------------------------
+.pa-eyebrow {
+    font-size: .8125rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--pa-color-primary);
+    margin-bottom: .5rem;
+}
+
+.pa-card-public {
+    border-color: var(--pa-color-border);
+    border-radius: var(--pa-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--pa-shadow-sm);
+    transition: transform var(--pa-motion-duration-base) var(--pa-motion-easing),
+                box-shadow var(--pa-motion-duration-base) var(--pa-motion-easing);
+
+    &:hover,
+    &:focus-within {
+        transform: translateY(-2px);
+        box-shadow: var(--pa-shadow-md);
+    }
+
+    &__media {
+        aspect-ratio: 16 / 9;
+        background: linear-gradient(135deg, var(--pa-color-primary), var(--pa-color-secondary));
+    }
+
+    .stretched-link {
+        color: var(--pa-color-heading);
+        text-decoration: none;
+    }
+}
+
+.pa-badge-public {
+    display: inline-block;
+    padding: .2rem .65rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--pa-color-primary) 12%, white);
+    color: var(--pa-color-primary-strong);
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.pa-section-dark {
+    background: var(--pa-color-bg-dark);
+    color: var(--pa-color-on-bg-dark);
+
+    h1, h2, h3, h4, h5, h6 {
+        color: inherit;
+    }
+}
+
+// Public layout (SPA shell) -----------------------------------------------------------
+.pa-public {
+    background: #fff;
+}
+
+.pa-skip-link {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+    z-index: 2000;
+    padding: .5rem 1rem;
+    background: #fff;
+    border-radius: var(--pa-radius-md);
+}
+
+.pa-site-header {
+    border-bottom: 1px solid var(--pa-color-border);
+    background: rgba(255, 255, 255, .92);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 64px;
+
+        @include media-breakpoint-up(lg) {
+            min-height: 72px;
+        }
+    }
+
+    &__brand {
+        font-family: var(--pa-font-heading);
+        font-weight: 800;
+        font-size: 1.125rem;
+        color: var(--pa-color-heading);
+        text-decoration: none;
+    }
+}
+
+.pa-site-footer {
+    background: var(--pa-color-bg-dark);
+    color: color-mix(in srgb, var(--pa-color-on-bg-dark) 80%, transparent);
+    padding: 3rem 0 2rem;
+    margin-top: var(--pa-space-section);
+
+    a {
+        color: var(--pa-color-on-bg-dark);
+    }
+}
+
+.pa-hero-placeholder {
+    padding: var(--pa-space-section) 0;
+    background:
+        radial-gradient(900px 400px at 0% 0%, color-mix(in srgb, var(--pa-color-primary) 16%, transparent), transparent 70%),
+        radial-gradient(700px 400px at 100% 100%, color-mix(in srgb, var(--pa-color-accent) 18%, transparent), transparent 70%),
+        var(--pa-color-bg-light);
+}
+
+.pa-skeleton {
+    background: linear-gradient(90deg, #EEF2F5 25%, #F7F9FA 37%, #EEF2F5 63%);
+    background-size: 400% 100%;
+    border-radius: var(--pa-radius-sm);
+    animation: pa-shimmer 1.4s ease infinite;
+}
+
+@keyframes pa-shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

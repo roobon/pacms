@@ -1,0 +1,38 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "test": "vitest run",
+        "lint": "eslint resources/js"
+    },
+    "dependencies": {
+        "@fontsource-variable/inter": "^5.3.0",
+        "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+        "@tanstack/react-query": "^5.103.2",
+        "axios": "^1.20.0",
+        "bootstrap": "^5.3.8",
+        "bootstrap-icons": "^1.13.1",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0",
+        "react-router": "^8.4.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@testing-library/jest-dom": "^7.0.1",
+        "@testing-library/react": "^16.3.3",
+        "@vitejs/plugin-react": "^6.1.1",
+        "concurrently": "^10.0.5",
+        "eslint": "^10.11.0",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "eslint-plugin-react-refresh": "^0.5.7",
+        "globals": "^17.12.0",
+        "jsdom": "^30.1.1",
+        "laravel-vite-plugin": "^3.2.0",
+        "sass-embedded": "^1.105.0",
+        "vite": "^8.3.0",
+        "vitest": "^5.0.1"
+    }
+}
