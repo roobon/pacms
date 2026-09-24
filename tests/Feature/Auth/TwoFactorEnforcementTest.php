@@ -6,8 +6,15 @@ it('sends privileged staff without 2FA to the security page', function (string $
         ->assertRedirect(route('admin.account.security'));
 })->with(['super-admin', 'administrator', 'editor']);
 
-it('lets privileged staff open the security page to set up 2FA', function () {
-    $this->actingAs(userWithRole('editor', twoFactor: false))
+it('lets privileged staff open the security page to set up 2FA (after confirming the password)', function () {
+    $editor = userWithRole('editor', twoFactor: false);
+
+    $this->actingAs($editor)
+        ->get(route('admin.account.security'))
+        ->assertRedirect(route('password.confirm'));
+
+    $this->actingAs($editor)
+        ->withSession(['auth.password_confirmed_at' => time()])
         ->get(route('admin.account.security'))
         ->assertOk()
         ->assertSee('Enable two-factor authentication');

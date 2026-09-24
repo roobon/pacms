@@ -20,7 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', DashboardController::class)->name('dashboard');
 
 Route::get('account/profile', [AccountController::class, 'profile'])->name('account.profile');
-Route::get('account/security', [AccountController::class, 'security'])->name('account.security');
+// Password re-confirmation first ("sudo mode"): Fortify's 2FA endpoints require a recently
+// confirmed password, and confirming inside a POST would redirect back as a GET.
+Route::get('account/security', [AccountController::class, 'security'])
+    ->middleware('password.confirm')
+    ->name('account.security');
 
 Route::resource('users', UserController::class)->except('show');
 
