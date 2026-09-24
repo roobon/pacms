@@ -28,3 +28,7 @@ if (! config('pacms.queue.managed_worker')) {
 }
 
 Schedule::command('model:prune', ['--model' => [ActivityLog::class]])->daily();
+
+// Scheduled publishing and revision retention.
+Schedule::command('pacms:publish-scheduled')->everyMinute()->withoutOverlapping();
+Schedule::command('pacms:revisions:prune')->weekly();

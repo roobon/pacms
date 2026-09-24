@@ -16,7 +16,7 @@
 | Primary keys | `id BIGINT UNSIGNED AUTO_INCREMENT` (Laravel `id()`). |
 | Public/stable identifiers | `uuid CHAR(26)` ULIDs where an ID leaves the database in portable form (blocks, media, import jobs) or must not be guessable. Numeric IDs are fine in admin URLs. |
 | Timestamps | `created_at`, `updated_at` (UTC). App timezone for display: `Asia/Dhaka` (configurable setting). |
-| Soft deletes | `deleted_at` on user-facing content (pages, all content modules, media, menus, global blocks, templates, custom block types, external sources). **Not** on join, log or cache tables. |
+| Soft deletes | `deleted_at` on user-facing content (pages, all content modules, menus, global blocks, templates, custom block types, external sources). **Not** on media (deletion is permanent and removes the files, so a "deleted" file can never stay publicly reachable — Phase 3 decision), join, log or cache tables. |
 | Authorship | `created_by`, `updated_by` → `users.id` **ON DELETE SET NULL** (content outlives accounts). |
 | Enums | `VARCHAR(32)` backed by PHP enums, not MySQL `ENUM`, so adding a value never needs an `ALTER`. Validated in app code. |
 | JSON | Used only for block configuration (`content/source/display/layout/style/responsive/advanced`), custom block field definitions, provider config, snapshots, image variants, logs' metadata, and settings values. **Never for anything we filter or join on.** |
@@ -381,7 +381,7 @@ Category and tags via terms. `INDEX(next_check_at)`, `INDEX(coverage_type, statu
 | variants | json null | `{"webp":{"320":"…"},"original":{…},"placeholder":"data:…"}` |
 | checksum_sha256 | char(64) | duplicate detection, `INDEX` |
 | uploaded_by | FK users null SET NULL | |
-| timestamps, deleted_at | | |
+| timestamps | | no soft delete (see §1) |
 
 Indexes: `INDEX(kind, created_at)`, `FULLTEXT(original_name, alt, caption)` for admin search. Categories and tags via terms.
 

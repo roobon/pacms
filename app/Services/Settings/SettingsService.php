@@ -4,6 +4,7 @@ namespace App\Services\Settings;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\Cache\CacheVersions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,11 @@ class SettingsService
             'contact_phone' => ['', true],
             'address' => ['', true],
             'timezone' => ['Asia/Dhaka', true],
+            'homepage_page_id' => [null, true],
+        ],
+        'seo' => [
+            // Extra robots.txt lines (the Sitemap line is always added).
+            'robots_txt' => ["User-agent: *\nDisallow: /admin\nDisallow: /account\nDisallow: /preview", false],
         ],
         'design' => [
             'tokens' => [[], false],
@@ -82,6 +88,9 @@ class SettingsService
         });
 
         Cache::forget($this->cacheKey($group));
+
+        // Public payloads embed settings (site name in titles, homepage …).
+        app(CacheVersions::class)->bump('settings');
     }
 
     /**

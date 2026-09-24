@@ -1,0 +1,10 @@
+# PACMS: never execute scripts from public storage (SECURITY-ARCHITECTURE.md §8).
+# Uploads are stored under generated names with allow-listed extensions; this is defence in depth.
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh|asp|aspx|jsp|htaccess)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>

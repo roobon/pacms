@@ -9,6 +9,7 @@ export default defineConfig({
                 // Admin: Blade pages + small enhancements (React islands are added per feature).
                 'resources/scss/admin.scss',
                 'resources/js/admin/app.js',
+                'resources/js/admin/islands/media-picker.jsx',
                 // Public website: React SPA.
                 'resources/scss/public.scss',
                 'resources/js/public/main.jsx',

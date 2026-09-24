@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use App\Auth\AuthActivitySubscriber;
 use App\Cms\Design\DesignTokenService;
+use App\Models\Media;
+use App\Models\Page;
+use App\Models\Term;
 use App\Models\User;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Settings\SettingsService;
@@ -32,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
         // Short, stable aliases for polymorphic columns (DATABASE-ARCHITECTURE.md §1).
         Relation::enforceMorphMap([
             'user' => User::class,
+            'page' => Page::class,
+            'media' => Media::class,
+            'term' => Term::class,
         ]);
 
         // Catch N+1 queries and silently dropped attributes during development and tests.

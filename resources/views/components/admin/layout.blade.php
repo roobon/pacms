@@ -9,6 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ? $title.' · ' : '' }}Admin · {{ app(\App\Services\Settings\SettingsService::class)->get('site', 'name') }}</title>
     @vite(['resources/scss/admin.scss', 'resources/js/admin/app.js'])
+    @stack('islands')
 </head>
 <body class="pa-admin">
     <a class="visually-hidden-focusable pa-skip-link" href="#main">Skip to main content</a>
@@ -29,9 +30,10 @@
                     @endif
                     <ul class="list-unstyled mb-3">
                         @foreach ($section['items'] as $item)
-                            @php($isActive = request()->routeIs($item['active']))
+                            @php($url = route($item['route'], $item['params'] ?? []))
+                            @php($isActive = isset($item['params']) ? url()->current() === $url : request()->routeIs($item['active']))
                             <li>
-                                <a href="{{ route($item['route']) }}" @class(['pa-sidebar__link', 'is-active' => $isActive]) @if ($isActive) aria-current="page" @endif>
+                                <a href="{{ $url }}" @class(['pa-sidebar__link', 'is-active' => $isActive]) @if ($isActive) aria-current="page" @endif>
                                     <i class="bi {{ $item['icon'] }}" aria-hidden="true"></i>
                                     <span>{{ $item['label'] }}</span>
                                 </a>

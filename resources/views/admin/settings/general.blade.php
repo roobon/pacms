@@ -25,6 +25,25 @@
                         </div>
                     </div>
                 </div>
+
+                <section class="card pa-card mt-4" aria-labelledby="homepage-heading">
+                    <div class="card-header"><h2 id="homepage-heading" class="h6 mb-0">Homepage &amp; search engines</h2></div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="field-homepage" class="form-label">Homepage</label>
+                            <select id="field-homepage" name="homepage_page_id" class="form-select @error('homepage_page_id') is-invalid @enderror" aria-describedby="homepage-help">
+                                <option value="">— Default welcome page —</option>
+                                @foreach ($livePages as $livePage)
+                                    <option value="{{ $livePage->id }}" @selected((int) old('homepage_page_id', $site['homepage_page_id']) === $livePage->id)>{{ $livePage->title }} (/{{ $livePage->published_path }})</option>
+                                @endforeach
+                            </select>
+                            <div id="homepage-help" class="form-text">Only published pages can be the homepage. Its own address then redirects to <code>/</code>.</div>
+                            @error('homepage_page_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <x-admin.field name="robots_txt" label="robots.txt rules" type="textarea" :value="$seo['robots_txt']"
+                            help="The sitemap line is added automatically. Changes apply immediately." class="font-monospace" rows="5" />
+                    </div>
+                </section>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Save settings</button>
