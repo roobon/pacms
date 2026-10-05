@@ -2,6 +2,7 @@
 
 namespace App\Services\Pages;
 
+use App\Cms\Blocks\BlockPayloadResolver;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\Revision;
@@ -20,6 +21,7 @@ class PagePayloadBuilder
         private readonly SeoResolver $seo,
         private readonly CacheVersions $versions,
         private readonly SettingsService $settings,
+        private readonly BlockPayloadResolver $blocks,
     ) {}
 
     /**
@@ -30,7 +32,7 @@ class PagePayloadBuilder
     public function forLivePage(Page $page): array
     {
         $key = 'pacms:page-payload:'.$page->published_revision_id.':'.$page->published_path.':'
-            .$this->versions->fingerprint('pages', 'media', 'settings');
+            .$this->versions->fingerprint('pages', 'media', 'settings', 'news');
 
         return Cache::remember($key, now()->addDay(), function () use ($page) {
             /** @var Revision $revision */
@@ -85,7 +87,7 @@ class PagePayloadBuilder
                 'is_home' => $isHome,
                 'image' => $featured,
             ], $snapshot['seo'] ?? null, $breadcrumbs),
-            'blocks' => $snapshot['blocks'] ?? [],
+            'blocks' => $this->blocks->resolve((array) ($snapshot['blocks'] ?? []), includeHidden: false),
         ];
     }
 

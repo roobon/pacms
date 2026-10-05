@@ -22,6 +22,8 @@ final class AdminNavigation
             ]],
             ['label' => 'Content', 'items' => [
                 ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
+                ['label' => 'News', 'route' => 'admin.news.index', 'icon' => 'bi-newspaper', 'active' => 'admin.news.*', 'can' => 'news.view'],
+                ['label' => 'News categories', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'news_category'], 'icon' => 'bi-bookmarks', 'can' => 'taxonomies.manage'],
             ]],
             ['label' => 'Media', 'items' => [
                 ['label' => 'Library', 'route' => 'admin.media.index', 'icon' => 'bi-images', 'active' => 'admin.media.*', 'can' => 'media.view'],

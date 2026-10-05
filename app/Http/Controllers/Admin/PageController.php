@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Cms\Blocks\BlockTreeRepository;
 use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PageRequest;
@@ -11,7 +12,6 @@ use App\Services\Publishing\PublishingService;
 use App\Services\Settings\SettingsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -59,7 +59,7 @@ class PageController extends Controller
     {
         Gate::authorize('create', Page::class);
 
-        $page = $this->pages->create($request->user(), $request->validated());
+        $page = $this->pages->create($request->user(), $request->pageData());
 
         return redirect()->route('admin.pages.edit', $page)->with('success', __('Page created as a draft.'));
     }
@@ -75,8 +75,7 @@ class PageController extends Controller
     {
         Gate::authorize('update', $page);
 
-        $data = $request->validated();
-        $this->pages->update($request->user(), $page, Arr::except($data, 'lock_version'), (int) $data['lock_version']);
+        $this->pages->update($request->user(), $page, $request->pageData(), (int) $request->validated('lock_version'));
 
         return redirect()->route('admin.pages.edit', $page)->with('success', __('Changes saved.'));
     }
@@ -110,6 +109,7 @@ class PageController extends Controller
             'canEdit' => $page->exists ? Gate::allows('update', $page) : true,
             'actions' => $page->exists ? app(PublishingService::class)->availableActions($page, $request->user()) : [],
             'revisions' => $page->exists ? $page->revisions()->with('author:id,name')->limit(10)->get() : collect(),
+            'blocks' => $page->exists ? app(BlockTreeRepository::class)->load($page) : [],
         ];
     }
 }

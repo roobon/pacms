@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Cms\Blocks\BlockTreeRepository;
 use App\Enums\ContentStatus;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasSeo;
@@ -139,11 +140,14 @@ class Page extends Model implements Revisionable
             'type' => 'page',
             'fields' => $this->only(self::SNAPSHOT_FIELDS) + ['path' => $this->path],
             'seo' => $this->seoSnapshot(),
-            // Block tree arrives with the Block Engine (Phase 4).
-            'blocks' => [],
+            'blocks' => $this->exists ? app(BlockTreeRepository::class)->load($this) : [],
         ];
     }
 
+    /**
+     * Restores fields and SEO. The block tree is restored (and re-validated) by
+     * PageService::restore(), which knows the acting user.
+     */
     public function applySnapshot(array $snapshot): void
     {
         $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip(self::SNAPSHOT_FIELDS));

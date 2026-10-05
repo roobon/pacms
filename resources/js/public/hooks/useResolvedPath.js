@@ -23,6 +23,7 @@ export function useResolvedPath(pathname) {
     let initialData;
     if (isInitialPath) {
         if (initial.page) initialData = { kind: 'page', data: initial.page };
+        else if (initial.news) initialData = { kind: 'news', data: initial.news };
         else if (initial.route?.status === 404) initialData = { kind: 'not_found' };
         else if (pathname === '/') initialData = { kind: 'home' };
     }

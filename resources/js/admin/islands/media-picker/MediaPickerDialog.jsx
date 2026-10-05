@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { adminHttp, errorMessage } from '../../http.js';
 
 /**
@@ -69,7 +70,9 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
         }
     }
 
-    return (
+    // Rendered in <body> through a portal: the picker is often placed inside the page form,
+    // and its upload <form> must never be nested in another form.
+    return createPortal(
         <dialog ref={dialogRef} className="pa-dialog" aria-labelledby={headingId} onClose={onClose} onCancel={onClose}>
             <div className="pa-dialog__header">
                 <h2 id={headingId} className="h5 mb-0">
@@ -178,6 +181,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                     </button>
                 </div>
             </div>
-        </dialog>
+        </dialog>,
+        document.body,
     );
 }

@@ -1,0 +1,151 @@
+import { useId } from 'react';
+import TokenSelect from '../fields/TokenSelect.jsx';
+import { getIn, setIn } from '../tree.js';
+
+const COLUMN_PRESETS = {
+    '12': 'One column',
+    '6,6': 'Two equal',
+    '4,8': 'Narrow + wide',
+    '8,4': 'Wide + narrow',
+    '4,4,4': 'Three equal',
+    '3,3,3,3': 'Four equal',
+};
+
+/**
+ * Layout settings (CMS-ARCHITECTURE.md §8.1). Values are design tokens or validated
+ * literals. Per-device overrides are edited in Phase 5; the device switch already
+ * previews them.
+ *
+ * @param {{node: Object, type: Object, onChange: (layout: Object) => void, errors: Record<string, string[]>, disabled?: boolean}} props
+ */
+export default function LayoutPanel({ node, type, onChange, errors, disabled = false }) {
+    const id = useId();
+    const layout = node.layout ?? {};
+    const set = (path, value) => onChange(setIn(layout, path, value));
+    const hasContainer = ['section', 'hero'].includes(type.slug);
+
+    return (
+        <div>
+            {hasContainer && (
+                <Row id={`${id}-container`} label="Content width">
+                    <select id={`${id}-container`} className="form-select form-select-sm" value={layout.container ?? 'boxed'} disabled={disabled} onChange={(e) => set('container', e.target.value)}>
+                        <option value="boxed">Site width</option>
+                        <option value="narrow">Narrow (reading width)</option>
+                        <option value="fluid">Full width with margins</option>
+                        <option value="full">Edge to edge</option>
+                    </select>
+                </Row>
+            )}
+
+            {type.slug === 'columns' && (
+                <>
+                    <Row id={`${id}-cols`} label="Columns (desktop)">
+                        <select
+                            id={`${id}-cols`}
+                            className="form-select form-select-sm"
+                            value={(layout.columns?.desktop ?? []).join(',')}
+                            disabled={disabled}
+                            onChange={(e) => set('columns.desktop', e.target.value.split(',').map(Number))}
+                        >
+                            {!COLUMN_PRESETS[(layout.columns?.desktop ?? []).join(',')] && <option value={(layout.columns?.desktop ?? []).join(',')}>Custom</option>}
+                            {Object.entries(COLUMN_PRESETS).map(([value, label]) => (
+                                <option key={value} value={value}>
+                                    {label}
+                                </option>
+                            ))}
+                        </select>
+                    </Row>
+                    <div className="form-check mb-3">
+                        <input
+                            id={`${id}-stack`}
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={Array.isArray(layout.columns?.mobile) && layout.columns.mobile.every((span) => span === 12)}
+                            disabled={disabled}
+                            onChange={(e) => set('columns.mobile', e.target.checked ? (layout.columns?.desktop ?? [12]).map(() => 12) : undefined)}
+                        />
+                        <label className="form-check-label small" htmlFor={`${id}-stack`}>
+                            Stack columns on phones
+                        </label>
+                    </div>
+                </>
+            )}
+
+            {['columns', 'button-group', 'container', 'hero'].includes(type.slug) && (
+                <Row id={`${id}-gap`} label="Gap">
+                    <TokenSelect id={`${id}-gap`} group="space" value={layout.gap ?? null} onChange={(v) => set('gap', v)} disabled={disabled} />
+                </Row>
+            )}
+
+            <div className="row g-2">
+                {['top', 'bottom'].map((side) => (
+                    <div className="col-6" key={side}>
+                        <Row id={`${id}-p-${side}`} label={`Padding ${side}`} error={errors[`layout.padding.${side}`]}>
+                            <TokenSelect id={`${id}-p-${side}`} group="space" value={getIn(layout, `padding.${side}`) ?? null} onChange={(v) => set(`padding.${side}`, v)} emptyLabel="None" disabled={disabled} />
+                        </Row>
+                    </div>
+                ))}
+                <div className="col-6">
+                    <Row id={`${id}-m-bottom`} label="Space below">
+                        <TokenSelect id={`${id}-m-bottom`} group="space" value={getIn(layout, 'margin.bottom') ?? null} onChange={(v) => set('margin.bottom', v)} emptyLabel="Default" disabled={disabled} />
+                    </Row>
+                </div>
+                <div className="col-6">
+                    <Row id={`${id}-align`} label="Text alignment">
+                        <select id={`${id}-align`} className="form-select form-select-sm" value={layout.text_align ?? ''} disabled={disabled} onChange={(e) => set('text_align', e.target.value || undefined)}>
+                            <option value="">Default</option>
+                            <option value="start">Left</option>
+                            <option value="center">Centre</option>
+                            <option value="end">Right</option>
+                        </select>
+                    </Row>
+                </div>
+            </div>
+
+            {['button-group', 'hero'].includes(type.slug) && (
+                <Row id={`${id}-justify`} label="Horizontal alignment">
+                    <select id={`${id}-justify`} className="form-select form-select-sm" value={layout.justify ?? ''} disabled={disabled} onChange={(e) => set('justify', e.target.value || undefined)}>
+                        <option value="">Default</option>
+                        <option value="start">Left</option>
+                        <option value="center">Centre</option>
+                        <option value="end">Right</option>
+                    </select>
+                </Row>
+            )}
+
+            {['hero', 'section', 'container'].includes(type.slug) && (
+                <Row id={`${id}-minh`} label="Minimum height (% of screen)" error={errors['layout.min_height']}>
+                    <input
+                        id={`${id}-minh`}
+                        type="number"
+                        min={0}
+                        max={100}
+                        className="form-control form-control-sm"
+                        value={layout.min_height?.unit === 'vh' ? layout.min_height.value : ''}
+                        placeholder="auto"
+                        disabled={disabled}
+                        onChange={(e) => set('min_height', e.target.value ? { value: Number(e.target.value), unit: 'vh' } : undefined)}
+                    />
+                </Row>
+            )}
+
+            {type.slug === 'container' && (
+                <Row id={`${id}-maxw`} label="Maximum width">
+                    <TokenSelect id={`${id}-maxw`} group="container" value={layout.max_width?.$token ? layout.max_width : null} onChange={(v) => set('max_width', v)} emptyLabel="Full" disabled={disabled} />
+                </Row>
+            )}
+        </div>
+    );
+}
+
+function Row({ id, label, error, children }) {
+    return (
+        <div className="mb-3">
+            <label className="form-label small" htmlFor={id}>
+                {label}
+            </label>
+            {children}
+            {error && <div className="invalid-feedback d-block">{error[0]}</div>}
+        </div>
+    );
+}

@@ -54,6 +54,8 @@ class PageRequest extends FormRequest
             'featured_media_id' => ['nullable', 'integer', $image],
             'template' => ['required', Rule::in(array_keys(config('pacms.pages.templates')))],
             'lock_version' => [$this->route('page') ? 'required' : 'nullable', 'integer'],
+            // Block tree from the builder island, as JSON (validated in depth by BlockTreeValidator).
+            'blocks' => ['nullable', 'string', 'max:'.((int) config('pacms.blocks.max_payload_kb') * 1024), 'json'],
 
             'seo' => ['array'],
             'seo.title' => ['nullable', 'string', 'max:255'],
@@ -65,6 +67,22 @@ class PageRequest extends FormRequest
             'seo.og_description' => ['nullable', 'string', 'max:500'],
             'seo.og_image_media_id' => ['nullable', 'integer', $image],
         ];
+    }
+
+    /**
+     * Validated page data for PageService, with the block tree decoded (when sent).
+     *
+     * @return array<string, mixed>
+     */
+    public function pageData(): array
+    {
+        $data = $this->safe()->except(['lock_version', 'blocks']);
+
+        if ($this->filled('blocks')) {
+            $data['blocks'] = json_decode((string) $this->input('blocks'), true, 64) ?? [];
+        }
+
+        return $data;
     }
 
     /**

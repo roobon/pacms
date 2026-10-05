@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use App\Auth\AuthActivitySubscriber;
+use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Design\DesignTokenService;
+use App\Cms\Sources\SourceRegistry;
 use App\Models\Media;
+use App\Models\News;
 use App\Models\Page;
 use App\Models\Term;
 use App\Models\User;
@@ -28,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SettingsService::class);
         $this->app->singleton(ActivityLogger::class);
         $this->app->singleton(DesignTokenService::class);
+        $this->app->singleton(BlockRegistry::class);
+        $this->app->singleton(SourceRegistry::class);
     }
 
     public function boot(): void
@@ -38,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
             'page' => Page::class,
             'media' => Media::class,
             'term' => Term::class,
+            'news' => News::class,
         ]);
 
         // Catch N+1 queries and silently dropped attributes during development and tests.

@@ -67,7 +67,9 @@ export function readInitialData(doc) {
 
     try {
         const data = JSON.parse(element.textContent || '{}');
-        return { site: data.site ?? null, route: data.route ?? null, page: data.page ?? null };
+        const result = { site: data.site ?? null, route: data.route ?? null, page: data.page ?? null };
+        if (data.news) result.news = data.news;
+        return result;
     } catch {
         return empty;
     }

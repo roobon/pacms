@@ -1,5 +1,28 @@
 <?php
 
+use App\Cms\Blocks\Types\AccordionBlock;
+use App\Cms\Blocks\Types\AccordionItemBlock;
+use App\Cms\Blocks\Types\ButtonBlock;
+use App\Cms\Blocks\Types\ButtonGroupBlock;
+use App\Cms\Blocks\Types\CardsBlock;
+use App\Cms\Blocks\Types\ColumnBlock;
+use App\Cms\Blocks\Types\ColumnsBlock;
+use App\Cms\Blocks\Types\ContainerBlock;
+use App\Cms\Blocks\Types\CtaBlock;
+use App\Cms\Blocks\Types\DividerBlock;
+use App\Cms\Blocks\Types\FaqBlock;
+use App\Cms\Blocks\Types\HeadingBlock;
+use App\Cms\Blocks\Types\HeroBlock;
+use App\Cms\Blocks\Types\IconBlock;
+use App\Cms\Blocks\Types\ImageBlock;
+use App\Cms\Blocks\Types\NewsBlock;
+use App\Cms\Blocks\Types\QuoteBlock;
+use App\Cms\Blocks\Types\RichTextBlock;
+use App\Cms\Blocks\Types\SectionBlock;
+use App\Cms\Blocks\Types\SpacerBlock;
+use App\Cms\Blocks\Types\StatisticsBlock;
+use App\Cms\Blocks\Types\VideoBlock;
+
 return [
 
     /*
@@ -115,8 +138,41 @@ return [
         'quality' => 82,
     ],
 
+    'blocks' => [
+        // Tree limits (SECURITY-ARCHITECTURE.md §4).
+        'max_depth' => 12,
+        'max_nodes' => 2000,
+        'max_payload_kb' => 2048,
+        // Core block types (CMS-ARCHITECTURE.md §5.5), in palette order.
+        'types' => [
+            SectionBlock::class,
+            ContainerBlock::class,
+            ColumnsBlock::class,
+            ColumnBlock::class,
+            HeadingBlock::class,
+            RichTextBlock::class,
+            ImageBlock::class,
+            ButtonBlock::class,
+            ButtonGroupBlock::class,
+            IconBlock::class,
+            VideoBlock::class,
+            DividerBlock::class,
+            SpacerBlock::class,
+            HeroBlock::class,
+            CardsBlock::class,
+            StatisticsBlock::class,
+            AccordionBlock::class,
+            AccordionItemBlock::class,
+            FaqBlock::class,
+            QuoteBlock::class,
+            CtaBlock::class,
+            NewsBlock::class,
+        ],
+    ],
+
     // Registered taxonomies. Content types add theirs as they are built.
     'taxonomies' => [
+        'news_category' => ['label' => 'News categories', 'singular' => 'News category', 'hierarchical' => true],
         'media_category' => ['label' => 'Media categories', 'singular' => 'Media category', 'hierarchical' => true],
         'tag' => ['label' => 'Tags', 'singular' => 'Tag', 'hierarchical' => false],
     ],

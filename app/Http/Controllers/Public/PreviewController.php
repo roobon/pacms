@@ -18,6 +18,26 @@ use Illuminate\Support\Facades\Gate;
  */
 class PreviewController extends Controller
 {
+    /**
+     * Empty SPA shell for the builder's live-preview iframe. Content arrives via postMessage.
+     */
+    public function builder(SitePayload $sitePayload): Response
+    {
+        $site = $sitePayload->build();
+
+        return response()->view('spa', [
+            'site' => $site,
+            'seo' => ['title' => 'Builder preview', 'robots' => 'noindex,nofollow', 'json_ld' => []],
+            'initial' => [
+                'site' => $site,
+                'route' => ['path' => '/__builder-preview', 'status' => 200, 'builder' => true],
+            ],
+        ])->withHeaders([
+            'Cache-Control' => 'no-store, private',
+            'X-Robots-Tag' => 'noindex, nofollow',
+        ]);
+    }
+
     public function page(Request $request, Page $page, SitePayload $sitePayload, PagePayloadBuilder $builder): Response
     {
         Gate::authorize('view', $page);

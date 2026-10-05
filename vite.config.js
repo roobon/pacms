@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/scss/admin.scss',
                 'resources/js/admin/app.js',
                 'resources/js/admin/islands/media-picker.jsx',
+                'resources/js/admin/islands/page-builder.jsx',
                 // Public website: React SPA.
                 'resources/scss/public.scss',
                 'resources/js/public/main.jsx',

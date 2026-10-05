@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\Redirect;
+use App\Services\News\NewsPayloadBuilder;
 use App\Services\Pages\PagePayloadBuilder;
 use App\Services\Public\PathResolver;
 use App\Services\Public\SitePayload;
@@ -35,6 +36,7 @@ class SpaController extends Controller
         PathResolver $resolver,
         PagePayloadBuilder $pages,
         RedirectService $redirects,
+        NewsPayloadBuilder $newsPayload,
     ): Response|RedirectResponse {
         $path = trim($request->path(), '/');
 
@@ -56,6 +58,7 @@ class SpaController extends Controller
 
         return match ($resolved['kind']) {
             'page' => $this->pageResponse($site, $path, $pages->forLivePage($resolved['page'])),
+            'news' => $this->shell($site, $path, 200, ($news = $newsPayload->build($resolved['news']))['seo'], ['news' => $news]),
             'home' => $this->shell($site, $path, 200, $this->basicSeo($site, null, $site['url'].'/', organization: true)),
             'redirect' => $this->redirectResponse($resolved['redirect'], $redirects),
             default => $this->shell($site, $path, 404, $this->basicSeo($site, 'Page not found', null, noindex: true)),

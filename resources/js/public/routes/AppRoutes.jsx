@@ -10,6 +10,8 @@ import PreviewPage from '../pages/PreviewPage.jsx';
 const LoginPage = lazyWithReload(() => import('../pages/account/LoginPage.jsx'));
 const RegisterPage = lazyWithReload(() => import('../pages/account/RegisterPage.jsx'));
 const AccountPage = lazyWithReload(() => import('../pages/account/AccountPage.jsx'));
+// Only used inside the admin Block Builder.
+const BuilderPreviewPage = lazyWithReload(() => import('../pages/BuilderPreviewPage.jsx'));
 
 /**
  * Route table. Must stay in sync with App\Http\Controllers\Public\SpaController::ROUTES,
@@ -19,6 +21,15 @@ const AccountPage = lazyWithReload(() => import('../pages/account/AccountPage.js
 export default function AppRoutes() {
     return (
         <Routes>
+            {/* Builder preview frame: blocks only, no site header/footer. */}
+            <Route
+                path="__builder-preview"
+                element={
+                    <Suspense fallback={null}>
+                        <BuilderPreviewPage />
+                    </Suspense>
+                }
+            />
             <Route element={<SiteShell />}>
                 <Route index element={<ContentRoute />} />
                 <Route path="preview/pages/:id" element={<PreviewPage />} />
