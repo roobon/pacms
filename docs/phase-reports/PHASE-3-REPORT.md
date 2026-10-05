@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-09-24 |
-| Branch | `phase/3-cms-core` (not merged, not pushed; waiting for review) |
+| Branch | `phase/3-cms-core` → merged into `main` 2026-10-05 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
 | Prepared with | Claude Code (AI-assisted). **Needs team review before Phase 4.** |
 
 ```
 PHASE:   3 — CMS Core (+ Media core, per decision D-04)
-STATUS:  Complete. All automated checks pass and the end-to-end HTTP smoke test passed on pacms.test.
-         Awaiting team review in the browser.
+STATUS:  Complete and APPROVED by the team lead (2026-10-05); merged into main (e663fd7), tag v0.3.0.
+
 ```
 
 ## Implemented

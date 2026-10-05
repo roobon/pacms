@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 3 (CMS Core + Media core) complete, awaiting team review.** See [docs/phase-reports/PHASE-3-REPORT.md](docs/phase-reports/PHASE-3-REPORT.md).
+- Current status: **Phase 3 (CMS Core + Media core) approved and merged (v0.3.0). Phase 4 (Block Engine) is next.** See [docs/phase-reports/PHASE-3-REPORT.md](docs/phase-reports/PHASE-3-REPORT.md).
 
 ## Requirements
 
