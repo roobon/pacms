@@ -3,8 +3,8 @@ import { Route, Routes } from 'react-router';
 import { lazyWithReload } from '../utils/lazyWithReload.js';
 import SiteShell from '../components/layout/SiteShell.jsx';
 import PageSkeleton from '../components/common/PageSkeleton.jsx';
-import HomePage from '../pages/HomePage.jsx';
-import NotFoundPage from '../pages/NotFoundPage.jsx';
+import ContentRoute from '../pages/ContentRoute.jsx';
+import PreviewPage from '../pages/PreviewPage.jsx';
 
 // Account pages are only needed by visitors who sign in — keep them out of the initial bundle.
 const LoginPage = lazyWithReload(() => import('../pages/account/LoginPage.jsx'));
@@ -20,7 +20,8 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route element={<SiteShell />}>
-                <Route index element={<HomePage />} />
+                <Route index element={<ContentRoute />} />
+                <Route path="preview/pages/:id" element={<PreviewPage />} />
                 <Route
                     path="account"
                     element={
@@ -45,7 +46,8 @@ export default function AppRoutes() {
                         </Suspense>
                     }
                 />
-                <Route path="*" element={<NotFoundPage />} />
+                {/* CMS pages, redirects and 404s are resolved by the server-side PathResolver. */}
+                <Route path="*" element={<ContentRoute />} />
             </Route>
         </Routes>
     );

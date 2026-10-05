@@ -30,5 +30,47 @@ document.querySelectorAll('input[type="color"][data-sync]').forEach((picker) => 
     });
 });
 
+// New pages: fill the URL slug from the title until the editor types their own slug.
+document.querySelectorAll('[data-slug-source]').forEach((source) => {
+    const target = document.querySelector(source.dataset.slugSource);
+    if (!(target instanceof HTMLInputElement) || !target.hasAttribute('data-slug-auto')) return;
+    let touched = target.value !== '';
+    target.addEventListener('input', () => {
+        touched = target.value !== '';
+    });
+    source.addEventListener('input', () => {
+        if (!touched) target.value = slugify(source.value);
+    });
+});
+
+/** Same rules as the server: lowercase ASCII letters, digits and single hyphens. */
+export function slugify(value) {
+    return value
+        .normalize('NFKD')
+        .replace(/[̀-ͯ]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 191);
+}
+
+// Drag & drop onto the Media Library upload box fills its file input.
+document.querySelectorAll('[data-dropzone]').forEach((zone) => {
+    const input = zone.querySelector('input[type="file"]');
+    ['dragenter', 'dragover'].forEach((type) =>
+        zone.addEventListener(type, (event) => {
+            event.preventDefault();
+            zone.classList.add('is-dragover');
+        }),
+    );
+    ['dragleave', 'drop'].forEach((type) => zone.addEventListener(type, () => zone.classList.remove('is-dragover')));
+    zone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        if (input && event.dataTransfer?.files.length) {
+            input.files = event.dataTransfer.files;
+        }
+    });
+});
+
 // Move focus to the validation summary so screen-reader users hear the errors.
 document.getElementById('error-summary')?.focus();

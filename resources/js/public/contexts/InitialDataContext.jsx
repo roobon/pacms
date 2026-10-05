@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
 /** @type {import('react').Context<import('../utils/initialData.js').InitialData>} */
-const InitialDataContext = createContext({ site: null, route: null });
+const InitialDataContext = createContext({ site: null, route: null, page: null });
 
 export const InitialDataProvider = InitialDataContext.Provider;
 

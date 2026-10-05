@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Public\PreviewController;
+use App\Http\Controllers\Public\SeoFilesController;
 use App\Http\Controllers\Public\SpaController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,5 +14,14 @@ use Illuminate\Support\Facades\Route;
 | Everything else is served by the public React SPA through the server-assisted
 | shell, which sets the correct HTTP status and SEO metadata per URL.
 */
+
+Route::get('robots.txt', [SeoFilesController::class, 'robots'])->name('robots');
+Route::get('sitemap.xml', [SeoFilesController::class, 'index'])->name('sitemap');
+Route::get('sitemaps/pages.xml', [SeoFilesController::class, 'pages'])->name('sitemap.pages');
+
+// Secure preview: valid signature AND a signed-in user who may view the page.
+Route::get('preview/pages/{page}', [PreviewController::class, 'page'])
+    ->middleware(['signed:relative', 'auth'])
+    ->name('preview.page');
 
 Route::fallback(SpaController::class)->name('spa');

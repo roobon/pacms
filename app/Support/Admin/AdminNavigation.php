@@ -12,13 +12,24 @@ use App\Models\User;
 final class AdminNavigation
 {
     /**
-     * @return list<array{label: string, items: list<array{label: string, route: string, icon: string, active: string}>}>
+     * @return list<array{label: string, items: list<array<string, mixed>>}>
      */
     public static function for(User $user): array
     {
         $sections = [
             ['label' => '', 'items' => [
                 ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'bi-speedometer2', 'active' => 'admin.dashboard', 'can' => 'admin.access'],
+            ]],
+            ['label' => 'Content', 'items' => [
+                ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
+            ]],
+            ['label' => 'Media', 'items' => [
+                ['label' => 'Library', 'route' => 'admin.media.index', 'icon' => 'bi-images', 'active' => 'admin.media.*', 'can' => 'media.view'],
+                ['label' => 'Media categories', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'media_category'], 'icon' => 'bi-folder2', 'active' => 'admin.terms.*', 'can' => 'taxonomies.manage'],
+                ['label' => 'Tags', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'tag'], 'icon' => 'bi-tags', 'can' => 'taxonomies.manage'],
+            ]],
+            ['label' => 'SEO', 'items' => [
+                ['label' => 'Redirects', 'route' => 'admin.redirects.index', 'icon' => 'bi-signpost-split', 'active' => 'admin.redirects.*', 'can' => 'redirects.manage'],
             ]],
             ['label' => 'Design', 'items' => [
                 ['label' => 'Design Tokens', 'route' => 'admin.design.tokens', 'icon' => 'bi-palette', 'active' => 'admin.design.*', 'can' => 'design_tokens.manage'],

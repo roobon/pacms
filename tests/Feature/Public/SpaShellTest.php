@@ -8,8 +8,8 @@ it('serves the homepage shell with server-rendered SEO and initial data', functi
     $this->get('/')
         ->assertOk()
         ->assertSee('<title data-pacms-head>Green Future Foundation</title>', false)
-        ->assertSee('<meta name="description" content="We support schools.">', false)
-        ->assertSee('<link rel="canonical" href="http://pacms.test/">', false)
+        ->assertSee('<meta name="description" content="We support schools." data-pacms-head>', false)
+        ->assertSee('<link rel="canonical" href="http://pacms.test/" data-pacms-head>', false)
         ->assertSee('<meta property="og:site_name" content="Green Future Foundation">', false)
         ->assertSee('"@type":"Organization"', false)
         ->assertSee('id="pacms-initial"', false);

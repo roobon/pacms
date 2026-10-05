@@ -54,6 +54,7 @@ final class PermissionCatalog
             ],
             'Integrations' => ['external_sources.manage', 'external_sources.sync', 'facebook.connect'],
             'SEO' => ['seo.manage', 'redirects.manage'],
+            'Taxonomy' => ['taxonomies.manage'],
             'Import / Export' => ['import.run', 'export.run'],
             'Users' => ['users.view', 'users.manage', 'users.manage_roles'],
             'System' => ['settings.manage', 'activity_log.view', 'backups.manage', 'revisions.restore'],
@@ -90,7 +91,7 @@ final class PermissionCatalog
                 'testimonials.view', 'testimonials.moderate', 'testimonials.publish', 'testimonials.delete',
                 'media.view', 'media.upload', 'media.update', 'media.delete',
                 'templates.manage', 'global_blocks.manage', 'global_blocks.detach', 'menus.manage',
-                'external_sources.sync', 'seo.manage', 'redirects.manage',
+                'external_sources.sync', 'seo.manage', 'redirects.manage', 'taxonomies.manage',
                 'import.run', 'export.run', 'revisions.restore',
             ],
         );

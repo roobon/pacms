@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\MeController;
+use App\Http\Controllers\Api\V1\PageController;
+use App\Http\Controllers\Api\V1\ResolveController;
 use App\Http\Controllers\Api\V1\SiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('site', SiteController::class)->name('site');
+
+    Route::middleware('cache.headers:public;max_age=60;etag')->group(function () {
+        Route::get('resolve', ResolveController::class)->name('resolve');
+        Route::get('pages/{path}', PageController::class)->where('path', '[a-z0-9/\-]+')->name('pages.show');
+    });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', MeController::class)->name('me');

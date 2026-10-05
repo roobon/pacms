@@ -63,6 +63,11 @@ class SecurityHeaders
         $hot = trim((string) @file_get_contents(public_path('hot')));
         $origin = rtrim($hot, '/');
 
+        // CSP cannot express IPv6 literals ([::1]); vite.config.js binds the dev server to 127.0.0.1.
+        if (str_contains($origin, '[')) {
+            logger()->warning('Vite dev server runs on an IPv6 address; CSP will block its styles. Restart `npm run dev`.');
+        }
+
         return $origin !== '' ? ' '.$origin : '';
     }
 }

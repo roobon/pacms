@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 2 — Foundation, complete and awaiting team review** ([report](phase-reports/PHASE-2-REPORT.md)). Phase 3 has not started.
+Current phase: **Phase 3 — CMS Core + Media core, complete and awaiting team review** ([report](phase-reports/PHASE-3-REPORT.md)). Phase 2: [report](phase-reports/PHASE-2-REPORT.md). Phase 4 has not started.
 
 | Document | Purpose |
 |---|---|

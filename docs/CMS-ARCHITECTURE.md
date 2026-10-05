@@ -254,7 +254,7 @@ Content that is *listed and filtered* (news in a grid, events by date) and conte
 |---|---|---|
 | Editing storage | Working copy in tables (`pages` row + `blocks` tree) | Row + `blocks` tree |
 | What the public sees | The **published snapshot** (`revisions` row referenced by `published_revision_id`) | The row itself once `status = published` |
-| Editing a live item | Safe: edits stay in the working copy until *Publish changes*. The UI shows "Unpublished changes". | Saving a published item updates it live. This needs `*.publish` permission. Every save creates a revision. |
+| Editing a live item | Safe: edits stay in the working copy until *Publish changes*. The UI shows "Unpublished changes". `status` describes the **working copy**, and "live" is separate (a published snapshot exists), so a live page being edited is *Live + Draft* and can go through review again. Any edit resets In review / Approved / Scheduled to Draft. | Saving a published item updates it live. This needs `*.publish` permission. Every save creates a revision. |
 | Review of changes to live items | Yes (submit working copy for review) | Not in v1. Upgrade path: Craft-style draft copies (`draft_of_id`) without schema rewrite (risk R-07) |
 | Why | Visual pages are edited over days and must not go live half-finished. Snapshots also make public rendering a single-row read. | Listings, filters, RSS, search and sitemaps query columns directly. Snapshot-only storage would force duplicating every listable column. |
 

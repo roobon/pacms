@@ -9,6 +9,7 @@ export default defineConfig({
                 // Admin: Blade pages + small enhancements (React islands are added per feature).
                 'resources/scss/admin.scss',
                 'resources/js/admin/app.js',
+                'resources/js/admin/islands/media-picker.jsx',
                 // Public website: React SPA.
                 'resources/scss/public.scss',
                 'resources/js/public/main.jsx',
@@ -38,6 +39,11 @@ export default defineConfig({
         },
     },
     server: {
+        // Bind to IPv4: the dev-server origin is added to the Content-Security-Policy, and CSP
+        // source expressions cannot contain IPv6 literals such as http://[::1]:5173.
+        host: '127.0.0.1',
+        port: 5173,
+        strictPort: true,
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },

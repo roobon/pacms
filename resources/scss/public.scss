@@ -284,6 +284,40 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         var(--pa-color-bg-light);
 }
 
+.pa-page-header-public {
+    padding: clamp(2rem, 5vw, 4rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+
+    .breadcrumb {
+        --bs-breadcrumb-divider-color: var(--pa-color-muted);
+        --bs-breadcrumb-item-active-color: var(--pa-color-muted);
+    }
+}
+
+.pa-page-lead {
+    max-width: 46rem;
+    color: var(--pa-color-muted);
+}
+
+.pa-page-featured {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: cover;
+    border-radius: var(--pa-radius-lg);
+}
+
+.pa-preview-banner {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    padding: .5rem 1rem;
+    text-align: center;
+    font-weight: 600;
+    background: var(--pa-color-accent);
+    color: var(--pa-color-on-accent);
+}
+
 .pa-skeleton {
     background: linear-gradient(90deg, #EEF2F5 25%, #F7F9FA 37%, #EEF2F5 63%);
     background-size: 400% 100%;

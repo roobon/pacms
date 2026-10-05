@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Page;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Settings\SettingsService;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -19,7 +21,9 @@ class SettingsController extends Controller
     {
         return view('admin.settings.general', [
             'site' => $this->settings->group('site'),
+            'seo' => $this->settings->group('seo'),
             'timezones' => DateTimeZone::listIdentifiers(),
+            'livePages' => Page::query()->live()->orderBy('published_path')->get(['id', 'title', 'published_path']),
         ]);
     }
 
@@ -33,16 +37,20 @@ class SettingsController extends Controller
             'contact_phone' => ['nullable', 'string', 'max:64'],
             'address' => ['nullable', 'string', 'max:500'],
             'timezone' => ['required', Rule::in(DateTimeZone::listIdentifiers())],
+            'homepage_page_id' => ['nullable', 'integer', Rule::exists('pages', 'id')->whereNotNull('published_revision_id')->whereNull('deleted_at')],
+            'robots_txt' => ['nullable', 'string', 'max:5000'],
         ]);
 
-        $data = array_map(fn ($value) => $value ?? '', $data);
+        $site = array_map(fn ($value) => $value ?? '', Arr::except($data, ['homepage_page_id', 'robots_txt']));
+        $site['homepage_page_id'] = isset($data['homepage_page_id']) ? (int) $data['homepage_page_id'] : null;
         $before = $this->settings->group('site');
 
-        $this->settings->set('site', $data, $request->user());
+        $this->settings->set('site', $site, $request->user());
+        $this->settings->set('seo', ['robots_txt' => (string) ($data['robots_txt'] ?? '')], $request->user());
 
         $logger->log('settings.updated', null, [
             'group' => 'site',
-            'changed' => array_keys(array_diff_assoc($data, array_intersect_key($before, $data))),
+            'changed' => array_keys(array_diff_assoc(array_map('strval', $site), array_map('strval', array_intersect_key($before, $site)))),
         ], subjectLabel: 'General settings');
 
         return back()->with('success', __('Settings saved.'));
