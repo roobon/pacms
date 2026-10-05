@@ -88,7 +88,7 @@ STATUS:  Complete. All automated checks pass and the end-to-end HTTP smoke test 
 
 | Suite | Result |
 |---|---|
-| Pest (MySQL `pacms_testing`) | **146 passed, 545 assertions** (Phase 2: 89), ~150 s |
+| Pest (MySQL `pacms_testing`) | **149 passed, 559 assertions** (Phase 2: 89), ~150 s |
 | Vitest | **14 passed** (Phase 2: 9) |
 | Larastan level 6 | No errors |
 | Pint / ESLint | Passed / clean |
@@ -171,6 +171,15 @@ The smoke-test page "Smoke Test Page" and its image remain in the local dev DB. 
 | Media deletion is permanent (no soft delete) | A soft-deleted file would still be publicly reachable at its URL |
 | Preview payload embedded server-side | The draft never travels through the public API. Signature + auth + policy |
 | Relative signed preview URLs | Work regardless of which host name the admin uses |
+
+## Fixes during the Phase 3 review (2026-09-24 → 2026-10-05)
+
+| Finding | Resolution | Commit |
+|---|---|---|
+| Public site unstyled while `npm run dev` runs: the dev server reported `http://[::1]:5173`, and CSP cannot express IPv6 literals, so the browser blocked its stylesheet and fonts | Vite dev server bound to `127.0.0.1:5173`. The server logs a warning if an IPv6 origin appears again | `319146c` |
+| Dashboard out of date ("Phase 2 foundation" text) and empty for editors | New dashboard: content statistics (permission-filtered), **Waiting for your review** (approvers), **Your drafts**, **Scheduled to publish**, plus the existing health and activity panels. 3 dashboard tests added | `56ed1c2` (controller, committed mid-change) + this commit (view, tests) |
+
+`56ed1c2` was committed while the dashboard change was half done (controller updated, view not yet). That left the dashboard erroring and 8 tests failing until the follow-up commit. **Current state: Pest 149 passed, Vitest 14 passed, Larastan and Pint clean.**
 
 ## Next phase
 
