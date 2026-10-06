@@ -35,6 +35,7 @@
  * @property {string|null} excerpt
  * @property {ImageData|null} featured_image
  * @property {string} template
+ * @property {boolean} [show_title]
  * @property {string|null} published_at
  * @property {string|null} updated_at
  * @property {{title: string, url: string}[]} breadcrumbs

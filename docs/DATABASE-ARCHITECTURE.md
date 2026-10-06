@@ -136,6 +136,7 @@ Spatie tables (`roles`, `permissions`, `model_has_roles`, `model_has_permissions
 | excerpt | text null | |
 | featured_media_id | FK media null, SET NULL | |
 | template | varchar(32) | page layout: `default`, `full-width`, `landing` (no chrome) |
+| show_title | bool, default true | show the default page header (title, summary). When false the H1 stays, visually hidden. Added after the Phase 4 review |
 | header_global_block_id, footer_global_block_id | FK global_blocks null, SET NULL | null = site default |
 | status | varchar(16) | draft / in_review / approved / published / archived |
 | has_unpublished_changes | bool | working copy differs from published snapshot |

@@ -102,13 +102,20 @@
                                 </select>
                                 @error('parent_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
-                            <div class="mb-0">
+                            <div class="mb-3">
                                 <label for="field-template" class="form-label">Layout</label>
                                 <select id="field-template" name="template" class="form-select">
                                     @foreach ($templates as $value => $label)
                                         <option value="{{ $value }}" @selected(old('template', $page->template ?? 'default') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="form-check mb-0">
+                                <input type="hidden" name="show_title" value="0">
+                                <input type="checkbox" id="field-show-title" name="show_title" value="1" class="form-check-input" aria-describedby="field-show-title-help"
+                                    @checked((bool) old('show_title', $page->show_title ?? true))>
+                                <label for="field-show-title" class="form-check-label">Show page title</label>
+                                <div id="field-show-title-help" class="form-text">Shows the title and summary above the page content. When off, the title stays available to screen readers and search engines. A Heading 1 block in the content always replaces it.</div>
                             </div>
                         </div>
                     </section>

@@ -8,18 +8,25 @@ import SeoHead from '../components/common/SeoHead.jsx';
 /**
  * Renders a CMS page: blocks when the page has them, otherwise title, summary and
  * featured image. When the blocks provide their own H1 (e.g. a hero), the default page
- * header is left out so there is exactly one H1.
+ * header is left out so there is exactly one H1. When the editor turned the title off, the
+ * H1 is kept for screen readers and search engines but not shown.
  *
  * @param {{page: import('../utils/initialData.js').PageData}} props
  */
 export default function PageView({ page }) {
     const fullWidth = page.template === 'full-width';
     const blocks = page.blocks ?? [];
-    const showHeader = !hasHeadingOne(blocks);
+    const needsHeading = !hasHeadingOne(blocks);
+    const showHeader = needsHeading && page.show_title !== false;
 
     return (
         <article>
             <SeoHead seo={page.seo} />
+            {needsHeading && !showHeader && (
+                <h1 className="visually-hidden" tabIndex={-1}>
+                    {page.title}
+                </h1>
+            )}
             {showHeader && (
                 <header className="pa-page-header-public">
                     <div className={fullWidth ? 'container-fluid px-4' : 'container'}>

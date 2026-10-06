@@ -77,6 +77,7 @@ class PagePayloadBuilder
             'excerpt' => $fields['excerpt'] ?? null,
             'featured_image' => $featured?->toImageArray('(min-width: 1320px) 1280px, 100vw'),
             'template' => (string) ($fields['template'] ?? 'default'),
+            'show_title' => (bool) ($fields['show_title'] ?? true),
             'published_at' => $page->first_published_at?->toIso8601String(),
             'updated_at' => $updatedAt,
             'breadcrumbs' => $breadcrumbs,

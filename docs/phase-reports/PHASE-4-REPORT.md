@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Date | 2026-10-05 |
-| Branch | `phase/4-block-engine` (not pushed, not merged) |
+| Branch | `phase/4-block-engine` (pushed, not merged) |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
 | Prepared with | Claude Code (AI-assisted). **Needs team review before Phase 5.** |
 
@@ -64,8 +64,8 @@ STATUS:  Complete. Waiting for team review.
 
 | Suite | Result |
 |---|---|
-| Pest (MySQL `pacms_testing`) | **185 passed, 704 assertions** (Phase 3: 149), ~200 s |
-| Vitest | **34 passed** (Phase 3: 14) |
+| Pest (MySQL `pacms_testing`) | **186 passed, 712 assertions** (Phase 3: 149), ~225 s, after review fixes |
+| Vitest | **37 passed** (Phase 3: 14), after review fixes |
 | Larastan level 6 | No errors |
 | Pint / ESLint | Passed / clean |
 
@@ -124,6 +124,13 @@ Verified over HTTP with the services the builder uses:
 3. **Not yet available:** custom block types, block templates, global blocks, and JSON import/export.
 4. Slider, tabs and gallery blocks, and FAQ `FAQPage` JSON-LD.
 5. **News is minimal:** no scheduling, revisions, body blocks or archive page (full module in Phase 8). There are no real external providers yet (Phase 10).
+
+## Review fixes (2026-10-06)
+
+| Finding | Change |
+|---|---|
+| The page title should be optional (home page review) | New **Show page title** checkbox in *Page settings*, on by default (`pages.show_title`, migration `add_show_title_to_pages_table`). It is part of the snapshot, so it goes live with *Publish changes* and is restored with revisions; older snapshots restore with the title shown. When off, the title and summary are not shown, but a visually hidden H1 remains for screen readers and search engines. A Heading 1 block still replaces the default title. Tests: 1 Pest, 3 Vitest. |
+| News cards appeared twice on the home page screenshot | Not a defect: the payload holds three articles once each. The repeated row came from the full-page screenshot tool stitching the page. |
 
 ## Architectural decisions (Phase 4)
 

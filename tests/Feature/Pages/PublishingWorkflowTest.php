@@ -145,3 +145,32 @@ it('offers only the actions a role may perform', function () {
         ->and($editorActions)->toContain('publish', 'schedule', 'archive')
         ->and($editorActions)->not->toContain('unpublish', 'approve');
 });
+
+it('lets editors hide the page title, staged like any other change', function () {
+    $editor = userWithRole('editor');
+    $page = livePage(['title' => 'About us']);
+    $this->getJson('/api/v1/pages/about-us')->assertJsonPath('data.show_title', true);
+
+    $this->actingAs($editor)->put(route('admin.pages.update', $page), pagePayload([
+        'title' => 'About us', 'slug' => 'about-us', 'lock_version' => $page->lock_version, 'show_title' => '0',
+    ]))->assertSessionHasNoErrors();
+
+    expect($page->fresh()->show_title)->toBeFalse();
+    $this->getJson('/api/v1/pages/about-us')->assertJsonPath('data.show_title', true);
+
+    app(PublishingService::class)->transition($page->fresh(), WorkflowAction::Publish, $editor);
+    $this->getJson('/api/v1/pages/about-us')->assertJsonPath('data.show_title', false);
+
+    // Requests without the field (e.g. older clients) keep the title visible.
+    $page->refresh();
+    $this->actingAs($editor)->put(route('admin.pages.update', $page), pagePayload([
+        'title' => 'About us', 'slug' => 'about-us', 'lock_version' => $page->lock_version,
+    ]))->assertSessionHasNoErrors();
+    expect($page->fresh()->show_title)->toBeTrue();
+
+    // Snapshots from before the field existed restore with the title shown.
+    $page->refresh();
+    $page->show_title = false;
+    $page->applySnapshot(['fields' => ['title' => 'About us']]);
+    expect($page->show_title)->toBeTrue();
+});
