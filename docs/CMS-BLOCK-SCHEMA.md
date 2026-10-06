@@ -393,6 +393,15 @@ The strategy in the file is a **suggestion**; the importing user confirms or cha
 
 Importing a custom type requires `block_types.manage`. If the site already has a type with the same slug, the preview offers: use existing (if field-compatible), import as new slug, or skip (dependent nodes reported).
 
+**Phase 5 implementation notes (internal storage; the portable forms above arrive with import/export in Phase 6):**
+
+- **Global block references** are stored as a top-level node key, `{"type": "global-ref", "global_block_id": 12}` (column `blocks.global_block_id`). Export turns this into the `$ref` form.
+- **Conditions** are a structural wrapper block rather than `advanced.when`: `{"type": "when", "content": {"field": "role", "operator": "filled|empty|equals", "value": "…"}, "children": […]}`. Like `repeat`, it is transparent: placement rules apply to its children as if they were placed in its parent.
+- **Bindings** replace a whole field value. A `url` field can fill a `link` setting (`"link": {"$bind": "item.url"}` becomes a URL link). The allowed source → target field types are listed in `App\Cms\Fields\Bindings` (for example, `text` can fill `rich-text`, and is escaped).
+- **Rendering:** the server expands custom block instances and global blocks into ordinary blocks before the payload is built (`App\Cms\Blocks\BlockExpander`). Bindings, `repeat` and `when` never reach the browser. Expanded blocks carry `"locked": true` and derived uuids.
+- **Empty values:** if a structure block's required setting is linked to an empty field, that block is left out (for example, no biography means no empty text block).
+- **Field types** added in Phase 5: `radio`, `multi-select`, `url`, `time`, `datetime`. Still to come: `gallery` and `relationship` (Phases 7–8).
+
 ---
 
 ## 11. Display

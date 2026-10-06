@@ -169,7 +169,9 @@ The homepage is `settings.site.homepage_page_id` (not a flag column, so there is
 Indexes: `INDEX(owner_type, owner_id, parent_id, position)`, `INDEX(block_type_id)`, `INDEX(global_block_id)`.
 Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, position` → assembled in PHP.
 
-**Phase 4 implementation notes:** `uuid` is a lowercase ULID (`char(26)`). `global_block_id` is not created yet; it arrives with global blocks in Phase 5. The composite index is named `blocks_owner_tree_index`. Saving replaces all of an owner's rows in one transaction, and uuids are kept. Live content never reads these rows directly: the published page snapshot (revision) holds the block tree.
+**Phase 4 implementation notes:** `uuid` is a lowercase ULID (`char(26)`). The composite index is named `blocks_owner_tree_index`. Saving replaces all of an owner's rows in one transaction, and uuids are kept. Live content never reads these rows directly: the published page snapshot (revision) holds the block tree.
+
+**Phase 5:** `global_block_id` exists (FK `global_blocks`, RESTRICT). It is set only on `global-ref` blocks and appears in the node format as a top-level `global_block_id`. Global blocks, templates and custom block types own trees here too (owner morph `global_block`, `block_template`, `block_type`).
 
 ### block_types
 | Column | Type | Notes |
@@ -188,7 +190,7 @@ Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, 
 | published_revision_id | FK revisions null | custom types: compiled published structure |
 | lock_version, created_by, updated_by, timestamps, deleted_at | | |
 
-**Phase 4 implementation notes:** only the core columns exist (slug, name, description, category, icon, is_core, status, fields, capabilities, defaults, version, timestamps). Core rows are synced from the PHP classes by `pacms:blocks:sync` (also run by `ProductionSeeder`). `published_revision_id`, `lock_version`, the author columns and soft delete come with custom block types in Phase 5.
+**Phase 4 implementation notes:** only the core columns exist (slug, name, description, category, icon, is_core, status, fields, capabilities, defaults, version, timestamps). Core rows are synced from the PHP classes by `pacms:blocks:sync` (also run by `ProductionSeeder`). **Phase 5:** custom types add `has_unpublished_changes`, `published_revision_id`, `published_at`, `lock_version`, `created_by`, `updated_by` and `deleted_at`. For a custom type, `fields` holds the working copy of its field definitions. Its structure tree is in `blocks` (owner `block_type`), and pages use the published revision. `version` starts at 0 and increases with each publish. Custom slugs are `custom/<key>`.
 
 ### global_blocks
 | Column | Type | Notes |
@@ -198,6 +200,8 @@ Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, 
 | kind | varchar(16) | `header`, `footer`, `generic` |
 | status, has_unpublished_changes, published_revision_id, published_at | | staged publishing |
 | lock_version, created_by, updated_by, timestamps, deleted_at | | |
+
+**Phase 5 implementation notes:** a `description` column was added. Only `kind = generic` is offered in the admin now; `header`/`footer` come with navigation in Phase 9. Usage is tracked in `content_references` (context `global_ref`), and a global block cannot be deleted while it is used.
 
 ### block_templates
 | Column | Type | Notes |
@@ -209,6 +213,8 @@ Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, 
 | status, published_revision_id, lock_version | | |
 | is_system | bool | shipped starter templates (restorable) |
 | created_by, updated_by, timestamps, deleted_at | | |
+
+**Phase 5 implementation notes:** templates are **not staged**: nothing renders them live, and inserting one makes a deep copy of the saved tree. So there is no `published_revision_id`. `status` is `published` (offered in the builder) or `draft` (hidden), and every save records a revision. `thumbnail_media_id` exists but is not used yet.
 
 ### revisions
 | Column | Type | Notes |

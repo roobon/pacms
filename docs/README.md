@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 4 — Block Engine, approved and merged (v0.4.0)** ([report](phase-reports/PHASE-4-REPORT.md)). Phase 3: [report](phase-reports/PHASE-3-REPORT.md). Phase 5 has not started.
+Current phase: **Phase 5 — Custom Block Builder, complete and awaiting review** ([report](phase-reports/PHASE-5-REPORT.md)). Phase 4: [report](phase-reports/PHASE-4-REPORT.md) (v0.4.0).
 
 | Document | Purpose |
 |---|---|

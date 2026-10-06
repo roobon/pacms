@@ -36,7 +36,8 @@ export function frameProps(node, preview, extraClass = '') {
         if (ATTRIBUTE.test(name)) props[name] = String(value);
     }
 
-    if (preview) props['data-block-uuid'] = node.uuid;
+    // Locked blocks (inside a global or custom block) select their owner when clicked.
+    if (preview && !node.locked) props['data-block-uuid'] = node.uuid;
 
     return props;
 }

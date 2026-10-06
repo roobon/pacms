@@ -50,6 +50,62 @@ export default function FieldInput({ field, value, onChange, errors = {}, path =
                 </select>
             );
             break;
+        case 'radio':
+            return (
+                <fieldset className="mb-3" aria-describedby={describedBy}>
+                    <legend className="form-label small fw-semibold">
+                        {field.label}
+                        {field.required && <span className="pa-required">(required)</span>}
+                    </legend>
+                    {Object.entries(field.options ?? {}).map(([optionValue, label]) => (
+                        <div className="form-check form-check-inline" key={optionValue}>
+                            <input id={`${id}-${optionValue}`} type="radio" className="form-check-input" name={id} checked={value === optionValue} disabled={disabled} onChange={() => onChange(optionValue)} />
+                            <label className="form-check-label small" htmlFor={`${id}-${optionValue}`}>
+                                {label}
+                            </label>
+                        </div>
+                    ))}
+                    {error && (
+                        <div id={errorId} className="invalid-feedback d-block">
+                            {error}
+                        </div>
+                    )}
+                </fieldset>
+            );
+        case 'multi-select': {
+            const selected = Array.isArray(value) ? value : [];
+            return (
+                <fieldset className="mb-3" aria-describedby={describedBy}>
+                    <legend className="form-label small fw-semibold">{field.label}</legend>
+                    {Object.entries(field.options ?? {}).map(([optionValue, label]) => (
+                        <div className="form-check" key={optionValue}>
+                            <input
+                                id={`${id}-${optionValue}`}
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={selected.includes(optionValue)}
+                                disabled={disabled}
+                                onChange={(e) => onChange(e.target.checked ? [...selected, optionValue] : selected.filter((v) => v !== optionValue))}
+                            />
+                            <label className="form-check-label small" htmlFor={`${id}-${optionValue}`}>
+                                {label}
+                            </label>
+                        </div>
+                    ))}
+                    {error && (
+                        <div id={errorId} className="invalid-feedback d-block">
+                            {error}
+                        </div>
+                    )}
+                </fieldset>
+            );
+        }
+        case 'time':
+            control = <input id={id} type="time" className={`form-control form-control-sm${invalid}`} value={value ?? ''} disabled={disabled} aria-describedby={describedBy} onChange={(e) => onChange(e.target.value)} />;
+            break;
+        case 'datetime':
+            control = <input id={id} type="datetime-local" className={`form-control form-control-sm${invalid}`} value={value ?? ''} disabled={disabled} aria-describedby={describedBy} onChange={(e) => onChange(e.target.value)} />;
+            break;
         case 'link':
             control = <LinkInput id={id} value={value ?? null} onChange={onChange} disabled={disabled} />;
             break;
@@ -85,7 +141,7 @@ export default function FieldInput({ field, value, onChange, errors = {}, path =
             control = (
                 <input
                     id={id}
-                    type={field.type === 'email' ? 'email' : field.type === 'video-url' ? 'url' : 'text'}
+                    type={field.type === 'email' ? 'email' : ['video-url', 'url'].includes(field.type) ? 'url' : 'text'}
                     className={`form-control form-control-sm${invalid}`}
                     value={value ?? ''}
                     maxLength={field.max}

@@ -121,7 +121,7 @@ Verified over HTTP with the services the builder uses:
 
 1. **Builder:** no drag-and-drop yet (move up/down buttons), no undo/redo, no copy/paste between pages, and no per-device editing of responsive overrides in the UI (the engine and renderer support them).
 2. **Style UI:** gradient, border and typography controls are not in the inspector yet (the engine supports them). No custom CSS.
-3. **Not yet available:** custom block types, block templates, global blocks, and JSON import/export.
+3. **Not yet available:** custom block types, block templates and global blocks (Phase 5). JSON import/export is Phase 6 in the roadmap, not Phase 5 as first stated here.
 4. Slider, tabs and gallery blocks, and FAQ `FAQPage` JSON-LD.
 5. **News is minimal:** no scheduling, revisions, body blocks or archive page (full module in Phase 8). There are no real external providers yet (Phase 10).
 
@@ -148,5 +148,5 @@ Verified over HTTP with the services the builder uses:
 
 ## Next phase
 
-**Phase 5 — Advanced builder:** drag-and-drop, undo/redo, templates, global blocks, custom block types, import/export, and the remaining style controls.
+**Phase 5 — Custom Block Builder:** drag-and-drop, undo/redo, templates, global blocks, custom block types, and the remaining style controls (import/export is Phase 6).
 **Not started. Waiting for your review and approval.**
