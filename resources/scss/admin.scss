@@ -716,21 +716,29 @@ $sidebar-bg: #0F172A;
         border-bottom: 1px solid $border-color;
     }
 
+    // Fixed height: the frame is sized from the stage, so the stage must not grow with it.
     &__stage {
-        flex: 1;
         display: flex;
         justify-content: center;
+        height: 75vh;
+        min-height: 28rem;
         padding: .75rem;
-        overflow: auto;
+        overflow: hidden;
     }
 
-    &__frame {
-        max-width: 100%;
-        min-height: 70vh;
+    &__viewport {
+        flex: none;
+        overflow: hidden;
         background: #fff;
-        border: 1px solid $border-color;
+        box-shadow: 0 0 0 1px $border-color; // not a border: the viewport must match the scaled frame exactly
         border-radius: $border-radius;
-        transition: width .2s ease;
+    }
+
+    // Rendered at the device's real width, scaled down (from the top left) when wider than the stage.
+    &__frame {
+        display: block;
+        border: 0;
+        transform-origin: 0 0;
     }
 }
 

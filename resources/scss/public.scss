@@ -486,19 +486,27 @@ img.pa-ratio {
 }
 
 // Items: grid, list, featured, carousel ------------------------------------------------
+// The per-device column count is a maximum. Tracks never get narrower than --pa-item-min
+// (so a 3-column grid inside a half-width column drops to fewer columns), and with fewer
+// items than columns the items share the full row (auto-fit) instead of leaving gaps.
 .pa-items-grid {
+    --pa-cols: var(--pa-cols-d, 3);
+    --pa-grid-gap: var(--pa-space-5);
     display: grid;
-    grid-template-columns: repeat(var(--pa-cols-d, 3), minmax(0, 1fr));
-    gap: var(--pa-space-5);
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, max(var(--pa-item-min, 15rem), calc((100% - (var(--pa-cols) - 1) * var(--pa-grid-gap)) / var(--pa-cols)))), 1fr)
+    );
+    gap: var(--pa-grid-gap);
     margin: 0;
     padding: 0;
 
     @include media-breakpoint-down(lg) {
-        grid-template-columns: repeat(var(--pa-cols-t, 2), minmax(0, 1fr));
+        --pa-cols: var(--pa-cols-t, 2);
     }
 
     @include media-breakpoint-down(md) {
-        grid-template-columns: repeat(var(--pa-cols-m, 1), minmax(0, 1fr));
+        --pa-cols: var(--pa-cols-m, 1);
     }
 }
 

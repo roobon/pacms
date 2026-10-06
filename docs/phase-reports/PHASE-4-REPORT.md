@@ -130,6 +130,8 @@ Verified over HTTP with the services the builder uses:
 | Finding | Change |
 |---|---|
 | The page title should be optional (home page review) | New **Show page title** checkbox in *Page settings*, on by default (`pages.show_title`, migration `add_show_title_to_pages_table`). It is part of the snapshot, so it goes live with *Publish changes* and is restored with revisions; older snapshots restore with the title shown. When off, the title and summary are not shown, but a visually hidden H1 remains for screen readers and search engines. A Heading 1 block still replaces the default title. Tests: 1 Pest, 3 Vitest. |
+| A card in a half-width column was only ~150px wide | Item grids (Cards, News, Statistics) treat the per-device column count as a **maximum**: columns never get narrower than a minimum width (15rem, statistics 9rem), so a 3-column grid in a narrow column drops to fewer columns, and fewer items than columns share the row (`auto-fit`). |
+| The builder's *desktop* preview showed the phone layout | The preview frame was as wide as the stage (~690px), below the site's 768px phone breakpoint. It now renders at real device widths (desktop 1280px, tablet 820px, phone 390px) and is scaled down to fit, with the scale shown in the toolbar. |
 | News cards appeared twice on the home page screenshot | Not a defect: the payload holds three articles once each. The repeated row came from the full-page screenshot tool stitching the page. |
 
 ## Architectural decisions (Phase 4)

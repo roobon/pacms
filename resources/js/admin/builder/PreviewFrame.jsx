@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { adminHttp } from '../http.js';
 import { useBuilder } from './store.js';
 
-const WIDTHS = { desktop: '100%', tablet: '820px', mobile: '390px' };
+// Real device widths, so the site's breakpoints behave as on that device. A frame wider
+// than the stage is scaled down to fit instead of being squeezed into a narrower layout.
+const WIDTHS = { desktop: 1280, tablet: 820, mobile: 390 };
 
 /**
  * Live preview: the public SPA in an iframe renders the tree with the same components
@@ -19,6 +21,29 @@ export default function PreviewFrame() {
     const [ready, setReady] = useState(false);
     const [status, setStatus] = useState('idle');
     const resolved = useRef([]);
+    const stage = useRef(null);
+    const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+
+    // Track the space available for the frame, to scale wide devices down to fit.
+    useLayoutEffect(() => {
+        const element = stage.current;
+        if (!element) return undefined;
+        const measure = () => {
+            const style = getComputedStyle(element);
+            setStageSize({
+                width: element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+                height: element.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+            });
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, []);
+
+    const width = WIDTHS[device];
+    const scale = stageSize.width > 0 ? Math.min(1, stageSize.width / width) : 1;
+    const height = stageSize.height > 0 ? stageSize.height / scale : undefined;
 
     const post = (message) => iframe.current?.contentWindow?.postMessage(message, window.location.origin);
 
@@ -81,13 +106,22 @@ export default function PreviewFrame() {
                     ))}
                 </div>
                 <span className="small text-body-secondary" role="status">
+                    {scale < 1 && status === 'idle' && `${width}px at ${Math.round(scale * 100)}%`}
                     {status === 'updating' && 'Updating preview…'}
                     {status === 'invalid' && <span className="text-danger">Fix the highlighted errors to update the preview.</span>}
                     {status === 'error' && <span className="text-danger">Preview unavailable — check your connection.</span>}
                 </span>
             </div>
-            <div className="pa-preview__stage">
-                <iframe ref={iframe} src={endpoints?.previewFrame} title="Live preview of the page" style={{ width: WIDTHS[device] }} className="pa-preview__frame" />
+            <div ref={stage} className="pa-preview__stage">
+                <div className="pa-preview__viewport" style={{ width: width * scale, height: stageSize.height || undefined }}>
+                    <iframe
+                        ref={iframe}
+                        src={endpoints?.previewFrame}
+                        title="Live preview of the page"
+                        style={{ width, height, transform: scale < 1 ? `scale(${scale})` : undefined }}
+                        className="pa-preview__frame"
+                    />
+                </div>
             </div>
         </section>
     );

@@ -40,7 +40,7 @@ export function CardsBlock({ node, preview }) {
 
 export function StatisticsBlock({ node, preview }) {
     const columns = node.display?.columns ?? {};
-    const style = { '--pa-cols-d': columns.desktop ?? 3, '--pa-cols-t': columns.tablet ?? columns.desktop ?? 3, '--pa-cols-m': columns.mobile ?? 1 };
+    const style = { '--pa-cols-d': columns.desktop ?? 3, '--pa-cols-t': columns.tablet ?? columns.desktop ?? 3, '--pa-cols-m': columns.mobile ?? 1, '--pa-item-min': '9rem' };
     const format = new Intl.NumberFormat(document.documentElement.lang || 'en');
 
     return (
