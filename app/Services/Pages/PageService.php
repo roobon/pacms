@@ -91,8 +91,9 @@ class PageService
             $oldPath = $page->path;
 
             $page->fill(Arr::only($data, Page::SNAPSHOT_FIELDS));
-            // An emptied URL field is regenerated from the title, as on create.
-            $page->slug = $data['slug'] ?? $this->paths->slugify((string) $page->title);
+            // fill() only touches the slug when it was sent: an emptied URL field (null) is
+            // regenerated from the title, as on create; an omitted one keeps the current URL.
+            $page->slug ??= $this->paths->slugify((string) $page->title);
 
             $parent = $page->parent_id ? Page::query()->findOrFail($page->parent_id) : null;
             $this->paths->validate($page, $parent, $page->slug);
