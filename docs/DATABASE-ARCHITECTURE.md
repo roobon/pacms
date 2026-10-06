@@ -136,6 +136,7 @@ Spatie tables (`roles`, `permissions`, `model_has_roles`, `model_has_permissions
 | excerpt | text null | |
 | featured_media_id | FK media null, SET NULL | |
 | template | varchar(32) | page layout: `default`, `full-width`, `landing` (no chrome) |
+| show_title | bool, default true | show the default page header (title, summary). When false the H1 stays, visually hidden. Added after the Phase 4 review |
 | header_global_block_id, footer_global_block_id | FK global_blocks null, SET NULL | null = site default |
 | status | varchar(16) | draft / in_review / approved / published / archived |
 | has_unpublished_changes | bool | working copy differs from published snapshot |
@@ -168,6 +169,8 @@ The homepage is `settings.site.homepage_page_id` (not a flag column, so there is
 Indexes: `INDEX(owner_type, owner_id, parent_id, position)`, `INDEX(block_type_id)`, `INDEX(global_block_id)`.
 Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, position` → assembled in PHP.
 
+**Phase 4 implementation notes:** `uuid` is a lowercase ULID (`char(26)`). `global_block_id` is not created yet; it arrives with global blocks in Phase 5. The composite index is named `blocks_owner_tree_index`. Saving replaces all of an owner's rows in one transaction, and uuids are kept. Live content never reads these rows directly: the published page snapshot (revision) holds the block tree.
+
 ### block_types
 | Column | Type | Notes |
 |---|---|---|
@@ -184,6 +187,8 @@ Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, 
 | version | int unsigned | increments on publish |
 | published_revision_id | FK revisions null | custom types: compiled published structure |
 | lock_version, created_by, updated_by, timestamps, deleted_at | | |
+
+**Phase 4 implementation notes:** only the core columns exist (slug, name, description, category, icon, is_core, status, fields, capabilities, defaults, version, timestamps). Core rows are synced from the PHP classes by `pacms:blocks:sync` (also run by `ProductionSeeder`). `published_revision_id`, `lock_version`, the author columns and soft delete come with custom block types in Phase 5.
 
 ### global_blocks
 | Column | Type | Notes |
@@ -273,6 +278,8 @@ All publishable modules share these **publishable columns**:
 
 ### news
 `id, title, slug UNIQUE, excerpt text, featured_media_id FK media SET NULL` + publishable columns. Body = block tree (owner `news`). Category and tags via terms.
+
+**Phase 4 (minimal News, decision D-04):** created without `publish_at` (no scheduling yet) and without staged publishing. Category taxonomy `news_category`. Body blocks, scheduling, revisions and the archive page arrive with the full News module in Phase 8.
 
 ### events
 `id, title, slug UNIQUE, excerpt, featured_media_id, start_at datetime, end_at datetime null, all_day bool, timezone varchar(64), venue varchar(255), address text, map_url varchar(1024) null, registration_url varchar(1024) null, organizer varchar(255)` + publishable. `INDEX(status, start_at)` for "upcoming". Body = blocks.

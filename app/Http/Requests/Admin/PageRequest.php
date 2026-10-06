@@ -32,6 +32,7 @@ class PageRequest extends FormRequest
 
         $this->merge([
             'slug' => $slug === '' ? null : Str::lower($slug),
+            'show_title' => $this->boolean('show_title', true),
             'seo' => array_merge((array) $this->input('seo', []), [
                 'robots_index' => $this->boolean('seo.robots_index', true),
                 'robots_follow' => $this->boolean('seo.robots_follow', true),
@@ -53,7 +54,10 @@ class PageRequest extends FormRequest
             'excerpt' => ['nullable', 'string', 'max:1000'],
             'featured_media_id' => ['nullable', 'integer', $image],
             'template' => ['required', Rule::in(array_keys(config('pacms.pages.templates')))],
+            'show_title' => ['boolean'],
             'lock_version' => [$this->route('page') ? 'required' : 'nullable', 'integer'],
+            // Block tree from the builder island, as JSON (validated in depth by BlockTreeValidator).
+            'blocks' => ['nullable', 'string', 'max:'.((int) config('pacms.blocks.max_payload_kb') * 1024), 'json'],
 
             'seo' => ['array'],
             'seo.title' => ['nullable', 'string', 'max:255'],
@@ -65,6 +69,22 @@ class PageRequest extends FormRequest
             'seo.og_description' => ['nullable', 'string', 'max:500'],
             'seo.og_image_media_id' => ['nullable', 'integer', $image],
         ];
+    }
+
+    /**
+     * Validated page data for PageService, with the block tree decoded (when sent).
+     *
+     * @return array<string, mixed>
+     */
+    public function pageData(): array
+    {
+        $data = $this->safe()->except(['lock_version', 'blocks']);
+
+        if ($this->filled('blocks')) {
+            $data['blocks'] = json_decode((string) $this->input('blocks'), true, 64) ?? [];
+        }
+
+        return $data;
     }
 
     /**

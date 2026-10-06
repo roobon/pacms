@@ -3,6 +3,7 @@ import { useResolvedPath } from '../hooks/useResolvedPath.js';
 import PageSkeleton from '../components/common/PageSkeleton.jsx';
 import HomePage from './HomePage.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
+import NewsView from './NewsView.jsx';
 import PageView from './PageView.jsx';
 
 /**
@@ -32,6 +33,8 @@ export default function ContentRoute() {
     switch (data.kind) {
         case 'page':
             return <PageView page={data.data} />;
+        case 'news':
+            return <NewsView news={data.data} />;
         case 'home':
             return <HomePage />;
         case 'redirect':

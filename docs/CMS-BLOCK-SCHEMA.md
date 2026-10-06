@@ -138,6 +138,14 @@ All references are objects whose single key starts with `$`. They are **the only
 
 Entities accepted in `$ref`: `pages, news, events, projects, programs, publications, team, partners, testimonials, media_coverage, galleries, terms, global_blocks, templates, external_sources, menus`.
 
+**Internal storage (builder and database) vs. portable documents.** Inside one site, the builder stores references by ID, because IDs survive renames:
+
+- media: `{"$media": 42}`, as above
+- links to content: `{"type": "entity", "entity": "pages" | "news", "id": 7, "new_tab": false}`. They are resolved to a URL at render time, so a moved page never breaks a link. A target that is unpublished or deleted renders as plain text.
+- links to anything else: `{"type": "url" | "anchor" | "email", …}`
+
+The portable `$ref` / slug / path forms above are used only in import/export documents (Phase 5), which translate between the two.
+
 ---
 
 ## 5. Block type catalogue (1.0)

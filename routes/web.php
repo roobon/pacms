@@ -24,4 +24,9 @@ Route::get('preview/pages/{page}', [PreviewController::class, 'page'])
     ->middleware(['signed:relative', 'auth'])
     ->name('preview.page');
 
+// Builder live preview frame: the SPA renders trees the builder posts to it (same origin).
+Route::get('__builder-preview', [PreviewController::class, 'builder'])
+    ->middleware(['auth', 'can:pages.view'])
+    ->name('preview.builder');
+
 Route::fallback(SpaController::class)->name('spa');

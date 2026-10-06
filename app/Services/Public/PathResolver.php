@@ -2,6 +2,7 @@
 
 namespace App\Services\Public;
 
+use App\Models\News;
 use App\Models\Page;
 use App\Models\Redirect;
 use App\Services\Seo\RedirectService;
@@ -21,7 +22,7 @@ class PathResolver
     ) {}
 
     /**
-     * @return array{kind: 'home'|'page'|'redirect'|'not_found', page?: Page, redirect?: Redirect}
+     * @return array{kind: 'home'|'page'|'news'|'redirect'|'not_found', page?: Page, news?: News, redirect?: Redirect}
      */
     public function resolve(string $path): array
     {
@@ -36,6 +37,13 @@ class PathResolver
         $page = Page::query()->live()->where('published_path', $path)->first();
         if ($page !== null) {
             return ['kind' => 'page', 'page' => $page];
+        }
+
+        if (preg_match('#^news/([a-z0-9-]+)$#', $path, $match)) {
+            $news = News::query()->published()->where('slug', $match[1])->first();
+            if ($news !== null) {
+                return ['kind' => 'news', 'news' => $news];
+            }
         }
 
         $redirect = $this->redirects->find('/'.$path);

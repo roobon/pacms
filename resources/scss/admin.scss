@@ -533,6 +533,360 @@ $sidebar-bg: #0F172A;
     columns: 2;
 }
 
+// Block Builder ----------------------------------------------------------------------
+.pa-builder {
+    &__status {
+        padding: .5rem 1rem;
+        border-bottom: 1px solid $border-color;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr) minmax(18rem, 22rem);
+        min-height: 70vh;
+
+        @media (max-width: 1399.98px) {
+            grid-template-columns: minmax(14rem, 16rem) minmax(0, 1fr);
+
+            .pa-inspector {
+                grid-column: 1 / -1;
+                border-left: 0;
+                border-top: 1px solid $border-color;
+            }
+        }
+
+        @include media-breakpoint-down(lg) {
+            grid-template-columns: 1fr;
+
+            .pa-structure,
+            .pa-preview {
+                border-right: 0;
+                border-bottom: 1px solid $border-color;
+            }
+        }
+    }
+}
+
+.btn-icon-sm {
+    padding: .125rem .35rem;
+    font-size: .875rem;
+    line-height: 1.2;
+    color: $secondary;
+    background: transparent;
+    border: 0;
+
+    &:hover:not(:disabled) {
+        color: $primary;
+        background: rgba(10, 107, 102, .08);
+    }
+}
+
+.pa-structure {
+    border-right: 1px solid $border-color;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    &__header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .5rem;
+        padding: .75rem 1rem;
+        background: #fff;
+        border-bottom: 1px solid $border-color;
+    }
+}
+
+.pa-tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: .25rem;
+        padding-right: .25rem;
+        border-left: 3px solid transparent;
+
+        &:hover { background: #F8FAFC; }
+
+        &.is-selected {
+            background: rgba(10, 107, 102, .08);
+            border-left-color: $primary;
+        }
+
+        &.is-hidden .pa-tree__label { opacity: .55; }
+    }
+
+    &__label {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .4rem .25rem;
+        font-size: .875rem;
+        text-align: left;
+        color: $body-color;
+        background: none;
+        border: 0;
+    }
+
+    &__actions {
+        display: none;
+        flex-shrink: 0;
+    }
+
+    &__row:hover &__actions,
+    &__row:focus-within &__actions,
+    &__row.is-selected &__actions {
+        display: inline-flex;
+    }
+}
+
+.pa-add-menu {
+    position: relative;
+
+    &__panel {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + .25rem);
+        left: 0;
+        width: 20rem;
+        max-height: 26rem;
+        overflow-y: auto;
+        padding: .75rem;
+        background: #fff;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-lg;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, .16);
+    }
+
+    &__group {
+        margin: .25rem 0;
+        font-size: .6875rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: $secondary;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: .375rem;
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .25rem;
+        padding: .5rem .25rem;
+        font-size: .75rem;
+        color: $body-color;
+        background: #F8FAFC;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+
+        .bi { font-size: 1.125rem; color: $primary; }
+
+        &:hover { border-color: $primary; }
+    }
+}
+
+.pa-preview {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #E9EEF3;
+    border-right: 1px solid $border-color;
+
+    &__toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .75rem;
+        padding: .5rem .75rem;
+        background: #fff;
+        border-bottom: 1px solid $border-color;
+    }
+
+    // Fixed height: the frame is sized from the stage, so the stage must not grow with it.
+    &__stage {
+        display: flex;
+        justify-content: center;
+        height: 75vh;
+        min-height: 28rem;
+        padding: .75rem;
+        overflow: hidden;
+    }
+
+    &__viewport {
+        flex: none;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 0 0 1px $border-color; // not a border: the viewport must match the scaled frame exactly
+        border-radius: $border-radius;
+    }
+
+    // Rendered at the device's real width, scaled down (from the top left) when wider than the stage.
+    &__frame {
+        display: block;
+        border: 0;
+        transform-origin: 0 0;
+    }
+}
+
+.pa-inspector {
+    border-left: 1px solid $border-color;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    &--empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        padding: 2rem 1rem;
+        text-align: center;
+        color: $secondary;
+
+        .bi { font-size: 1.75rem; }
+    }
+
+    &__header {
+        display: flex;
+        gap: .75rem;
+        padding: .875rem 1rem;
+        border-bottom: 1px solid $border-color;
+
+        > .bi { font-size: 1.25rem; color: $primary; }
+    }
+
+    &__body {
+        padding: 1rem;
+    }
+}
+
+.pa-tabs {
+    display: flex;
+    border-bottom: 1px solid $border-color;
+    background: #F8FAFC;
+
+    &__tab {
+        flex: 1;
+        position: relative;
+        padding: .6rem .25rem;
+        font-size: .8125rem;
+        font-weight: 600;
+        color: $secondary;
+        background: none;
+        border: 0;
+        border-bottom: 2px solid transparent;
+
+        &.is-active {
+            color: $primary;
+            border-bottom-color: $primary;
+            background: #fff;
+        }
+    }
+
+    &__dot {
+        position: absolute;
+        top: .4rem;
+        right: .4rem;
+        width: .5rem;
+        height: .5rem;
+        border-radius: 50%;
+        background: $danger;
+    }
+}
+
+.pa-panel {
+    margin-bottom: 1rem;
+    padding: .75rem;
+    background: #F8FAFC;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+
+    &__title {
+        float: none;
+        width: auto;
+        margin-bottom: .5rem;
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: $secondary;
+    }
+}
+
+.pa-repeater {
+    &__row {
+        margin-bottom: .5rem;
+        background: #fff;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+    }
+
+    &__summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .5rem;
+        padding: .375rem .5rem;
+        font-size: .8125rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    &__actions {
+        display: inline-flex;
+        flex-shrink: 0;
+    }
+
+    &__body {
+        padding: .5rem .75rem 0;
+        border-top: 1px solid $border-color;
+    }
+}
+
+.pa-rte {
+    &__toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+        margin-bottom: .25rem;
+    }
+
+    &__content {
+        min-height: 8rem;
+
+        > :last-child { margin-bottom: 0; }
+
+        &:focus { outline: 3px solid #1B64D1; outline-offset: 1px; }
+    }
+}
+
+.pa-link-results {
+    max-height: 10rem;
+    overflow-y: auto;
+}
+
+.pa-swatch {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 1px solid $border-color;
+}
+
 // Auth pages ---------------------------------------------------------------------
 .pa-auth {
     min-height: 100vh;

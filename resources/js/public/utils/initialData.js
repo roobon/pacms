@@ -35,6 +35,7 @@
  * @property {string|null} excerpt
  * @property {ImageData|null} featured_image
  * @property {string} template
+ * @property {boolean} [show_title]
  * @property {string|null} published_at
  * @property {string|null} updated_at
  * @property {{title: string, url: string}[]} breadcrumbs
@@ -67,7 +68,9 @@ export function readInitialData(doc) {
 
     try {
         const data = JSON.parse(element.textContent || '{}');
-        return { site: data.site ?? null, route: data.route ?? null, page: data.page ?? null };
+        const result = { site: data.site ?? null, route: data.route ?? null, page: data.page ?? null };
+        if (data.news) result.news = data.news;
+        return result;
     } catch {
         return empty;
     }

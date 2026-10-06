@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Cms\Blocks\BlockTreeRepository;
 use App\Enums\ContentStatus;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Concerns\HasSeo;
@@ -27,14 +28,14 @@ class Page extends Model implements Revisionable
 {
     use HasRevisions, HasSeo, SoftDeletes;
 
-    public const SNAPSHOT_FIELDS = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template'];
+    public const SNAPSHOT_FIELDS = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template', 'show_title'];
 
     /**
      * Editable working-copy fields. Workflow, path and publishing columns are set by services.
      *
      * @var list<string>
      */
-    protected $fillable = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template'];
+    protected $fillable = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template', 'show_title'];
 
     /**
      * @var array<string, mixed>
@@ -42,6 +43,7 @@ class Page extends Model implements Revisionable
     protected $attributes = [
         'status' => 'draft',
         'template' => 'default',
+        'show_title' => true,
         'has_unpublished_changes' => true,
         'lock_version' => 0,
     ];
@@ -51,6 +53,7 @@ class Page extends Model implements Revisionable
         return [
             'status' => ContentStatus::class,
             'has_unpublished_changes' => 'boolean',
+            'show_title' => 'boolean',
             'publish_at' => 'datetime',
             'published_at' => 'datetime',
             'first_published_at' => 'datetime',
@@ -139,14 +142,18 @@ class Page extends Model implements Revisionable
             'type' => 'page',
             'fields' => $this->only(self::SNAPSHOT_FIELDS) + ['path' => $this->path],
             'seo' => $this->seoSnapshot(),
-            // Block tree arrives with the Block Engine (Phase 4).
-            'blocks' => [],
+            'blocks' => $this->exists ? app(BlockTreeRepository::class)->load($this) : [],
         ];
     }
 
+    /**
+     * Restores fields and SEO. The block tree is restored (and re-validated) by
+     * PageService::restore(), which knows the acting user.
+     */
     public function applySnapshot(array $snapshot): void
     {
-        $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip(self::SNAPSHOT_FIELDS));
+        // Snapshots taken before a field existed fall back to its default.
+        $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip(self::SNAPSHOT_FIELDS)) + ['show_title' => true];
 
         // Never re-attach to a parent or image that no longer exists.
         if (isset($fields['parent_id']) && ! Page::query()->whereKey($fields['parent_id'])->exists()) {

@@ -48,11 +48,11 @@
                                            pattern="[a-z0-9]+(-[a-z0-9]+)*" aria-describedby="slug-help" @if (! $editing) data-slug-auto @endif>
                                     @error('slug')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
-                                <div id="slug-help" class="form-text">Lowercase letters, numbers and hyphens. Changing the URL of a published page adds an automatic redirect from the old address when you publish.</div>
+                                <div id="slug-help" class="form-text">Lowercase letters, numbers and hyphens. Leave empty to create it from the title. Changing the URL of a published page adds an automatic redirect from the old address when you publish.</div>
                             </div>
                             <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$page->excerpt"
                                 help="Shown under the title and used as the default search-engine description." />
-                            <p class="small text-body-secondary mb-0"><i class="bi bi-info-circle" aria-hidden="true"></i> Page content blocks arrive with the Block Engine (Phase 4).</p>
+                            <p class="small text-body-secondary mb-0"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i> Build the page content with blocks in the <a href="#builder-heading">Page content</a> section below.</p>
                         </div>
                     </section>
 
@@ -102,13 +102,20 @@
                                 </select>
                                 @error('parent_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
-                            <div class="mb-0">
+                            <div class="mb-3">
                                 <label for="field-template" class="form-label">Layout</label>
                                 <select id="field-template" name="template" class="form-select">
                                     @foreach ($templates as $value => $label)
                                         <option value="{{ $value }}" @selected(old('template', $page->template ?? 'default') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="form-check mb-0">
+                                <input type="hidden" name="show_title" value="0">
+                                <input type="checkbox" id="field-show-title" name="show_title" value="1" class="form-check-input" aria-describedby="field-show-title-help"
+                                    @checked((bool) old('show_title', $page->show_title ?? true))>
+                                <label for="field-show-title" class="form-check-label">Show page title</label>
+                                <div id="field-show-title-help" class="form-text">Shows the title and summary above the page content. When off, the title stays available to screen readers and search engines. A Heading 1 block in the content always replaces it.</div>
                             </div>
                         </div>
                     </section>
@@ -229,4 +236,43 @@
             </aside>
         </div>
     </div>
+
+    {{-- Block Builder (React island). Its hidden input belongs to the page form, so
+         "Save draft" stores fields and blocks together. --}}
+    @php
+        $blockErrors = collect($errors->getMessages())->filter(fn ($m, $key) => str_starts_with($key, 'blocks'))->all();
+        $oldBlocks = old('blocks');
+        $builderData = [
+            'blocks' => $oldBlocks !== null ? (json_decode($oldBlocks, true) ?? []) : $blocks,
+            'errors' => $blockErrors,
+            'readonly' => $readonly,
+            'endpoints' => [
+                'definitions' => route('admin.api.blocks.definitions'),
+                'resolve' => route('admin.api.blocks.resolve'),
+                'linkTargets' => route('admin.api.link-targets'),
+                'media' => route('admin.api.media.index'),
+                'mediaUpload' => route('admin.api.media.store'),
+                'previewFrame' => route('preview.builder', [], false),
+            ],
+        ];
+    @endphp
+    <section class="card pa-card mt-4" aria-labelledby="builder-heading">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 id="builder-heading" class="h6 mb-0">Page content</h2>
+            @if ($blockErrors)
+                <span class="pa-badge pa-badge--danger">{{ count($blockErrors) }} block {{ \Illuminate\Support\Str::plural('error', count($blockErrors)) }}</span>
+            @endif
+        </div>
+        <div class="card-body p-0">
+            <input type="hidden" id="blocks-input" name="blocks" form="page-form" value="{{ $oldBlocks ?? json_encode($blocks) }}">
+            <div id="page-builder">
+                <p class="p-4 mb-0 text-body-secondary"><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading the block builder…</p>
+            </div>
+        </div>
+    </section>
+    <script id="page-builder-data" type="application/json">{!! json_encode($builderData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) !!}</script>
+    @push('islands')
+        @viteReactRefresh
+        @vite('resources/js/admin/islands/page-builder.jsx')
+    @endpush
 </x-admin.layout>

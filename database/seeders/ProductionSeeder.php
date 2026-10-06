@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Auth\RolePermissionSynchronizer;
+use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Design\DesignTokenService;
 use Illuminate\Database\Seeder;
 
@@ -12,8 +13,10 @@ use Illuminate\Database\Seeder;
  */
 class ProductionSeeder extends Seeder
 {
-    public function run(RolePermissionSynchronizer $permissions, DesignTokenService $tokens): void
+    public function run(RolePermissionSynchronizer $permissions, DesignTokenService $tokens, BlockRegistry $blocks): void
     {
+        $blocks->sync();
+
         $result = $permissions->sync();
 
         $this->command?->info(sprintf(

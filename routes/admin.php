@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\Api\BlockBuilderController;
 use App\Http\Controllers\Admin\Api\MediaController as MediaApiController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PagePreviewController;
 use App\Http\Controllers\Admin\PageRevisionController;
@@ -65,8 +67,15 @@ Route::middleware('can:redirects.manage')->group(function () {
     Route::delete('redirects/{redirect}', [RedirectController::class, 'destroy'])->name('redirects.destroy');
 });
 
+// News (minimal, Phase 4 — full module in Phase 8)
+Route::resource('news', NewsController::class)->except('show')->parameters(['news' => 'news']);
+Route::post('news/{news}/publish', [NewsController::class, 'publish'])->name('news.publish');
+
 // JSON endpoints for admin React islands (same session + CSRF)
 Route::prefix('api')->name('api.')->group(function () {
+    Route::get('blocks/definitions', [BlockBuilderController::class, 'definitions'])->name('blocks.definitions');
+    Route::post('blocks/resolve', [BlockBuilderController::class, 'resolve'])->name('blocks.resolve');
+    Route::get('link-targets', [BlockBuilderController::class, 'linkTargets'])->name('link-targets');
     Route::get('media', [MediaApiController::class, 'index'])->name('media.index');
     Route::post('media', [MediaApiController::class, 'store'])->name('media.store');
 });

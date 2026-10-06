@@ -1,6 +1,7 @@
 <?php
 
 use App\Auth\RolePermissionSynchronizer;
+use App\Cms\Blocks\BlockRegistry;
 use App\Enums\WorkflowAction;
 use App\Models\Page;
 use App\Models\User;
@@ -20,7 +21,10 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->beforeEach(fn () => app(RolePermissionSynchronizer::class)->sync())
+    ->beforeEach(function () {
+        app(RolePermissionSynchronizer::class)->sync();
+        app(BlockRegistry::class)->sync();
+    })
     ->in('Feature');
 
 pest()->extend(TestCase::class)->in('Unit');
