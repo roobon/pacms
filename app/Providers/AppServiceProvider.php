@@ -6,6 +6,9 @@ use App\Auth\AuthActivitySubscriber;
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Design\DesignTokenService;
 use App\Cms\Sources\SourceRegistry;
+use App\Models\BlockTemplate;
+use App\Models\BlockType;
+use App\Models\GlobalBlock;
 use App\Models\Media;
 use App\Models\News;
 use App\Models\Page;
@@ -44,6 +47,9 @@ class AppServiceProvider extends ServiceProvider
             'media' => Media::class,
             'term' => Term::class,
             'news' => News::class,
+            'global_block' => GlobalBlock::class,
+            'block_template' => BlockTemplate::class,
+            'block_type' => BlockType::class,
         ]);
 
         // Catch N+1 queries and silently dropped attributes during development and tests.

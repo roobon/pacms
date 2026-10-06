@@ -237,42 +237,6 @@
         </div>
     </div>
 
-    {{-- Block Builder (React island). Its hidden input belongs to the page form, so
-         "Save draft" stores fields and blocks together. --}}
-    @php
-        $blockErrors = collect($errors->getMessages())->filter(fn ($m, $key) => str_starts_with($key, 'blocks'))->all();
-        $oldBlocks = old('blocks');
-        $builderData = [
-            'blocks' => $oldBlocks !== null ? (json_decode($oldBlocks, true) ?? []) : $blocks,
-            'errors' => $blockErrors,
-            'readonly' => $readonly,
-            'endpoints' => [
-                'definitions' => route('admin.api.blocks.definitions'),
-                'resolve' => route('admin.api.blocks.resolve'),
-                'linkTargets' => route('admin.api.link-targets'),
-                'media' => route('admin.api.media.index'),
-                'mediaUpload' => route('admin.api.media.store'),
-                'previewFrame' => route('preview.builder', [], false),
-            ],
-        ];
-    @endphp
-    <section class="card pa-card mt-4" aria-labelledby="builder-heading">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h2 id="builder-heading" class="h6 mb-0">Page content</h2>
-            @if ($blockErrors)
-                <span class="pa-badge pa-badge--danger">{{ count($blockErrors) }} block {{ \Illuminate\Support\Str::plural('error', count($blockErrors)) }}</span>
-            @endif
-        </div>
-        <div class="card-body p-0">
-            <input type="hidden" id="blocks-input" name="blocks" form="page-form" value="{{ $oldBlocks ?? json_encode($blocks) }}">
-            <div id="page-builder">
-                <p class="p-4 mb-0 text-body-secondary"><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading the block builder…</p>
-            </div>
-        </div>
-    </section>
-    <script id="page-builder-data" type="application/json">{!! json_encode($builderData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) !!}</script>
-    @push('islands')
-        @viteReactRefresh
-        @vite('resources/js/admin/islands/page-builder.jsx')
-    @endpush
+    <x-admin.block-builder :blocks="$blocks" form="page-form" :readonly="$readonly" context="page"
+        :owner="$page->exists ? ['type' => 'page', 'id' => $page->id] : null" :autosave="$autosave" />
 </x-admin.layout>

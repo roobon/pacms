@@ -34,6 +34,9 @@ final class AdminNavigation
                 ['label' => 'Redirects', 'route' => 'admin.redirects.index', 'icon' => 'bi-signpost-split', 'active' => 'admin.redirects.*', 'can' => 'redirects.manage'],
             ]],
             ['label' => 'Design', 'items' => [
+                ['label' => 'Global blocks', 'route' => 'admin.global-blocks.index', 'icon' => 'bi-globe2', 'active' => 'admin.global-blocks.*', 'can' => 'global_blocks.manage'],
+                ['label' => 'Templates', 'route' => 'admin.block-templates.index', 'icon' => 'bi-layout-wtf', 'active' => 'admin.block-templates.*', 'can' => 'templates.manage'],
+                ['label' => 'Custom blocks', 'route' => 'admin.block-types.index', 'icon' => 'bi-puzzle', 'active' => 'admin.block-types.*', 'can' => 'block_types.manage'],
                 ['label' => 'Design Tokens', 'route' => 'admin.design.tokens', 'icon' => 'bi-palette', 'active' => 'admin.design.*', 'can' => 'design_tokens.manage'],
             ]],
             ['label' => 'System', 'items' => [
