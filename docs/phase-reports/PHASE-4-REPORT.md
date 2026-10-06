@@ -3,13 +3,13 @@
 | | |
 |---|---|
 | Date | 2026-10-05 |
-| Branch | `phase/4-block-engine` (pushed, not merged) |
+| Branch | `phase/4-block-engine` → merged into `main` 2026-10-06 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
 | Prepared with | Claude Code (AI-assisted). **Needs team review before Phase 5.** |
 
 ```
 PHASE:   4 — Block Engine (+ minimal News, per decision D-04)
-STATUS:  Complete. Waiting for team review.
+STATUS:  Complete and APPROVED by the team lead (2026-10-06) after review fixes; merged into main (b6812e9), tag v0.4.0.
 ```
 
 ## Implemented

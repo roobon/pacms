@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 3 — CMS Core + Media core, approved and merged (v0.3.0)** ([report](phase-reports/PHASE-3-REPORT.md)). Phase 2: [report](phase-reports/PHASE-2-REPORT.md). Phase 4 has not started.
+Current phase: **Phase 4 — Block Engine, approved and merged (v0.4.0)** ([report](phase-reports/PHASE-4-REPORT.md)). Phase 3: [report](phase-reports/PHASE-3-REPORT.md). Phase 5 has not started.
 
 | Document | Purpose |
 |---|---|
