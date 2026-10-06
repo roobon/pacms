@@ -48,7 +48,7 @@
                                            pattern="[a-z0-9]+(-[a-z0-9]+)*" aria-describedby="slug-help" @if (! $editing) data-slug-auto @endif>
                                     @error('slug')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
-                                <div id="slug-help" class="form-text">Lowercase letters, numbers and hyphens. Changing the URL of a published page adds an automatic redirect from the old address when you publish.</div>
+                                <div id="slug-help" class="form-text">Lowercase letters, numbers and hyphens. Leave empty to create it from the title. Changing the URL of a published page adds an automatic redirect from the old address when you publish.</div>
                             </div>
                             <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$page->excerpt"
                                 help="Shown under the title and used as the default search-engine description." />

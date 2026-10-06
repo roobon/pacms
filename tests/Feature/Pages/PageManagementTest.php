@@ -111,3 +111,14 @@ it('lists pages with search and status filters', function () {
     $this->actingAs($editor)->get(route('admin.pages.index', ['q' => 'Findable']))->assertOk()->assertSee('Findable page');
     $this->actingAs($editor)->get(route('admin.pages.index', ['status' => 'published']))->assertOk()->assertDontSee('Findable page');
 });
+
+it('regenerates the URL from the title when the URL field is emptied on edit', function () {
+    $editor = userWithRole('editor');
+    $page = makePage($editor, ['title' => 'Our Programs']);
+
+    $this->actingAs($editor)->put(route('admin.pages.update', $page), pagePayload([
+        'title' => 'Our Projects', 'slug' => '', 'lock_version' => $page->lock_version,
+    ]))->assertSessionHasNoErrors();
+
+    expect($page->fresh())->slug->toBe('our-projects')->path->toBe('our-projects');
+});
