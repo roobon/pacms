@@ -122,6 +122,8 @@ function styleDeclarations(style) {
     add(out, 'font-family', token(typography.font));
     add(out, 'font-size', token(typography.size));
     if ([300, 400, 500, 600, 700, 800, 900].includes(typography.weight)) add(out, 'font-weight', String(typography.weight));
+    const lineHeight = Number(typography.line_height);
+    if (lineHeight >= 0.8 && lineHeight <= 3) add(out, 'line-height', String(lineHeight));
     add(out, 'text-align', enumValue('textAlign', typography.align));
     add(out, 'text-transform', enumValue('transform', typography.transform));
     if (typography.color) add(out, '--bs-heading-color', 'inherit');

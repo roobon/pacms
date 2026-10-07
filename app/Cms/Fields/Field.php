@@ -6,8 +6,8 @@ namespace App\Cms\Fields;
  * A field definition (CMS-ARCHITECTURE.md §11.2). One definition drives the builder's
  * inspector form, server-side validation and (Phase 6) the generated JSON Schema.
  *
- * Supported types: text, textarea, rich-text, number, checkbox, select, link, email,
- * image, media, icon, color, date, video-url, repeater.
+ * Supported types: text, textarea, rich-text, number, checkbox, select, radio, multi-select,
+ * link, url, email, image, media, icon, color, date, time, datetime, video-url, repeater.
  */
 final class Field
 {
@@ -51,6 +51,57 @@ final class Field
     {
         $field = new self('select', $key);
         $field->definition['options'] = $options;
+
+        return $field;
+    }
+
+    /**
+     * @param  array<int|string, string>  $options  value => label
+     */
+    public static function radio(string $key, array $options): self
+    {
+        $field = new self('radio', $key);
+        $field->definition['options'] = $options;
+
+        return $field;
+    }
+
+    /**
+     * @param  array<int|string, string>  $options  value => label
+     */
+    public static function multiSelect(string $key, array $options): self
+    {
+        $field = new self('multi-select', $key);
+        $field->definition['options'] = $options;
+
+        return $field;
+    }
+
+    public static function url(string $key): self
+    {
+        return (new self('url', $key))->max(2048);
+    }
+
+    public static function time(string $key): self
+    {
+        return new self('time', $key);
+    }
+
+    public static function datetime(string $key): self
+    {
+        return new self('datetime', $key);
+    }
+
+    /**
+     * A definition that was already validated (FieldDefinitionValidator), e.g. a custom
+     * block type's fields stored in the database.
+     *
+     * @param  array<string, mixed>  $definition
+     */
+    public static function fromArray(array $definition): self
+    {
+        $field = new self((string) $definition['type'], (string) $definition['key']);
+        $field->definition = $definition;
 
         return $field;
     }

@@ -783,3 +783,47 @@ img.pa-ratio {
         animation-iteration-count: 1 !important;
     }
 }
+
+// List block ---------------------------------------------------------------------------
+.pa-list {
+    display: grid;
+    gap: var(--pa-space-2) var(--pa-space-5);
+    margin: 0 0 var(--pa-space-4);
+    padding: 0;
+    list-style: none;
+
+    &--cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    &--cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    @include media-breakpoint-down(md) {
+        &--cols-2,
+        &--cols-3 { grid-template-columns: 1fr; }
+    }
+
+    &--bullet { padding-left: 1.25rem; list-style: disc; }
+    &--number { padding-left: 1.5rem; list-style: decimal; }
+
+    &__item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--pa-space-2);
+    }
+
+    &--bullet &__item,
+    &--number &__item { display: list-item; }
+
+    &__icon {
+        flex: none;
+        margin-top: .15em;
+        color: var(--pa-color-primary);
+    }
+
+    &__text a { color: var(--pa-color-primary); }
+
+    &--pad-sm &__item { padding: var(--pa-space-1) var(--pa-space-2); }
+    &--pad-md &__item { padding: var(--pa-space-2) var(--pa-space-3); }
+    &--pad-lg &__item { padding: var(--pa-space-3) var(--pa-space-4); }
+
+    &--dividers &__item + &__item { border-top: 1px solid var(--pa-color-border); }
+    &--dividers { row-gap: 0; }
+}

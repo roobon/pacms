@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Cms\Blocks\BlockExpander;
 use App\Cms\Blocks\BlockPayloadResolver;
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Blocks\BlockTreeValidator;
 use App\Cms\Design\TokenCatalog;
 use App\Cms\Display\DisplayModeRegistry;
+use App\Cms\Fields\Bindings;
+use App\Cms\Fields\FieldDefinitionValidator;
 use App\Cms\Sources\SourceRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\News;
@@ -45,9 +48,14 @@ class BlockBuilderController extends Controller
                 'font_size' => $group('font-size'),
                 'container' => $group('container'),
             ],
+            'field_types' => FieldDefinitionValidator::TYPES,
+            'bindings' => Bindings::compatibility(),
             'permissions' => [
                 'custom_attributes' => $request->user()->can('blocks.custom_attributes'),
                 'media_upload' => $request->user()->can('media.upload'),
+                'templates' => $request->user()->can('templates.manage'),
+                'global_blocks' => $request->user()->can('global_blocks.manage'),
+                'global_detach' => $request->user()->can('global_blocks.detach'),
             ],
         ]);
     }
@@ -55,12 +63,26 @@ class BlockBuilderController extends Controller
     /**
      * Validate and resolve an unsaved tree for the live preview. Nothing is stored.
      */
-    public function resolve(Request $request, BlockTreeValidator $validator, BlockPayloadResolver $resolver): JsonResponse
+    public function resolve(Request $request, BlockTreeValidator $validator, BlockPayloadResolver $resolver, FieldDefinitionValidator $definitions, BlockExpander $expander): JsonResponse
     {
         abort_unless($request->user()->can('pages.view'), 403);
 
-        $request->validate(['blocks' => ['present', 'array']]);
-        $blocks = $validator->validate((array) $request->input('blocks'), $request->user());
+        $request->validate([
+            'blocks' => ['present', 'array'],
+            'context' => ['nullable', 'in:page,global,template,structure'],
+            'fields' => ['nullable', 'array'],
+        ]);
+        $context = (string) $request->input('context', BlockTreeValidator::CONTEXT_PAGE);
+
+        if ($context === BlockTreeValidator::CONTEXT_STRUCTURE) {
+            // A custom block type's layout: preview it filled with sample values.
+            $fields = $definitions->validate($request->input('fields', []));
+            $structure = $validator->validate((array) $request->input('blocks'), $request->user(), $context, $fields);
+
+            return response()->json(['blocks' => $resolver->resolve($expander->preview($structure, $fields), includeHidden: true)]);
+        }
+
+        $blocks = $validator->validate((array) $request->input('blocks'), $request->user(), $context);
 
         return response()->json(['blocks' => $resolver->resolve($blocks, includeHidden: true)]);
     }

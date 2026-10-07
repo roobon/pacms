@@ -11,17 +11,21 @@ use App\Cms\Blocks\Types\ContainerBlock;
 use App\Cms\Blocks\Types\CtaBlock;
 use App\Cms\Blocks\Types\DividerBlock;
 use App\Cms\Blocks\Types\FaqBlock;
+use App\Cms\Blocks\Types\GlobalRefBlock;
 use App\Cms\Blocks\Types\HeadingBlock;
 use App\Cms\Blocks\Types\HeroBlock;
 use App\Cms\Blocks\Types\IconBlock;
 use App\Cms\Blocks\Types\ImageBlock;
+use App\Cms\Blocks\Types\ListBlock;
 use App\Cms\Blocks\Types\NewsBlock;
 use App\Cms\Blocks\Types\QuoteBlock;
+use App\Cms\Blocks\Types\RepeatBlock;
 use App\Cms\Blocks\Types\RichTextBlock;
 use App\Cms\Blocks\Types\SectionBlock;
 use App\Cms\Blocks\Types\SpacerBlock;
 use App\Cms\Blocks\Types\StatisticsBlock;
 use App\Cms\Blocks\Types\VideoBlock;
+use App\Cms\Blocks\Types\WhenBlock;
 
 return [
 
@@ -151,6 +155,7 @@ return [
             ColumnBlock::class,
             HeadingBlock::class,
             RichTextBlock::class,
+            ListBlock::class,
             ImageBlock::class,
             ButtonBlock::class,
             ButtonGroupBlock::class,
@@ -167,6 +172,9 @@ return [
             QuoteBlock::class,
             CtaBlock::class,
             NewsBlock::class,
+            GlobalRefBlock::class,
+            RepeatBlock::class,
+            WhenBlock::class,
         ],
     ],
 

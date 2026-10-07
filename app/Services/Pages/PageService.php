@@ -186,7 +186,7 @@ class PageService
     }
 
     /**
-     * Featured image, social image and every media item used in the page's blocks.
+     * Featured image, social image, and every media item, global block and custom block type used in the page's blocks.
      */
     public function syncReferences(Page $page): void
     {
@@ -201,13 +201,7 @@ class PageService
             $references[] = ['target' => $media, 'context' => 'og_image'];
         }
 
-        $tree = $this->blocks->load($page);
-        $media = $this->blocks->referencedMedia($tree);
-        foreach ($this->blocks->mediaReferences($tree) as $reference) {
-            if (isset($media[$reference['media_id']])) {
-                $references[] = ['target' => $media[$reference['media_id']], 'context' => 'block_content', 'block_uuid' => $reference['block_uuid']];
-            }
-        }
+        $references = array_merge($references, $this->blocks->references($this->blocks->load($page)));
 
         $this->references->sync($page, $references);
     }

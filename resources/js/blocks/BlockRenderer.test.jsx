@@ -113,3 +113,42 @@ describe('BlockRenderer', () => {
         expect(document.querySelector('iframe').getAttribute('src')).toContain('youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
 });
+
+describe('reusable blocks', () => {
+    const inner = { uuid: 'iiiiiiiiiiiiiiiiiiiiiiiiii', type: 'heading', locked: true, content: { text: 'Shared CTA', level: '2' } };
+
+    it('renders a global block’s inlined tree, with locked children not selectable in preview', () => {
+        const { container } = renderBlocks([{ uuid: 'gggggggggggggggggggggggggg', type: 'global-ref', content: {}, children: [inner] }], true);
+
+        expect(screen.getByRole('heading', { name: 'Shared CTA' })).toBeInTheDocument();
+        expect(container.querySelector('[data-block-uuid="gggggggggggggggggggggggggg"]')).not.toBeNull();
+        expect(container.querySelector('[data-block-uuid="iiiiiiiiiiiiiiiiiiiiiiiiii"]')).toBeNull();
+    });
+
+    it('shows a placeholder for an unpublished global block only in preview', () => {
+        renderBlocks([{ uuid: 'gggggggggggggggggggggggggg', type: 'global-ref', content: {} }], true);
+        expect(screen.getByRole('note')).toHaveTextContent('Choose a published global block');
+
+        const { container } = renderBlocks([{ uuid: 'hhhhhhhhhhhhhhhhhhhhhhhhhh', type: 'global-ref', content: {} }]);
+        expect(container.querySelector('.pa-global-block')).toBeNull();
+    });
+
+    it('renders any custom block type with the shared component', () => {
+        renderBlocks([{ uuid: 'cccccccccccccccccccccccccc', type: 'custom/staff-profile', content: {}, children: [inner] }]);
+        expect(document.querySelector('.pa-custom-block')).not.toBeNull();
+        expect(screen.getByRole('heading', { name: 'Shared CTA' })).toBeInTheDocument();
+    });
+});
+
+describe('list block', () => {
+    it('uses an ordered list for numbers and decorative icons otherwise', () => {
+        const { container, unmount } = renderBlocks([{ uuid: 'llllllllllllllllllllllllll', type: 'list', content: { style: 'number', items: [{ text: 'One' }, { text: 'Two' }] } }]);
+        expect(container.querySelector('ol.pa-list')).not.toBeNull();
+        expect(screen.getAllByRole('listitem')).toHaveLength(2);
+        unmount();
+
+        renderBlocks([{ uuid: 'mmmmmmmmmmmmmmmmmmmmmmmmmm', type: 'list', content: { style: 'check', items: [{ text: 'Linked', link: { href: '/contact' } }] } }]);
+        expect(document.querySelector('ul.pa-list .bi-check-circle-fill').getAttribute('aria-hidden')).toBe('true');
+        expect(screen.getByRole('link', { name: 'Linked' })).toHaveAttribute('href', '/contact');
+    });
+});

@@ -4,8 +4,12 @@ use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Api\BlockBuilderController;
 use App\Http\Controllers\Admin\Api\MediaController as MediaApiController;
+use App\Http\Controllers\Admin\Api\ReusableBlockController;
+use App\Http\Controllers\Admin\BlockTemplateController;
+use App\Http\Controllers\Admin\CustomBlockTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
+use App\Http\Controllers\Admin\GlobalBlockController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
@@ -71,10 +75,29 @@ Route::middleware('can:redirects.manage')->group(function () {
 Route::resource('news', NewsController::class)->except('show')->parameters(['news' => 'news']);
 Route::post('news/{news}/publish', [NewsController::class, 'publish'])->name('news.publish');
 
+// Reusable blocks (Phase 5): global blocks, templates, custom block types
+Route::middleware('can:global_blocks.manage')->group(function () {
+    Route::resource('global-blocks', GlobalBlockController::class)->except('show');
+    Route::post('global-blocks/{global_block}/publish', [GlobalBlockController::class, 'publish'])->name('global-blocks.publish');
+});
+Route::resource('block-templates', BlockTemplateController::class)->except('show')->middleware('can:templates.manage');
+Route::middleware('can:block_types.manage')->group(function () {
+    Route::resource('block-types', CustomBlockTypeController::class)->except('show');
+    Route::post('block-types/{block_type}/publish', [CustomBlockTypeController::class, 'publish'])->name('block-types.publish');
+    Route::post('block-types/{block_type}/toggle', [CustomBlockTypeController::class, 'toggle'])->name('block-types.toggle');
+});
+
 // JSON endpoints for admin React islands (same session + CSRF)
 Route::prefix('api')->name('api.')->group(function () {
     Route::get('blocks/definitions', [BlockBuilderController::class, 'definitions'])->name('blocks.definitions');
     Route::post('blocks/resolve', [BlockBuilderController::class, 'resolve'])->name('blocks.resolve');
+    Route::get('global-blocks', [ReusableBlockController::class, 'globals'])->name('globals.index');
+    Route::post('global-blocks', [ReusableBlockController::class, 'storeGlobal'])->name('globals.store');
+    Route::post('global-blocks/{global}/detach', [ReusableBlockController::class, 'detach'])->name('globals.detach');
+    Route::get('templates', [ReusableBlockController::class, 'templates'])->name('templates.index');
+    Route::get('templates/{template}', [ReusableBlockController::class, 'template'])->name('templates.show');
+    Route::post('templates', [ReusableBlockController::class, 'storeTemplate'])->name('templates.store');
+    Route::post('autosave', [ReusableBlockController::class, 'autosave'])->middleware('throttle:30,1')->name('autosave');
     Route::get('link-targets', [BlockBuilderController::class, 'linkTargets'])->name('link-targets');
     Route::get('media', [MediaApiController::class, 'index'])->name('media.index');
     Route::post('media', [MediaApiController::class, 'store'])->name('media.store');

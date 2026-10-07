@@ -25,6 +25,7 @@ class BlockPayloadResolver
         private readonly BlockRegistry $registry,
         private readonly BlockTreeRepository $tree,
         private readonly SourceRegistry $sources,
+        private readonly BlockExpander $expander,
     ) {}
 
     /**
@@ -34,6 +35,10 @@ class BlockPayloadResolver
      */
     public function resolve(array $nodes, bool $includeHidden = false): array
     {
+        // Global blocks and custom blocks become ordinary blocks first, so their media and
+        // links are resolved in the same batches.
+        $nodes = $this->expander->expand($nodes);
+
         $this->media = $this->tree->referencedMedia($nodes);
         $this->links = $this->collectLinks($nodes);
 
@@ -72,6 +77,9 @@ class BlockPayloadResolver
 
             if (! empty($node['hidden'])) {
                 $out['hidden'] = true;
+            }
+            if (! empty($node['locked'])) {
+                $out['locked'] = true;
             }
 
             $source = (array) ($node['source'] ?? []);

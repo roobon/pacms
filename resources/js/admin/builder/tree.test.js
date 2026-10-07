@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canPlace, cloneNode, createNode, findNode, insertNode, moveNode, removeNode, setIn, ulid } from './tree.js';
+import { bindingScope, canInsert, canPlace, cloneNode, createNode, findNode, flatten, insertNode, moveNode, moveTo, projectDrop, removeNode, setIn, ulid } from './tree.js';
 
 const type = (slug, capabilities = {}, extra = {}) => ({
     slug,
@@ -76,5 +76,51 @@ describe('tree helpers', () => {
         expect(next).toEqual({ padding: { top: 1, bottom: 2 } });
         expect(layout).toEqual({ padding: { top: 1 } });
         expect(setIn(next, 'padding.top', undefined)).toEqual({ padding: { bottom: 2 } });
+    });
+});
+
+describe('Phase 5 tree helpers', () => {
+    const repeat = type('repeat', { allowed_children: ['*'], contexts: ['structure'], transparent: true });
+    const all = { ...types, repeat };
+    const nodes = [
+        { uuid: 's', type: 'section', children: [{ uuid: 'h1', type: 'heading' }, { uuid: 'h2', type: 'heading' }] },
+        { uuid: 'h3', type: 'heading' },
+    ];
+
+    it('flattens visible rows with depth', () => {
+        expect(flatten(nodes).map((row) => [row.uuid, row.depth])).toEqual([['s', 0], ['h1', 1], ['h2', 1], ['h3', 0]]);
+        expect(flatten(nodes, new Set(['s'])).map((row) => row.uuid)).toEqual(['s', 'h3']);
+    });
+
+    it('projects a drop position from the target row and horizontal offset', () => {
+        const rows = flatten(nodes);
+        // Drag h3 (last) up onto h2's place, no offset: becomes a child of s at index 1.
+        expect(projectDrop(rows, 'h3', 2, 0)).toEqual({ parentUuid: 's', index: 1, depth: 1 });
+        // Dragging h1 one level left at the end of the section: top level, after s.
+        expect(projectDrop(rows, 'h1', 2, -1)).toEqual({ parentUuid: null, index: 1, depth: 0 });
+    });
+
+    it('moves nodes with moveTo and never into themselves', () => {
+        const moved = moveTo(nodes, 'h3', 's', 0);
+        expect(moved[0].children.map((n) => n.uuid)).toEqual(['h3', 'h1', 'h2']);
+        expect(moveTo(nodes, 's', 'h1', 0)).toBe(nodes);
+    });
+
+    it('looks through transparent wrappers when checking placement', () => {
+        const tree = [{ uuid: 'c', type: 'columns', children: [{ uuid: 'r', type: 'repeat', children: [] }] }];
+        expect(canInsert(tree, 'column', 'r', all)).toBe(true);
+        expect(canInsert(tree, 'heading', 'r', all)).toBe(false);
+        expect(canInsert(tree, 'repeat', 'c', all)).toBe(true);
+    });
+
+    it('offers type fields and the enclosing repeat row as binding targets', () => {
+        const fields = [
+            { key: 'name', type: 'text', label: 'Name' },
+            { key: 'links', type: 'repeater', label: 'Links', fields: [{ key: 'url', type: 'url', label: 'Address' }] },
+        ];
+        const tree = [{ uuid: 'r', type: 'repeat', content: { field: 'links' }, children: [{ uuid: 'b', type: 'heading' }] }];
+
+        expect(bindingScope(tree, 'b', fields).options.map((o) => o.path)).toEqual(['name', 'links', 'item.url']);
+        expect(bindingScope(tree, 'r', fields).options.map((o) => o.path)).toEqual(['name', 'links']);
     });
 });

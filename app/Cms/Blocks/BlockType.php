@@ -97,6 +97,31 @@ abstract class BlockType
     }
 
     /**
+     * Where the block may be used: "page" (pages and other content), "global" (global
+     * blocks), "template" and "structure" (custom block type structures). null = everywhere.
+     *
+     * @return list<string>|null
+     */
+    public function contexts(): ?array
+    {
+        return null;
+    }
+
+    /**
+     * Structural wrappers (repeat, when) that disappear when rendered: placement rules
+     * look through them to the nearest real parent.
+     */
+    public function isTransparent(): bool
+    {
+        return false;
+    }
+
+    final public function allowedIn(string $context): bool
+    {
+        return $this->contexts() === null || in_array($context, $this->contexts(), true);
+    }
+
+    /**
      * Default values for a newly inserted block (content/layout/style/display/children).
      *
      * @return array<string, mixed>
@@ -143,7 +168,7 @@ abstract class BlockType
      *
      * @return array<string, mixed>
      */
-    final public function toArray(): array
+    public function toArray(): array
     {
         return [
             'slug' => $this->slug(),
@@ -160,6 +185,8 @@ abstract class BlockType
                 'excluded_children' => $this->excludedChildren(),
                 'allowed_parents' => $this->allowedParents(),
                 'max_children' => $this->maxChildren(),
+                'contexts' => $this->contexts(),
+                'transparent' => $this->isTransparent(),
             ],
             'defaults' => $this->defaults(),
         ];

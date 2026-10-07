@@ -110,3 +110,26 @@ export function VideoBlock({ node, preview }) {
         </div>
     );
 }
+
+const LIST_ICONS = { check: 'bi-check-circle-fill', bullet: null, number: null };
+
+/** List of short items: bullets, numbers (<ol>), check marks or icons; items may link. */
+export function ListBlock({ node, preview }) {
+    const { style = 'check', icon, columns = '1', item_padding: padding = 'none', dividers = false, items = [] } = node.content;
+    const Tag = style === 'number' ? 'ol' : 'ul';
+    const iconFor = (item) => (style === 'icon' ? item.icon || icon || 'bi-arrow-right-circle' : LIST_ICONS[style]);
+
+    return (
+        <Tag {...frameProps(node, preview, `pa-list pa-list--${style} pa-list--cols-${columns} pa-list--pad-${padding}${dividers ? ' pa-list--dividers' : ''}`)}>
+            {items.map((item, index) => {
+                const glyph = iconFor(item);
+                return (
+                    <li key={index} className="pa-list__item">
+                        {glyph && <i className={`bi ${glyph} pa-list__icon`} aria-hidden="true" />}
+                        <span className="pa-list__text">{item.link ? <SmartLink link={item.link}>{item.text}</SmartLink> : item.text}</span>
+                    </li>
+                );
+            })}
+        </Tag>
+    );
+}

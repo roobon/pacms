@@ -52,3 +52,38 @@ it('serves the builder preview frame to signed-in staff only, never indexed', fu
 
     $this->actingAs(userWithRole('registered-user', twoFactor: false))->get('/__builder-preview')->assertForbidden();
 });
+
+it('validates list blocks and resolves their item links', function () {
+    $editor = userWithRole('editor');
+
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => [
+        ['uuid' => '01k00000000000000000000lst', 'type' => 'list', 'content' => ['style' => 'icon', 'items' => [
+            ['text' => 'Contact us', 'icon' => 'bi-envelope', 'link' => ['type' => 'url', 'url' => '/contact']],
+            ['text' => 'Plain item'],
+        ]]],
+    ]])
+        ->assertOk()
+        ->assertJsonPath('blocks.0.content.items.0.link.href', '/contact')
+        ->assertJsonPath('blocks.0.content.items.1.text', 'Plain item');
+
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => [
+        ['uuid' => '01k00000000000000000000lsx', 'type' => 'list', 'content' => ['style' => 'stars', 'items' => [['text' => '']]]],
+    ]])->assertJsonValidationErrors(['blocks.01k00000000000000000000lsx.content.style', 'blocks.01k00000000000000000000lsx.content.items.0.text']);
+});
+
+it('validates line height and list spacing options', function () {
+    $editor = userWithRole('editor');
+
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => [
+        ['uuid' => '01k00000000000000000000lh1', 'type' => 'list', 'content' => ['item_padding' => 'md', 'dividers' => true, 'items' => [['text' => 'A']]],
+            'layout' => ['padding' => ['left' => ['$token' => 'space.4']], 'gap' => ['$token' => 'space.2']],
+            'style' => ['typography' => ['line_height' => 1.8]]],
+    ]])
+        ->assertOk()
+        ->assertJsonPath('blocks.0.style.typography.line_height', 1.8)
+        ->assertJsonPath('blocks.0.content.item_padding', 'md');
+
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => [
+        ['uuid' => '01k00000000000000000000lh2', 'type' => 'heading', 'content' => ['text' => 'X', 'level' => '2'], 'style' => ['typography' => ['line_height' => '1.5; color:red']]],
+    ]])->assertJsonValidationErrors('blocks.01k00000000000000000000lh2.style.typography.line_height');
+});

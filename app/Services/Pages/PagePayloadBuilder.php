@@ -32,7 +32,7 @@ class PagePayloadBuilder
     public function forLivePage(Page $page): array
     {
         $key = 'pacms:page-payload:'.$page->published_revision_id.':'.$page->published_path.':'
-            .$this->versions->fingerprint('pages', 'media', 'settings', 'news');
+            .$this->versions->fingerprint('pages', 'media', 'settings', 'news', 'globals', 'block_types');
 
         return Cache::remember($key, now()->addDay(), function () use ($page) {
             /** @var Revision $revision */

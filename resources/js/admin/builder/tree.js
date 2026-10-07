@@ -122,9 +122,19 @@ export function createNode(slug, types, overrides = {}) {
     return node;
 }
 
-/** Can `child` be placed directly inside `parent` (null = page level)? Mirrors BlockType::allowedUnder. */
+/** May the type be used in this builder context (page, global, template, structure)? Mirrors BlockType::allowedIn. */
+export function allowedInContext(type, context) {
+    const contexts = type?.capabilities.contexts;
+    return !Array.isArray(contexts) || contexts.includes(context);
+}
+
+/**
+ * Can `child` be placed directly inside `parent` (null = page level)? Mirrors
+ * BlockType::allowedUnder. Transparent wrappers (repeat, when) may go anywhere.
+ */
 export function canPlace(child, parent) {
     if (!child) return false;
+    if (child.capabilities.transparent) return parent === null || Array.isArray(parent.capabilities.allowed_children);
     const parents = child.capabilities.allowed_parents;
     if (Array.isArray(parents) && parents.length === 0) return parent === null;
     if (Array.isArray(parents) && (parent === null || !parents.includes(parent.slug))) return false;
@@ -133,6 +143,146 @@ export function canPlace(child, parent) {
     const allowed = parent.capabilities.allowed_children;
     if (!Array.isArray(allowed) || (parent.capabilities.excluded_children ?? []).includes(child.slug)) return false;
     return allowed.includes('*') || allowed.includes(child.slug);
+}
+
+/**
+ * The type a block placed inside `parentUuid` renders into: the parent itself, or for
+ * transparent wrappers (repeat, when) their nearest real ancestor. null = top level.
+ */
+export function effectiveParentType(nodes, parentUuid, types) {
+    let uuid = parentUuid;
+    while (uuid) {
+        const found = findNode(nodes, uuid);
+        if (!found) return null;
+        const type = types[found.node.type];
+        if (!type?.capabilities.transparent) return type ?? null;
+        uuid = found.parent?.uuid ?? null;
+    }
+    return null;
+}
+
+/** Can a node of `slug` be inserted inside `parentUuid` (null = top level)? */
+export function canInsert(nodes, slug, parentUuid, types) {
+    const type = types[slug];
+    if (!type) return false;
+    const parentNode = parentUuid ? findNode(nodes, parentUuid)?.node : null;
+    const parentType = parentNode ? types[parentNode.type] : null;
+    if (parentType && !Array.isArray(parentType.capabilities.allowed_children)) return false;
+    if (type.capabilities.transparent) return true;
+    return canPlace(type, effectiveParentType(nodes, parentUuid, types));
+}
+
+/** Is `uuid` the node `ancestorUuid` or one of its descendants? */
+export function isWithin(nodes, uuid, ancestorUuid) {
+    const found = findNode(nodes, ancestorUuid);
+    return Boolean(found && (found.node.uuid === uuid || findNode(found.node.children ?? [], uuid)));
+}
+
+/**
+ * Move a node to `parentUuid` (null = top level) at `index` (position among the new
+ * siblings, counted without the moved node). Refuses to move a node into itself.
+ */
+export function moveTo(nodes, uuid, parentUuid, index) {
+    const found = findNode(nodes, uuid);
+    if (!found || (parentUuid && isWithin(nodes, parentUuid, uuid))) return nodes;
+    return insertNode(removeNode(nodes, uuid), parentUuid, index, found.node);
+}
+
+/**
+ * Depth-first list of visible rows for the structure tree and drag & drop:
+ * [{ uuid, node, parentUuid, depth, index }]. Children of `collapsed` uuids are skipped.
+ */
+export function flatten(nodes, collapsed = new Set(), parentUuid = null, depth = 0) {
+    return nodes.flatMap((node, index) => [
+        { uuid: node.uuid, node, parentUuid, depth, index },
+        ...(collapsed.has(node.uuid) ? [] : flatten(node.children ?? [], collapsed, node.uuid, depth + 1)),
+    ]);
+}
+
+/**
+ * Where a dragged row would land: given the flattened rows (without the dragged row's
+ * descendants), the target row index and the horizontal drag offset in levels, return
+ * { parentUuid, index, depth } or null.
+ */
+export function projectDrop(rows, activeUuid, overIndex, levelOffset) {
+    const activeIndex = rows.findIndex((row) => row.uuid === activeUuid);
+    if (activeIndex < 0 || overIndex < 0) return null;
+
+    const ordered = [...rows];
+    const [active] = ordered.splice(activeIndex, 1);
+    ordered.splice(overIndex, 0, active);
+
+    const previous = ordered[overIndex - 1];
+    const next = ordered[overIndex + 1];
+    const maxDepth = previous ? previous.depth + 1 : 0;
+    const minDepth = next ? next.depth : 0;
+    const depth = Math.max(minDepth, Math.min(maxDepth, active.depth + levelOffset));
+
+    // The parent is the closest row above with depth - 1.
+    let parentUuid = null;
+    for (let i = overIndex - 1; i >= 0; i--) {
+        if (ordered[i].depth === depth - 1) {
+            parentUuid = ordered[i].uuid;
+            break;
+        }
+        if (ordered[i].depth < depth - 1) break;
+    }
+
+    // Position among the new siblings: siblings above the drop point at the same depth.
+    let index = 0;
+    for (let i = overIndex - 1; i >= 0; i--) {
+        if (ordered[i].depth < depth) break;
+        if (ordered[i].depth === depth) index++;
+    }
+
+    return { parentUuid, index, depth };
+}
+
+/** Ancestors of a node, outermost first. */
+export function ancestorsOf(nodes, uuid) {
+    const chain = [];
+    let found = findNode(nodes, uuid);
+    while (found?.parent) {
+        chain.unshift(found.parent);
+        found = findNode(nodes, found.parent.uuid);
+    }
+    return chain;
+}
+
+/**
+ * Fields a block in a custom type's layout may link to (mirrors App\Cms\Fields\Bindings):
+ * the type's fields, plus "item.…" fields of the innermost enclosing `repeat` block.
+ *
+ * @returns {{options: Array<{path: string, label: string, type: string}>}}
+ */
+export function bindingScope(nodes, uuid, fields) {
+    const byKey = Object.fromEntries(fields.map((field) => [field.key, field]));
+    let item = null;
+    for (const ancestor of ancestorsOf(nodes, uuid)) {
+        if (ancestor.type !== 'repeat' || typeof ancestor.content?.field !== 'string') continue;
+        const path = ancestor.content.field;
+        const repeater = path.startsWith('item.') ? item?.[path.slice(5)] : byKey[path];
+        item = repeater?.type === 'repeater' ? Object.fromEntries((repeater.fields ?? []).map((field) => [field.key, field])) : null;
+    }
+
+    return {
+        options: [
+            ...fields.map((field) => ({ path: field.key, label: field.label, type: field.type })),
+            ...Object.values(item ?? {}).map((field) => ({ path: `item.${field.key}`, label: `Row → ${field.label}`, type: field.type })),
+        ],
+    };
+}
+
+/** Same tree with fresh uuids everywhere (paste, insert template, detach). */
+export function cloneTree(nodes) {
+    return nodes.map(cloneNode);
+}
+
+/** Label of a block in the structure tree: its name, its main text, or its type. */
+export function labelOf(node, types) {
+    const text = node.content?.text ?? node.content?.title ?? node.content?.heading ?? node.content?.label ?? node.content?.name;
+    const summary = typeof text === 'string' && text ? text.slice(0, 40) : null;
+    return node.name || summary || types[node.type]?.label || node.type;
 }
 
 /** Read a nested value by dotted path. */

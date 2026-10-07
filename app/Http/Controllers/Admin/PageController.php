@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\PageRequest;
 use App\Models\Page;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
+use App\Services\Revisions\RevisionService;
 use App\Services\Settings\SettingsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -110,6 +111,7 @@ class PageController extends Controller
             'actions' => $page->exists ? app(PublishingService::class)->availableActions($page, $request->user()) : [],
             'revisions' => $page->exists ? $page->revisions()->with('author:id,name')->limit(10)->get() : collect(),
             'blocks' => $page->exists ? app(BlockTreeRepository::class)->load($page) : [],
+            'autosave' => $page->exists ? app(RevisionService::class)->pendingAutosave($page, $request->user()) : null,
         ];
     }
 }

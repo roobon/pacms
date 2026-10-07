@@ -6,6 +6,7 @@ use App\Enums\RevisionKind;
 use App\Models\Contracts\Revisionable;
 use App\Models\Revision;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -17,9 +18,12 @@ class RevisionService
 {
     public const SCHEMA_VERSION = '1.0';
 
-    public function record(Model&Revisionable $item, RevisionKind $kind, ?User $user = null, ?string $summary = null): Revision
+    /**
+     * @param  array<string, mixed>|null  $snapshot  defaults to the item's current working copy
+     */
+    public function record(Model&Revisionable $item, RevisionKind $kind, ?User $user = null, ?string $summary = null, ?array $snapshot = null): Revision
     {
-        return DB::transaction(function () use ($item, $kind, $user, $summary) {
+        return DB::transaction(function () use ($item, $kind, $user, $summary, $snapshot) {
             $number = (int) Revision::query()
                 ->where('revisionable_type', $item->getMorphClass())
                 ->where('revisionable_id', $item->getKey())
@@ -31,12 +35,50 @@ class RevisionService
                 'revisionable_id' => $item->getKey(),
                 'number' => $number,
                 'kind' => $kind,
-                'snapshot' => $item->toSnapshot(),
+                'snapshot' => $snapshot ?? $item->toSnapshot(),
                 'schema_version' => self::SCHEMA_VERSION,
                 'summary' => $summary !== null ? mb_substr($summary, 0, 255) : null,
                 'created_by' => $user?->getKey(),
             ]);
         });
+    }
+
+    /**
+     * Store a user's unsaved builder tree (CMS-ARCHITECTURE.md §23.4). Only the latest
+     * autosave per user and item is kept; it never touches the working copy.
+     *
+     * @param  list<array<string, mixed>>  $blocks  already validated
+     */
+    public function autosave(Model&Revisionable $item, User $user, array $blocks): Revision
+    {
+        return DB::transaction(function () use ($item, $user, $blocks) {
+            $this->autosaves($item, $user)->delete();
+
+            return $this->record($item, RevisionKind::Autosave, $user, 'Autosave', ['blocks' => $blocks] + $item->toSnapshot());
+        });
+    }
+
+    /**
+     * The user's autosave when it is newer than the last real save.
+     */
+    public function pendingAutosave(Model&Revisionable $item, User $user): ?Revision
+    {
+        $autosave = $this->autosaves($item, $user)->latest('id')->first();
+        $updatedAt = $item->getAttribute('updated_at');
+
+        return $autosave !== null && ($updatedAt === null || $autosave->created_at?->gte($updatedAt)) ? $autosave : null;
+    }
+
+    /**
+     * @return Builder<Revision>
+     */
+    private function autosaves(Model $item, User $user): Builder
+    {
+        return Revision::query()
+            ->where('revisionable_type', $item->getMorphClass())
+            ->where('revisionable_id', $item->getKey())
+            ->where('kind', RevisionKind::Autosave)
+            ->where('created_by', $user->getKey());
     }
 
     /**
@@ -101,7 +143,8 @@ class RevisionService
                     ->pluck('id');
 
                 // Never delete a revision that is currently live.
-                $live = DB::table('pages')->whereIn('published_revision_id', $ids)->pluck('published_revision_id');
+                $live = collect(['pages', 'global_blocks', 'block_types'])
+                    ->flatMap(fn (string $table) => DB::table($table)->whereIn('published_revision_id', $ids)->pluck('published_revision_id'));
                 $deleted += Revision::query()->whereKey($ids->diff($live))->delete();
             });
 

@@ -12,9 +12,14 @@ use App\Support\Html\HtmlSanitizer;
  */
 final class FieldValidator
 {
+    /**
+     * @param  Bindings|null  $bindings  set when validating a custom block type's structure:
+     *                                   values may then be {"$bind": path} references
+     */
     public function __construct(
         private readonly ValueValidator $values,
         private readonly HtmlSanitizer $html,
+        private readonly ?Bindings $bindings = null,
     ) {}
 
     /**
@@ -30,6 +35,19 @@ final class FieldValidator
             $key = $field['key'];
             $fieldPath = "{$path}.{$key}";
             $value = $input[$key] ?? null;
+
+            if (Bindings::isBinding($value)) {
+                $error = $this->bindings === null
+                    ? __('Linked values are only allowed in custom block structures.')
+                    : $this->bindings->check($value['$bind'], (string) $field['type']);
+                if ($error !== null) {
+                    $this->values->errors()->add($fieldPath, $error);
+                } else {
+                    $clean[$key] = ['$bind' => $value['$bind']];
+                }
+
+                continue;
+            }
 
             if ($this->isEmpty($value)) {
                 if (! empty($field['required'])) {
@@ -95,10 +113,48 @@ final class FieldValidator
                 return filter_var($value, FILTER_VALIDATE_BOOLEAN);
 
             case 'select':
+            case 'radio':
                 return $this->values->enum(is_scalar($value) ? (string) $value : null, array_map('strval', array_keys($field['options'])), $path);
+
+            case 'multi-select':
+                $allowed = array_map('strval', array_keys($field['options']));
+                if (! is_array($value) || ! array_is_list($value) || array_diff(array_map(fn ($v) => is_scalar($v) ? (string) $v : '', $value), $allowed) !== []) {
+                    $errors->add($path, __('Choose from the listed options.'));
+
+                    return null;
+                }
+
+                return array_values(array_unique(array_map('strval', $value)));
 
             case 'link':
                 return $this->values->link($value, $path);
+
+            case 'url':
+                if (! is_string($value) || ! ValueValidator::isSafeUrl(trim($value))) {
+                    $errors->add($path, __('Enter a web address starting with https://, http://, / or #.'));
+
+                    return null;
+                }
+
+                return $this->maxLength(trim($value), $field, $path);
+
+            case 'time':
+                if (! is_string($value) || ! preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $value)) {
+                    $errors->add($path, __('Enter a time (HH:MM).'));
+
+                    return null;
+                }
+
+                return $value;
+
+            case 'datetime':
+                if (! is_string($value) || ! preg_match('/^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/', $value) || ! strtotime($value)) {
+                    $errors->add($path, __('Enter a date and time.'));
+
+                    return null;
+                }
+
+                return $value;
 
             case 'email':
                 if (! is_string($value) || ! filter_var($value, FILTER_VALIDATE_EMAIL)) {

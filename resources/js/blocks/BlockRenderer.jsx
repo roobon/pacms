@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { components } from './registry.js';
+import { CUSTOM_COMPONENT, components } from './registry.js';
 import { useIsPreview } from './common/frame.js';
 
 /**
@@ -14,7 +14,7 @@ export default function BlockRenderer({ nodes }) {
 
 function BlockNode({ node }) {
     const preview = useIsPreview();
-    const Block = components[node.type];
+    const Block = components[node.type] ?? (String(node.type).startsWith('custom/') ? components[CUSTOM_COMPONENT] : undefined);
 
     if (!Block) {
         return preview ? (

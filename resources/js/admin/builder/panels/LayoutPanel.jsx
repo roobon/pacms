@@ -13,16 +13,17 @@ const COLUMN_PRESETS = {
 
 /**
  * Layout settings (CMS-ARCHITECTURE.md §8.1). Values are design tokens or validated
- * literals. Per-device overrides are edited in Phase 5; the device switch already
- * previews them.
+ * literals. On tablet/phone the panel edits that device's overrides; settings that only
+ * make sense once per block (content width, columns, maximum width) stay desktop-only.
  *
- * @param {{node: Object, type: Object, onChange: (layout: Object) => void, errors: Record<string, string[]>, disabled?: boolean}} props
+ * @param {{node: Object, type: Object, onChange: (layout: Object) => void, errors: Record<string, string[]>, disabled?: boolean, device?: string}} props
  */
-export default function LayoutPanel({ node, type, onChange, errors, disabled = false }) {
+export default function LayoutPanel({ node, type, onChange, errors, disabled = false, device = 'desktop' }) {
     const id = useId();
     const layout = node.layout ?? {};
     const set = (path, value) => onChange(setIn(layout, path, value));
-    const hasContainer = ['section', 'hero'].includes(type.slug);
+    const desktop = device === 'desktop';
+    const hasContainer = desktop && ['section', 'hero'].includes(type.slug);
 
     return (
         <div>
@@ -37,7 +38,7 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
                 </Row>
             )}
 
-            {type.slug === 'columns' && (
+            {desktop && type.slug === 'columns' && (
                 <>
                     <Row id={`${id}-cols`} label="Columns (desktop)">
                         <select
@@ -71,14 +72,14 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
                 </>
             )}
 
-            {['columns', 'button-group', 'container', 'hero'].includes(type.slug) && (
-                <Row id={`${id}-gap`} label="Gap">
+            {['columns', 'button-group', 'container', 'hero', 'list'].includes(type.slug) && (
+                <Row id={`${id}-gap`} label={type.slug === 'list' ? 'Space between items' : 'Gap'}>
                     <TokenSelect id={`${id}-gap`} group="space" value={layout.gap ?? null} onChange={(v) => set('gap', v)} disabled={disabled} />
                 </Row>
             )}
 
             <div className="row g-2">
-                {['top', 'bottom'].map((side) => (
+                {['top', 'bottom', 'left', 'right'].map((side) => (
                     <div className="col-6" key={side}>
                         <Row id={`${id}-p-${side}`} label={`Padding ${side}`} error={errors[`layout.padding.${side}`]}>
                             <TokenSelect id={`${id}-p-${side}`} group="space" value={getIn(layout, `padding.${side}`) ?? null} onChange={(v) => set(`padding.${side}`, v)} emptyLabel="None" disabled={disabled} />
@@ -129,7 +130,7 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
                 </Row>
             )}
 
-            {type.slug === 'container' && (
+            {desktop && type.slug === 'container' && (
                 <Row id={`${id}-maxw`} label="Maximum width">
                     <TokenSelect id={`${id}-maxw`} group="container" value={layout.max_width?.$token ? layout.max_width : null} onChange={(v) => set('max_width', v)} emptyLabel="Full" disabled={disabled} />
                 </Row>

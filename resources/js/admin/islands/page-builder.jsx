@@ -1,6 +1,7 @@
 /**
- * Page Builder island: mounts on #page-builder inside the page edit form.
- * Initial data comes from <script type="application/json" id="page-builder-data">.
+ * Block Builder island: mounts on #page-builder inside the edit form of a page, global
+ * block, template or custom block type. Initial data comes from
+ * <script type="application/json" id="page-builder-data"> (x-admin.block-builder).
  */
 import { createRoot } from 'react-dom/client';
 import Builder from '../builder/Builder.jsx';
@@ -22,8 +23,10 @@ if (mount && dataElement && input) {
                 nodes: Array.isArray(data.blocks) ? data.blocks : [],
                 errors: data.errors ?? {},
                 readonly: data.readonly,
+                context: data.context ?? 'page',
+                fields: Array.isArray(data.fields) ? data.fields : null,
             });
-            createRoot(mount).render(<Builder input={input} />);
+            createRoot(mount).render(<Builder input={input} fieldsInput={document.getElementById('fields-input')} owner={data.owner ?? null} autosave={data.autosave ?? null} />);
         })
         .catch(() => {
             mount.innerHTML = '<div class="alert alert-danger">The block builder could not be loaded. Reload the page to try again.</div>';
