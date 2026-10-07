@@ -40,7 +40,9 @@ export function CardsBlock({ node, preview }) {
 
 export function StatisticsBlock({ node, preview }) {
     const columns = node.display?.columns ?? {};
-    const style = { '--pa-cols-d': columns.desktop ?? 3, '--pa-cols-t': columns.tablet ?? columns.desktop ?? 3, '--pa-cols-m': columns.mobile ?? 1, '--pa-item-min': '9rem' };
+    // Without a setting, one column per number (up to four), so 4 statistics share one row.
+    const fallback = Math.min(Math.max((node.content.items ?? []).length, 1), 4);
+    const style = { '--pa-cols-d': columns.desktop ?? fallback, '--pa-cols-t': columns.tablet ?? Math.min(columns.desktop ?? fallback, 2), '--pa-cols-m': columns.mobile ?? 1, '--pa-item-min': '9rem' };
     const format = new Intl.NumberFormat(document.documentElement.lang || 'en');
 
     return (

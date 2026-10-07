@@ -23,7 +23,10 @@ final class ValueValidator
     /** @var array<int, Media|null> */
     private array $media = [];
 
-    public function __construct(private readonly Errors $errors) {}
+    /**
+     * @param  array<string, true>  $pendingAssets  asset keys of a JSON import that are not downloaded yet
+     */
+    public function __construct(private readonly Errors $errors, private readonly array $pendingAssets = []) {}
 
     public function errors(): Errors
     {
@@ -132,10 +135,15 @@ final class ValueValidator
     /**
      * {"$media": 12} referencing an existing media item (optionally of one kind, public).
      *
-     * @return array{'$media': int}|null
+     * @return array{'$media': int}|array{'$asset': string}|null
      */
     public function mediaRef(mixed $value, string $path, ?MediaKind $kind = null): ?array
     {
+        // JSON import: an asset declared in the document and not downloaded yet.
+        if (is_array($value) && is_string($value['$asset'] ?? null) && isset($this->pendingAssets[$value['$asset']])) {
+            return ['$asset' => $value['$asset']];
+        }
+
         $id = is_array($value) ? ($value['$media'] ?? null) : null;
 
         if (! is_int($id) && ! (is_string($id) && ctype_digit($id))) {

@@ -36,6 +36,7 @@
             'templates' => route('admin.api.templates.index'),
             'template' => route('admin.api.templates.show', ['template' => '__ID__']),
             'storeTemplate' => route('admin.api.templates.store'),
+            'exportBlocks' => route('admin.api.export.blocks'),
             'autosave' => route('admin.api.autosave'),
         ],
     ];

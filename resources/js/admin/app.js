@@ -74,3 +74,22 @@ document.querySelectorAll('[data-dropzone]').forEach((zone) => {
 
 // Move focus to the validation summary so screen-reader users hear the errors.
 document.getElementById('error-summary')?.focus();
+
+// Copy buttons: <button data-copy-target="#textarea">
+document.querySelectorAll('[data-copy-target]').forEach((button) => {
+    button.addEventListener('click', async () => {
+        const target = document.querySelector(button.dataset.copyTarget);
+        if (!target) return;
+        const label = button.innerHTML;
+        try {
+            await navigator.clipboard.writeText(target.value ?? target.textContent);
+            button.textContent = 'Copied';
+        } catch {
+            target.select?.();
+            button.textContent = 'Press Ctrl+C to copy';
+        }
+        setTimeout(() => {
+            button.innerHTML = label;
+        }, 2000);
+    });
+});

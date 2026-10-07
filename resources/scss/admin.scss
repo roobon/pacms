@@ -1153,3 +1153,22 @@ $sidebar-bg: #0F172A;
         &.is-selected { color: #fff; background: $primary; }
     }
 }
+
+// JSON import --------------------------------------------------------------------
+.pa-dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: .25rem 1rem;
+
+    dt { font-weight: 600; color: $secondary; }
+    dd { margin: 0; }
+}
+
+.text-pre-wrap { white-space: pre-wrap; }
+
+.pa-asset-choice {
+    padding: .5rem 0;
+    border-bottom: 1px solid $border-color;
+
+    &:last-of-type { border-bottom: 0; }
+}

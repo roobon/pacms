@@ -9,6 +9,7 @@ use App\Cms\Sources\SourceRegistry;
 use App\Models\BlockTemplate;
 use App\Models\BlockType;
 use App\Models\GlobalBlock;
+use App\Models\ImportJob;
 use App\Models\Media;
 use App\Models\News;
 use App\Models\Page;
@@ -50,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
             'global_block' => GlobalBlock::class,
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,
+            'import_job' => ImportJob::class,
         ]);
 
         // Catch N+1 queries and silently dropped attributes during development and tests.

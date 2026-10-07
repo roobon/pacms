@@ -6,6 +6,7 @@
     'help' => null,
     'required' => false,
     'autocomplete' => null,
+    'rows' => 3,
 ])
 @php
     $id = 'field-'.str_replace(['[', ']', '.'], '-', $name);
@@ -19,7 +20,7 @@
         @if ($required)<span class="pa-required">(required)</span>@endif
     </label>
     @if ($type === 'textarea')
-        <textarea id="{{ $id }}" name="{{ $name }}" rows="3"
+        <textarea id="{{ $id }}" name="{{ $name }}" rows="{{ $rows }}"
             {{ $attributes->class(['form-control', 'is-invalid' => $hasError]) }}
             @required($required) @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif
             @if ($hasError) aria-invalid="true" @endif>{{ old($errorKey, $value) }}</textarea>
