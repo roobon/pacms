@@ -22,6 +22,7 @@ class SettingsController extends Controller
         return view('admin.settings.general', [
             'site' => $this->settings->group('site'),
             'seo' => $this->settings->group('seo'),
+            'media' => $this->settings->group('media'),
             'timezones' => DateTimeZone::listIdentifiers(),
             'livePages' => Page::query()->live()->orderBy('published_path')->get(['id', 'title', 'published_path']),
         ]);
@@ -39,14 +40,20 @@ class SettingsController extends Controller
             'timezone' => ['required', Rule::in(DateTimeZone::listIdentifiers())],
             'homepage_page_id' => ['nullable', 'integer', Rule::exists('pages', 'id')->whereNotNull('published_revision_id')->whereNull('deleted_at')],
             'robots_txt' => ['nullable', 'string', 'max:5000'],
+            'allow_svg' => ['boolean'],
         ]);
 
-        $site = array_map(fn ($value) => $value ?? '', Arr::except($data, ['homepage_page_id', 'robots_txt']));
+        $site = array_map(fn ($value) => $value ?? '', Arr::except($data, ['homepage_page_id', 'robots_txt', 'allow_svg']));
         $site['homepage_page_id'] = isset($data['homepage_page_id']) ? (int) $data['homepage_page_id'] : null;
         $before = $this->settings->group('site');
 
         $this->settings->set('site', $site, $request->user());
         $this->settings->set('seo', ['robots_txt' => (string) ($data['robots_txt'] ?? '')], $request->user());
+        $allowSvg = $request->boolean('allow_svg');
+        if ($allowSvg !== (bool) $this->settings->get('media', 'allow_svg')) {
+            $this->settings->set('media', ['allow_svg' => $allowSvg], $request->user());
+            $logger->log($allowSvg ? 'settings.svg_enabled' : 'settings.svg_disabled', null, [], subjectLabel: 'Media settings');
+        }
 
         $logger->log('settings.updated', null, [
             'group' => 'site',

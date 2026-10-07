@@ -21,7 +21,7 @@ class MediaController extends Controller
 
         $filters = MediaScreens::validateFilters($request);
 
-        return MediaResource::collection(MediaScreens::filteredQuery($filters)->paginate(24)->withQueryString());
+        return MediaResource::collection(MediaScreens::filteredQuery($filters, $request->user()->id)->paginate(24)->withQueryString());
     }
 
     public function store(Request $request, MediaService $media): JsonResponse
@@ -32,6 +32,12 @@ class MediaController extends Controller
             'file' => ['required', 'file'],
             'alt' => ['nullable', 'string', 'max:255'],
         ]);
+
+        // The same file already in the library is reused instead of stored twice.
+        $existing = $media->findDuplicate($request->file('file'));
+        if ($existing !== null) {
+            return (new MediaResource($existing))->additional(['meta' => ['duplicate' => true]])->response()->setStatusCode(200);
+        }
 
         $item = $media->store($request->file('file'), $request->user(), ['alt' => $request->input('alt')]);
 

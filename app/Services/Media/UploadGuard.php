@@ -26,7 +26,7 @@ class UploadGuard
      *
      * @throws ValidationException
      */
-    public function inspect(UploadedFile $file, string $field = 'file'): array
+    public function inspect(UploadedFile $file, string $field = 'file', bool $allowSvg = false): array
     {
         if (! $file->isValid()) {
             $this->fail($field, __('The upload failed. The file may be larger than the server allows.'));
@@ -40,6 +40,10 @@ class UploadGuard
             if (in_array($part, self::DANGEROUS_PARTS, true)) {
                 $this->fail($field, __('This file name is not allowed.'));
             }
+        }
+
+        if ($extension === 'svg') {
+            return $this->svg($file, $field, $allowSvg);
         }
 
         $allowed = config('pacms.media.allowed');
@@ -78,6 +82,30 @@ class UploadGuard
         }
 
         return ['extension' => $extension === 'jpeg' ? 'jpg' : $extension, 'mime' => $detected, 'kind' => $kind, 'width' => $width, 'height' => $height];
+    }
+
+    /**
+     * SVG (decision D-10): only when the site allows it and the user may upload SVG. The
+     * file is cleaned afterwards by SvgSanitizer before it is stored.
+     *
+     * @return array{extension: string, mime: string, kind: MediaKind, width: ?int, height: ?int}
+     */
+    private function svg(UploadedFile $file, string $field, bool $allowed): array
+    {
+        if (! $allowed) {
+            $this->fail($field, __('SVG uploads are switched off. An administrator can allow them under Settings → Media.'));
+        }
+
+        $detected = (string) (new finfo(FILEINFO_MIME_TYPE))->file($file->getRealPath());
+        if (! in_array($detected, ['image/svg+xml', 'image/svg', 'text/xml', 'application/xml', 'text/plain', 'text/html'], true)) {
+            $this->fail($field, __('The file content does not match its .:ext extension.', ['ext' => 'svg']));
+        }
+
+        if ($file->getSize() > SvgSanitizer::MAX_KB * 1024) {
+            $this->fail($field, __('SVG files may be at most :size MB.', ['size' => SvgSanitizer::MAX_KB / 1024]));
+        }
+
+        return ['extension' => 'svg', 'mime' => 'image/svg+xml', 'kind' => MediaKind::Image, 'width' => null, 'height' => null];
     }
 
     private function fail(string $field, string $message): never

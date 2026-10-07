@@ -14,12 +14,13 @@
                     <div class="card-body">
                         <x-admin.field name="title" label="Title" :value="$item->title" required data-slug-source="#field-slug" />
                         <x-admin.field name="slug" label="URL slug" :value="$item->slug" help="Optional — generated from the title." :data-slug-auto="$editing ? null : true" />
-                        <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$item->excerpt" help="Shown on news cards and as the search-engine description." />
+                        <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$item->excerpt" data-summary-editor help="Shown on news cards and as the search-engine description (formatting is removed there)." />
+                        <x-admin.field name="body" label="Article text" type="textarea" rows="12" :value="$item->body" data-rich-editor help="The full article, shown under the image. Headings, lists, quotes and links are available." />
                         <x-admin.media-picker name="featured_media_id" label="Image" :media="$item->featuredMedia" :disabled="! $canEdit" />
                         @if ($categories->isNotEmpty())
                             @php($selected = old('categories', $item->exists ? $item->terms->pluck('id')->all() : []))
                             <fieldset class="mb-3">
-                                <legend class="form-label">Categories</legend>
+                                <legend class="form-label fs-6">Categories</legend>
                                 @foreach ($categories as $category)
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category->id }}" id="cat-{{ $category->id }}" @checked(in_array($category->id, array_map('intval', $selected), true))>
@@ -73,4 +74,8 @@
             </section>
         </div>
     </div>
+    @push('islands')
+        @viteReactRefresh
+        @vite('resources/js/admin/islands/summary-editor.jsx')
+    @endpush
 </x-admin.layout>

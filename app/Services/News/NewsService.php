@@ -34,7 +34,7 @@ class NewsService
     {
         return DB::transaction(function () use ($user, $data) {
             $news = new News;
-            $news->fill(Arr::only($data, ['title', 'excerpt', 'featured_media_id', 'featured']));
+            $news->fill(Arr::only($data, ['title', 'excerpt', 'body', 'featured_media_id', 'featured']));
             $news->slug = $this->uniqueSlug($data['slug'] ?? null, (string) $data['title']);
             $news->forceFill(['author_id' => $user->id, 'created_by' => $user->id, 'updated_by' => $user->id])->save();
             $news->syncTerms('news_category', (array) ($data['categories'] ?? []));
@@ -56,7 +56,7 @@ class NewsService
         }
 
         return DB::transaction(function () use ($user, $news, $data) {
-            $news->fill(Arr::only($data, ['title', 'excerpt', 'featured_media_id', 'featured']));
+            $news->fill(Arr::only($data, ['title', 'excerpt', 'body', 'featured_media_id', 'featured']));
             if (! empty($data['slug']) && $data['slug'] !== $news->slug) {
                 $news->slug = $this->uniqueSlug($data['slug'], (string) $news->title, $news->id);
             }

@@ -53,7 +53,8 @@ class ImportController extends Controller
         return view('admin.import.show', [
             'job' => $import,
             'report' => $import->report,
-            'blocks' => $this->withoutPendingAssets((array) ($document['blocks'] ?? [])),
+            'blocks' => $this->previewAssets((array) ($document['blocks'] ?? []), $this->libraryAssets($import)),
+            'pendingAssets' => array_values(array_diff(array_column((array) $import->assets, 'key'), array_keys($this->libraryAssets($import)))),
             'pages' => in_array($import->kind, ['block', 'section'], true)
                 ? Page::query()->orderBy('path')->get(['id', 'title', 'path'])->filter(fn (Page $page) => Gate::allows('update', $page))->values()
                 : collect(),
@@ -120,20 +121,40 @@ class ImportController extends Controller
     }
 
     /**
-     * For the preview: images that are not downloaded yet are left out.
+     * Assets that point to an existing library item: key => media id.
+     *
+     * @return array<string, int>
+     */
+    private function libraryAssets(ImportJob $import): array
+    {
+        $ids = [];
+        foreach ((array) $import->assets as $asset) {
+            if ($asset['strategy'] === 'existing' && ! empty($asset['media'])) {
+                $ids[(string) $asset['key']] = (int) $asset['media'];
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * For the preview: images already in the library are shown; the others stay pending
+     * placeholders (they appear after the import downloads them).
      *
      * @param  array<mixed>  $value
+     * @param  array<string, int>  $library
      * @return array<mixed>
      */
-    private function withoutPendingAssets(array $value): array
+    private function previewAssets(array $value, array $library): array
     {
         foreach ($value as $key => $item) {
-            if (is_array($item)) {
-                if (array_keys($item) === ['$asset']) {
-                    unset($value[$key]);
-                } else {
-                    $value[$key] = $this->withoutPendingAssets($item);
-                }
+            if (! is_array($item)) {
+                continue;
+            }
+            if (array_keys($item) === ['$asset'] && isset($library[(string) $item['$asset']])) {
+                $value[$key] = ['$media' => $library[(string) $item['$asset']]];
+            } elseif (array_keys($item) !== ['$asset']) {
+                $value[$key] = $this->previewAssets($item, $library);
             }
         }
 

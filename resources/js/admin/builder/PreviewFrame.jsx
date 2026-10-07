@@ -16,6 +16,7 @@ export default function PreviewFrame() {
     const nodes = useBuilder((state) => state.nodes);
     const context = useBuilder((state) => state.context);
     const fields = useBuilder((state) => state.fields);
+    const pendingAssets = useBuilder((state) => state.pendingAssets);
     const selected = useBuilder((state) => state.selected);
     const device = useBuilder((state) => state.device);
     const endpoints = useBuilder((state) => state.definitions?.endpoints);
@@ -67,7 +68,7 @@ export default function PreviewFrame() {
         const timer = setTimeout(async () => {
             setStatus('updating');
             try {
-                const { data } = await adminHttp.post(endpoints.resolve, { blocks: nodes, context, fields: fields ?? undefined }, { signal: controller.signal });
+                const { data } = await adminHttp.post(endpoints.resolve, { blocks: nodes, context, fields: fields ?? undefined, assets: pendingAssets.length ? pendingAssets : undefined }, { signal: controller.signal });
                 resolved.current = data.blocks;
                 post({ type: 'pacms:preview', blocks: data.blocks });
                 setErrors({});
@@ -86,7 +87,7 @@ export default function PreviewFrame() {
             clearTimeout(timer);
             controller.abort();
         };
-    }, [nodes, context, fields, ready, endpoints, setErrors]);
+    }, [nodes, context, fields, pendingAssets, ready, endpoints, setErrors]);
 
     useEffect(() => {
         if (ready) post({ type: 'pacms:select', uuid: selected });

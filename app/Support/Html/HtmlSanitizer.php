@@ -15,6 +15,8 @@ final class HtmlSanitizer
 {
     private SymfonySanitizer $sanitizer;
 
+    private SymfonySanitizer $inline;
+
     public function __construct()
     {
         $config = (new HtmlSanitizerConfig)
@@ -56,11 +58,48 @@ final class HtmlSanitizer
             ->withMaxInputLength(200000);
 
         $this->sanitizer = new SymfonySanitizer($config);
+
+        $this->inline = new SymfonySanitizer((new HtmlSanitizerConfig)
+            ->allowElement('p')
+            ->allowElement('br')
+            ->allowElement('strong')
+            ->allowElement('b')
+            ->allowElement('em')
+            ->allowElement('i')
+            ->allowElement('a', ['href', 'title', 'rel'])
+            ->allowLinkSchemes(['http', 'https', 'mailto', 'tel'])
+            ->allowRelativeLinks()
+            ->forceAttribute('a', 'rel', 'noopener noreferrer')
+            ->withMaxInputLength(20000));
     }
 
     public function sanitize(string $html): string
     {
         return trim($this->sanitizer->sanitize($html));
+    }
+
+    /**
+     * Short formatted text such as page and news summaries: paragraphs, bold, italic and
+     * links only.
+     */
+    public function inline(string $html): string
+    {
+        return trim($this->inline->sanitize($html));
+    }
+
+    /**
+     * Readable plain text from HTML (search descriptions, cards, structured data).
+     */
+    public static function toText(?string $html): ?string
+    {
+        if ($html === null || trim($html) === '') {
+            return null;
+        }
+
+        $text = html_entity_decode(strip_tags((string) preg_replace('#</p>\s*<p[^>]*>|<br\s*/?>#i', ' ', $html)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim((string) preg_replace('/\s+/u', ' ', $text));
+
+        return $text === '' ? null : $text;
     }
 
     /**

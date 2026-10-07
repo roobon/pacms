@@ -11,7 +11,7 @@
                 @csrf
                 <div class="card-header"><h2 class="h6 mb-0">1. Paste or upload</h2></div>
                 <div class="card-body">
-                    <x-admin.field name="json" label="JSON" type="textarea" rows="14" class="font-monospace small" help="The whole document, starting with { and including &quot;schema_version&quot;: &quot;1.0&quot;. Code-like content is never run; it is removed and reported." />
+                    <x-admin.field name="json" label="JSON" type="textarea" rows="14" class="font-monospace small" help="The whole document, starting with { and containing the schema_version line (1.0). Code-like content is never run; it is removed and reported." />
                     <div class="mb-3">
                         <label for="field-file" class="form-label">…or a .json file (max 2 MB)</label>
                         <input id="field-file" type="file" name="file" accept=".json,application/json" class="form-control @error('file') is-invalid @enderror">

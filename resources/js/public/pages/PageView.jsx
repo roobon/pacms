@@ -4,6 +4,7 @@ import { hasHeadingOne } from '../../blocks/utils.js';
 import Breadcrumbs from '../components/common/Breadcrumbs.jsx';
 import Image from '../components/common/Image.jsx';
 import SeoHead from '../components/common/SeoHead.jsx';
+import Summary from '../components/common/Summary.jsx';
 
 /**
  * Renders a CMS page: blocks when the page has them, otherwise title, summary and
@@ -34,7 +35,7 @@ export default function PageView({ page }) {
                         <h1 className="display-6 fw-bold" tabIndex={-1}>
                             {page.title}
                         </h1>
-                        {page.excerpt && <p className="lead mb-0 pa-page-lead">{page.excerpt}</p>}
+                        <Summary html={page.excerpt_html} text={page.excerpt} className="lead mb-0 pa-page-lead" />
                     </div>
                 </header>
             )}

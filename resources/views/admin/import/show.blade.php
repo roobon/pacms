@@ -95,6 +95,18 @@
                     @csrf
                     <div class="card-header"><h2 class="h6 mb-0">2. Import</h2></div>
                     <div class="card-body">
+                        @if ($counts['warning'] > 0)
+                            {{-- Warnings must be acknowledged (CMS-BLOCK-SCHEMA.md §16): shown first so it is not missed. --}}
+                            <div class="pa-ack mb-3 @error('acknowledge') is-invalid @enderror">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input" type="checkbox" name="acknowledge" value="1" id="acknowledge" aria-describedby="acknowledge-help">
+                                    <label class="form-check-label small fw-semibold" for="acknowledge">I have read the {{ trans_choice(':count warning|:count warnings', $counts['warning'], ['count' => $counts['warning']]) }} in the report</label>
+                                </div>
+                                <div id="acknowledge-help" class="form-text mb-0">Warnings name what was changed or left out. The rest imports normally.</div>
+                                @error('acknowledge')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                            </div>
+                        @endif
+
                         @if ($job->kind === 'page')
                             <input type="hidden" name="target" value="new">
                             <p class="small">Creates a new <strong>draft page</strong>. If the URL is taken, a number is added.</p>
@@ -103,7 +115,7 @@
                             <p class="small">Creates a new <strong>template</strong>, hidden from the builder until you offer it.</p>
                         @else
                             <fieldset class="mb-3">
-                                <legend class="form-label">Where should the blocks go?</legend>
+                                <legend class="form-label fs-6 fw-semibold">Where should the blocks go?</legend>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="target" value="page" id="target-page" @checked(old('target', 'page') === 'page') @disabled($pages->isEmpty())>
                                     <label class="form-check-label" for="target-page">At the end of a page (as unpublished changes)</label>
@@ -125,7 +137,7 @@
 
                         @if (! empty($job->assets))
                             <fieldset class="mb-3">
-                                <legend class="form-label">Images</legend>
+                                <legend class="form-label fs-6 fw-semibold">Images</legend>
                                 @foreach ($job->assets as $asset)
                                     @php($key = $asset['key'])
                                     <div class="pa-asset-choice">
@@ -151,14 +163,6 @@
                             </fieldset>
                         @endif
 
-                        @if ($counts['warning'] > 0)
-                            <div class="form-check mb-3">
-                                <input class="form-check-input @error('acknowledge') is-invalid @enderror" type="checkbox" name="acknowledge" value="1" id="acknowledge">
-                                <label class="form-check-label small" for="acknowledge">I have read the {{ trans_choice(':count warning|:count warnings', $counts['warning'], ['count' => $counts['warning']]) }}.</label>
-                                @error('acknowledge')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                        @endif
-
                         <button type="submit" class="btn btn-primary w-100">Import as draft</button>
                     </div>
                 </form>
@@ -181,6 +185,7 @@
     @endif
 
     @if ($blocks !== [])
-        <x-admin.block-builder :blocks="$blocks" form="import-confirm" :readonly="true" :context="$job->kind === 'template' ? 'template' : 'page'" heading="Preview (images appear after import)" />
+        <x-admin.block-builder :blocks="$blocks" form="import-confirm" :readonly="true" :context="$job->kind === 'template' ? 'template' : 'page'" :pending-assets="$pendingAssets"
+            :heading="$pendingAssets === [] ? 'Preview' : 'Preview (images to be downloaded appear after the import)'" />
     @endif
 </x-admin.layout>

@@ -13,13 +13,22 @@
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="card pa-card mb-4">
-                <div class="pa-media-tile__thumb" style="aspect-ratio: auto; min-height: 12rem">
-                    @if ($item->isImage() && $item->isPublic())
-                        <img src="{{ $item->thumbnailUrl(960) }}" alt="{{ $item->alt }}" style="object-fit: contain; max-height: 28rem">
-                    @else
-                        <i class="bi {{ $item->kind->icon() }}" aria-hidden="true"></i>
-                    @endif
-                </div>
+                {{-- Preview: public files from their URL, private ones through the staff-only file route. --}}
+                @php($fileUrl = $item->isPublic() ? $item->url() : route('admin.media.file', $item))
+                @if ($item->isImage())
+                    <div class="pa-media-tile__thumb" style="aspect-ratio: auto; min-height: 12rem">
+                        <img src="{{ $item->isPublic() ? $item->thumbnailUrl(960) : $fileUrl }}" alt="{{ $item->alt }}" style="object-fit: contain; max-height: 28rem">
+                    </div>
+                @elseif ($item->kind === \App\Enums\MediaKind::Video)
+                    <video class="pa-media-preview" src="{{ $fileUrl }}" controls preload="metadata"></video>
+                @elseif ($item->kind === \App\Enums\MediaKind::Audio)
+                    <div class="p-3"><audio class="w-100" src="{{ $fileUrl }}" controls preload="metadata"></audio></div>
+                @elseif ($item->extension === 'pdf')
+                    <iframe class="pa-media-preview" src="{{ route('admin.media.file', $item) }}" style="height: 28rem" title="Preview of {{ $item->original_name }}"></iframe>
+                    <p class="small px-3 pt-2 mb-0">Preview not showing? <a href="{{ route('admin.media.file', $item) }}" target="_blank" rel="noopener">Open the PDF<span class="visually-hidden"> (opens in new tab)</span></a> or <a href="{{ route('admin.media.download', $item) }}">download it</a>.</p>
+                @else
+                    <div class="pa-media-tile__thumb" style="aspect-ratio: auto; min-height: 12rem"><i class="bi {{ $item->kind->icon() }}" aria-hidden="true"></i></div>
+                @endif
                 <div class="card-body small">
                     <dl class="pa-meta mb-0">
                         <dt>Type</dt><dd>{{ $item->mime_type }}</dd>
@@ -45,6 +54,14 @@
                             <li class="list-group-item d-flex justify-content-between">
                                 @if ($usage->owner instanceof \App\Models\Page)
                                     <a href="{{ route('admin.pages.edit', $usage->owner) }}">{{ $usage->owner->title }}</a>
+                                @elseif ($usage->owner instanceof \App\Models\News)
+                                    <a href="{{ route('admin.news.edit', $usage->owner) }}">{{ $usage->owner->title }}</a> <span class="text-body-secondary">news</span>
+                                @elseif ($usage->owner instanceof \App\Models\GlobalBlock)
+                                    <a href="{{ route('admin.global-blocks.edit', $usage->owner) }}">{{ $usage->owner->name }}</a> <span class="text-body-secondary">global block</span>
+                                @elseif ($usage->owner instanceof \App\Models\BlockTemplate)
+                                    <a href="{{ route('admin.block-templates.edit', $usage->owner) }}">{{ $usage->owner->name }}</a> <span class="text-body-secondary">template</span>
+                                @elseif ($usage->owner instanceof \App\Models\BlockType)
+                                    <a href="{{ route('admin.block-types.edit', $usage->owner) }}">{{ $usage->owner->name }}</a> <span class="text-body-secondary">custom block</span>
                                 @else
                                     <span>{{ class_basename($usage->owner) }} #{{ $usage->owner_id }}</span>
                                 @endif
@@ -56,6 +73,26 @@
             </section>
 
             @can('media.update')
+                <section class="card pa-card mb-4" aria-labelledby="visibility-heading">
+                    <div class="card-header"><h2 id="visibility-heading" class="h6 mb-0">Visibility</h2></div>
+                    <div class="card-body small">
+                        @if ($item->isPublic())
+                            <p>Public: anyone with the address can open it.</p>
+                            <form method="POST" action="{{ route('admin.media.visibility', $item) }}">
+                                @csrf <input type="hidden" name="private" value="1">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" @disabled($usages->isNotEmpty())><i class="bi bi-lock" aria-hidden="true"></i> Make private</button>
+                                @if ($usages->isNotEmpty())<div class="form-text">Used on the site, so it must stay public.</div>@endif
+                            </form>
+                        @else
+                            <p>Private: only signed-in staff can open it; it is never served from the public storage.</p>
+                            <form method="POST" action="{{ route('admin.media.visibility', $item) }}">
+                                @csrf <input type="hidden" name="private" value="0">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-unlock" aria-hidden="true"></i> Make public</button>
+                            </form>
+                        @endif
+                    </div>
+                </section>
+
                 <section class="card pa-card mb-4" aria-labelledby="replace-heading">
                     <div class="card-header"><h2 id="replace-heading" class="h6 mb-0">Replace file</h2></div>
                     <form method="POST" action="{{ route('admin.media.replace', $item) }}" enctype="multipart/form-data" class="card-body">
@@ -90,7 +127,7 @@
 
                     @if ($item->isImage())
                         <fieldset class="mb-3">
-                            <legend class="form-label">Focal point</legend>
+                            <legend class="form-label fs-6">Focal point</legend>
                             <p class="form-text mt-0">Where to keep the focus when the image is cropped (0 = left/top, 1 = right/bottom).</p>
                             <div class="row g-2">
                                 <div class="col-6"><label for="focal-x" class="form-label small">Horizontal</label><input id="focal-x" type="number" step="0.05" min="0" max="1" name="focal_x" value="{{ old('focal_x', $item->focal_point['x'] ?? 0.5) }}" class="form-control"></div>
@@ -102,7 +139,7 @@
                     @php($selected = $item->terms->pluck('id')->all())
                     @if ($categories->isNotEmpty())
                         <fieldset class="mb-3">
-                            <legend class="form-label">Categories</legend>
+                            <legend class="form-label fs-6">Categories</legend>
                             @foreach ($categories as $category)
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category->id }}" id="cat-{{ $category->id }}" @checked(in_array($category->id, $selected, true))>
@@ -113,7 +150,7 @@
                     @endif
                     @if ($tags->isNotEmpty())
                         <fieldset class="mb-3">
-                            <legend class="form-label">Tags</legend>
+                            <legend class="form-label fs-6">Tags</legend>
                             @foreach ($tags as $tag)
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id }}" id="tag-{{ $tag->id }}" @checked(in_array($tag->id, $selected, true))>

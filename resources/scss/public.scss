@@ -270,6 +270,15 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: color-mix(in srgb, var(--pa-color-on-bg-dark) 80%, transparent);
     padding: 3rem 0 2rem;
     margin-top: var(--pa-space-section);
+}
+
+// Pages built from blocks bring their own spacing (sections have padding), so a coloured
+// last section can meet the footer without a white strip in between.
+main:has(.pa-page-blocks) ~ .pa-site-footer {
+    margin-top: 0;
+}
+
+.pa-site-footer {
 
     a {
         color: var(--pa-color-on-bg-dark);
@@ -296,6 +305,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .pa-page-lead {
     max-width: 46rem;
     color: var(--pa-color-muted);
+}
+
+// Formatted summary (paragraphs, bold, italic, links).
+.pa-summary {
+    p { margin: 0 0 .5em; }
+    p:last-child { margin-bottom: 0; }
+    a { color: var(--pa-color-primary); }
 }
 
 .pa-page-featured {
@@ -854,4 +870,13 @@ img.pa-ratio {
 
     &--dividers &__item + &__item { border-top: 1px solid var(--pa-color-border); }
     &--dividers { row-gap: 0; }
+}
+
+// News article text --------------------------------------------------------------------
+.pa-article-body {
+    margin-top: var(--pa-space-6);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+
+    h2, h3, h4 { margin-top: var(--pa-space-6); }
 }

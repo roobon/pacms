@@ -5,6 +5,7 @@ use App\Models\BlockTemplate;
 use App\Models\ImportJob;
 use App\Models\Media;
 use App\Models\Page;
+use App\Services\Media\MediaService;
 use App\Support\Http\SafeHttpClient;
 
 it('accepts every complete example in CMS-BLOCK-SCHEMA.md without errors', function () {
@@ -208,4 +209,33 @@ it('reads the ChatGPT shape with blocks under "content" and a status', function 
         ->and($job->documentData()['blocks'])->toHaveCount(2)
         ->and($info)->toContain('under "content/blocks"')->toContain('"status" is ignored')->toContain('read as the page')
         ->and(implode(' ', messages($job, 'warning')))->toContain('The HTML was cleaned'); // <h1> is not allowed in rich text
+});
+
+it('previews imports with library images and pending downloads without errors', function () {
+    $editor = userWithRole('editor');
+    $media = app(MediaService::class)->store(fakeJpeg(), $editor, ['alt' => 'Library photo']);
+
+    $job = analyse($editor, [
+        'schema_version' => '1.0', 'kind' => 'block',
+        'assets' => [
+            ['key' => 'lib', 'media' => $media->id, 'strategy' => 'existing'],
+            ['key' => 'new', 'url' => 'https://images.example.org/new.jpg', 'strategy' => 'download'],
+        ],
+        'blocks' => [
+            ['type' => 'image', 'content' => ['image' => ['$asset' => 'lib'], 'alt' => 'A']],
+            ['type' => 'image', 'content' => ['image' => ['$asset' => 'new'], 'alt' => 'B']],
+        ],
+    ]);
+
+    $page = $this->actingAs($editor)->get(route('admin.import.show', $job))->assertOk();
+    $data = json_decode(html_entity_decode((string) str($page->getContent())->between('id="page-builder-data" type="application/json">', '</script>')), true);
+
+    expect($data['blocks'][0]['content']['image'])->toBe(['$media' => $media->id])
+        ->and($data['pendingAssets'])->toBe(['new']);
+
+    // The preview endpoint accepts the pending image as a placeholder.
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => $data['blocks'], 'assets' => ['new']])
+        ->assertOk()
+        ->assertJsonPath('blocks.0.content.image.id', $media->id)
+        ->assertJsonPath('blocks.1.content.image', null);
 });

@@ -51,7 +51,7 @@
                                 <div id="slug-help" class="form-text">Lowercase letters, numbers and hyphens. Leave empty to create it from the title. Changing the URL of a published page adds an automatic redirect from the old address when you publish.</div>
                             </div>
                             <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$page->excerpt"
-                                help="Shown under the title and used as the default search-engine description." />
+                                data-summary-editor help="Shown under the title and used as the default search-engine description (formatting is removed there)." />
                             <p class="small text-body-secondary mb-0"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i> Build the page content with blocks in the <a href="#builder-heading">Page content</a> section below.</p>
                         </div>
                     </section>
@@ -246,4 +246,8 @@
 
     <x-admin.block-builder :blocks="$blocks" form="page-form" :readonly="$readonly" context="page"
         :owner="$page->exists ? ['type' => 'page', 'id' => $page->id] : null" :autosave="$autosave" />
+    {{-- React refresh is already added by the block builder component. --}}
+    @push('islands')
+        @vite('resources/js/admin/islands/summary-editor.jsx')
+    @endpush
 </x-admin.layout>

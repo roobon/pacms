@@ -4,6 +4,8 @@ namespace App\Http\Requests\Admin;
 
 use App\Enums\MediaKind;
 use App\Models\Page;
+use App\Rules\SummaryText;
+use App\Support\Html\HtmlSanitizer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -33,6 +35,8 @@ class PageRequest extends FormRequest
         $this->merge([
             'slug' => $slug === '' ? null : Str::lower($slug),
             'show_title' => $this->boolean('show_title', true),
+            // Summary: small editor output, cleaned to paragraphs, bold, italic and links.
+            'excerpt' => is_string($this->input('excerpt')) ? (app(HtmlSanitizer::class)->inline($this->input('excerpt')) ?: null) : $this->input('excerpt'),
             'seo' => array_merge((array) $this->input('seo', []), [
                 'robots_index' => $this->boolean('seo.robots_index', true),
                 'robots_follow' => $this->boolean('seo.robots_follow', true),
@@ -51,7 +55,7 @@ class PageRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:191'],
             'parent_id' => ['nullable', 'integer', Rule::exists('pages', 'id')->whereNull('deleted_at')],
-            'excerpt' => ['nullable', 'string', 'max:1000'],
+            'excerpt' => ['nullable', 'string', 'max:20000', new SummaryText],
             'featured_media_id' => ['nullable', 'integer', $image],
             'template' => ['required', Rule::in(array_keys(config('pacms.pages.templates')))],
             'show_title' => ['boolean'],

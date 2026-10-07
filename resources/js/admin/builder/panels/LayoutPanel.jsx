@@ -82,7 +82,7 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
                 {['top', 'bottom', 'left', 'right'].map((side) => (
                     <div className="col-6" key={side}>
                         <Row id={`${id}-p-${side}`} label={`Padding ${side}`} error={errors[`layout.padding.${side}`]}>
-                            <TokenSelect id={`${id}-p-${side}`} group="space" value={getIn(layout, `padding.${side}`) ?? null} onChange={(v) => set(`padding.${side}`, v)} emptyLabel="None" disabled={disabled} />
+                            <TokenSelect id={`${id}-p-${side}`} group="space" value={getIn(layout, `padding.${side}`) ?? null} onChange={(v) => set(`padding.${side}`, v)} emptyLabel="Default" disabled={disabled} />
                         </Row>
                     </div>
                 ))}
