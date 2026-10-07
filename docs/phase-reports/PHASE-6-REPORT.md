@@ -115,6 +115,7 @@ Through the real services, without simulated downloads, I imported a page with:
 4. You can import blocks into a page from the Import screen, but not yet directly from inside the builder (paste JSON into the builder).
 5. `import_jobs` are not pruned yet (Phase 13).
 6. The preview does not show images that haven't been downloaded yet; they appear after the import.
+7. **Idea, deferred by the team lead (2026-10-07):** add a style guide to the AI instructions: theme tokens, background, gradient and card options, and proven section patterns. AI-generated pages would then arrive styled, not just with content. For now, style in the builder and with Design Tokens.
 
 ## Review fixes
 
