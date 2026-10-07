@@ -14,7 +14,7 @@
                     <div class="card-body">
                         <x-admin.field name="title" label="Title" :value="$item->title" required data-slug-source="#field-slug" />
                         <x-admin.field name="slug" label="URL slug" :value="$item->slug" help="Optional — generated from the title." :data-slug-auto="$editing ? null : true" />
-                        <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$item->excerpt" help="Shown on news cards and as the search-engine description." />
+                        <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$item->excerpt" data-summary-editor help="Shown on news cards and as the search-engine description (formatting is removed there)." />
                         <x-admin.media-picker name="featured_media_id" label="Image" :media="$item->featuredMedia" :disabled="! $canEdit" />
                         @if ($categories->isNotEmpty())
                             @php($selected = old('categories', $item->exists ? $item->terms->pluck('id')->all() : []))
@@ -73,4 +73,8 @@
             </section>
         </div>
     </div>
+    @push('islands')
+        @viteReactRefresh
+        @vite('resources/js/admin/islands/summary-editor.jsx')
+    @endpush
 </x-admin.layout>

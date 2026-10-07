@@ -1,6 +1,7 @@
 import Image from '../components/common/Image.jsx';
 import SeoHead from '../components/common/SeoHead.jsx';
 import Breadcrumbs from '../components/common/Breadcrumbs.jsx';
+import Summary from '../components/common/Summary.jsx';
 
 /**
  * News detail (minimal in Phase 4; body blocks arrive with the full module in Phase 8).
@@ -25,7 +26,7 @@ export default function NewsView({ news }) {
                     <h1 className="display-6 fw-bold" tabIndex={-1}>
                         {news.title}
                     </h1>
-                    {news.excerpt && <p className="lead pa-page-lead">{news.excerpt}</p>}
+                    <Summary html={news.excerpt_html} text={news.excerpt} className="lead pa-page-lead" />
                 </div>
             </header>
             {news.featured_image && (

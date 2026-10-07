@@ -32,7 +32,8 @@
  * @property {string} path
  * @property {string} url
  * @property {boolean} is_home
- * @property {string|null} excerpt
+ * @property {string|null} excerpt plain text
+ * @property {string|null} [excerpt_html] formatted summary (cleaned on the server)
  * @property {ImageData|null} featured_image
  * @property {string} template
  * @property {boolean} [show_title]

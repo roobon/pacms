@@ -9,6 +9,7 @@ use App\Models\Revision;
 use App\Services\Cache\CacheVersions;
 use App\Services\Seo\SeoResolver;
 use App\Services\Settings\SettingsService;
+use App\Support\Html\HtmlSanitizer;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -74,7 +75,9 @@ class PagePayloadBuilder
             'path' => $urlPath,
             'url' => $url,
             'is_home' => $isHome,
-            'excerpt' => $fields['excerpt'] ?? null,
+            // Plain text for cards, search and sharing; the formatted version for the page lead.
+            'excerpt' => HtmlSanitizer::toText($fields['excerpt'] ?? null),
+            'excerpt_html' => $this->summaryHtml($fields['excerpt'] ?? null),
             'featured_image' => $featured?->toImageArray('(min-width: 1320px) 1280px, 100vw'),
             'template' => (string) ($fields['template'] ?? 'default'),
             'show_title' => (bool) ($fields['show_title'] ?? true),
@@ -83,7 +86,7 @@ class PagePayloadBuilder
             'breadcrumbs' => $breadcrumbs,
             'seo' => $this->seo->resolve([
                 'title' => (string) ($fields['title'] ?? $page->title),
-                'excerpt' => $fields['excerpt'] ?? null,
+                'excerpt' => HtmlSanitizer::toText($fields['excerpt'] ?? null),
                 'url' => $url,
                 'is_home' => $isHome,
                 'image' => $featured,
@@ -119,5 +122,13 @@ class PagePayloadBuilder
         array_unshift($crumbs, ['title' => (string) $this->settings->get('site', 'name'), 'url' => '/']);
 
         return $crumbs;
+    }
+
+    /**
+     * Summaries are cleaned on save; cleaning again on output also covers older revisions.
+     */
+    private function summaryHtml(?string $excerpt): ?string
+    {
+        return HtmlSanitizer::toText($excerpt) === null ? null : app(HtmlSanitizer::class)->inline((string) $excerpt);
     }
 }

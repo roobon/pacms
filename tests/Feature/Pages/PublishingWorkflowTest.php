@@ -174,3 +174,26 @@ it('lets editors hide the page title, staged like any other change', function ()
     $page->applySnapshot(['fields' => ['title' => 'About us']]);
     expect($page->show_title)->toBeTrue();
 });
+
+it('keeps limited formatting in summaries and plain text for search and cards', function () {
+    $editor = userWithRole('editor');
+    $page = livePage(['title' => 'Formatted']);
+
+    $this->actingAs($editor)->put(route('admin.pages.update', $page), pagePayload([
+        'title' => 'Formatted', 'slug' => 'formatted', 'lock_version' => $page->lock_version,
+        'excerpt' => '<p>We <strong>plant</strong> <em>trees</em> <a href="/about" onclick="x()">with you</a>.</p><h2>No</h2><script>alert(1)</script>',
+    ]))->assertSessionHasNoErrors();
+    app(PublishingService::class)->transition($page->fresh(), WorkflowAction::Publish, $editor);
+
+    $data = $this->getJson('/api/v1/pages/formatted')->json('data');
+    expect($data['excerpt'])->toBe('We plant trees with you.')
+        ->and($data['excerpt_html'])->toContain('<strong>plant</strong>')->toContain('<em>trees</em>')->toContain('href="/about"')
+        ->not->toContain('onclick')->not->toContain('<script')->not->toContain('<h2')
+        ->and($data['seo']['description'])->toBe('We plant trees with you.');
+
+    // The limit counts visible characters, not markup.
+    $this->actingAs($editor)->put(route('admin.pages.update', $page), pagePayload([
+        'title' => 'Formatted', 'slug' => 'formatted', 'lock_version' => $page->fresh()->lock_version,
+        'excerpt' => '<p><strong>'.str_repeat('a', 1001).'</strong></p>',
+    ]))->assertSessionHasErrors('excerpt');
+});

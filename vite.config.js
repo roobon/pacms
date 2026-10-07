@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/admin/app.js',
                 'resources/js/admin/islands/media-picker.jsx',
                 'resources/js/admin/islands/page-builder.jsx',
+                'resources/js/admin/islands/summary-editor.jsx',
                 // Public website: React SPA.
                 'resources/scss/public.scss',
                 'resources/js/public/main.jsx',

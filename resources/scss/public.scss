@@ -298,6 +298,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: var(--pa-color-muted);
 }
 
+// Formatted summary (paragraphs, bold, italic, links).
+.pa-summary {
+    p { margin: 0 0 .5em; }
+    p:last-child { margin-bottom: 0; }
+    a { color: var(--pa-color-primary); }
+}
+
 .pa-page-featured {
     display: block;
     width: 100%;
