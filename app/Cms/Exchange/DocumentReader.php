@@ -172,6 +172,39 @@ final class DocumentReader
     {
         $kind = $document['kind'] ?? null;
 
+        // Blocks under another name ("content.blocks", "body", "sections", "components"),
+        // at the top level or inside "page".
+        foreach (['' => &$document, 'page/' => &$document['page']] as $prefix => &$scope) {
+            if (! is_array($scope) || isset($scope['blocks'])) {
+                continue;
+            }
+            foreach (['content.blocks', 'content', 'body', 'sections', 'components'] as $path) {
+                $found = data_get($scope, $path);
+                if (is_array($found) && $found !== [] && array_is_list($found) && is_array($found[0]) && isset($found[0]['type'])) {
+                    $scope['blocks'] = $found;
+                    data_forget($scope, $path);
+                    if (is_array($scope['content'] ?? null) && $scope['content'] === []) {
+                        unset($scope['content']);
+                    }
+                    $report->info('document', __('The blocks were under ":path" instead of "blocks"; they were read as the blocks.', ['path' => $prefix.str_replace('.', '/', $path)]), '/'.$prefix.str_replace('.', '/', $path));
+
+                    break;
+                }
+            }
+        }
+        unset($scope);
+
+        foreach (['' => $document, 'page/' => $document['page'] ?? null] as $prefix => $scope) {
+            if (is_array($scope) && array_key_exists('status', $scope)) {
+                $report->info('document', __('"status" is ignored: imports are always drafts, and a person publishes them.'), '/'.$prefix.'status');
+                if ($prefix === '') {
+                    unset($document['status']);
+                } else {
+                    unset($document['page']['status']);
+                }
+            }
+        }
+
         if (isset($document['blocks']) && is_array($document['blocks']) && ! array_is_list($document['blocks']) && isset($document['blocks']['type'])) {
             $document['blocks'] = [$document['blocks']];
             $report->info('document', __('"blocks" was a single block; it was read as a list of one.'), '/blocks');

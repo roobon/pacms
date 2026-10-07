@@ -121,6 +121,7 @@ Through the real services, without simulated downloads, I imported a page with:
 | Finding | Change |
 |---|---|
 | A ChatGPT-made component was refused: “A page document needs a "page" object” | Common envelope mistakes are repaired and noted instead of refused. A `page` document with its blocks at the top level becomes a page when a title is known, otherwise it imports as blocks or a section (you choose where they go). A missing or made-up `kind` (e.g. `component`) is worked out from the contents. A single block object is read as a list of one. The AI instructions now show the section/component shape too. |
+| A second ChatGPT page had its blocks under `"content": {"blocks": […]}` and a `"status"` | Blocks are also found under `content.blocks`, `content`, `body`, `sections` or `components` (top level or inside `page`); `status` is ignored with a note (imports are always drafts). Test added. |
 | The error screen gave no way to correct the document; “Unknown import”, “1 errors” | The submitted JSON is kept (`import_jobs.source`) and shown in an editable box with **Check again**. The headings and plurals were fixed. Tests added. |
 
 ## Architectural decisions (Phase 6)

@@ -187,3 +187,25 @@ it('shows the submitted JSON so a failed document can be corrected and checked a
         ->assertSee('fix the error below')
         ->assertSee('&quot;kind&quot;: &quot;page&quot;', false);
 });
+
+it('reads the ChatGPT shape with blocks under "content" and a status', function () {
+    $job = analyse(userWithRole('editor'), [
+        'schema_version' => '1.0',
+        'kind' => 'page',
+        'title' => 'About Us',
+        'slug' => 'about-us',
+        'status' => 'draft',
+        'content' => ['blocks' => [
+            ['type' => 'rich-text', 'content' => ['html' => '<p><a href="/">Probha Aurora Foundation</a> / About Us</p><h1>About Us</h1><p>Building a greener future.</p>']],
+            ['type' => 'heading', 'content' => ['text' => 'Our mission', 'level' => 2]],
+        ]],
+    ]);
+
+    $info = implode(' ', messages($job, 'info'));
+    expect($job->status)->toBe(ImportJob::AWAITING)
+        ->and($job->kind)->toBe('page')
+        ->and($job->documentData()['page']['title'])->toBe('About Us')
+        ->and($job->documentData()['blocks'])->toHaveCount(2)
+        ->and($info)->toContain('under "content/blocks"')->toContain('"status" is ignored')->toContain('read as the page')
+        ->and(implode(' ', messages($job, 'warning')))->toContain('The HTML was cleaned'); // <h1> is not allowed in rich text
+});
