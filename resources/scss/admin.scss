@@ -1221,3 +1221,9 @@ $sidebar-bg: #0F172A;
 
     &.is-invalid { border-color: $danger; background: #FDF0F0; }
 }
+
+// Fieldset legends used as field labels: same size as other labels (Bootstrap's default
+// legend is 1.5rem).
+legend.form-label {
+    font-size: 1rem;
+}

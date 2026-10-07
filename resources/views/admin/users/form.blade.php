@@ -24,7 +24,7 @@
                 <div class="card pa-card mb-4">
                     <div class="card-body">
                         <fieldset class="mb-3">
-                            <legend class="form-label">Status</legend>
+                            <legend class="form-label fs-6">Status</legend>
                             @foreach (\App\Enums\UserStatus::cases() as $status)
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" id="status-{{ $status->value }}" value="{{ $status->value }}"
@@ -35,7 +35,7 @@
                         </fieldset>
 
                         <fieldset>
-                            <legend class="form-label">Roles</legend>
+                            <legend class="form-label fs-6">Roles</legend>
                             @php($current = old('roles', $user->exists ? $user->roles->pluck('name')->all() : []))
                             @forelse ($assignableRoles as $role)
                                 <div class="form-check">

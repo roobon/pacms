@@ -19,7 +19,7 @@
                         @if ($categories->isNotEmpty())
                             @php($selected = old('categories', $item->exists ? $item->terms->pluck('id')->all() : []))
                             <fieldset class="mb-3">
-                                <legend class="form-label">Categories</legend>
+                                <legend class="form-label fs-6">Categories</legend>
                                 @foreach ($categories as $category)
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category->id }}" id="cat-{{ $category->id }}" @checked(in_array($category->id, array_map('intval', $selected), true))>

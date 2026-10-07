@@ -127,7 +127,7 @@
 
                     @if ($item->isImage())
                         <fieldset class="mb-3">
-                            <legend class="form-label">Focal point</legend>
+                            <legend class="form-label fs-6">Focal point</legend>
                             <p class="form-text mt-0">Where to keep the focus when the image is cropped (0 = left/top, 1 = right/bottom).</p>
                             <div class="row g-2">
                                 <div class="col-6"><label for="focal-x" class="form-label small">Horizontal</label><input id="focal-x" type="number" step="0.05" min="0" max="1" name="focal_x" value="{{ old('focal_x', $item->focal_point['x'] ?? 0.5) }}" class="form-control"></div>
@@ -139,7 +139,7 @@
                     @php($selected = $item->terms->pluck('id')->all())
                     @if ($categories->isNotEmpty())
                         <fieldset class="mb-3">
-                            <legend class="form-label">Categories</legend>
+                            <legend class="form-label fs-6">Categories</legend>
                             @foreach ($categories as $category)
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category->id }}" id="cat-{{ $category->id }}" @checked(in_array($category->id, $selected, true))>
@@ -150,7 +150,7 @@
                     @endif
                     @if ($tags->isNotEmpty())
                         <fieldset class="mb-3">
-                            <legend class="form-label">Tags</legend>
+                            <legend class="form-label fs-6">Tags</legend>
                             @foreach ($tags as $tag)
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id }}" id="tag-{{ $tag->id }}" @checked(in_array($tag->id, $selected, true))>
