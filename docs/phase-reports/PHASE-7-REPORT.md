@@ -3,15 +3,15 @@
 | | |
 |---|---|
 | Date | 2026-10-07 |
-| Branch | `phase/7-media` (not merged) |
+| Branch | `phase/7-media` → merged into `main` 2026-10-07 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
 | Prepared with | Claude Code (AI-assisted). **Needs team review before Phase 8.** |
 
 ```
 PHASE:   7 — Media (library, upload, metadata, search, filtering, preview, replacement,
          secure storage)
-STATUS:  Complete. All automated checks pass. The new Library screens need your browser
-         review.
+STATUS:  Complete and APPROVED by the team lead (2026-10-07); merged into main (c13d783),
+         tag v0.7.0.
 ```
 
 Much of the master prompt's Phase 7 list was already built in Phase 3 (Media core):
