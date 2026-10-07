@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-07 |
-| Branch | `phase/5-advanced-builder` (not merged) |
+| Branch | `phase/5-advanced-builder` → merged into `main` 2026-10-07 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
 | Prepared with | Claude Code (AI-assisted). **Needs team review before Phase 6.** |
 
 ```
 PHASE:   5 — Custom Block Builder (master prompt) / full builder UX (roadmap)
-STATUS:  Complete. All automated checks pass. The builder UI has not been browser-tested
-         by me, so it needs your review.
+STATUS:  Complete and APPROVED by the team lead (2026-10-07) after review fixes; merged into
+         main (18dc09a), tag v0.5.0.
 ```
 
 ## Implemented
@@ -84,7 +84,7 @@ STATUS:  Complete. All automated checks pass. The builder UI has not been browse
 
 | Suite | Result |
 |---|---|
-| Pest (MySQL `pacms_testing`) | **206 passed, 817 assertions** (Phase 4: 187) |
+| Pest (MySQL `pacms_testing`) | **208 passed, 828 assertions** (Phase 4: 187), after review fixes |
 | Vitest | **58 passed** (Phase 4: 37), after review fixes |
 | Larastan level 6 / Pint / ESLint | No errors / passed / clean |
 
