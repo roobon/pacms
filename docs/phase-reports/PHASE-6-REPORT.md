@@ -116,6 +116,13 @@ Through the real services, without simulated downloads, I imported a page with:
 5. `import_jobs` are not pruned yet (Phase 13).
 6. The preview does not show images that haven't been downloaded yet; they appear after the import.
 
+## Review fixes
+
+| Finding | Change |
+|---|---|
+| A ChatGPT-made component was refused: “A page document needs a "page" object” | Common envelope mistakes are repaired and noted instead of refused. A `page` document with its blocks at the top level becomes a page when a title is known, otherwise it imports as blocks or a section (you choose where they go). A missing or made-up `kind` (e.g. `component`) is worked out from the contents. A single block object is read as a list of one. The AI instructions now show the section/component shape too. |
+| The error screen gave no way to correct the document; “Unknown import”, “1 errors” | The submitted JSON is kept (`import_jobs.source`) and shown in an editable box with **Check again**. The headings and plurals were fixed. Tests added. |
+
 ## Architectural decisions (Phase 6)
 
 | Decision | Reason |

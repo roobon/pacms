@@ -93,6 +93,7 @@ class ImportService
             'status' => $report->hasErrors() ? ImportJob::FAILED : ImportJob::AWAITING,
             'title' => mb_substr((string) ($report->toArray()['summary']['title'] ?? $sourceName ?? ''), 0, 255) ?: null,
             'schema_version' => '1.0',
+            'source' => mb_strlen($json) <= DocumentReader::MAX_BYTES ? $json : null,
             'document' => json_encode($translated, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             'assets' => $assets,
             'report' => $report->toArray(),

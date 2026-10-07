@@ -162,3 +162,28 @@ it('imports templates hidden from the builder and needs the right permissions', 
     $this->actingAs(userWithRole('editor'))->get(route('admin.import.show', $job))->assertForbidden();
     $this->actingAs($editor)->get(route('admin.import.show', $job))->assertOk()->assertSee('Imported as a draft');
 });
+
+it('repairs common AI envelope mistakes and says so', function (array $document, string $kind, string $note) {
+    $job = analyse(userWithRole('editor'), ['schema_version' => '1.0'] + $document);
+
+    expect($job->status)->toBe(ImportJob::AWAITING)
+        ->and($job->kind)->toBe($kind)
+        ->and(implode(' ', messages($job, 'info')))->toContain($note);
+})->with([
+    'page kind, blocks at the top, no title' => [['kind' => 'page', 'blocks' => [['type' => 'section', 'children' => [['type' => 'divider']]]]], 'section', 'imported as section'],
+    'page kind, page fields at the top' => [['kind' => 'page', 'title' => 'Mission', 'blocks' => [['type' => 'divider']]], 'page', 'read as the page'],
+    'kind missing' => [['blocks' => [['type' => 'divider']]], 'block', '"kind" was missing'],
+    'made-up kind' => [['kind' => 'component', 'blocks' => [['type' => 'divider']]], 'block', '"kind": "component"'],
+    'single block object' => [['kind' => 'block', 'blocks' => ['type' => 'divider']], 'block', 'list of one'],
+]);
+
+it('shows the submitted JSON so a failed document can be corrected and checked again', function () {
+    $editor = userWithRole('editor');
+    $job = analyse($editor, '{"schema_version": "1.0", "kind": "page", "page": {"blocks": []}}');
+
+    $this->actingAs($editor)->get(route('admin.import.show', $job))
+        ->assertOk()
+        ->assertSee('Check again')
+        ->assertSee('fix the error below')
+        ->assertSee('&quot;kind&quot;: &quot;page&quot;', false);
+});

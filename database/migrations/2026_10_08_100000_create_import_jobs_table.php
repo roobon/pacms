@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('status', 24);               // awaiting_confirmation | importing | completed | failed
             $table->string('title')->nullable();
             $table->string('schema_version', 8);
+            $table->longText('source')->nullable();     // the submitted JSON, so it can be corrected and checked again
             $table->longText('document');               // translated document (internal format, assets pending)
             $table->json('assets')->nullable();         // asset plan
             $table->json('report');

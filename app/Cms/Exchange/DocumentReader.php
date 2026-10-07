@@ -57,6 +57,8 @@ final class DocumentReader
             return null;
         }
 
+        $document = $this->normaliseShape($document, $report);
+
         $kind = $document['kind'] ?? null;
         if ($kind === 'site') {
             $report->error('document', __('Full-site packages ("kind": "site") are not supported in schema 1.0.'), '/kind');
@@ -73,7 +75,7 @@ final class DocumentReader
         $rootPointer = $kind === 'page' ? '/page/blocks' : '/blocks';
 
         if ($kind === 'page' && ! is_array($document['page'] ?? null)) {
-            $report->error('document', __('A page document needs a "page" object.'), '/page');
+            $report->error('document', __('A page document needs a "page" object, for example {"kind": "page", "page": {"title": "About us", "blocks": [ … ]}}.'), '/page');
 
             return null;
         }
@@ -152,6 +154,82 @@ final class DocumentReader
         }
 
         return $document;
+    }
+
+    /**
+     * AI assistants often get the envelope slightly wrong. Repair the common, unambiguous
+     * shapes and say so in the report instead of refusing the document:
+     *
+     * - "kind" missing or unknown ("component", "blocks"…) → worked out from the contents
+     * - "kind": "page" with the blocks at the top level → a page when a title is known,
+     *   otherwise imported as blocks
+     * - a single block object instead of a list → a list of one
+     *
+     * @param  array<string, mixed>  $document
+     * @return array<string, mixed>
+     */
+    private function normaliseShape(array $document, ImportReport $report): array
+    {
+        $kind = $document['kind'] ?? null;
+
+        if (isset($document['blocks']) && is_array($document['blocks']) && ! array_is_list($document['blocks']) && isset($document['blocks']['type'])) {
+            $document['blocks'] = [$document['blocks']];
+            $report->info('document', __('"blocks" was a single block; it was read as a list of one.'), '/blocks');
+        }
+
+        $topLevelBlocks = is_array($document['blocks'] ?? null) && array_is_list($document['blocks']) && $document['blocks'] !== [];
+
+        if ($kind === 'page' && ! is_array($document['page'] ?? null) && $topLevelBlocks) {
+            $title = $document['title'] ?? $document['meta']['title'] ?? null;
+            if (is_scalar($title) && trim((string) $title) !== '') {
+                $document['page'] = array_filter([
+                    'title' => (string) $title,
+                    'slug' => $document['slug'] ?? null,
+                    'excerpt' => $document['excerpt'] ?? null,
+                    'seo' => $document['seo'] ?? null,
+                    'blocks' => $document['blocks'],
+                ], fn ($v) => $v !== null);
+                unset($document['blocks'], $document['title'], $document['slug'], $document['excerpt'], $document['seo']);
+                $report->info('document', __('The page fields were at the top level instead of inside "page"; they were read as the page.'), '/page');
+            } else {
+                $document['kind'] = $this->blocksKind($document['blocks']);
+                $report->info('document', __('"kind" was "page" but there was no "page" object or title, so the content is imported as :kind (you choose where it goes).', ['kind' => $document['kind']]), '/kind');
+            }
+
+            return $document;
+        }
+
+        if (! in_array($kind, [...self::KINDS, 'site'], true)) {
+            $inferred = match (true) {
+                is_array($document['page'] ?? null) => 'page',
+                is_array($document['template'] ?? null) && $topLevelBlocks => 'template',
+                $topLevelBlocks => $this->blocksKind($document['blocks']),
+                default => null,
+            };
+
+            if ($inferred !== null) {
+                $report->info('document', $kind === null
+                    ? __('"kind" was missing; the document was read as ":kind".', ['kind' => $inferred])
+                    : __('"kind": ":given" is not a PACMS kind; the document was read as ":kind".', ['given' => is_scalar($kind) ? (string) $kind : '?', 'kind' => $inferred]), '/kind');
+                $document['kind'] = $inferred;
+            }
+        }
+
+        return $document;
+    }
+
+    /**
+     * @param  list<mixed>  $blocks
+     */
+    private function blocksKind(array $blocks): string
+    {
+        foreach ($blocks as $block) {
+            if (! is_array($block) || ($block['type'] ?? null) !== 'section') {
+                return 'block';
+            }
+        }
+
+        return 'section';
     }
 
     /**
