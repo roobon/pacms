@@ -867,6 +867,10 @@ $sidebar-bg: #0F172A;
         > :last-child { margin-bottom: 0; }
 
         &:focus { outline: 3px solid #1B64D1; outline-offset: 1px; }
+
+        &--short { min-height: 5rem; }
+
+        p { margin-bottom: .5rem; }
     }
 }
 

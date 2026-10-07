@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ContentStatus;
 use App\Models\Concerns\HasTerms;
+use App\Support\Html\HtmlSanitizer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -88,7 +89,7 @@ class News extends Model
             'title' => $this->title,
             'url' => $this->url(),
             'external' => false,
-            'excerpt' => $this->excerpt,
+            'excerpt' => HtmlSanitizer::toText($this->excerpt),
             'image' => $this->featuredMedia?->toImageArray('(min-width: 992px) 33vw, 100vw'),
             'date' => $this->published_at?->toIso8601String(),
             'meta' => array_filter(['category' => $category?->name]),

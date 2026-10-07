@@ -5,6 +5,7 @@ namespace App\Services\News;
 use App\Models\News;
 use App\Services\Seo\SeoResolver;
 use App\Services\Settings\SettingsService;
+use App\Support\Html\HtmlSanitizer;
 
 /**
  * Public payload for a published news item (minimal; the full News module is Phase 8).
@@ -31,7 +32,7 @@ class NewsPayloadBuilder
 
         $seo = $this->seo->resolve([
             'title' => $news->title,
-            'excerpt' => $news->excerpt,
+            'excerpt' => HtmlSanitizer::toText($news->excerpt),
             'url' => $url,
             'image' => $news->featuredMedia,
             'type' => 'article',
@@ -54,7 +55,8 @@ class NewsPayloadBuilder
             'title' => $news->title,
             'path' => $news->url(),
             'url' => $url,
-            'excerpt' => $news->excerpt,
+            'excerpt' => HtmlSanitizer::toText($news->excerpt),
+            'excerpt_html' => HtmlSanitizer::toText($news->excerpt) === null ? null : app(HtmlSanitizer::class)->inline((string) $news->excerpt),
             'featured_image' => $news->featuredMedia?->toImageArray('(min-width: 1320px) 1280px, 100vw'),
             'category' => $category?->name,
             'published_at' => $news->published_at?->toIso8601String(),
