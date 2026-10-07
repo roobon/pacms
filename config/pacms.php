@@ -16,6 +16,7 @@ use App\Cms\Blocks\Types\HeadingBlock;
 use App\Cms\Blocks\Types\HeroBlock;
 use App\Cms\Blocks\Types\IconBlock;
 use App\Cms\Blocks\Types\ImageBlock;
+use App\Cms\Blocks\Types\ListBlock;
 use App\Cms\Blocks\Types\NewsBlock;
 use App\Cms\Blocks\Types\QuoteBlock;
 use App\Cms\Blocks\Types\RepeatBlock;
@@ -154,6 +155,7 @@ return [
             ColumnBlock::class,
             HeadingBlock::class,
             RichTextBlock::class,
+            ListBlock::class,
             ImageBlock::class,
             ButtonBlock::class,
             ButtonGroupBlock::class,

@@ -139,3 +139,16 @@ describe('reusable blocks', () => {
         expect(screen.getByRole('heading', { name: 'Shared CTA' })).toBeInTheDocument();
     });
 });
+
+describe('list block', () => {
+    it('uses an ordered list for numbers and decorative icons otherwise', () => {
+        const { container, unmount } = renderBlocks([{ uuid: 'llllllllllllllllllllllllll', type: 'list', content: { style: 'number', items: [{ text: 'One' }, { text: 'Two' }] } }]);
+        expect(container.querySelector('ol.pa-list')).not.toBeNull();
+        expect(screen.getAllByRole('listitem')).toHaveLength(2);
+        unmount();
+
+        renderBlocks([{ uuid: 'mmmmmmmmmmmmmmmmmmmmmmmmmm', type: 'list', content: { style: 'check', items: [{ text: 'Linked', link: { href: '/contact' } }] } }]);
+        expect(document.querySelector('ul.pa-list .bi-check-circle-fill').getAttribute('aria-hidden')).toBe('true');
+        expect(screen.getByRole('link', { name: 'Linked' })).toHaveAttribute('href', '/contact');
+    });
+});

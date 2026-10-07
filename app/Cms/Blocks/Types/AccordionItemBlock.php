@@ -39,7 +39,7 @@ class AccordionItemBlock extends BlockType
 
     public function allowedChildren(): ?array
     {
-        return ['heading', 'rich-text', 'image', 'button', 'button-group', 'columns', 'video', 'divider'];
+        return ['heading', 'rich-text', 'list', 'image', 'button', 'button-group', 'columns', 'video', 'divider'];
     }
 
     public function defaults(): array

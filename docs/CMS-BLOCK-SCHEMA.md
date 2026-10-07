@@ -157,6 +157,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 |---|---|---|---|
 | `heading` | – | S | `text` (≤ 255), `level` (1–6, default 2), `eyebrow`? |
 | `rich-text` | – | S | `html` (§8.3) |
+| `list` | – | S | `style` (bullet/number/check/icon), `icon`?, `columns` (1–3), `items[]`: `text`, `icon`?, `link`? |
 | `image` | – | S | `image` (media), `alt`?, `caption`?, `link`? (§8.4), `lightbox` bool |
 | `video` | – | S | `provider` (`youtube`/`vimeo`/`media`), `url` or `media`, `poster`?, `title` (required for a11y) |
 | `button` | – | S | `label`, `link`, `variant` (`primary`/`secondary`/`accent`/`outline`/`link`), `icon`?, `icon_position` |

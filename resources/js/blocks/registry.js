@@ -1,4 +1,4 @@
-import { ButtonBlock, ButtonGroupBlock, DividerBlock, HeadingBlock, IconBlock, ImageBlock, RichTextBlock, SpacerBlock, VideoBlock } from './components/basic.jsx';
+import { ButtonBlock, ButtonGroupBlock, DividerBlock, HeadingBlock, IconBlock, ImageBlock, ListBlock, RichTextBlock, SpacerBlock, VideoBlock } from './components/basic.jsx';
 import { ColumnBlock, ColumnsBlock, ContainerBlock, SectionBlock } from './components/layout.jsx';
 import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, QuoteBlock, StatisticsBlock } from './components/content.jsx';
 import { NewsBlock } from './components/collections.jsx';
@@ -15,6 +15,7 @@ export const components = {
     column: ColumnBlock,
     heading: HeadingBlock,
     'rich-text': RichTextBlock,
+    list: ListBlock,
     image: ImageBlock,
     button: ButtonBlock,
     'button-group': ButtonGroupBlock,
