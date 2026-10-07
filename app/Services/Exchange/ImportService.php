@@ -322,8 +322,10 @@ class ImportService
             try {
                 $file = $this->http->download((string) $asset['url']);
                 try {
-                    $media = $this->media->store(
-                        new UploadedFile($file['path'], $file['name'], $file['mime'], null, true),
+                    $upload = new UploadedFile($file['path'], $file['name'], $file['mime'], null, true);
+                    // Re-importing the same image reuses the existing library item.
+                    $media = $this->media->findDuplicate($upload) ?? $this->media->store(
+                        $upload,
                         $user,
                         array_filter(['alt' => $asset['alt'], 'credit' => $asset['credit']]),
                     );

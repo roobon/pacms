@@ -1172,3 +1172,43 @@ $sidebar-bg: #0F172A;
 
     &:last-of-type { border-bottom: 0; }
 }
+
+// Media library, Phase 7: bulk selection ------------------------------------------
+.pa-bulk-bar {
+    position: sticky;
+    top: 3.5rem;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem 1rem;
+    margin-bottom: 1rem;
+    padding: .5rem .75rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+}
+
+.pa-media-grid__item {
+    position: relative;
+}
+
+.pa-media-select {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+    z-index: 2;
+    width: 1.25rem;
+    height: 1.25rem;
+    box-shadow: 0 0 0 2px #fff;
+
+    &:checked + .pa-media-tile { outline: 3px solid $primary; outline-offset: -1px; }
+}
+
+.pa-media-preview {
+    display: block;
+    width: 100%;
+    max-height: 32rem;
+    border: 0;
+    background: #F1F5F9;
+}

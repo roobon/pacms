@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Cache\CacheVersions;
 use App\Services\Content\ContentReferenceService;
+use App\Services\Settings\SettingsService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -28,6 +29,8 @@ class MediaService
         private readonly ContentReferenceService $references,
         private readonly ActivityLogger $logger,
         private readonly CacheVersions $cache,
+        private readonly SvgSanitizer $svg,
+        private readonly SettingsService $settings,
     ) {}
 
     /**
@@ -35,13 +38,14 @@ class MediaService
      */
     public function store(UploadedFile $file, User $user, array $meta = [], bool $private = false): Media
     {
-        $info = $this->guard->inspect($file);
+        $info = $this->guard->inspect($file, 'file', $this->mayUploadSvg($user));
+        $source = (string) hash_file('sha256', $file->getRealPath());
         $disk = $private ? config('pacms.media.private_disk') : config('pacms.media.disk');
 
         [$path, $width, $height, $size, $checksum] = $this->writeFile($file, $info, $disk);
 
         try {
-            $media = DB::transaction(function () use ($file, $user, $meta, $info, $disk, $path, $width, $height, $size, $checksum) {
+            $media = DB::transaction(function () use ($file, $user, $meta, $info, $disk, $path, $width, $height, $size, $checksum, $source) {
                 $media = new Media;
                 $media->fill(array_intersect_key($meta, array_flip(['alt', 'caption', 'description', 'credit', 'is_decorative'])));
                 $media->forceFill([
@@ -56,6 +60,7 @@ class MediaService
                     'width' => $width,
                     'height' => $height,
                     'checksum_sha256' => $checksum,
+                    'source_checksum' => $source,
                     'uploaded_by' => $user->getKey(),
                 ])->save();
 
@@ -67,9 +72,58 @@ class MediaService
         }
 
         $this->afterFileChange($media);
-        $this->logger->log('media.uploaded', $media, ['kind' => $media->kind->value, 'size' => $media->size], $user, $media->original_name);
+        $this->logger->log($media->extension === 'svg' ? 'media.svg_uploaded' : 'media.uploaded', $media, ['kind' => $media->kind->value, 'size' => $media->size], $user, $media->original_name);
 
         return $media;
+    }
+
+    /**
+     * An item already in the library with exactly the same original file, if any.
+     */
+    public function findDuplicate(UploadedFile $file): ?Media
+    {
+        $sum = (string) hash_file('sha256', $file->getRealPath());
+
+        return Media::query()->where('source_checksum', $sum)->orWhere('checksum_sha256', $sum)->orderBy('id')->first();
+    }
+
+    /**
+     * Move an item between the public and the private disk. A file that is used on the site
+     * cannot be made private, because those pages would lose it.
+     *
+     * @throws ValidationException
+     */
+    public function setVisibility(Media $media, bool $private, User $user): Media
+    {
+        $target = $private ? config('pacms.media.private_disk') : config('pacms.media.disk');
+        if ($media->disk === $target) {
+            return $media;
+        }
+
+        if ($private && $this->references->isUsed($media)) {
+            throw ValidationException::withMessages(['media' => __('“:name” is used on the site, so it cannot be made private.', ['name' => $media->original_name])]);
+        }
+
+        $from = Storage::disk($media->disk);
+        $to = Storage::disk($target);
+        $files = $this->filesOf($media);
+        foreach ($files as $path) {
+            if ($from->exists($path)) {
+                $to->put($path, (string) $from->get($path));
+            }
+        }
+
+        $media->forceFill(['disk' => $target])->save();
+        $from->delete($files);
+        $this->cache->bump('media');
+        $this->logger->log($private ? 'media.made_private' : 'media.made_public', $media, [], $user, $media->original_name);
+
+        return $media;
+    }
+
+    public function mayUploadSvg(User $user): bool
+    {
+        return (bool) $this->settings->get('media', 'allow_svg') && $user->can('media.upload_svg');
     }
 
     /**
@@ -77,7 +131,7 @@ class MediaService
      */
     public function replace(Media $media, UploadedFile $file, User $user): Media
     {
-        $info = $this->guard->inspect($file);
+        $info = $this->guard->inspect($file, 'file', $this->mayUploadSvg($user));
 
         if ($info['kind'] !== $media->kind) {
             throw ValidationException::withMessages(['file' => __('Replace a :kind with another :kind.', ['kind' => strtolower($media->kind->label())])]);
@@ -95,6 +149,7 @@ class MediaService
             'width' => $width,
             'height' => $height,
             'checksum_sha256' => $checksum,
+            'source_checksum' => (string) hash_file('sha256', $file->getRealPath()),
             'variants' => null,
         ])->save();
 
@@ -149,7 +204,8 @@ class MediaService
      */
     public function generateVariants(Media $media): void
     {
-        if ($media->kind !== MediaKind::Image) {
+        // Vector images scale by themselves: no raster variants.
+        if ($media->kind !== MediaKind::Image || $media->extension === 'svg') {
             return;
         }
 
@@ -187,7 +243,11 @@ class MediaService
         $width = $info['width'];
         $height = $info['height'];
 
-        if ($info['kind'] === MediaKind::Image) {
+        if ($info['extension'] === 'svg') {
+            $clean = $this->svg->clean((string) file_get_contents($file->getRealPath()));
+            [$width, $height] = [$clean['width'], $clean['height']];
+            Storage::disk($disk)->put($path, $clean['svg']);
+        } elseif ($info['kind'] === MediaKind::Image) {
             try {
                 $image = $this->images->decode((string) file_get_contents($file->getRealPath()));
                 $binary = $this->images->reencode($image, $info['extension']);

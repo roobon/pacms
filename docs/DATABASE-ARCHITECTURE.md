@@ -393,6 +393,7 @@ Category and tags via terms. `INDEX(next_check_at)`, `INDEX(coverage_type, statu
 | focal_point | json null | `{x, y}` 0–1 |
 | variants | json null | `{"webp":{"320":"…"},"original":{…},"placeholder":"data:…"}` |
 | checksum_sha256 | char(64) | duplicate detection, `INDEX` |
+| source_checksum | char(64) null | **Phase 7:** SHA-256 of the *uploaded* file (images are re-encoded, so their stored checksum differs). Duplicate uploads are recognised by this or by `checksum_sha256`. `INDEX` |
 | uploaded_by | FK users null SET NULL | |
 | timestamps | | no soft delete (see §1) |
 

@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 6 (AI JSON import/export) approved and merged (v0.6.0). Phase 7 (Media, advanced) is next.** See [docs/phase-reports/PHASE-6-REPORT.md](docs/phase-reports/PHASE-6-REPORT.md).
+- Current status: **Phase 7 (Media, advanced) complete on branch `phase/7-media`, awaiting team review.** See [docs/phase-reports/PHASE-7-REPORT.md](docs/phase-reports/PHASE-7-REPORT.md).
 
 ## Requirements
 

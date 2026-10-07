@@ -93,3 +93,32 @@ document.querySelectorAll('[data-copy-target]').forEach((button) => {
         }, 2000);
     });
 });
+
+// Bulk selection: "select all" checkbox, live count, and a confirmation before deleting.
+document.querySelectorAll('[data-bulk]').forEach((form) => {
+    const items = () => document.querySelectorAll('[data-bulk-item]');
+    const all = form.querySelector('[data-select-all]');
+    const count = form.querySelector('[data-bulk-count]');
+    const refresh = () => {
+        const checked = [...items()].filter((item) => item.checked).length;
+        if (count) count.textContent = `${checked} selected`;
+        if (all) all.checked = checked > 0 && checked === items().length;
+    };
+
+    all?.addEventListener('change', () => {
+        items().forEach((item) => {
+            item.checked = all.checked;
+        });
+        refresh();
+    });
+    items().forEach((item) => item.addEventListener('change', refresh));
+
+    form.addEventListener('submit', (event) => {
+        if (![...items()].some((item) => item.checked)) {
+            event.preventDefault();
+            window.alert('Select at least one file.');
+        } else if (form.elements.action?.value === 'delete' && !window.confirm(form.dataset.confirmDelete)) {
+            event.preventDefault();
+        }
+    });
+});

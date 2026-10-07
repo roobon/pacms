@@ -44,6 +44,18 @@
                             help="The sitemap line is added automatically. Changes apply immediately." class="font-monospace" rows="5" />
                     </div>
                 </section>
+
+                <section class="card pa-card mt-4" aria-labelledby="media-settings-heading">
+                    <div class="card-header"><h2 id="media-settings-heading" class="h6 mb-0">Media</h2></div>
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input type="hidden" name="allow_svg" value="0">
+                            <input class="form-check-input" type="checkbox" name="allow_svg" value="1" id="allow-svg" aria-describedby="allow-svg-help" @checked(old('allow_svg', $media['allow_svg']))>
+                            <label class="form-check-label" for="allow-svg">Allow SVG uploads (logos and icons)</label>
+                        </div>
+                        <div id="allow-svg-help" class="form-text">Only for roles with the “Upload SVG” permission (Administrator by default). Every SVG is cleaned: scripts, event handlers and external references are removed. Off by default because SVG files can contain code.</div>
+                    </div>
+                </section>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Save settings</button>

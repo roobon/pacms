@@ -53,12 +53,15 @@ Route::get('pages/{page}/preview', PagePreviewController::class)->name('pages.pr
 
 // Media Library (permissions checked in the controller: media.view/upload/update/delete)
 Route::get('media', [MediaController::class, 'index'])->name('media.index');
+Route::post('media/bulk', [MediaController::class, 'bulk'])->name('media.bulk');
 Route::post('media', [MediaController::class, 'store'])->name('media.store');
 Route::get('media/{media}', [MediaController::class, 'edit'])->name('media.edit');
 Route::put('media/{media}', [MediaController::class, 'update'])->name('media.update');
 Route::post('media/{media}/replace', [MediaController::class, 'replace'])->name('media.replace');
 Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 Route::get('media/{media}/download', [MediaController::class, 'download'])->name('media.download');
+Route::get('media/{media}/file', [MediaController::class, 'file'])->name('media.file');
+Route::post('media/{media}/visibility', [MediaController::class, 'visibility'])->name('media.visibility');
 
 Route::middleware('can:taxonomies.manage')->group(function () {
     Route::get('taxonomies/{taxonomy}', [TermController::class, 'index'])->name('terms.index');
