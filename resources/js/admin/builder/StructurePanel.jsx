@@ -1,9 +1,10 @@
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import ActionDialog from './ActionDialog.jsx';
 import Palette from './Palette.jsx';
+import Popover from './Popover.jsx';
 import { errorsFor, useBuilder } from './store.js';
 import { canInsert, findNode, flatten, labelOf, projectDrop, removeNode } from './tree.js';
 import { adminHttp } from '../http.js';
@@ -34,7 +35,6 @@ export default function StructurePanel() {
                     <IconButton icon="bi-arrow-counterclockwise" label="Undo (Ctrl+Z)" disabled={!canUndo} onClick={undo} />
                     <IconButton icon="bi-arrow-clockwise" label="Redo (Ctrl+Shift+Z)" disabled={!canRedo} onClick={redo} />
                     <IconButton icon="bi-clipboard" label="Paste (Ctrl+V)" onClick={paste} />
-                    <span className="small text-body-secondary ms-auto d-none d-xxl-inline">Drag ⠿ to move · Alt+arrows</span>
                 </div>
             )}
             {nodes.length === 0 ? (
@@ -198,6 +198,8 @@ function TreeRow({ row, depth, invalid, collapsed, onToggle, readonly }) {
 function MoreMenu({ node, label }) {
     const [open, setOpen] = useState(false);
     const [dialog, setDialog] = useState(null);
+    const button = useRef(null);
+    const closeMenu = useCallback(() => setOpen(false), []);
     const context = useBuilder((state) => state.context);
     const definitions = useBuilder((state) => state.definitions);
     const { copy, paste, replaceWith, select, announce } = useBuilder.getState();
@@ -231,12 +233,12 @@ function MoreMenu({ node, label }) {
 
     return (
         <span className="pa-add-menu">
-            <button type="button" className="btn btn-icon-sm" aria-haspopup="menu" aria-expanded={open} title={`More actions for ${label}`} onClick={() => setOpen(!open)}>
+            <button ref={button} type="button" className="btn btn-icon-sm" aria-haspopup="menu" aria-expanded={open} title={`More actions for ${label}`} onClick={() => setOpen(!open)}>
                 <i className="bi bi-three-dots" aria-hidden="true" />
                 <span className="visually-hidden">More actions for {label}</span>
             </button>
             {open && (
-                <ul className="pa-menu" role="menu" onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}>
+                <Popover anchor={button} onClose={closeMenu} align="end" role="menu" label={`More actions for ${label}`} className="pa-menu">
                     {items.map((item) => (
                         <li key={item.label} role="none">
                             <button
@@ -252,7 +254,7 @@ function MoreMenu({ node, label }) {
                             </button>
                         </li>
                     ))}
-                </ul>
+                </Popover>
             )}
             {dialog === 'template' && (
                 <ActionDialog

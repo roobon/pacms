@@ -652,10 +652,6 @@ $sidebar-bg: #0F172A;
     position: relative;
 
     &__panel {
-        position: absolute;
-        z-index: 30;
-        top: calc(100% + .25rem);
-        left: 0;
         width: 20rem;
         max-height: 26rem;
         overflow-y: auto;
@@ -991,11 +987,14 @@ $sidebar-bg: #0F172A;
     }
 }
 
+// Floating panels are portalled to <body> (Popover.jsx) so scrolling columns never clip them.
+.pa-popover {
+    position: fixed;
+    z-index: 1080;
+    max-width: calc(100vw - 1rem);
+}
+
 .pa-menu {
-    position: absolute;
-    z-index: 40;
-    top: calc(100% + .25rem);
-    right: 0;
     min-width: 14rem;
     margin: 0;
     padding: .25rem;

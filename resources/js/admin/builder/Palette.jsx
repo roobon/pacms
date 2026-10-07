@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { adminHttp } from '../http.js';
 import { cache } from './hooks/useGlobals.js';
+import Popover from './Popover.jsx';
 import { useBuilder } from './store.js';
 import { allowedInContext, canInsert, createNode } from './tree.js';
 
@@ -12,22 +13,23 @@ export default function Palette({ parentUuid, label, icon = 'bi-plus-lg', compac
     const [open, setOpen] = useState(false);
     const [tab, setTab] = useState('blocks');
     const [query, setQuery] = useState('');
+    const button = useRef(null);
     const context = useBuilder((state) => state.context);
     const tabs = [['blocks', 'Blocks'], context !== 'structure' && ['templates', 'Templates'], ['page', 'template'].includes(context) && ['globals', 'Global']].filter(Boolean);
 
-    function close() {
+    const close = useCallback(() => {
         setOpen(false);
         setQuery('');
-    }
+    }, []);
 
     return (
         <span className="pa-add-menu">
-            <button type="button" className={compact ? 'btn btn-icon-sm' : 'btn btn-sm btn-primary'} aria-expanded={open} onClick={() => setOpen(!open)} title={label}>
+            <button ref={button} type="button" className={compact ? 'btn btn-icon-sm' : 'btn btn-sm btn-primary'} aria-expanded={open} onClick={() => setOpen(!open)} title={label}>
                 <i className={`bi ${icon}`} aria-hidden="true" />
                 {compact ? <span className="visually-hidden">{label}</span> : <span> {label}</span>}
             </button>
             {open && (
-                <div className="pa-add-menu__panel" role="dialog" aria-label={label} onKeyDown={(e) => e.key === 'Escape' && close()}>
+                <Popover anchor={button} onClose={close} label={label} className="pa-add-menu__panel">
                     {tabs.length > 1 && (
                         <div className="pa-tabs pa-tabs--compact mb-2" role="tablist">
                             {tabs.map(([key, name]) => (
@@ -44,7 +46,7 @@ export default function Palette({ parentUuid, label, icon = 'bi-plus-lg', compac
                     <button type="button" className="btn btn-sm btn-link" onClick={close}>
                         Close
                     </button>
-                </div>
+                </Popover>
             )}
         </span>
     );

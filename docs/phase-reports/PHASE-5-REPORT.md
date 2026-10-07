@@ -85,7 +85,7 @@ STATUS:  Complete. All automated checks pass. The builder UI has not been browse
 | Suite | Result |
 |---|---|
 | Pest (MySQL `pacms_testing`) | **206 passed, 817 assertions** (Phase 4: 187) |
-| Vitest | **53 passed** (Phase 4: 37) |
+| Vitest | **55 passed** (Phase 4: 37), after review fixes |
 | Larastan level 6 / Pint / ESLint | No errors / passed / clean |
 
 **Security tests added:**
@@ -130,6 +130,12 @@ The public API returned only core blocks. The values were filled in, the HTML-lo
    - header/footer global blocks (Phase 9)
 5. **Autosave** covers the block tree, not the form fields (title, slug…).
 6. **Custom type preview:** linked image fields show nothing in the preview (no placeholder image).
+
+## Review fixes
+
+| Finding | Change |
+|---|---|
+| The *Add block* palette was cut off by the narrow, scrolling Structure column (template screen) | The palette and the ⋯ menu now open in a floating layer above the page (`Popover.jsx`), placed next to their button and kept inside the window. They close on Escape or an outside click. Vitest added. The clipped “Drag to move” toolbar hint was removed (the buttons have tooltips). |
 
 ## Architectural decisions (Phase 5)
 
