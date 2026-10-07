@@ -64,4 +64,21 @@ describe('compileTree', () => {
     it('sanitises the class name', () => {
         expect(blockClass('ab"c<d>')).toBe('b-abcd');
     });
+
+    it('compiles line height, side padding and gap; ignores out-of-range line heights', () => {
+        const css = compileTree([
+            node({
+                type: 'list',
+                layout: { padding: { left: { $token: 'space.4' }, right: { value: 12, unit: 'px' } }, gap: { $token: 'space.2' } },
+                style: { typography: { line_height: 1.8 } },
+            }),
+            node({ uuid: '01k00000000000000000000xyz', style: { typography: { line_height: 9 } } }),
+        ]);
+
+        expect(css).toContain('line-height: 1.8;');
+        expect(css).toContain('padding-left: var(--pa-space-4);');
+        expect(css).toContain('padding-right: 12px;');
+        expect(css).toContain('gap: var(--pa-space-2);');
+        expect(css).not.toContain('line-height: 9');
+    });
 });

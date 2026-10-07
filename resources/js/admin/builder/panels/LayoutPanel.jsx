@@ -72,14 +72,14 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
                 </>
             )}
 
-            {['columns', 'button-group', 'container', 'hero'].includes(type.slug) && (
-                <Row id={`${id}-gap`} label="Gap">
+            {['columns', 'button-group', 'container', 'hero', 'list'].includes(type.slug) && (
+                <Row id={`${id}-gap`} label={type.slug === 'list' ? 'Space between items' : 'Gap'}>
                     <TokenSelect id={`${id}-gap`} group="space" value={layout.gap ?? null} onChange={(v) => set('gap', v)} disabled={disabled} />
                 </Row>
             )}
 
             <div className="row g-2">
-                {['top', 'bottom'].map((side) => (
+                {['top', 'bottom', 'left', 'right'].map((side) => (
                     <div className="col-6" key={side}>
                         <Row id={`${id}-p-${side}`} label={`Padding ${side}`} error={errors[`layout.padding.${side}`]}>
                             <TokenSelect id={`${id}-p-${side}`} group="space" value={getIn(layout, `padding.${side}`) ?? null} onChange={(v) => set(`padding.${side}`, v)} emptyLabel="None" disabled={disabled} />

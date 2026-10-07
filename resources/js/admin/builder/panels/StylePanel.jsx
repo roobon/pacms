@@ -124,6 +124,19 @@ export default function StylePanel({ node, onChange, errors, disabled = false })
                             <option value="capitalize">Capitalised</option>
                         </select>
                     </div>
+                    <div className="col-6 mb-2">
+                        <label className="form-label small" htmlFor={`${id}-lh`}>
+                            Line height
+                        </label>
+                        <select id={`${id}-lh`} className="form-select form-select-sm" value={style.typography?.line_height ?? ''} disabled={disabled} onChange={(e) => set('typography.line_height', e.target.value ? Number(e.target.value) : undefined)}>
+                            <option value="">Default</option>
+                            {[[1, 'Tight (1)'], [1.2, 'Snug (1.2)'], [1.4, 'Compact (1.4)'], [1.6, 'Normal (1.6)'], [1.8, 'Relaxed (1.8)'], [2, 'Loose (2)']].map(([value, label]) => (
+                                <option key={value} value={value}>
+                                    {label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </fieldset>
 

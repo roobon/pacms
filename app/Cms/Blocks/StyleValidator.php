@@ -274,6 +274,8 @@ final class StyleValidator
                 'font' => $this->values->token($v, ['font'], $p),
                 'size' => $this->values->token($v, ['font-size'], $p),
                 'weight' => in_array((int) $v, [300, 400, 500, 600, 700, 800, 900], true) ? (int) $v : $this->invalid($p),
+                // Unitless multiplier, e.g. 1.6 (scales with the font size).
+                'line_height' => is_numeric($v) && $v >= 0.8 && $v <= 3 ? round((float) $v, 2) : $this->invalid($p),
                 'align' => $this->values->enum($v, ['start', 'center', 'end'], $p),
                 'transform' => $this->values->enum($v, ['none', 'uppercase', 'lowercase', 'capitalize'], $p),
                 default => null,

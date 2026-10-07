@@ -819,4 +819,11 @@ img.pa-ratio {
     }
 
     &__text a { color: var(--pa-color-primary); }
+
+    &--pad-sm &__item { padding: var(--pa-space-1) var(--pa-space-2); }
+    &--pad-md &__item { padding: var(--pa-space-2) var(--pa-space-3); }
+    &--pad-lg &__item { padding: var(--pa-space-3) var(--pa-space-4); }
+
+    &--dividers &__item + &__item { border-top: 1px solid var(--pa-color-border); }
+    &--dividers { row-gap: 0; }
 }

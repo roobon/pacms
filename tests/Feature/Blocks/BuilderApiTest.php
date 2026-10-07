@@ -70,3 +70,20 @@ it('validates list blocks and resolves their item links', function () {
         ['uuid' => '01k00000000000000000000lsx', 'type' => 'list', 'content' => ['style' => 'stars', 'items' => [['text' => '']]]],
     ]])->assertJsonValidationErrors(['blocks.01k00000000000000000000lsx.content.style', 'blocks.01k00000000000000000000lsx.content.items.0.text']);
 });
+
+it('validates line height and list spacing options', function () {
+    $editor = userWithRole('editor');
+
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => [
+        ['uuid' => '01k00000000000000000000lh1', 'type' => 'list', 'content' => ['item_padding' => 'md', 'dividers' => true, 'items' => [['text' => 'A']]],
+            'layout' => ['padding' => ['left' => ['$token' => 'space.4']], 'gap' => ['$token' => 'space.2']],
+            'style' => ['typography' => ['line_height' => 1.8]]],
+    ]])
+        ->assertOk()
+        ->assertJsonPath('blocks.0.style.typography.line_height', 1.8)
+        ->assertJsonPath('blocks.0.content.item_padding', 'md');
+
+    $this->actingAs($editor)->postJson(route('admin.api.blocks.resolve'), ['blocks' => [
+        ['uuid' => '01k00000000000000000000lh2', 'type' => 'heading', 'content' => ['text' => 'X', 'level' => '2'], 'style' => ['typography' => ['line_height' => '1.5; color:red']]],
+    ]])->assertJsonValidationErrors('blocks.01k00000000000000000000lh2.style.typography.line_height');
+});

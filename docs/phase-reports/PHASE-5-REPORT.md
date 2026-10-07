@@ -85,7 +85,7 @@ STATUS:  Complete. All automated checks pass. The builder UI has not been browse
 | Suite | Result |
 |---|---|
 | Pest (MySQL `pacms_testing`) | **206 passed, 817 assertions** (Phase 4: 187) |
-| Vitest | **56 passed** (Phase 4: 37), after review fixes |
+| Vitest | **57 passed** (Phase 4: 37), after review fixes |
 | Larastan level 6 / Pint / ESLint | No errors / passed / clean |
 
 **Security tests added:**
@@ -137,6 +137,7 @@ The public API returned only core blocks. The values were filled in, the HTML-lo
 |---|---|
 | The *Add block* palette was cut off by the narrow, scrolling Structure column (template screen) | The palette and the ⋯ menu now open in a floating layer above the page (`Popover.jsx`), placed next to their button and kept inside the window. They close on Escape or an outside click. Vitest added. The clipped “Drag to move” toolbar hint was removed (the buttons have tooltips). |
 | No list block (only lists inside Text) | New core **List** block (Basic): style bullets / numbers / check marks / icons, an icon per item, an optional link per item, and 1–3 columns (one column on phones). Numbers render as `<ol>`, the others as `<ul>`, with decorative icons hidden from screen readers. Also allowed inside accordion items. Pest and Vitest added. |
+| No line height or list item spacing; list text touched the edge of its background | Style → Text gets **Line height** (1–2, validated). Layout gets **left and right padding** for every block (previously top/bottom only). The List block gets **Space between items** (Layout → gap), **Item padding** (none/small/medium/large) and **Lines between items**. Tests added. |
 
 ## Architectural decisions (Phase 5)
 
