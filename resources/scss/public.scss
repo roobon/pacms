@@ -370,8 +370,36 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     }
 }
 
+// Default rhythm: sections, heroes and calls to action get breathing room even when the
+// editor (or an imported document) sets no spacing. Layout → Padding overrides it, because
+// the scoped block styles come later in the page.
+.pa-section,
+.pa-cta {
+    padding-block: calc(var(--pa-space-section) / 2);
+}
+
+.pa-hero {
+    padding-block: var(--pa-space-section);
+}
+
 .pa-cta {
     padding-inline: var(--pa-space-5);
+}
+
+// Blocks placed directly on the page (outside a section) line up with the site width
+// instead of running edge to edge.
+.pa-page-blocks > :where(:not(.pa-section, .pa-hero, .pa-global-block, .pa-custom-block, style)) {
+    @include make-container();
+
+    @each $breakpoint, $max in $container-max-widths {
+        @include media-breakpoint-up($breakpoint) {
+            max-width: $max;
+        }
+    }
+}
+
+.pa-page-blocks > :where(.pa-cta) {
+    padding-inline: calc(var(--bs-gutter-x, 1.5rem) * .5);
 }
 
 .pa-columns {
