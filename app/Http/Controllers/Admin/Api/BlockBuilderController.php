@@ -72,7 +72,11 @@ class BlockBuilderController extends Controller
             'blocks' => ['present', 'array'],
             'context' => ['nullable', 'in:page,global,template,structure'],
             'fields' => ['nullable', 'array'],
+            // JSON import preview: images not downloaded yet show as empty placeholders.
+            'assets' => ['nullable', 'array', 'max:200'],
+            'assets.*' => ['string', 'max:64'],
         ]);
+        $validator = $validator->withPendingAssets((array) $request->input('assets', []));
         $context = (string) $request->input('context', BlockTreeValidator::CONTEXT_PAGE);
 
         if ($context === BlockTreeValidator::CONTEXT_STRUCTURE) {

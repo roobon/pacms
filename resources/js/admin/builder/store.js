@@ -24,15 +24,17 @@ export const useBuilder = create((set, get) => ({
     context: 'page',
     /** Custom block type field definitions (structure context only), else null. */
     fields: null,
+    /** JSON import preview: asset keys accepted as image placeholders. */
+    pendingAssets: [],
     past: [],
     future: [],
     lastEdit: null,
     /** Short message for the screen-reader live region and the status bar. */
     notice: '',
 
-    init({ definitions, nodes, errors, readonly, context = 'page', fields = null }) {
+    init({ definitions, nodes, errors, readonly, context = 'page', fields = null, pendingAssets = [] }) {
         const types = Object.fromEntries(definitions.types.map((type) => [type.slug, type]));
-        set({ definitions, types, nodes, errors: errors ?? {}, readonly: Boolean(readonly), context, fields, selected: null, dirty: false, past: [], future: [], lastEdit: null });
+        set({ definitions, types, nodes, errors: errors ?? {}, readonly: Boolean(readonly), context, fields, pendingAssets, selected: null, dirty: false, past: [], future: [], lastEdit: null });
     },
 
     select(uuid) {

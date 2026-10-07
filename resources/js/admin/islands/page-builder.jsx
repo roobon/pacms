@@ -25,6 +25,7 @@ if (mount && dataElement && input) {
                 readonly: data.readonly,
                 context: data.context ?? 'page',
                 fields: Array.isArray(data.fields) ? data.fields : null,
+                pendingAssets: Array.isArray(data.pendingAssets) ? data.pendingAssets : [],
             });
             createRoot(mount).render(<Builder input={input} fieldsInput={document.getElementById('fields-input')} owner={data.owner ?? null} autosave={data.autosave ?? null} />);
         })

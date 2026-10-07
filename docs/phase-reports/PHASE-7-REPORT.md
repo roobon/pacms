@@ -98,6 +98,14 @@ Phase 7 completes the rest of the roadmap.
 4. **Duplicate detection** only recognises identical files. Visually similar images (resized or re-saved) are not detected.
 5. **Files uploaded before Phase 7** have no `source_checksum`. Duplicates of earlier *images* are therefore not recognised; documents are, through `checksum_sha256`.
 
+## Review fixes (import screen, found while testing Phase 6 features)
+
+| Finding | Change |
+|---|---|
+| The JSON help text showed `&quot;` | Help text reworded without quote characters. |
+| “Confirm that you have read the warnings” was easy to miss (tick box at the very bottom); the “Images” heading was oversized | The tick box is now the first item of the import panel, in a highlighted box with an explanation. The panel headings use the normal size. |
+| The import preview stayed empty: “Fix the highlighted errors” | Images not yet downloaded were removed for the preview, so image blocks failed their required-image check and blocked the whole preview. Now images that already exist in the library (e.g. a page exported from this site) are shown, and images still to be downloaded are accepted as empty placeholders by the preview endpoint (`assets` parameter). Test added. |
+
 ## Architectural decisions (Phase 7)
 
 | Decision | Reason |

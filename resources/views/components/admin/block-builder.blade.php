@@ -7,6 +7,7 @@
     'autosave' => null,     {{-- pending autosave revision of the current user --}}
     'fields' => null,       {{-- custom block type: working field definitions (structure context) --}}
     'heading' => 'Page content',
+    'pendingAssets' => [], {{-- JSON import preview: asset keys not downloaded yet --}}
 ])
 {{-- Block Builder (React island). Its hidden inputs belong to the owner's form, so one
      "Save" stores the fields and the block tree together. --}}
@@ -22,6 +23,7 @@
         'context' => $context,
         'owner' => $owner,
         'fields' => $fields === null ? null : ($oldFields !== null ? (json_decode($oldFields, true) ?? []) : $fields),
+        'pendingAssets' => $pendingAssets,
         'autosave' => $autosave ? ['saved_at' => $autosave->created_at?->toIso8601String(), 'blocks' => $autosave->snapshot['blocks'] ?? []] : null,
         'endpoints' => [
             'definitions' => route('admin.api.blocks.definitions'),
