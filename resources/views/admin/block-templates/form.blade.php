@@ -47,6 +47,9 @@
                     </div>
                     <button type="submit" form="template-form" class="btn btn-primary">{{ $editing ? 'Save' : 'Create' }}</button>
                     @if ($editing)
+                        @can('export.run')
+                            <a href="{{ route('admin.export.template', $item) }}" class="btn btn-link p-0 text-start"><i class="bi bi-filetype-json" aria-hidden="true"></i> Export JSON</a>
+                        @endcan
                         <form method="POST" action="{{ route('admin.block-templates.destroy', $item) }}" data-confirm="Delete “{{ $item->name }}”? Pages that used it keep their copy.">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-link text-danger p-0"><i class="bi bi-trash" aria-hidden="true"></i> Delete</button>

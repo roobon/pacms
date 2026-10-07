@@ -501,6 +501,8 @@ Index: `INDEX(external_source_id, published_at)`.
 | confirmed_at, completed_at, expires_at | timestamp null | |
 | timestamps | | |
 
+**Phase 6 implementation notes:** the table is simpler than designed. It has no `uuid`. `status` is `awaiting_confirmation | importing | completed | failed`; a document with errors is stored as `failed` straight away. `document` holds the **translated** document (internal format with pending `$asset` references) rather than the original payload. The original is not kept, because the report records everything that was changed or removed. `assets` holds the asset plan, `options` the confirmed choices (target and per-asset strategy), and `result_type`/`result_id` what was created. `kind`, `title` and `error` were added. Expiry and pruning come with the maintenance tasks in Phase 13.
+
 Framework tables (`cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs`) are created by Laravel's default migrations.
 
 ---

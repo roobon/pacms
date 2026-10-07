@@ -56,6 +56,7 @@ class BlockBuilderController extends Controller
                 'templates' => $request->user()->can('templates.manage'),
                 'global_blocks' => $request->user()->can('global_blocks.manage'),
                 'global_detach' => $request->user()->can('global_blocks.detach'),
+                'export' => $request->user()->can('export.run'),
             ],
         ]);
     }

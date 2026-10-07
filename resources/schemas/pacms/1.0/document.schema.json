@@ -1,0 +1,1446 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:pacms:schema:1.0:document",
+    "title": "PACMS document 1.0",
+    "description": "Import/export envelope for Probha Aurora CMS. See CMS-BLOCK-SCHEMA.md.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "kind"
+    ],
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "pattern": "^1\\.[0-9]+$"
+        },
+        "kind": {
+            "enum": [
+                "block",
+                "section",
+                "template",
+                "page"
+            ]
+        },
+        "meta": {
+            "type": "object",
+            "properties": {
+                "generator": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                }
+            }
+        },
+        "assets": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+                "$ref": "#/$defs/asset"
+            }
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/node"
+            }
+        },
+        "template": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "scope": {
+                    "enum": [
+                        "block",
+                        "section",
+                        "page"
+                    ]
+                },
+                "category": {
+                    "type": "string"
+                }
+            }
+        },
+        "page": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "slug": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                },
+                "parent": {
+                    "$ref": "#/$defs/entity_ref"
+                },
+                "excerpt": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "featured_image": {
+                    "$ref": "#/$defs/image"
+                },
+                "template": {
+                    "enum": [
+                        "default",
+                        "full-width"
+                    ]
+                },
+                "seo": {
+                    "type": "object"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/node"
+                    }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "asset_ref": {
+            "type": "object",
+            "required": [
+                "$asset"
+            ],
+            "properties": {
+                "$asset": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{1,64}$"
+                }
+            },
+            "additionalProperties": false
+        },
+        "media_ref": {
+            "type": "object",
+            "required": [
+                "$media"
+            ],
+            "properties": {
+                "$media": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "additionalProperties": false
+        },
+        "image": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/asset_ref"
+                },
+                {
+                    "$ref": "#/$defs/media_ref"
+                }
+            ]
+        },
+        "token": {
+            "type": "object",
+            "required": [
+                "$token"
+            ],
+            "properties": {
+                "$token": {
+                    "type": "string",
+                    "enum": [
+                        "color.primary",
+                        "color.primary-strong",
+                        "color.secondary",
+                        "color.accent",
+                        "color.heading",
+                        "color.body",
+                        "color.muted",
+                        "color.bg-light",
+                        "color.bg-dark",
+                        "color.border",
+                        "color.border-strong",
+                        "color.success",
+                        "color.warning",
+                        "color.danger",
+                        "color.focus",
+                        "color.white",
+                        "font.heading",
+                        "font.body",
+                        "font-size.xs",
+                        "font-size.sm",
+                        "font-size.base",
+                        "font-size.lg",
+                        "font-size.xl",
+                        "font-size.2xl",
+                        "font-size.3xl",
+                        "font-size.4xl",
+                        "font-size.5xl",
+                        "space.0",
+                        "space.1",
+                        "space.2",
+                        "space.3",
+                        "space.4",
+                        "space.5",
+                        "space.6",
+                        "space.7",
+                        "space.8",
+                        "space.9",
+                        "space.10",
+                        "space.section",
+                        "container.narrow",
+                        "container.xxl",
+                        "container.wide",
+                        "radius.sm",
+                        "radius.md",
+                        "radius.lg",
+                        "radius.xl",
+                        "radius.pill",
+                        "shadow.sm",
+                        "shadow.md",
+                        "shadow.lg",
+                        "motion.duration-fast",
+                        "motion.duration-base",
+                        "motion.duration-slow",
+                        "motion.easing",
+                        "button.radius",
+                        "button.font-weight",
+                        "form.radius"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "color": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/token"
+                },
+                {
+                    "type": "string",
+                    "pattern": "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
+                }
+            ]
+        },
+        "entity_ref": {
+            "type": "object",
+            "required": [
+                "$ref"
+            ],
+            "properties": {
+                "$ref": {
+                    "type": "object",
+                    "required": [
+                        "entity"
+                    ],
+                    "properties": {
+                        "entity": {
+                            "type": "string"
+                        },
+                        "slug": {
+                            "type": "string"
+                        },
+                        "path": {
+                            "type": "string"
+                        },
+                        "taxonomy": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "link": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "url"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "url"
+                        },
+                        "url": {
+                            "type": "string",
+                            "maxLength": 2048,
+                            "pattern": "^(https?://|/|#|mailto:|tel:)"
+                        },
+                        "new_tab": {
+                            "type": "boolean"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "ref"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "entity"
+                        },
+                        "ref": {
+                            "$ref": "#/$defs/entity_ref"
+                        },
+                        "new_tab": {
+                            "type": "boolean"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "anchor"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "anchor"
+                        },
+                        "anchor": {
+                            "type": "string",
+                            "pattern": "^[a-z][a-z0-9-]{0,63}$"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "email"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "email"
+                        },
+                        "email": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            ]
+        },
+        "asset": {
+            "type": "object",
+            "required": [
+                "key"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{1,64}$"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^https?://"
+                },
+                "media": {
+                    "type": "integer"
+                },
+                "alt": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "credit": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "strategy": {
+                    "enum": [
+                        "download",
+                        "external",
+                        "existing"
+                    ]
+                }
+            }
+        },
+        "node": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "enum": [
+                        "section",
+                        "container",
+                        "columns",
+                        "column",
+                        "heading",
+                        "rich-text",
+                        "list",
+                        "image",
+                        "button",
+                        "button-group",
+                        "icon",
+                        "video",
+                        "divider",
+                        "spacer",
+                        "hero",
+                        "cards",
+                        "statistics",
+                        "accordion",
+                        "accordion-item",
+                        "faq",
+                        "quote",
+                        "cta",
+                        "news",
+                        "global-ref"
+                    ]
+                },
+                "key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{1,64}$"
+                },
+                "uuid": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 120
+                },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "content": {
+                    "type": "object"
+                },
+                "source": {
+                    "type": "object",
+                    "properties": {
+                        "mode": {
+                            "enum": [
+                                "static",
+                                "dynamic",
+                                "external"
+                            ]
+                        }
+                    }
+                },
+                "display": {
+                    "type": "object"
+                },
+                "layout": {
+                    "type": "object"
+                },
+                "style": {
+                    "type": "object"
+                },
+                "responsive": {
+                    "type": "object",
+                    "properties": {
+                        "tablet": {
+                            "type": "object"
+                        },
+                        "mobile": {
+                            "type": "object"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "advanced": {
+                    "type": "object"
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/node"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "section"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__section"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "container"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__container"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "columns"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__columns"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "column"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__column"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "heading"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__heading"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "rich-text"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__rich_text"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "list"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__list"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "image"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__image"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "button"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__button"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "button-group"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__button_group"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "icon"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__icon"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "video"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__video"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "divider"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__divider"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "spacer"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__spacer"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "hero"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__hero"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "cards"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__cards"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "statistics"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__statistics"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "accordion"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__accordion"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "accordion-item"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__accordion_item"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "faq"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__faq"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "quote"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__quote"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "cta"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__cta"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "news"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__news"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "global-ref"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__global_ref"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "content__section": {
+            "type": "object",
+            "description": "Section",
+            "properties": {
+                "aria_label": {
+                    "description": "Section name for screen readers (optional)",
+                    "type": "string",
+                    "maxLength": 120
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__container": {
+            "type": "object",
+            "description": "Container",
+            "properties": {},
+            "additionalProperties": false
+        },
+        "content__columns": {
+            "type": "object",
+            "description": "Columns",
+            "properties": {},
+            "additionalProperties": false
+        },
+        "content__column": {
+            "type": "object",
+            "description": "Column",
+            "properties": {},
+            "additionalProperties": false
+        },
+        "content__heading": {
+            "type": "object",
+            "description": "Heading",
+            "properties": {
+                "eyebrow": {
+                    "description": "Small text above",
+                    "type": "string",
+                    "maxLength": 120
+                },
+                "text": {
+                    "description": "Heading",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "level": {
+                    "description": "Level",
+                    "enum": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6"
+                    ]
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "additionalProperties": false
+        },
+        "content__rich_text": {
+            "type": "object",
+            "description": "Text",
+            "properties": {
+                "html": {
+                    "description": "Text",
+                    "type": "string",
+                    "maxLength": 100000
+                }
+            },
+            "required": [
+                "html"
+            ],
+            "additionalProperties": false
+        },
+        "content__list": {
+            "type": "object",
+            "description": "List",
+            "properties": {
+                "style": {
+                    "description": "Style",
+                    "enum": [
+                        "bullet",
+                        "number",
+                        "check",
+                        "icon"
+                    ]
+                },
+                "icon": {
+                    "description": "Icon (for “Icons”)",
+                    "type": "string",
+                    "pattern": "^bi-[a-z0-9-]+$"
+                },
+                "columns": {
+                    "description": "Columns (desktop)",
+                    "enum": [
+                        "1",
+                        "2",
+                        "3"
+                    ]
+                },
+                "item_padding": {
+                    "description": "Item padding",
+                    "enum": [
+                        "none",
+                        "sm",
+                        "md",
+                        "lg"
+                    ]
+                },
+                "dividers": {
+                    "description": "Lines between items",
+                    "type": "boolean"
+                },
+                "items": {
+                    "description": "Items",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "text": {
+                                "description": "Text",
+                                "type": "string",
+                                "maxLength": 300
+                            },
+                            "icon": {
+                                "description": "Icon (optional)",
+                                "type": "string",
+                                "pattern": "^bi-[a-z0-9-]+$"
+                            },
+                            "link": {
+                                "description": "Link (optional)",
+                                "$ref": "#/$defs/link"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__image": {
+            "type": "object",
+            "description": "Image",
+            "properties": {
+                "image": {
+                    "description": "Image",
+                    "$ref": "#/$defs/image"
+                },
+                "alt": {
+                    "description": "Alternative text",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "caption": {
+                    "description": "Caption",
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "link": {
+                    "description": "Link (optional)",
+                    "$ref": "#/$defs/link"
+                },
+                "ratio": {
+                    "description": "Crop",
+                    "enum": [
+                        "auto",
+                        "1:1",
+                        "4:3",
+                        "16:9",
+                        "21:9"
+                    ]
+                }
+            },
+            "required": [
+                "image"
+            ],
+            "additionalProperties": false
+        },
+        "content__button": {
+            "type": "object",
+            "description": "Button",
+            "properties": {
+                "label": {
+                    "description": "Label",
+                    "type": "string",
+                    "maxLength": 80
+                },
+                "link": {
+                    "description": "Link",
+                    "$ref": "#/$defs/link"
+                },
+                "variant": {
+                    "description": "Style",
+                    "enum": [
+                        "primary",
+                        "secondary",
+                        "accent",
+                        "outline",
+                        "link"
+                    ]
+                },
+                "icon": {
+                    "description": "Icon (optional)",
+                    "type": "string",
+                    "pattern": "^bi-[a-z0-9-]+$"
+                }
+            },
+            "required": [
+                "label",
+                "link"
+            ],
+            "additionalProperties": false
+        },
+        "content__button_group": {
+            "type": "object",
+            "description": "Buttons",
+            "properties": {},
+            "additionalProperties": false
+        },
+        "content__icon": {
+            "type": "object",
+            "description": "Icon",
+            "properties": {
+                "icon": {
+                    "description": "Icon",
+                    "type": "string",
+                    "pattern": "^bi-[a-z0-9-]+$"
+                },
+                "label": {
+                    "description": "Accessible label",
+                    "type": "string",
+                    "maxLength": 120
+                },
+                "size": {
+                    "description": "Size",
+                    "enum": [
+                        "md",
+                        "lg",
+                        "xl"
+                    ]
+                },
+                "color": {
+                    "description": "Colour",
+                    "$ref": "#/$defs/color"
+                }
+            },
+            "required": [
+                "icon"
+            ],
+            "additionalProperties": false
+        },
+        "content__video": {
+            "type": "object",
+            "description": "Video",
+            "properties": {
+                "url": {
+                    "description": "YouTube or Vimeo link",
+                    "type": "string",
+                    "maxLength": 2048
+                },
+                "title": {
+                    "description": "Video title",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "poster": {
+                    "description": "Cover image (optional)",
+                    "$ref": "#/$defs/image"
+                }
+            },
+            "required": [
+                "url",
+                "title"
+            ],
+            "additionalProperties": false
+        },
+        "content__divider": {
+            "type": "object",
+            "description": "Divider",
+            "properties": {
+                "line": {
+                    "description": "Line",
+                    "enum": [
+                        "solid",
+                        "dashed",
+                        "dotted"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__spacer": {
+            "type": "object",
+            "description": "Spacer",
+            "properties": {
+                "size": {
+                    "description": "Height",
+                    "enum": [
+                        "space.4",
+                        "space.6",
+                        "space.8",
+                        "space.10"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__hero": {
+            "type": "object",
+            "description": "Hero",
+            "properties": {},
+            "additionalProperties": false
+        },
+        "content__cards": {
+            "type": "object",
+            "description": "Cards",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "items": {
+                    "description": "Cards",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 24,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "image": {
+                                "description": "Image",
+                                "$ref": "#/$defs/image"
+                            },
+                            "icon": {
+                                "description": "Icon",
+                                "type": "string",
+                                "pattern": "^bi-[a-z0-9-]+$"
+                            },
+                            "title": {
+                                "description": "Title",
+                                "type": "string",
+                                "maxLength": 255
+                            },
+                            "text": {
+                                "description": "Text",
+                                "type": "string",
+                                "maxLength": 600
+                            },
+                            "link": {
+                                "description": "Link",
+                                "$ref": "#/$defs/link"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__statistics": {
+            "type": "object",
+            "description": "Statistics",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "items": {
+                    "description": "Statistics",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 12,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "description": "Number",
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1000000000
+                            },
+                            "prefix": {
+                                "description": "Before the number",
+                                "type": "string",
+                                "maxLength": 8
+                            },
+                            "suffix": {
+                                "description": "After the number",
+                                "type": "string",
+                                "maxLength": 12
+                            },
+                            "label": {
+                                "description": "Label",
+                                "type": "string",
+                                "maxLength": 80
+                            },
+                            "icon": {
+                                "description": "Icon",
+                                "type": "string",
+                                "pattern": "^bi-[a-z0-9-]+$"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__accordion": {
+            "type": "object",
+            "description": "Accordion",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__accordion_item": {
+            "type": "object",
+            "description": "Accordion item",
+            "properties": {
+                "title": {
+                    "description": "Title",
+                    "type": "string",
+                    "maxLength": 255
+                }
+            },
+            "required": [
+                "title"
+            ],
+            "additionalProperties": false
+        },
+        "content__faq": {
+            "type": "object",
+            "description": "FAQ",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "items": {
+                    "description": "Questions",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 40,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "question": {
+                                "description": "Question",
+                                "type": "string",
+                                "maxLength": 255
+                            },
+                            "answer": {
+                                "description": "Answer",
+                                "type": "string",
+                                "maxLength": 20000
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__quote": {
+            "type": "object",
+            "description": "Quote",
+            "properties": {
+                "text": {
+                    "description": "Quote",
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "author": {
+                    "description": "Name",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "role": {
+                    "description": "Role or organisation",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "image": {
+                    "description": "Photo",
+                    "$ref": "#/$defs/image"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "additionalProperties": false
+        },
+        "content__cta": {
+            "type": "object",
+            "description": "Call to action",
+            "properties": {},
+            "additionalProperties": false
+        },
+        "content__news": {
+            "type": "object",
+            "description": "News",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is no news",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                },
+                "items": {
+                    "description": "Items (static mode)",
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 24,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "description": "Title",
+                                "type": "string",
+                                "maxLength": 255
+                            },
+                            "excerpt": {
+                                "description": "Summary",
+                                "type": "string",
+                                "maxLength": 400
+                            },
+                            "image": {
+                                "description": "Image",
+                                "$ref": "#/$defs/image"
+                            },
+                            "date": {
+                                "description": "Date",
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "link": {
+                                "description": "Link",
+                                "$ref": "#/$defs/link"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__global_ref": {
+            "type": "object",
+            "description": "Global block",
+            "properties": {
+                "global": {
+                    "$ref": "#/$defs/entity_ref"
+                }
+            },
+            "required": [
+                "global"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

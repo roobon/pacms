@@ -23,6 +23,7 @@ final class AdminNavigation
             ['label' => 'Content', 'items' => [
                 ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
                 ['label' => 'News', 'route' => 'admin.news.index', 'icon' => 'bi-newspaper', 'active' => 'admin.news.*', 'can' => 'news.view'],
+                ['label' => 'Import JSON', 'route' => 'admin.import.index', 'icon' => 'bi-filetype-json', 'active' => 'admin.import.*', 'can' => 'import.run'],
                 ['label' => 'News categories', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'news_category'], 'icon' => 'bi-bookmarks', 'can' => 'taxonomies.manage'],
             ]],
             ['label' => 'Media', 'items' => [

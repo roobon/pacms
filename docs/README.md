@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 5 — Custom Block Builder, approved and merged (v0.5.0)** ([report](phase-reports/PHASE-5-REPORT.md)). Phase 4: [report](phase-reports/PHASE-4-REPORT.md). Phase 6 has not started.
+Current phase: **Phase 6 — AI JSON, complete and awaiting review** ([report](phase-reports/PHASE-6-REPORT.md)). Phase 5: [report](phase-reports/PHASE-5-REPORT.md) (v0.5.0).
 
 | Document | Purpose |
 |---|---|

@@ -50,6 +50,9 @@ class BlockTreeValidator
     /** @var array<int, bool> global block id => usable */
     private array $globals = [];
 
+    /** @var array<string, true> JSON import asset keys accepted in place of media (not downloaded yet) */
+    private array $pendingAssets = [];
+
     public function __construct(
         private readonly BlockRegistry $registry,
         private readonly SourceRegistry $sources,
@@ -67,7 +70,7 @@ class BlockTreeValidator
     public function validate(array $nodes, ?User $user = null, string $context = self::CONTEXT_PAGE, array $bindableFields = []): array
     {
         $this->errors = new Errors;
-        $this->values = new ValueValidator($this->errors);
+        $this->values = new ValueValidator($this->errors, $this->pendingAssets);
         $this->count = 0;
         $this->seenUuids = [];
         $this->globals = [];
@@ -88,6 +91,19 @@ class BlockTreeValidator
         $this->errors->throwIfAny();
 
         return $clean;
+    }
+
+    /**
+     * A validator that accepts {"$asset": key} for these keys (JSON import preview).
+     *
+     * @param  list<string>  $keys
+     */
+    public function withPendingAssets(array $keys): static
+    {
+        $clone = clone $this;
+        $clone->pendingAssets = array_fill_keys($keys, true);
+
+        return $clone;
     }
 
     /**

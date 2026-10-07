@@ -229,7 +229,21 @@ function MoreMenu({ node, label }) {
         },
         permissions.templates && context !== 'structure' && { label: 'Save as template…', icon: 'bi-layout-wtf', onClick: () => setDialog('template') },
         permissions.global_blocks && context === 'page' && node.type !== 'global-ref' && { label: 'Convert to global block…', icon: 'bi-globe2', onClick: () => setDialog('global') },
+        permissions.export && context !== 'structure' && { label: 'Export as JSON', icon: 'bi-filetype-json', onClick: exportJson },
     ].filter(Boolean);
+
+    async function exportJson() {
+        try {
+            const { data } = await adminHttp.post(endpoints.exportBlocks, { blocks: [node], title: label, context });
+            const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+            const link = Object.assign(document.createElement('a'), { href: url, download: `${label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'block'}.pacms.json` });
+            link.click();
+            URL.revokeObjectURL(url);
+            announce('Exported as JSON');
+        } catch {
+            announce('Export failed: fix the errors on this block first.');
+        }
+    }
 
     return (
         <span className="pa-add-menu">

@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Document | CMS-BLOCK-SCHEMA.md (Phase 1 deliverables U, V) |
-| Schema version | **1.0** (draft, frozen when Phase 6 ships) |
+| Schema version | **1.0** (frozen with Phase 6) |
 | Audience | PACMS developers, and anyone (human or AI such as ChatGPT, Claude or Gemini) generating PACMS JSON |
-| Machine-readable schema | Generated in Phase 6 to `resources/schemas/pacms/1.0/*.schema.json` (JSON Schema 2020-12) and downloadable from **Admin → Import / Export → Schema** |
+| Machine-readable schema | `resources/schemas/pacms/1.0/document.schema.json` (JSON Schema 2020-12, core types, `php artisan pacms:schema`). **Admin → Import JSON → JSON Schema** downloads a live version that also covers the site's custom block types. |
 
 ---
 
@@ -581,6 +581,22 @@ JSON (paste / upload / AI output)
 
 Permissions: `import.run` + create permission for the target type; custom CSS & custom types need their own permissions (§15, §10).
 
+**Phase 6 implementation notes (what 1.0 does today):**
+
+- **One set of rules.** Documents are translated to the builder's internal format and checked by the same validator as every builder save. An invalid value is removed with a warning; a block that cannot be placed is removed with a warning. A required value that is missing or unsafe is an **error** in the analysis. After confirmation, a block whose required image failed to download is left out (with a warning) instead of failing the whole import.
+- **Assets.** `external` is downloaded too (the site does not hot-link images). Downloads use `SafeHttpClient`: http(s) only, standard ports, every address checked as public, the connection pinned to the checked address, redirects re-checked (max 3), ≤ 20 MB. The file then goes through the normal upload checks.
+- **Not imported in 1.0, reported instead:**
+  - `custom_block_types` definitions: create the types first; blocks of existing types import normally
+  - external sources (Phase 10)
+  - `source.pick` (newest items are shown)
+  - page `header`/`footer` (Phase 9)
+  - `advanced.custom_css` (never accepted from imports)
+  - `visibility.audience`
+  - responsive `display`/`visible`
+- **`uuid`s** in a document are ignored: imports always create new blocks ("update in place" is not offered in 1.0).
+- **Targets.** `page` creates a draft page; if the slug is taken, a number is added. `template` creates a template hidden from the builder. `block`/`section` go to the end of a chosen page's working copy (unpublished changes), or become a new hidden template.
+- **AI output** wrapped in a Markdown code fence (```json … ```) is accepted.
+
 ---
 
 ## 18. Export
@@ -615,6 +631,7 @@ Export rules:
 | Version | Date | Change |
 |---|---|---|
 | 1.0-draft | 2026-09-24 | Initial Phase 1 design |
+| 1.0 | 2026-10-07 | Frozen with the Phase 6 importer. Example 20.1 links to `/programs` as a URL, because `programs` is a reserved module path and cannot be a page. Implementation notes are in §17. |
 
 ---
 
@@ -643,7 +660,7 @@ Export rules:
         { "type": "rich-text", "content": { "html": "<p>We help schools and young people take action for the environment.</p>" } },
         { "type": "button-group", "content": { "align": "center" }, "children": [
           { "type": "button", "content": { "label": "Our programs", "variant": "accent",
-              "link": { "type": "entity", "ref": {"$ref": {"entity": "pages", "path": "programs"}} } } },
+              "link": { "type": "url", "url": "/programs" } } },
           { "type": "button", "content": { "label": "Get involved", "variant": "outline",
               "link": { "type": "anchor", "anchor": "join" } } } ] }
       ]

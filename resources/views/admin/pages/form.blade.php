@@ -207,6 +207,13 @@
                     </div>
                 </section>
 
+                @if ($editing && (auth()->user()->can('export.run') || auth()->user()->can('import.run')))
+                    <p class="small mb-4">
+                        @can('export.run')<a href="{{ route('admin.export.page', $page) }}"><i class="bi bi-filetype-json" aria-hidden="true"></i> Export JSON</a>@endcan
+                        @can('import.run')<span class="text-body-secondary mx-1">·</span><a href="{{ route('admin.import.index') }}">Import JSON</a>@endcan
+                    </p>
+                @endif
+
                 @if ($editing)
                     <section class="card pa-card mb-4" aria-labelledby="revisions-heading">
                         <div class="card-header d-flex justify-content-between align-items-center">

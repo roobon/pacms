@@ -9,7 +9,9 @@ use App\Http\Controllers\Admin\BlockTemplateController;
 use App\Http\Controllers\Admin\CustomBlockTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
+use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\GlobalBlockController;
+use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
@@ -85,6 +87,21 @@ Route::middleware('can:block_types.manage')->group(function () {
     Route::resource('block-types', CustomBlockTypeController::class)->except('show');
     Route::post('block-types/{block_type}/publish', [CustomBlockTypeController::class, 'publish'])->name('block-types.publish');
     Route::post('block-types/{block_type}/toggle', [CustomBlockTypeController::class, 'toggle'])->name('block-types.toggle');
+});
+
+// JSON import / export (Phase 6)
+Route::middleware('can:import.run')->group(function () {
+    Route::get('import', [ImportController::class, 'index'])->name('import.index');
+    Route::post('import', [ImportController::class, 'store'])->middleware('throttle:20,1')->name('import.store');
+    Route::get('import/schema.json', [ImportController::class, 'schema'])->name('import.schema');
+    Route::get('import/{import}', [ImportController::class, 'show'])->name('import.show');
+    Route::post('import/{import}/confirm', [ImportController::class, 'confirm'])->name('import.confirm');
+    Route::get('import/{import}/report.json', [ImportController::class, 'report'])->name('import.report');
+});
+Route::middleware('can:export.run')->group(function () {
+    Route::get('export/pages/{page}', [ExportController::class, 'page'])->name('export.page');
+    Route::get('export/templates/{block_template}', [ExportController::class, 'template'])->name('export.template');
+    Route::post('api/export/blocks', [ExportController::class, 'blocks'])->name('api.export.blocks');
 });
 
 // JSON endpoints for admin React islands (same session + CSRF)

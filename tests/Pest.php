@@ -3,12 +3,15 @@
 use App\Auth\RolePermissionSynchronizer;
 use App\Cms\Blocks\BlockRegistry;
 use App\Enums\WorkflowAction;
+use App\Models\ImportJob;
 use App\Models\Page;
 use App\Models\User;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
+use App\Support\Http\SafeHttpClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /*
@@ -108,4 +111,35 @@ function userWithRole(string $role, bool $twoFactor = true): User
     $user->assignRole($role);
 
     return $user;
+}
+
+/**
+ * Analyse a document as the given user and return the stored job.
+ *
+ * @param  array<string, mixed>|string  $document
+ */
+function analyse($user, array|string $document): ImportJob
+{
+    test()->actingAs($user)
+        ->post(route('admin.import.store'), ['json' => is_string($document) ? $document : json_encode($document)])
+        ->assertRedirect();
+
+    return ImportJob::query()->latest('id')->firstOrFail();
+}
+
+/**
+ * @return list<string> messages of one level ("error", "warning", "info")
+ */
+function messages(ImportJob $job, string $level): array
+{
+    return array_values(array_map(fn ($e) => $e['message'], array_filter($job->report['entries'], fn ($e) => $e['level'] === $level)));
+}
+
+function fakeDownloads(): void
+{
+    app()->instance(SafeHttpClient::class, new SafeHttpClient(fn () => ['93.184.216.34']));
+    Http::fake([
+        'https://images.example.org/*' => Http::response((string) file_get_contents(fakeJpeg()->getRealPath()), 200, ['Content-Type' => 'image/jpeg']),
+        '*' => Http::response('', 404),
+    ]);
 }
