@@ -270,6 +270,15 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: color-mix(in srgb, var(--pa-color-on-bg-dark) 80%, transparent);
     padding: 3rem 0 2rem;
     margin-top: var(--pa-space-section);
+}
+
+// Pages built from blocks bring their own spacing (sections have padding), so a coloured
+// last section can meet the footer without a white strip in between.
+main:has(.pa-page-blocks) ~ .pa-site-footer {
+    margin-top: 0;
+}
+
+.pa-site-footer {
 
     a {
         color: var(--pa-color-on-bg-dark);
