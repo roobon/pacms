@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 6 — AI JSON, complete and awaiting review** ([report](phase-reports/PHASE-6-REPORT.md)). Phase 5: [report](phase-reports/PHASE-5-REPORT.md) (v0.5.0).
+Current phase: **Phase 6 — AI JSON, approved and merged (v0.6.0)** ([report](phase-reports/PHASE-6-REPORT.md)). Phase 5: [report](phase-reports/PHASE-5-REPORT.md). Phase 7 has not started.
 
 | Document | Purpose |
 |---|---|

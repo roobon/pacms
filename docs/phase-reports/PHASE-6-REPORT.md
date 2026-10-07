@@ -3,15 +3,15 @@
 | | |
 |---|---|
 | Date | 2026-10-07 |
-| Branch | `phase/6-ai-json` (not merged) |
+| Branch | `phase/6-ai-json` → merged into `main` 2026-10-07 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
 | Prepared with | Claude Code (AI-assisted). **Needs team review before Phase 7.** |
 
 ```
 PHASE:   6 — AI JSON (schema, versioning, validation, security, import, export, preview,
          report, asset validation, missing-reference handling)
-STATUS:  Complete. All automated checks pass. A real import with an internet image
-         download worked on pacms.test. The import screens need your browser review.
+STATUS:  Complete and APPROVED by the team lead (2026-10-07) after review fixes; merged into
+         main (4e2e546), tag v0.6.0.
 ```
 
 ## Implemented
@@ -74,7 +74,7 @@ STATUS:  Complete. All automated checks pass. A real import with an internet ima
 
 | Suite | Result |
 |---|---|
-| Pest (MySQL `pacms_testing`) | **240 passed, 985 assertions** (Phase 5: 208) |
+| Pest (MySQL `pacms_testing`) | **247 passed, 1019 assertions** (Phase 5: 208), after review fixes |
 | Vitest | **58 passed** |
 | Larastan level 6 / Pint / ESLint | No errors / passed / clean |
 
