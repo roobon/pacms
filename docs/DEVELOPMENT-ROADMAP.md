@@ -81,6 +81,7 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
 
 ### Phase 8 — Content Modules (XL)
 - Events, Projects, Programs, Publications, Team, Partners, Testimonials (+ submission API, moderation queue, logs), Media Coverage (+ scheduled source checks, fallback display), Galleries (CMS mode). The News module is completed.
+- **Module sidebars** (agreed 2026-10-07): global blocks of kind `sidebar`, built in the builder. Settings choose a sidebar and its side (left or right) per content type (news, events, projects, programs…). Each item can override it or turn it off. On desktop the content takes about two-thirds and the sidebar one-third; on phones the sidebar goes below the content.
 - Admin CRUD for all (shared Blade components), dynamic sources and cards for each, search indexing.
 - Tests: per module CRUD + policies + leak tests, moderation state machine, testimonial privacy assertions, source-check classification.
 
