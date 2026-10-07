@@ -55,3 +55,26 @@ it('hides unpublished and deleted news everywhere', function () {
     $this->actingAs($editor)->delete(route('admin.news.destroy', $news))->assertRedirect();
     $this->get('/news/gone-soon')->assertNotFound();
 });
+
+it('stores a cleaned article text and shows it on the article page', function () {
+    $editor = userWithRole('editor');
+
+    $this->actingAs($editor)->post(route('admin.news.store'), [
+        'title' => 'Mangrove day',
+        'excerpt' => '<p>We planted <strong>500</strong> trees.<script>x()</script></p>',
+        'body' => '<h2>The day</h2><p onclick="steal()">Volunteers came early.</p><ul><li>Tea</li></ul><script>alert(1)</script><a href="javascript:alert(1)">bad</a>',
+    ])->assertRedirect();
+
+    $news = News::query()->where('title', 'Mangrove day')->firstOrFail();
+    expect($news->body)->toContain('<h2>The day</h2>')->toContain('<li>Tea</li>')
+        ->not->toContain('script')->not->toContain('onclick')->not->toContain('javascript:')
+        ->and($news->excerpt)->toContain('<strong>500</strong>')->not->toContain('script');
+
+    $this->actingAs($editor)->post(route('admin.news.publish', $news));
+    $this->getJson('/api/v1/resolve?path=/news/mangrove-day')
+        ->assertOk()
+        ->assertJsonPath('data.body', $news->fresh()->body)
+        ->assertJsonPath('data.excerpt', 'We planted 500 trees.');
+
+    $this->actingAs($editor)->get(route('admin.news.edit', $news))->assertOk()->assertSee('data-rich-editor', false)->assertSee('Article text');
+});

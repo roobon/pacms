@@ -402,7 +402,8 @@ class ImportService
         $fields = [
             'title' => mb_substr($title, 0, 255),
             'slug' => is_string($page['slug'] ?? null) ? $this->paths->slugify($page['slug']) : null,
-            'excerpt' => is_scalar($page['excerpt'] ?? null) ? mb_substr(HtmlSanitizer::plain((string) $page['excerpt']), 0, 1000) : null,
+            // Summaries may carry bold, italic and links (same cleaning as the page form).
+            'excerpt' => is_scalar($page['excerpt'] ?? null) ? (app(HtmlSanitizer::class)->inline(mb_substr((string) $page['excerpt'], 0, 5000)) ?: null) : null,
             'template' => in_array($page['template'] ?? 'default', array_keys(config('pacms.pages.templates')), true) ? ($page['template'] ?? 'default') : 'default',
         ];
 

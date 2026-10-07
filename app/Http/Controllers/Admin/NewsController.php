@@ -101,12 +101,15 @@ class NewsController extends Controller
             'featured' => $request->boolean('featured'),
             // Summary: small editor output, cleaned to paragraphs, bold, italic and links.
             'excerpt' => is_string($request->input('excerpt')) ? (app(HtmlSanitizer::class)->inline($request->input('excerpt')) ?: null) : $request->input('excerpt'),
+            // Article text: rich text, cleaned with the same allowlist as Text blocks.
+            'body' => is_string($request->input('body')) ? (app(HtmlSanitizer::class)->sanitize($request->input('body')) ?: null) : $request->input('body'),
         ]);
 
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:191', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
             'excerpt' => ['nullable', 'string', 'max:20000', new SummaryText],
+            'body' => ['nullable', 'string', 'max:200000'],
             'featured_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where('kind', MediaKind::Image->value)],
             'featured' => ['boolean'],
             'categories' => ['array'],

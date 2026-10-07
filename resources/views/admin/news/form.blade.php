@@ -15,6 +15,7 @@
                         <x-admin.field name="title" label="Title" :value="$item->title" required data-slug-source="#field-slug" />
                         <x-admin.field name="slug" label="URL slug" :value="$item->slug" help="Optional — generated from the title." :data-slug-auto="$editing ? null : true" />
                         <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$item->excerpt" data-summary-editor help="Shown on news cards and as the search-engine description (formatting is removed there)." />
+                        <x-admin.field name="body" label="Article text" type="textarea" rows="12" :value="$item->body" data-rich-editor help="The full article, shown under the image. Headings, lists, quotes and links are available." />
                         <x-admin.media-picker name="featured_media_id" label="Image" :media="$item->featuredMedia" :disabled="! $canEdit" />
                         @if ($categories->isNotEmpty())
                             @php($selected = old('categories', $item->exists ? $item->terms->pluck('id')->all() : []))

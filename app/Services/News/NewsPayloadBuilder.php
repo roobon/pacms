@@ -57,6 +57,8 @@ class NewsPayloadBuilder
             'url' => $url,
             'excerpt' => HtmlSanitizer::toText($news->excerpt),
             'excerpt_html' => HtmlSanitizer::toText($news->excerpt) === null ? null : app(HtmlSanitizer::class)->inline((string) $news->excerpt),
+            // Cleaned on save; cleaned again here so older rows are safe too.
+            'body' => $news->body ? (app(HtmlSanitizer::class)->sanitize($news->body) ?: null) : null,
             'featured_image' => $news->featuredMedia?->toImageArray('(min-width: 1320px) 1280px, 100vw'),
             'category' => $category?->name,
             'published_at' => $news->published_at?->toIso8601String(),

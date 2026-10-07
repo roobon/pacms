@@ -871,3 +871,12 @@ img.pa-ratio {
     &--dividers &__item + &__item { border-top: 1px solid var(--pa-color-border); }
     &--dividers { row-gap: 0; }
 }
+
+// News article text --------------------------------------------------------------------
+.pa-article-body {
+    margin-top: var(--pa-space-6);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+
+    h2, h3, h4 { margin-top: var(--pa-space-6); }
+}

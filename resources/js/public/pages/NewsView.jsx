@@ -4,7 +4,8 @@ import Breadcrumbs from '../components/common/Breadcrumbs.jsx';
 import Summary from '../components/common/Summary.jsx';
 
 /**
- * News detail (minimal in Phase 4; body blocks arrive with the full module in Phase 8).
+ * News detail: summary, image and the article text. Builder content arrives with the full
+ * News module in Phase 8.
  *
  * @param {{news: Object}} props
  */
@@ -32,6 +33,12 @@ export default function NewsView({ news }) {
             {news.featured_image && (
                 <div className="container pa-container-narrow">
                     <Image image={news.featured_image} priority className="pa-page-featured" />
+                </div>
+            )}
+            {news.body && (
+                // Article text: rich text cleaned on the server (same allowlist as Text blocks).
+                <div className="container pa-container-narrow">
+                    <div className="pa-rich-text pa-article-body" dangerouslySetInnerHTML={{ __html: news.body }} />
                 </div>
             )}
         </article>

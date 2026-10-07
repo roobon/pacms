@@ -24,7 +24,7 @@ class News extends Model
 
     protected $table = 'news';
 
-    protected $fillable = ['title', 'slug', 'excerpt', 'featured_media_id', 'featured'];
+    protected $fillable = ['title', 'slug', 'excerpt', 'body', 'featured_media_id', 'featured'];
 
     /**
      * @var array<string, mixed>

@@ -71,8 +71,8 @@ Phase 7 completes the rest of the roadmap.
 
 | Suite | Result |
 |---|---|
-| Pest (MySQL `pacms_testing`) | **254 passed, 1067 assertions** (Phase 6: 247) |
-| Vitest | **58 passed** |
+| Pest (MySQL `pacms_testing`) | **257 passed, 1099 assertions** (Phase 6: 247), including the additions above |
+| Vitest | **59 passed** |
 | Larastan level 6 / Pint / ESLint | No errors / passed / clean |
 
 **New tests:**
@@ -105,6 +105,16 @@ Phase 7 completes the rest of the roadmap.
 | The JSON help text showed `&quot;` | Help text reworded without quote characters. |
 | “Confirm that you have read the warnings” was easy to miss (tick box at the very bottom); the “Images” heading was oversized | The tick box is now the first item of the import panel, in a highlighted box with an explanation. The panel headings use the normal size. |
 | The import preview stayed empty: “Fix the highlighted errors” | Images not yet downloaded were removed for the preview, so image blocks failed their required-image check and blocked the whole preview. Now images that already exist in the library (e.g. a page exported from this site) are shown, and images still to be downloaded are accepted as empty placeholders by the preview endpoint (`assets` parameter). Test added. |
+
+## Added at the team lead's request (2026-10-07)
+
+| Request | Change |
+|---|---|
+| “Basic editor” for news; summary formatting | The **summary editor** branch (`fix/summary-editor`, built after Phase 5) is merged into this phase. Summaries of pages and news get a small editor (bold, italic, links). They are cleaned to that set on save and on output; search, sharing, cards and JSON-LD use the plain text (`excerpt`), and the lead under the title uses `excerpt_html`. The 1,000-character limit counts visible text. JSON-imported summaries are cleaned the same way. |
+| News article text | News items get an **Article text** field (`news.body`, migration `add_body_to_news_table`) with the same rich text editor as the builder's Text block (headings, lists, quotes, links). It is cleaned with the Text block allowlist on save and again on output, and shown on the article page under the image. Test added. Builder content for news (blocks) stays in Phase 8. |
+| Oversized form headings (“Categories”, “Images”) | Legends used as field labels now use the normal label size on every admin form. |
+| Padding lists said “None” although sections have default spacing | They now say **Default**; **0 (0)** removes the spacing. |
+| White strip between a page's last section and the site footer | Pages built from blocks have no extra margin above the site footer. |
 
 ## Architectural decisions (Phase 7)
 
