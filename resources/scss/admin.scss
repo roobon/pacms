@@ -1120,3 +1120,36 @@ $sidebar-bg: #0F172A;
         border-radius: $border-radius-sm;
     }
 }
+
+.pa-icon-picker {
+    width: 22rem;
+    max-height: 24rem;
+    overflow-y: auto;
+    padding: .75rem;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, .16);
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
+        gap: .25rem;
+    }
+
+    &__item {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 1;
+        font-size: 1.25rem;
+        color: $body-color;
+        background: #F8FAFC;
+        border: 1px solid transparent;
+        border-radius: $border-radius;
+
+        &:hover,
+        &:focus-visible { border-color: $primary; background: rgba(10, 107, 102, .06); }
+
+        &.is-selected { color: #fff; background: $primary; }
+    }
+}

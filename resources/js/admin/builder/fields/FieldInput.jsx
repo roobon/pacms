@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import ColorInput from './ColorInput.jsx';
+import IconPicker from './IconPicker.jsx';
 import ImageInput from './ImageInput.jsx';
 import LinkInput from './LinkInput.jsx';
 import RepeaterInput from './RepeaterInput.jsx';
@@ -123,6 +124,7 @@ export default function FieldInput({ field, value, onChange, errors = {}, path =
                         <i className={`bi ${/^bi-[a-z0-9-]+$/.test(value ?? '') ? value : 'bi-question'}`} />
                     </span>
                     <input id={id} className={`form-control${invalid}`} placeholder="bi-tree" value={value ?? ''} disabled={disabled} aria-describedby={describedBy} onChange={(e) => onChange(e.target.value.trim())} />
+                    <IconPicker value={value} onPick={onChange} disabled={disabled} />
                 </div>
             );
             break;
