@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) is ready for review on `phase/8-content-modules`.** See [docs/phase-reports/PHASE-8A-REPORT.md](docs/phase-reports/PHASE-8A-REPORT.md).
+- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) is next.** See [docs/phase-reports/PHASE-8A-REPORT.md](docs/phase-reports/PHASE-8A-REPORT.md).
 
 ## Requirements
 

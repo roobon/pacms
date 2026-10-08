@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 7 — Media, advanced, approved and merged (v0.7.0)** ([report](phase-reports/PHASE-7-REPORT.md)). Phase 6: [report](phase-reports/PHASE-6-REPORT.md). Phase 8 has not started.
+Current phase: **Phase 8 — Content Modules, in parts.** Part 8A (content engine, News, Events, sidebars) approved and merged ([report](phase-reports/PHASE-8A-REPORT.md)); 8B is next. Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
 
 | Document | Purpose |
 |---|---|

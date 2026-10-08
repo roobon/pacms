@@ -3,13 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-08 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-08 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). **Needs team review before Part 8B.** |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-08. |
 
 ```
 PHASE:   8A — Content engine, full News module, Events, module sidebars
-STATUS:  Built and tested on the branch; waiting for the team lead's review.
+STATUS:  APPROVED by the team lead (2026-10-08) and merged into main (4966aad).
+         No version tag: v0.8.0 is tagged when all of Phase 8 is done.
          Later parts: 8B (Projects, Programs, Publications), 8C (Team, Partners,
          Testimonials, Media Coverage, Galleries, search indexing).
 ```
@@ -68,7 +69,7 @@ Phase 8 is large, so it is delivered in parts. Part 8A builds **one engine** for
 
 | Check | Result |
 |---|---|
-| Pest (full suite, parallel) | **267 passed** (1224 assertions) |
+| Pest (full suite, parallel) | **268 passed** (1234 assertions) |
 | Vitest | **62 passed** (11 files) |
 | Larastan (level 6) | No errors |
 | Pint, ESLint | Clean |
