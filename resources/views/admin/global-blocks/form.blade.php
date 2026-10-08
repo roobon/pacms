@@ -20,6 +20,16 @@
                         <x-admin.field name="name" label="Name" :value="$item->name" required help="Only editors see the name." />
                         <x-admin.field name="slug" label="Key" :value="$item->slug" help="Optional — generated from the name. Lowercase letters, numbers and hyphens." />
                         <x-admin.field name="description" label="Description" type="textarea" :value="$item->description" help="Helps editors pick the right block in the builder." />
+                        <div class="mb-0">
+                            <label for="field-kind" class="form-label">Used as</label>
+                            <select id="field-kind" name="kind" class="form-select @error('kind') is-invalid @enderror" aria-describedby="field-kind-help">
+                                @foreach (\App\Models\GlobalBlock::KINDS as $value => $label)
+                                    <option value="{{ $value }}" @selected(old('kind', $item->kind ?? 'generic') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            <div id="field-kind-help" class="form-text">“Sidebar” blocks can be shown next to news, events and other content (Settings → Sidebars, or per item).</div>
+                            @error('kind')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
                     </div>
                 </div>
             </form>

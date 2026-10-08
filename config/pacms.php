@@ -10,6 +10,7 @@ use App\Cms\Blocks\Types\ColumnsBlock;
 use App\Cms\Blocks\Types\ContainerBlock;
 use App\Cms\Blocks\Types\CtaBlock;
 use App\Cms\Blocks\Types\DividerBlock;
+use App\Cms\Blocks\Types\EventsBlock;
 use App\Cms\Blocks\Types\FaqBlock;
 use App\Cms\Blocks\Types\GlobalRefBlock;
 use App\Cms\Blocks\Types\HeadingBlock;
@@ -26,6 +27,8 @@ use App\Cms\Blocks\Types\SpacerBlock;
 use App\Cms\Blocks\Types\StatisticsBlock;
 use App\Cms\Blocks\Types\VideoBlock;
 use App\Cms\Blocks\Types\WhenBlock;
+use App\Cms\Content\Types\EventType;
+use App\Cms\Content\Types\NewsType;
 
 return [
 
@@ -172,15 +175,25 @@ return [
             QuoteBlock::class,
             CtaBlock::class,
             NewsBlock::class,
+            EventsBlock::class,
             GlobalRefBlock::class,
             RepeatBlock::class,
             WhenBlock::class,
         ],
     ],
 
+    // Content modules with direct publishing (CMS-ARCHITECTURE.md §3.3). Each entry is a
+    // ContentType; admin screens, workflow, archives, detail pages, blocks and sidebars
+    // are generated from it.
+    'content_types' => [
+        NewsType::class,
+        EventType::class,
+    ],
+
     // Registered taxonomies. Content types add theirs as they are built.
     'taxonomies' => [
         'news_category' => ['label' => 'News categories', 'singular' => 'News category', 'hierarchical' => true],
+        'event_category' => ['label' => 'Event categories', 'singular' => 'Event category', 'hierarchical' => true],
         'media_category' => ['label' => 'Media categories', 'singular' => 'Media category', 'hierarchical' => true],
         'tag' => ['label' => 'Tags', 'singular' => 'Tag', 'hierarchical' => false],
     ],

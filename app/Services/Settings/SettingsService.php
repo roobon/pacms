@@ -42,6 +42,10 @@ class SettingsService
             'tokens' => [[], false],
             'stylesheet' => [null, true],
         ],
+        'content' => [
+            // Module sidebars (Phase 8): type key => ['global_block_id' => int, 'position' => left|right].
+            'sidebars' => [[], false],
+        ],
         'media' => [
             // D-10: SVG uploads are off by default. When on, only users with
             // media.upload_svg may upload them, and every file is sanitised.

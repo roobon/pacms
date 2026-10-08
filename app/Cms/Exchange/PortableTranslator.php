@@ -4,8 +4,9 @@ namespace App\Cms\Exchange;
 
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Blocks\BlockType;
+use App\Cms\Content\ContentTypeRegistry;
+use App\Models\ContentItem;
 use App\Models\GlobalBlock;
-use App\Models\News;
 use App\Models\Page;
 use App\Models\Term;
 use App\Support\Html\HtmlSanitizer;
@@ -273,21 +274,22 @@ final class PortableTranslator
 
         $ref = (array) ($value['ref']['$ref'] ?? []);
         $entity = (string) ($ref['entity'] ?? '');
-        $target = match ($entity) {
-            'pages' => self::findPage($ref),
-            'news' => is_string($ref['slug'] ?? null) ? News::query()->where('slug', $ref['slug'])->first() : null,
+        $model = app(ContentTypeRegistry::class)->models()[$entity] ?? null;
+        $target = match (true) {
+            $entity === 'pages' => self::findPage($ref),
+            $model !== null => is_string($ref['slug'] ?? null) ? $model::query()->where('slug', $ref['slug'])->first() : null,
             default => null,
         };
 
         if ($target === null) {
-            $this->report->warning('references', in_array($entity, ['pages', 'news'], true)
+            $this->report->warning('references', ($entity === 'pages' || $model !== null)
                 ? __('Link target :ref was not found; the link was removed.', ['ref' => (string) json_encode($ref, JSON_UNESCAPED_SLASHES)])
                 : __('Links to ":entity" are not available yet; the link was removed.', ['entity' => $entity]), $pointer, $key);
 
             return null;
         }
 
-        if ($target instanceof Page && ! $target->isLive() || $target instanceof News && ! $target->isPublished()) {
+        if ($target instanceof Page && ! $target->isLive() || $target instanceof ContentItem && ! $target->isPublished()) {
             $this->report->info('references', __('Link target :ref is not published yet; the link shows as plain text until it is.', ['ref' => (string) json_encode($ref, JSON_UNESCAPED_SLASHES)]), $pointer, $key);
         }
 

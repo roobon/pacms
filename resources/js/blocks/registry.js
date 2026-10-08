@@ -1,7 +1,7 @@
 import { ButtonBlock, ButtonGroupBlock, DividerBlock, HeadingBlock, IconBlock, ImageBlock, ListBlock, RichTextBlock, SpacerBlock, VideoBlock } from './components/basic.jsx';
 import { ColumnBlock, ColumnsBlock, ContainerBlock, SectionBlock } from './components/layout.jsx';
 import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, QuoteBlock, StatisticsBlock } from './components/content.jsx';
-import { NewsBlock } from './components/collections.jsx';
+import { EventsBlock, NewsBlock } from './components/collections.jsx';
 import { CustomBlock, GlobalRefBlock } from './components/reusable.jsx';
 
 /**
@@ -31,6 +31,7 @@ export const components = {
     quote: QuoteBlock,
     cta: CtaBlock,
     news: NewsBlock,
+    events: EventsBlock,
     'global-ref': GlobalRefBlock,
     // Every custom block type ("custom/…") shares one component.
     'custom/*': CustomBlock,

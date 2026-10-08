@@ -630,6 +630,12 @@ img.pa-ratio {
         color: var(--pa-color-muted);
     }
 
+    &__place {
+        margin: 0;
+        font-size: var(--pa-font-size-sm);
+        color: var(--pa-color-body);
+    }
+
     &--list {
         flex-direction: row;
 
@@ -879,4 +885,104 @@ img.pa-ratio {
     line-height: 1.75;
 
     h2, h3, h4 { margin-top: var(--pa-space-6); }
+}
+
+// Content modules: detail with sidebar, event details, archives ------------------------
+.pa-with-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+    gap: var(--pa-space-7);
+    align-items: start;
+
+    &--left {
+        grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+
+        .pa-with-sidebar__aside { order: -1; }
+    }
+
+    &__aside {
+        position: sticky;
+        top: 5rem;
+
+        // Sections inside a sidebar do not need the full section rhythm.
+        .pa-section { padding-block: var(--pa-space-4); }
+    }
+
+    @include media-breakpoint-down(lg) {
+        &,
+        &--left { grid-template-columns: 1fr; }
+
+        &__aside {
+            position: static;
+            order: 0 !important;
+        }
+    }
+}
+
+.pa-content-blocks {
+    margin-top: var(--pa-space-6);
+}
+
+.pa-event-details {
+    margin: var(--pa-space-5) 0;
+    padding: var(--pa-space-5);
+    background: var(--pa-color-surface, #F6F8FA);
+    border: 1px solid var(--pa-color-border);
+    border-radius: var(--pa-radius-lg);
+
+    dl {
+        display: grid;
+        gap: var(--pa-space-4);
+    }
+
+    dt {
+        font-size: var(--pa-font-size-sm);
+        font-weight: 600;
+        color: var(--pa-color-muted);
+    }
+
+    dd { margin: 0; }
+}
+
+.pa-pre-line { white-space: pre-line; }
+
+.pa-badge-public--muted {
+    background: var(--pa-color-border);
+    color: var(--pa-color-body);
+}
+
+.pa-archive-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pa-space-2);
+    margin-bottom: var(--pa-space-5);
+}
+
+.pa-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: .25rem .9rem;
+    font-size: var(--pa-font-size-sm);
+    color: var(--pa-color-body);
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid var(--pa-color-border);
+    border-radius: 999px;
+
+    &:hover { border-color: var(--pa-color-primary); }
+
+    &.is-active {
+        color: #fff;
+        background: var(--pa-color-primary);
+        border-color: var(--pa-color-primary);
+    }
+}
+
+.pa-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--pa-space-4);
+    margin-top: var(--pa-space-6);
 }

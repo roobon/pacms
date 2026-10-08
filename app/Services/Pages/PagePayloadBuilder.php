@@ -3,6 +3,7 @@
 namespace App\Services\Pages;
 
 use App\Cms\Blocks\BlockPayloadResolver;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\Revision;
@@ -33,7 +34,7 @@ class PagePayloadBuilder
     public function forLivePage(Page $page): array
     {
         $key = 'pacms:page-payload:'.$page->published_revision_id.':'.$page->published_path.':'
-            .$this->versions->fingerprint('pages', 'media', 'settings', 'news', 'globals', 'block_types');
+            .$this->versions->fingerprint('pages', 'media', 'settings', 'globals', 'block_types', ...array_keys(app(ContentTypeRegistry::class)->all()));
 
         return Cache::remember($key, now()->addDay(), function () use ($page) {
             /** @var Revision $revision */

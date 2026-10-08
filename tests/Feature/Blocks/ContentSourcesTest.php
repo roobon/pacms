@@ -4,13 +4,14 @@ use App\Cms\Blocks\BlockPayloadResolver;
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Blocks\BlockTreeValidator;
 use App\Cms\Blocks\BlockType;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Sources\ExternalProvider;
 use App\Cms\Sources\SourceRegistry;
 use App\Enums\ContentStatus;
 use App\Enums\WorkflowAction;
 use App\Models\News;
 use App\Models\Term;
-use App\Services\News\NewsService;
+use App\Services\Content\ContentService;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
 use Illuminate\Support\Str;
@@ -149,9 +150,10 @@ it('refreshes cached page payloads when news is published', function () {
 
     $this->getJson('/api/v1/pages/with-news')->assertJsonCount(0, 'data.blocks.0.items');
 
-    $service = app(NewsService::class);
-    $item = $service->create($editor, ['title' => 'Breaking story']);
-    $service->publish($editor, $item);
+    $type = app(ContentTypeRegistry::class)->get('news');
+    $service = app(ContentService::class);
+    $item = $service->create($type, $editor, ['title' => 'Breaking story']);
+    $service->transition($type, $item, WorkflowAction::Publish, $editor);
 
     $this->getJson('/api/v1/pages/with-news')->assertJsonPath('data.blocks.0.items.0.title', 'Breaking story');
 });

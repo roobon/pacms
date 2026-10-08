@@ -2,6 +2,8 @@
 
 namespace App\Support\Admin;
 
+use App\Cms\Content\ContentType;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Models\User;
 
 /**
@@ -22,9 +24,9 @@ final class AdminNavigation
             ]],
             ['label' => 'Content', 'items' => [
                 ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
-                ['label' => 'News', 'route' => 'admin.news.index', 'icon' => 'bi-newspaper', 'active' => 'admin.news.*', 'can' => 'news.view'],
+                ...self::contentModules(),
                 ['label' => 'Import JSON', 'route' => 'admin.import.index', 'icon' => 'bi-filetype-json', 'active' => 'admin.import.*', 'can' => 'import.run'],
-                ['label' => 'News categories', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'news_category'], 'icon' => 'bi-bookmarks', 'can' => 'taxonomies.manage'],
+                ...self::contentCategories(),
             ]],
             ['label' => 'Media', 'items' => [
                 ['label' => 'Library', 'route' => 'admin.media.index', 'icon' => 'bi-images', 'active' => 'admin.media.*', 'can' => 'media.view'],
@@ -57,5 +59,37 @@ final class AdminNavigation
         }
 
         return $visible;
+    }
+
+    /**
+     * One entry per registered content module (news, events…).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function contentModules(): array
+    {
+        return array_values(array_map(fn (ContentType $type) => [
+            'label' => $type->label(),
+            'route' => 'admin.'.$type->key().'.index',
+            'icon' => $type->icon(),
+            'active' => 'admin.'.$type->key().'.*',
+            'can' => $type->permissionKey().'.view',
+        ], app(ContentTypeRegistry::class)->all()));
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private static function contentCategories(): array
+    {
+        $types = array_filter(app(ContentTypeRegistry::class)->all(), fn (ContentType $type) => $type->taxonomy() !== null);
+
+        return array_values(array_map(fn (ContentType $type) => [
+            'label' => (string) config('pacms.taxonomies.'.$type->taxonomy().'.label'),
+            'route' => 'admin.terms.index',
+            'params' => ['taxonomy' => $type->taxonomy()],
+            'icon' => 'bi-bookmarks',
+            'can' => 'taxonomies.manage',
+        ], $types));
     }
 }

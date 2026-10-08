@@ -10,6 +10,7 @@ use App\Services\Content\ContentReferenceService;
 use App\Services\Revisions\RevisionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -88,6 +89,7 @@ class GlobalBlockController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:191', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'kind' => ['nullable', Rule::in(array_keys(GlobalBlock::KINDS))],
             'blocks' => ['nullable', 'string', 'max:'.((int) config('pacms.blocks.max_payload_kb') * 1024), 'json'],
             'lock_version' => ['nullable', 'integer'],
         ]);

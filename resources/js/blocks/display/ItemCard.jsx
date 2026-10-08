@@ -11,7 +11,8 @@ import SmartLink from '../common/SmartLink.jsx';
 export default function ItemCard({ item, layout = 'card', showExcerpt = true, showDate = true, showImage = true, headingLevel = 3, cardStyle = 'elevated', ratio = '16:9' }) {
     const Heading = `h${Math.min(6, Math.max(2, headingLevel))}`;
     const link = item.link ?? (item.url ? { href: item.url, external: Boolean(item.external), new_tab: Boolean(item.external) } : null);
-    const date = showDate && item.date ? formatDate(item.date) : null;
+    // Modules may send their own date label (events: "12–14 March 2027, 10:00").
+    const date = showDate && item.date ? (item.meta?.when ?? formatDate(item.date)) : null;
 
     return (
         <article className={`pa-item pa-item--${layout} pa-item--${cardStyle}`}>
@@ -22,9 +23,10 @@ export default function ItemCard({ item, layout = 'card', showExcerpt = true, sh
             )}
             <div className="pa-item__body">
                 {item.icon && <i className={`bi ${item.icon} pa-item__icon`} aria-hidden="true" />}
-                {(date || item.meta?.category) && (
+                {(date || item.meta?.category || item.meta?.status) && (
                     <p className="pa-item__meta">
                         {item.meta?.category && <span className="pa-badge-public">{item.meta.category}</span>}
+                        {item.meta?.status && <span className="pa-badge-public pa-badge-public--muted">{item.meta.status}</span>}
                         {date && <time dateTime={item.date}>{date}</time>}
                     </p>
                 )}
@@ -37,6 +39,11 @@ export default function ItemCard({ item, layout = 'card', showExcerpt = true, sh
                         item.title
                     )}
                 </Heading>
+                {item.meta?.venue && (
+                    <p className="pa-item__place">
+                        <i className="bi bi-geo-alt" aria-hidden="true" /> {item.meta.venue}
+                    </p>
+                )}
                 {showExcerpt && item.excerpt && <p className="pa-item__excerpt">{item.excerpt}</p>}
             </div>
         </article>

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\Revision;
+use App\Services\Content\ContentPayloadBuilder;
 use App\Services\Pages\PagePayloadBuilder;
 use App\Services\Public\SitePayload;
 use Illuminate\Http\Request;
@@ -31,6 +33,34 @@ class PreviewController extends Controller
             'initial' => [
                 'site' => $site,
                 'route' => ['path' => '/__builder-preview', 'status' => 200, 'builder' => true],
+            ],
+        ])->withHeaders([
+            'Cache-Control' => 'no-store, private',
+            'X-Robots-Tag' => 'noindex, nofollow',
+        ]);
+    }
+
+    /**
+     * Preview of a content item's current state (news, events…; direct publishing has no
+     * separate working copy, so this shows the saved item, published or not).
+     */
+    public function content(Request $request, string $type, int $id, ContentTypeRegistry $types, SitePayload $sitePayload, ContentPayloadBuilder $builder): Response
+    {
+        $definition = $types->forRoutePrefix($type) ?? abort(404);
+        $model = $definition->modelClass();
+        $item = $model::query()->findOrFail($id);
+        Gate::authorize('view', $item);
+
+        $site = $sitePayload->build();
+        $payload = $builder->preview($item);
+
+        return response()->view('spa', [
+            'site' => $site,
+            'seo' => ['robots' => 'noindex,nofollow', 'canonical' => null, 'json_ld' => []] + $payload['seo'],
+            'initial' => [
+                'site' => $site,
+                'route' => ['path' => '/'.$request->path(), 'status' => 200, 'preview' => true],
+                'content' => $payload,
             ],
         ])->withHeaders([
             'Cache-Control' => 'no-store, private',

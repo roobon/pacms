@@ -3,6 +3,7 @@
 namespace App\Cms\Sources;
 
 use App\Cms\Blocks\BlockType;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Validation\ValueValidator;
 
 /**
@@ -18,9 +19,12 @@ class SourceRegistry
     /** @var array<string, ExternalProvider> */
     private array $external = [];
 
-    public function __construct()
+    public function __construct(ContentTypeRegistry $content)
     {
-        $this->registerDynamic(new NewsSource);
+        // Every content module can feed dynamic blocks.
+        foreach ($content->all() as $type) {
+            $this->registerDynamic(new ContentSource($type));
+        }
     }
 
     public function registerDynamic(DynamicSource $source): void

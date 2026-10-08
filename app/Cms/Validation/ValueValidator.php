@@ -2,11 +2,12 @@
 
 namespace App\Cms\Validation;
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Design\TokenCatalog;
 use App\Enums\MediaKind;
 use App\Models\Media;
-use App\Models\News;
 use App\Models\Page;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Validates the typed values used inside blocks: design-token references, lengths,
@@ -17,8 +18,15 @@ final class ValueValidator
 {
     public const LENGTH_UNITS = ['px', 'rem', 'em', '%', 'vh', 'vw'];
 
-    /** Link targets accepted by entity links: entity => model class. */
-    public const LINK_ENTITIES = ['pages' => Page::class, 'news' => News::class];
+    /**
+     * Link targets accepted by entity links: pages and every content module.
+     *
+     * @return array<string, class-string<Model>>
+     */
+    public static function linkEntities(): array
+    {
+        return ['pages' => Page::class] + app(ContentTypeRegistry::class)->models();
+    }
 
     /** @var array<int, Media|null> */
     private array $media = [];
@@ -205,7 +213,7 @@ final class ValueValidator
             case 'entity':
                 $entity = $value['entity'] ?? null;
                 $id = $value['id'] ?? null;
-                $class = self::LINK_ENTITIES[$entity] ?? null;
+                $class = self::linkEntities()[$entity] ?? null;
                 if ($class === null || ! is_numeric($id) || ! $class::query()->whereKey((int) $id)->exists()) {
                     $this->errors->add($path, __('The linked page no longer exists.'));
 

@@ -2,7 +2,9 @@
 
 namespace App\Services\Public;
 
-use App\Models\News;
+use App\Cms\Content\ContentType;
+use App\Cms\Content\ContentTypeRegistry;
+use App\Models\ContentItem;
 use App\Models\Page;
 use App\Models\Redirect;
 use App\Services\Seo\RedirectService;
@@ -19,10 +21,11 @@ class PathResolver
     public function __construct(
         private readonly SettingsService $settings,
         private readonly RedirectService $redirects,
+        private readonly ContentTypeRegistry $types,
     ) {}
 
     /**
-     * @return array{kind: 'home'|'page'|'news'|'redirect'|'not_found', page?: Page, news?: News, redirect?: Redirect}
+     * @return array{kind: 'home'|'page'|'content'|'archive'|'redirect'|'not_found', page?: Page, type?: ContentType, item?: ContentItem, redirect?: Redirect}
      */
     public function resolve(string $path): array
     {
@@ -39,10 +42,15 @@ class PathResolver
             return ['kind' => 'page', 'page' => $page];
         }
 
-        if (preg_match('#^news/([a-z0-9-]+)$#', $path, $match)) {
-            $news = News::query()->published()->where('slug', $match[1])->first();
-            if ($news !== null) {
-                return ['kind' => 'news', 'news' => $news];
+        // Content modules: /{prefix} is the archive, /{prefix}/{slug} a published item.
+        if (preg_match('#^([a-z0-9-]+)(?:/([a-z0-9-]+))?$#', $path, $match) && ($type = $this->types->forRoutePrefix($match[1])) !== null) {
+            if (! isset($match[2])) {
+                return ['kind' => 'archive', 'type' => $type];
+            }
+            $model = $type->modelClass();
+            $item = $model::query()->published()->where('slug', $match[2])->first();
+            if ($item !== null) {
+                return ['kind' => 'content', 'type' => $type, 'item' => $item];
             }
         }
 

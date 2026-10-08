@@ -17,9 +17,9 @@ abstract class DynamicSource
     abstract public function entity(): string;
 
     /**
-     * filter key => definition ['type' => 'bool'|'term', 'taxonomy' => …, 'label' => …]
+     * filter key => definition ['type' => 'bool'|'term'|'select', 'taxonomy' => …, 'options' => …, 'label' => …]
      *
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, mixed>>
      */
     abstract public function filters(): array;
 
@@ -61,6 +61,11 @@ abstract class DynamicSource
 
             if ($definition['type'] === 'bool') {
                 $filters[$key] = true;
+            } elseif ($definition['type'] === 'select') {
+                $choice = $values->enum(is_scalar($value) ? (string) $value : null, array_map('strval', array_keys($definition['options'] ?? [])), "{$path}.filters.{$key}");
+                if ($choice !== null) {
+                    $filters[$key] = $choice;
+                }
             } elseif ($definition['type'] === 'term') {
                 $exists = is_numeric($value) && Term::query()
                     ->where('taxonomy', $definition['taxonomy'])

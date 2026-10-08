@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Auth\AuthActivitySubscriber;
 use App\Cms\Blocks\BlockRegistry;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Design\DesignTokenService;
 use App\Cms\Sources\SourceRegistry;
 use App\Models\BlockTemplate;
 use App\Models\BlockType;
+use App\Models\Event as EventItem;
 use App\Models\GlobalBlock;
 use App\Models\ImportJob;
 use App\Models\Media;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ActivityLogger::class);
         $this->app->singleton(DesignTokenService::class);
         $this->app->singleton(BlockRegistry::class);
+        $this->app->singleton(ContentTypeRegistry::class);
         $this->app->singleton(SourceRegistry::class);
     }
 
@@ -48,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
             'media' => Media::class,
             'term' => Term::class,
             'news' => News::class,
+            'event' => EventItem::class,
             'global_block' => GlobalBlock::class,
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,

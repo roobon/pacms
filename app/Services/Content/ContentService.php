@@ -1,0 +1,338 @@
+<?php
+
+namespace App\Services\Content;
+
+use App\Cms\Blocks\BlockTreeRepository;
+use App\Cms\Blocks\BlockTreeValidator;
+use App\Cms\Content\ContentType;
+use App\Enums\ContentStatus;
+use App\Enums\RevisionKind;
+use App\Enums\WorkflowAction;
+use App\Models\ContentItem;
+use App\Models\Media;
+use App\Models\Revision;
+use App\Models\User;
+use App\Services\ActivityLog\ActivityLogger;
+use App\Services\Cache\CacheVersions;
+use App\Services\Revisions\RevisionService;
+use Carbon\CarbonInterface;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+
+/**
+ * Create, edit, publish and restore items of any content module (CMS-ARCHITECTURE.md §3–4,
+ * "Direct" publishing): the row is live once published, so changing a published item needs
+ * the module's publish permission. Every save records a revision.
+ */
+class ContentService
+{
+    public function __construct(
+        private readonly BlockTreeValidator $blockValidator,
+        private readonly BlockTreeRepository $blocks,
+        private readonly ContentReferenceService $references,
+        private readonly RevisionService $revisions,
+        private readonly ActivityLogger $logger,
+        private readonly CacheVersions $cache,
+    ) {}
+
+    /**
+     * @param  array<string, mixed>  $data  validated: common fields, module fields, terms, seo, blocks
+     */
+    public function create(ContentType $type, User $user, array $data): ContentItem
+    {
+        $blocks = array_key_exists('blocks', $data) ? $this->blockValidator->validate((array) $data['blocks'], $user) : null;
+
+        return DB::transaction(function () use ($type, $user, $data, $blocks) {
+            $model = $type->modelClass();
+            /** @var ContentItem $item */
+            $item = new $model;
+            $item->forceFill($this->attributes($type, $data));
+            $item->slug = $this->uniqueSlug($type, (string) ($data['slug'] ?? '') ?: (string) $data['title']);
+            $item->author_id = $user->id;
+            $item->created_by = $item->updated_by = $user->id;
+            $item->save();
+
+            $this->saveRelations($type, $item, $data, $blocks, $user);
+            $this->revisions->record($item, RevisionKind::Manual, $user, 'Created');
+            $this->logger->log($type->key().'.created', $item, [], $user);
+            $this->changed($type);
+
+            return $item;
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     *
+     * @throws AuthorizationException|ValidationException
+     */
+    public function update(ContentType $type, User $user, ContentItem $item, array $data, int $lockVersion): ContentItem
+    {
+        // Direct publishing: changing a live item changes the public site.
+        if ($item->status === ContentStatus::Published && ! $user->can($type->permissionKey().'.publish')) {
+            throw new AuthorizationException(__('Only publishers can change published :items.', ['items' => strtolower($type->label())]));
+        }
+
+        $blocks = array_key_exists('blocks', $data) ? $this->blockValidator->validate((array) $data['blocks'], $user) : null;
+
+        return DB::transaction(function () use ($type, $user, $item, $data, $blocks, $lockVersion) {
+            $item = $item->newQuery()->lockForUpdate()->findOrFail($item->getKey());
+            if ((int) $item->getAttribute('lock_version') !== $lockVersion) {
+                throw ValidationException::withMessages([
+                    'lock_version' => __('This was changed by someone else while you were editing. Reload it to see the latest version, then apply your changes again.'),
+                ]);
+            }
+
+            $before = $item->load('seo')->toSnapshot();
+            $item->forceFill($this->attributes($type, $data));
+            if (! empty($data['slug']) && $data['slug'] !== $item->slug) {
+                $item->slug = $this->uniqueSlug($type, (string) $data['slug'], $item->getKey());
+            }
+            $item->updated_by = $user->id;
+            $item->setAttribute('lock_version', (int) $item->getAttribute('lock_version') + 1);
+            $item->save();
+
+            $this->saveRelations($type, $item, $data, $blocks, $user);
+            $item->load('seo');
+            $this->revisions->record($item, RevisionKind::Manual, $user, $this->revisions->summarize($before, $item->toSnapshot()));
+            $this->logger->log($type->key().'.updated', $item, [], $user);
+            $this->changed($type);
+
+            return $item;
+        });
+    }
+
+    public function delete(ContentType $type, User $user, ContentItem $item): void
+    {
+        DB::transaction(function () use ($type, $user, $item) {
+            $item->delete();
+            $this->references->clear($item);
+            $this->logger->log($type->key().'.deleted', $item, [], $user);
+        });
+        $this->changed($type);
+    }
+
+    /**
+     * Write a revision back to the item (fields, terms, SEO, blocks) as a new revision.
+     */
+    public function restore(ContentType $type, User $user, ContentItem $item, Revision $revision): ContentItem
+    {
+        $blocks = $this->blockValidator->validate((array) ($revision->snapshot['blocks'] ?? []), $user);
+
+        return DB::transaction(function () use ($type, $user, $item, $revision, $blocks) {
+            $item->applySnapshot((array) $revision->snapshot);
+            $item->updated_by = $user->id;
+            $item->setAttribute('lock_version', (int) $item->getAttribute('lock_version') + 1);
+            $item->save();
+            $this->blocks->save($item, $blocks, $user);
+            $this->syncReferences($item);
+
+            $this->revisions->record($item, RevisionKind::Restore, $user, __('Restored revision #:number', ['number' => $revision->number]));
+            $this->logger->log($type->key().'.restored', $item, ['revision' => $revision->number], $user);
+            $this->changed($type);
+
+            return $item;
+        });
+    }
+
+    /**
+     * Workflow actions the user may perform now (for the publishing box).
+     *
+     * @return list<WorkflowAction>
+     */
+    public function availableActions(ContentType $type, ContentItem $item, User $user): array
+    {
+        return array_values(array_filter(
+            WorkflowAction::cases(),
+            fn (WorkflowAction $action) => $this->allowedFromState($item, $action) && $this->userMay($type, $item, $action, $user),
+        ));
+    }
+
+    /**
+     * @param  array{note?: ?string, publish_at?: ?CarbonInterface}  $options
+     *
+     * @throws AuthorizationException|ValidationException
+     */
+    public function transition(ContentType $type, ContentItem $item, WorkflowAction $action, ?User $user, array $options = []): ContentItem
+    {
+        if ($user !== null && ! $this->userMay($type, $item, $action, $user)) {
+            throw new AuthorizationException(__('You are not allowed to :action this :item.', ['action' => strtolower($action->label()), 'item' => $type->singular()]));
+        }
+
+        if (! $this->allowedFromState($item, $action)) {
+            throw ValidationException::withMessages(['action' => __('":action" is not possible while the :item is :status.', [
+                'action' => $action->label(), 'item' => $type->singular(), 'status' => strtolower($item->status->label()),
+            ])]);
+        }
+
+        $from = $item->status;
+
+        DB::transaction(function () use ($item, $action, $user, $options) {
+            match ($action) {
+                WorkflowAction::Submit => $item->status = ContentStatus::InReview,
+                WorkflowAction::Approve => $item->status = ContentStatus::Approved,
+                WorkflowAction::RequestChanges, WorkflowAction::Restore => $item->status = ContentStatus::Draft,
+                WorkflowAction::Publish => $this->publish($item),
+                WorkflowAction::Schedule => $this->schedule($item, $options['publish_at'] ?? null),
+                WorkflowAction::Unschedule => $item->publish_at = null,
+                WorkflowAction::Unpublish => [$item->status, $item->publish_at] = [ContentStatus::Draft, null],
+                WorkflowAction::Archive => [$item->status, $item->publish_at] = [ContentStatus::Archived, null],
+            };
+            $item->updated_by = $user?->getKey() ?? $item->updated_by;
+            $item->save();
+
+            if ($action === WorkflowAction::Publish) {
+                $this->revisions->record($item, RevisionKind::Published, $user, 'Published');
+            }
+        });
+
+        $this->logger->log('workflow.'.$action->value, $item, array_filter([
+            'from' => $from->value,
+            'to' => $item->status->value,
+            'note' => isset($options['note']) ? mb_substr((string) $options['note'], 0, 1000) : null,
+            'publish_at' => $item->publish_at?->toIso8601String(),
+        ]), $user);
+        $this->changed($type);
+
+        return $item;
+    }
+
+    /**
+     * Publish approved items whose scheduled time has passed (every content module).
+     */
+    public function publishDue(ContentType $type): int
+    {
+        $count = 0;
+        $model = $type->modelClass();
+
+        $model::query()
+            ->where('status', ContentStatus::Approved)
+            ->whereNotNull('publish_at')
+            ->where('publish_at', '<=', now())
+            ->orderBy('publish_at')
+            ->each(function (ContentItem $item) use ($type, &$count) {
+                $this->transition($type, $item, WorkflowAction::Publish, null);
+                $count++;
+            });
+
+        return $count;
+    }
+
+    public function syncReferences(ContentItem $item): void
+    {
+        $references = [];
+        if ($item->featured_media_id && ($media = Media::query()->find($item->featured_media_id))) {
+            $references[] = ['target' => $media, 'context' => 'featured_image'];
+        }
+        $og = $item->seo?->og_image_media_id;
+        if ($og && ($media = Media::query()->find($og))) {
+            $references[] = ['target' => $media, 'context' => 'og_image'];
+        }
+
+        $this->references->sync($item, array_merge($references, $this->blocks->references($this->blocks->load($item))));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function attributes(ContentType $type, array $data): array
+    {
+        $common = Arr::only($data, ['title', 'excerpt', 'body', 'featured_media_id', 'featured', 'sidebar_mode', 'sidebar_global_block_id']);
+        if (($common['sidebar_mode'] ?? 'default') !== 'custom') {
+            $common['sidebar_global_block_id'] = null;
+        }
+
+        return $common + $type->prepare(Arr::only($data, array_keys($type->fields())));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  list<array<string, mixed>>|null  $blocks
+     */
+    private function saveRelations(ContentType $type, ContentItem $item, array $data, ?array $blocks, User $user): void
+    {
+        if ($type->taxonomy() !== null && array_key_exists('terms', $data)) {
+            $item->syncTerms((string) $type->taxonomy(), array_map('intval', (array) $data['terms']));
+        }
+        if (array_key_exists('seo', $data)) {
+            $item->saveSeo((array) $data['seo']);
+        }
+        if ($blocks !== null) {
+            $this->blocks->save($item, $blocks, $user);
+        }
+        $this->syncReferences($item);
+    }
+
+    private function publish(ContentItem $item): void
+    {
+        $item->status = ContentStatus::Published;
+        $item->publish_at = null;
+        // The first publication date is kept when an item is re-published.
+        $item->published_at ??= now();
+        if ($item->published_at->isFuture()) {
+            $item->published_at = now();
+        }
+    }
+
+    private function schedule(ContentItem $item, ?CarbonInterface $publishAt): void
+    {
+        if ($publishAt === null || $publishAt->isPast()) {
+            throw ValidationException::withMessages(['publish_at' => __('Choose a date and time in the future.')]);
+        }
+
+        $item->status = ContentStatus::Approved;
+        $item->publish_at = Carbon::instance($publishAt);
+    }
+
+    private function allowedFromState(ContentItem $item, WorkflowAction $action): bool
+    {
+        $status = $item->status;
+
+        return match ($action) {
+            WorkflowAction::Submit => $status === ContentStatus::Draft,
+            WorkflowAction::Approve => $status === ContentStatus::InReview,
+            WorkflowAction::RequestChanges => in_array($status, [ContentStatus::InReview, ContentStatus::Approved], true),
+            WorkflowAction::Publish, WorkflowAction::Schedule => in_array($status, [ContentStatus::Draft, ContentStatus::InReview, ContentStatus::Approved], true),
+            WorkflowAction::Unschedule => $status === ContentStatus::Approved && $item->publish_at !== null,
+            WorkflowAction::Unpublish => $status === ContentStatus::Published,
+            WorkflowAction::Archive => $status !== ContentStatus::Archived,
+            WorkflowAction::Restore => $status === ContentStatus::Archived,
+        };
+    }
+
+    private function userMay(ContentType $type, ContentItem $item, WorkflowAction $action, User $user): bool
+    {
+        if (! $user->can($type->permissionKey().'.'.$action->permission())) {
+            return false;
+        }
+
+        return $action !== WorkflowAction::Submit || Gate::forUser($user)->allows('update', $item);
+    }
+
+    private function uniqueSlug(ContentType $type, string $wanted, ?int $ignoreId = null): string
+    {
+        $base = Str::limit(Str::slug($wanted) ?: $type->routePrefix().'-item', 180, '');
+        $candidate = $base;
+        $n = 2;
+        $model = $type->modelClass();
+
+        while ($model::withTrashed()->where('slug', $candidate)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
+            $candidate = "{$base}-{$n}";
+            $n++;
+        }
+
+        return $candidate;
+    }
+
+    private function changed(ContentType $type): void
+    {
+        // Pages show module items in blocks and sidebars; their cached payloads depend on this group.
+        $this->cache->bump($type->key());
+    }
+}
