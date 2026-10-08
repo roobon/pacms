@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Cms\Blocks\BlockTreeRepository;
 use App\Cms\Content\ContentType;
 use App\Cms\Content\ContentTypeRegistry;
+use App\Cms\Fields\VideoUrl;
 use App\Enums\ContentStatus;
 use App\Enums\MediaKind;
 use App\Enums\WorkflowAction;
 use App\Http\Controllers\Controller;
 use App\Models\ContentItem;
+use App\Models\Gallery;
+use App\Models\GalleryItem;
 use App\Models\GlobalBlock;
 use App\Models\Media;
 use App\Models\Revision;
@@ -179,7 +182,7 @@ class ContentController extends Controller
         Gate::authorize('restoreRevision', $item);
 
         // Restoring changes the item in place, so a live item needs the publish permission too.
-        if ($item->isPublished() && ! $request->user()->can($type->permissionKey().'.publish')) {
+        if ($item->isPublished() && ! $request->user()->can($type->ability('publish'))) {
             abort(403, __('Only publishers can change published :items.', ['items' => strtolower($type->label())]));
         }
 
@@ -216,7 +219,7 @@ class ContentController extends Controller
             'type' => $type,
             'item' => $item,
             'canEdit' => $item->exists
-                ? Gate::allows('update', $item) && ($item->status !== ContentStatus::Published || $request->user()->can($type->permissionKey().'.publish'))
+                ? Gate::allows('update', $item) && ($item->status !== ContentStatus::Published || $request->user()->can($type->ability('publish')))
                 : true,
             'actions' => $item->exists ? $this->content->availableActions($type, $item, $request->user()) : [],
             'categories' => $type->taxonomy() === null ? collect() : Term::query()->inTaxonomy((string) $type->taxonomy())->orderBy('name')->get(['id', 'name']),
@@ -229,6 +232,20 @@ class ContentController extends Controller
                 ? $item->attachments()->with('media')->get()->filter(fn ($attachment) => $attachment->media !== null)
                     ->map(fn ($attachment) => ['media_id' => $attachment->media_id, 'label' => $attachment->label, 'name' => $attachment->media->original_name, 'size' => $attachment->media->humanSize()])
                     ->values()->all()
+                : [],
+            'relationOptions' => collect($type->relationFields())->map(function (array $field) {
+                $model = $this->types->get((string) $field['target'])->modelClass();
+
+                return $model::query()->orderBy('title')->get(['id', 'title', 'status'])
+                    ->mapWithKeys(fn (ContentItem $option) => [$option->id => $option->title.($option->isPublished() ? '' : ' ('.strtolower($option->status->label()).')')])
+                    ->all();
+            })->all(),
+            'relationValues' => $item->exists ? collect($type->relationFields())->map(fn (array $field, string $name) => $item->relatedIds($name))->all() : [],
+            'galleryItems' => $item instanceof Gallery && $item->exists
+                ? $item->items()->with('media')->get()->map(fn (GalleryItem $row) => [
+                    'media_id' => $row->media_id, 'video_url' => $row->video_url, 'caption' => $row->caption, 'alt_override' => $row->alt_override, 'credit' => $row->credit,
+                    'thumbnail' => $row->media?->thumbnailUrl(320), 'name' => $row->media?->original_name,
+                ])->all()
                 : [],
             'mediaFields' => collect($type->fields())
                 ->filter(fn (array $field) => $field['type'] === 'media')
@@ -291,7 +308,29 @@ class ContentController extends Controller
             $rules['terms.*'] = ['integer', Rule::exists('terms', 'id')->where('taxonomy', $type->taxonomy())];
         }
         $attributes = ['featured_media_id' => 'image', 'sidebar_global_block_id' => 'sidebar', 'seo.og_image_media_id' => 'social image'];
+        foreach ($type->relationFields() as $name => $field) {
+            $rules[$name] = ['nullable', 'array', 'max:100'];
+            $rules["{$name}.*"] = ['nullable', 'integer'];
+            $attributes[$name] = strtolower((string) $field['label']);
+        }
+        if (isset($type->fields()['gallery_items'])) {
+            $rules['gallery_items.*'] = ['array'];
+            $rules['gallery_items.*.media_id'] = ['nullable', 'integer', Rule::exists('media', 'id')->where('kind', MediaKind::Image->value)->where('disk', config('pacms.media.disk'))];
+            $rules['gallery_items.*.video_url'] = ['nullable', 'string', 'max:1024', function (string $attribute, mixed $value, \Closure $fail) {
+                if (is_string($value) && $value !== '' && VideoUrl::parse($value) === null) {
+                    $fail(__('Use a YouTube or Vimeo link.'));
+                }
+            }];
+            $rules['gallery_items.*.caption'] = ['nullable', 'string', 'max:1000'];
+            $rules['gallery_items.*.alt_override'] = ['nullable', 'string', 'max:255'];
+            $rules['gallery_items.*.credit'] = ['nullable', 'string', 'max:191'];
+            $attributes['gallery_items.*.media_id'] = 'photo';
+            $attributes['gallery_items.*.video_url'] = 'video link';
+        }
         foreach ($type->fields() as $name => $field) {
+            if ($field['type'] === 'relation') {
+                continue;
+            }
             $rules[$name] = $field['rules'];
             $attributes[$name] = strtolower((string) $field['label']);
             foreach ($field['type'] === 'repeater' ? $field['fields'] : [] as $sub => $subField) {
@@ -318,7 +357,7 @@ class ContentController extends Controller
         }
         // Lists the editor emptied are not sent by the browser at all.
         foreach ($type->fields() as $name => $field) {
-            if ($field['type'] === 'repeater') {
+            if (in_array($field['type'], ['repeater', 'relation', 'gallery'], true)) {
                 $data[$name] ??= [];
             }
         }

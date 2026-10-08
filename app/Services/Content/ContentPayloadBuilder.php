@@ -6,8 +6,10 @@ use App\Cms\Blocks\BlockPayloadResolver;
 use App\Cms\Blocks\BlockTreeRepository;
 use App\Cms\Content\ContentType;
 use App\Cms\Content\ContentTypeRegistry;
+use App\Cms\Content\Types\GalleryType;
 use App\Models\Attachment;
 use App\Models\ContentItem;
+use App\Models\Gallery;
 use App\Models\GlobalBlock;
 use App\Models\SeoMetadata;
 use App\Models\Term;
@@ -165,7 +167,47 @@ class ContentPayloadBuilder
             'blocks' => $this->blocks->resolve($this->tree->load($item), includeHidden: false),
             'sidebar' => $this->sidebar($type, $item),
             'documents' => $this->documents($type, $item),
-        ] + $type->details($item);
+        ] + $this->withRelations($type, $item, $type->details($item));
+    }
+
+    /**
+     * Adds what relation fields link to: names as facts (with links), logo or card rows,
+     * and an embedded gallery.
+     *
+     * @param  array<string, mixed>  $details
+     * @return array<string, mixed>
+     */
+    private function withRelations(ContentType $type, ContentItem $item, array $details): array
+    {
+        $related = [];
+        foreach ($type->relationFields() as $name => $field) {
+            $items = $item->related($name);
+            if ($items === []) {
+                continue;
+            }
+            $title = (string) ($field['title'] ?? $field['label']);
+            $display = (string) ($field['display'] ?? 'cards');
+
+            if ($display === 'fact') {
+                foreach ($items as $linked) {
+                    $details['facts'][] = [
+                        'icon' => $linked->type()->icon(),
+                        'label' => $title,
+                        'value' => $linked->title,
+                        'url' => $linked->type()->hasDetailPages() ? $linked->url() : null,
+                    ];
+                }
+            } elseif ($display === 'gallery') {
+                $gallery = $items[0];
+                if ($gallery instanceof Gallery && ($media = app(GalleryType::class)->media($gallery)) !== []) {
+                    $related[] = ['key' => $name, 'title' => $title, 'display' => 'gallery', 'items' => $media, 'url' => $gallery->url(), 'link_label' => $gallery->title];
+                }
+            } else {
+                $related[] = ['key' => $name, 'title' => $title, 'display' => $display, 'items' => array_map(fn (ContentItem $linked) => $linked->toItem(), $items)];
+            }
+        }
+
+        return $details + ['related' => $related];
     }
 
     /**

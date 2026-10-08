@@ -55,6 +55,9 @@ class ProjectType extends ContentType
             'location' => ['type' => 'text', 'label' => 'Location', 'rules' => ['nullable', 'string', 'max:255'], 'placeholder' => 'e.g. Khulna and Satkhira', 'section' => 'Project details'],
             'manager_name' => ['type' => 'text', 'label' => 'Project manager', 'rules' => ['nullable', 'string', 'max:191'], 'section' => 'Project details'],
             'website_url' => ['type' => 'url', 'label' => 'Project website', 'rules' => ['nullable', 'url:http,https', 'max:1024'], 'section' => 'Project details'],
+            'manager' => ['type' => 'relation', 'target' => 'team', 'multiple' => false, 'display' => 'fact', 'label' => 'Project manager (team member)', 'title' => 'Project manager', 'help' => 'Links to their profile. Or type a name above.', 'section' => 'People, partners and gallery'],
+            'partners' => ['type' => 'relation', 'target' => 'partners', 'multiple' => true, 'display' => 'logos', 'label' => 'Partners', 'title' => 'Partners', 'section' => 'People, partners and gallery'],
+            'gallery' => ['type' => 'relation', 'target' => 'galleries', 'multiple' => false, 'display' => 'gallery', 'label' => 'Gallery', 'title' => 'Gallery', 'section' => 'People, partners and gallery'],
         ];
     }
 
@@ -125,7 +128,8 @@ class ProjectType extends ContentType
                 ['icon' => 'bi-flag', 'label' => 'Status', 'value' => self::STATUSES[$item->project_status] ?? null],
                 ['icon' => 'bi-calendar-range', 'label' => 'Period', 'value' => $this->period($item)],
                 ['icon' => 'bi-geo-alt', 'label' => 'Location', 'value' => $item->location],
-                ['icon' => 'bi-person', 'label' => 'Project manager', 'value' => $item->manager_name],
+                // A linked team member is shown instead (relation fact).
+                ['icon' => 'bi-person', 'label' => 'Project manager', 'value' => $item->relatedIds('manager') === [] ? $item->manager_name : null],
             ], fn (array $fact) => $fact['value'] !== null && $fact['value'] !== '')),
             'actions' => $item->website_url ? [['label' => 'Visit the project website', 'url' => $item->website_url, 'icon' => 'bi-box-arrow-up-right', 'external' => true]] : [],
         ];

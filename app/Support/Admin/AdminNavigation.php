@@ -73,7 +73,7 @@ final class AdminNavigation
             'route' => 'admin.'.$type->key().'.index',
             'icon' => $type->icon(),
             'active' => 'admin.'.$type->key().'.*',
-            'can' => $type->permissionKey().'.view',
+            'can' => $type->ability('view'),
         ], app(ContentTypeRegistry::class)->all()));
     }
 
@@ -82,7 +82,7 @@ final class AdminNavigation
      */
     private static function contentCategories(): array
     {
-        $types = array_filter(app(ContentTypeRegistry::class)->all(), fn (ContentType $type) => $type->taxonomy() !== null);
+        $types = array_filter(app(ContentTypeRegistry::class)->all(), fn (ContentType $type) => $type->taxonomy() !== null && $type->taxonomy() !== 'tag'); // Tags has its own entry
 
         return array_values(array_map(fn (ContentType $type) => [
             'label' => (string) config('pacms.taxonomies.'.$type->taxonomy().'.label'),

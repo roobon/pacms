@@ -8,10 +8,13 @@ import { adminHttp, errorMessage } from '../../http.js';
  *
  * @param {{
  *   title: string, endpoint: string, uploadEndpoint: string, canUpload: boolean,
- *   selectedId: number|null, onClose: () => void, onSelect: (media: any) => void, kind?: 'image'|'document'
+ *   selectedId: number|null, onClose: () => void, onSelect: (media: any) => void, kind?: 'image'|'document',
+ *   multiple?: boolean, onSelectMany?: (media: any[]) => void
  * }} props
  */
-export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, selectedId, onClose, onSelect, kind = 'image' }) {
+export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, selectedId, onClose, onSelect, kind = 'image', multiple = false, onSelectMany }) {
+    // Multiple mode (gallery editor): tiles toggle; uploads are added straight away.
+    const [many, setMany] = useState(/** @type {any[]} */ ([]));
     const isImage = kind === 'image';
     const noun = isImage ? 'image' : 'document';
     const dialogRef = useRef(/** @type {HTMLDialogElement|null} */ (null));
@@ -36,7 +39,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             setLoading(true);
             setError('');
             try {
-                const { data } = await adminHttp.get(endpoint, { params: { kind, q: search || undefined, page: pageNumber, visibility: isImage ? undefined : 'public' } });
+                const { data } = await adminHttp.get(endpoint, { params: { kind, q: search || undefined, page: pageNumber, visibility: isImage && !multiple ? undefined : 'public' } });
                 setItems((previous) => (pageNumber === 1 ? data.data : [...previous, ...data.data]));
                 setHasMore(data.meta.current_page < data.meta.last_page);
                 setPage(pageNumber);
@@ -46,7 +49,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                 setLoading(false);
             }
         },
-        [endpoint, kind, isImage],
+        [endpoint, kind, isImage, multiple],
     );
 
     // Debounced search (and initial load).
@@ -65,7 +68,8 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             form.append('file', upload.file);
             if (isImage) form.append('alt', upload.alt);
             const { data } = await adminHttp.post(uploadEndpoint, form);
-            onSelect(data.data);
+            if (multiple) onSelectMany?.([data.data]);
+            else onSelect(data.data);
         } catch (e) {
             setError(errorMessage(e));
             setUpload((u) => ({ ...u, busy: false }));
@@ -143,15 +147,15 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                     {!loading && items.length === 0 && <p className="text-body-secondary">No {noun}s found.</p>}
                     <ul className="pa-media-grid list-unstyled mb-0">
                         {items.map((item) => {
-                            const isChosen = (chosen?.id ?? selectedId) === item.id;
+                            const isChosen = multiple ? many.some((m) => m.id === item.id) : (chosen?.id ?? selectedId) === item.id;
                             return (
                                 <li key={item.id}>
                                     <button
                                         type="button"
                                         className="pa-media-tile w-100"
                                         aria-pressed={isChosen}
-                                        onClick={() => setChosen(item)}
-                                        onDoubleClick={() => onSelect(item)}
+                                        onClick={() => (multiple ? setMany((list) => (list.some((m) => m.id === item.id) ? list.filter((m) => m.id !== item.id) : [...list, item])) : setChosen(item))}
+                                        onDoubleClick={() => !multiple && onSelect(item)}
                                     >
                                         <span className="pa-media-tile__thumb">
                                             {item.thumbnail ? <img src={item.thumbnail} alt="" loading="lazy" /> : <i className={`bi ${isImage ? 'bi-image' : 'bi-file-earmark-text'}`} aria-hidden="true" />}
@@ -175,14 +179,23 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             </div>
 
             <div className="pa-dialog__footer">
-                <span className="small text-body-secondary">{chosen ? `Selected: ${chosen.name}` : `Select ${isImage ? 'an image' : 'a document'}, then confirm.`}</span>
+                <span className="small text-body-secondary" aria-live="polite">
+                    {multiple ? `${many.length} selected` : chosen ? `Selected: ${chosen.name}` : `Select ${isImage ? 'an image' : 'a document'}, then confirm.`}
+                </span>
                 <div className="d-flex gap-2">
                     <button type="button" className="btn btn-link" onClick={onClose}>
                         Cancel
                     </button>
-                    <button type="button" className="btn btn-primary" disabled={!chosen} onClick={() => chosen && onSelect(chosen)}>
-                        Use this {noun}
-                    </button>
+                    {multiple ? (
+                        <button type="button" className="btn btn-primary" disabled={many.length === 0} onClick={() => onSelectMany?.(many)}>
+                            Add {many.length || ''} {noun}
+                            {many.length === 1 ? '' : 's'}
+                        </button>
+                    ) : (
+                        <button type="button" className="btn btn-primary" disabled={!chosen} onClick={() => chosen && onSelect(chosen)}>
+                            Use this {noun}
+                        </button>
+                    )}
                 </div>
             </div>
         </dialog>,

@@ -313,8 +313,12 @@ All publishable modules share these **publishable columns**:
 ### team_members
 `id, name, slug UNIQUE, designation, photo_media_id, biography (rich text), email varchar(191) null, show_email bool default 0, phone null, show_phone bool default 0, social_links json (repeater: network, url), position int, status (active/inactive), timestamps, deleted_at`. Department via terms (`department`). `INDEX(status, position)`.
 
+**Phase 8C (built):** on the content engine as a *managed* module (`team.manage`, no editorial workflow): `title` = name, `featured_media_id` = photo, `excerpt` = short bio, `body` = biography, plus the columns above; status `published` = active, `draft` = inactive. Morph alias `team_member`. E-mail and phone reach the public payload only when their "show" flag is on.
+
 ### partners
 `id, name, slug UNIQUE, logo_media_id, description, website_url, position, status (active/inactive), timestamps, deleted_at`. Category via terms (`partner_category`).
+
+**Phase 8C (built):** managed module (`partners.manage`): `title` = organisation, `featured_media_id` = logo, `website_url`, `position`. No public detail pages (cards and logos link to the website). Morph alias `partner`.
 
 ### partnerables
 `partner_id FK CASCADE, partnerable_type, partnerable_id, role varchar(64) null, position` · PK (partner_id, partnerable_type, partnerable_id).
@@ -381,6 +385,11 @@ Category and tags via terms. `INDEX(next_check_at)`, `INDEX(coverage_type, statu
 
 ### gallery_items
 `id, gallery_id FK CASCADE, media_id FK media null RESTRICT, video_url varchar(1024) null, video_provider varchar(16) null, caption text null, alt_override varchar(255) null, credit varchar(191) null, position` · INDEX(gallery_id, position). Check: exactly one of media_id / video_url.
+
+**Phase 8C (built):** galleries use the common content columns (`featured_media_id` = cover) plus `gallery_type`, `gallery_date`, `location`, `credit`; tags via the shared `tag` taxonomy. The event/project/program links are relation fields stored in `content_relations` (not FK columns), and `source_mode`/`external_source_id` arrive with external providers (Phase 10). `gallery_items` as above without `video_provider` (parsed from the URL); only public library images; each photo is recorded in `content_references` (context `gallery_item`). Morph alias `gallery`.
+
+### content_relations (Phase 8C)
+`id, owner_type, owner_id, field varchar(64), related_type, related_id, position, timestamps` · INDEX(owner_type, owner_id, field, position) · INDEX(related_type, related_id). Links chosen in relation fields of content types (project → manager, partners, gallery; program → partners, gallery; gallery → event, project, program). Replaces the planned `partnerables` table and the `manager_team_member_id`/`gallery_id`/`event_id`/`project_id`/`program_id` columns with one generic table, which admin-made content types (8D) will use too. Rows of a deleted item are removed; links to deleted or unpublished items are not shown.
 
 ---
 

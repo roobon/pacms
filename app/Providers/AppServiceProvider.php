@@ -10,14 +10,17 @@ use App\Cms\Sources\SourceRegistry;
 use App\Models\BlockTemplate;
 use App\Models\BlockType;
 use App\Models\Event as EventItem;
+use App\Models\Gallery;
 use App\Models\GlobalBlock;
 use App\Models\ImportJob;
 use App\Models\Media;
 use App\Models\News;
 use App\Models\Page;
+use App\Models\Partner;
 use App\Models\Program;
 use App\Models\Project;
 use App\Models\Publication;
+use App\Models\TeamMember;
 use App\Models\Term;
 use App\Models\User;
 use App\Services\ActivityLog\ActivityLogger;
@@ -58,6 +61,9 @@ class AppServiceProvider extends ServiceProvider
             'project' => Project::class,
             'program' => Program::class,
             'publication' => Publication::class,
+            'team_member' => TeamMember::class,
+            'partner' => Partner::class,
+            'gallery' => Gallery::class,
             'global_block' => GlobalBlock::class,
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,

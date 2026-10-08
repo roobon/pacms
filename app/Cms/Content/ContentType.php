@@ -43,6 +43,51 @@ abstract class ContentType
         return $this->key();
     }
 
+    /**
+     * One permission that manages everything (e.g. "team.manage"), for simple directory-like
+     * modules without editorial workflow; null = the editorial permission set.
+     */
+    public function managePermission(): ?string
+    {
+        return null;
+    }
+
+    public function isManaged(): bool
+    {
+        return $this->managePermission() !== null;
+    }
+
+    /**
+     * The permission for an action (view, create, publish…) on this module.
+     */
+    public function ability(string $action): string
+    {
+        return $this->managePermission() ?? $this->permissionKey().'.'.$action;
+    }
+
+    /** Whether items have their own public page (/{prefix}/{slug}); partners link out instead. */
+    public function hasDetailPages(): bool
+    {
+        return true;
+    }
+
+    /** Whether items are ordered by a "Display order" number (team, partners). */
+    public function positioned(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Admin labels of the common fields, where a module names them differently
+     * (team: "Name", "Short bio", "Biography", "Photo").
+     *
+     * @return array{title: string, excerpt: string, body: string, image: string}
+     */
+    public function labels(): array
+    {
+        return ['title' => 'Title', 'excerpt' => 'Summary', 'body' => 'Article text', 'image' => 'Image'];
+    }
+
     /** Category taxonomy, or null. */
     public function taxonomy(): ?string
     {
@@ -109,6 +154,30 @@ abstract class ContentType
         return false;
     }
 
+    /** Field types stored outside the item's own table (content_relations, gallery_items). */
+    public const VIRTUAL_TYPES = ['relation', 'gallery'];
+
+    /**
+     * Fields stored in the item's own columns.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function columnFields(): array
+    {
+        return array_filter($this->fields(), fn (array $field) => ! in_array($field['type'], self::VIRTUAL_TYPES, true));
+    }
+
+    /**
+     * Relation fields: name => definition ('target' => type key, 'multiple' => bool,
+     * 'display' => fact|logos|cards|gallery, 'title' => public heading).
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function relationFields(): array
+    {
+        return array_filter($this->fields(), fn (array $field) => $field['type'] === 'relation');
+    }
+
     /**
      * Whether items have a "Documents" list (attachments: reports, briefs…).
      */
@@ -127,6 +196,7 @@ abstract class ContentType
     protected function cleanRows(array $rows, array $field): ?array
     {
         $clean = [];
+        ksort($rows); // validated() can return rows out of their submitted order
         foreach ($rows as $row) {
             $values = [];
             foreach (array_keys($field['fields']) as $sub) {

@@ -5,10 +5,13 @@ namespace App\Services\Content;
 use App\Cms\Blocks\BlockTreeRepository;
 use App\Cms\Blocks\BlockTreeValidator;
 use App\Cms\Content\ContentType;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Enums\ContentStatus;
 use App\Enums\RevisionKind;
 use App\Enums\WorkflowAction;
 use App\Models\ContentItem;
+use App\Models\ContentRelation;
+use App\Models\Gallery;
 use App\Models\Media;
 use App\Models\Revision;
 use App\Models\User;
@@ -38,6 +41,7 @@ class ContentService
         private readonly RevisionService $revisions,
         private readonly ActivityLogger $logger,
         private readonly CacheVersions $cache,
+        private readonly ContentTypeRegistry $types,
     ) {}
 
     /**
@@ -74,7 +78,7 @@ class ContentService
     public function update(ContentType $type, User $user, ContentItem $item, array $data, int $lockVersion): ContentItem
     {
         // Direct publishing: changing a live item changes the public site.
-        if ($item->status === ContentStatus::Published && ! $user->can($type->permissionKey().'.publish')) {
+        if ($item->status === ContentStatus::Published && ! $user->can($type->ability('publish'))) {
             throw new AuthorizationException(__('Only publishers can change published :items.', ['items' => strtolower($type->label())]));
         }
 
@@ -111,8 +115,13 @@ class ContentService
     {
         DB::transaction(function () use ($type, $user, $item) {
             $item->delete();
-            // Its documents stay in the revisions; the rows would otherwise keep the files from being deleted.
+            // Its documents and gallery photos stay in the revisions; the rows would otherwise
+            // keep the files from being deleted.
             $item->attachments()->delete();
+            if ($item instanceof Gallery) {
+                $item->items()->delete();
+            }
+            ContentRelation::query()->where('owner_type', $item->getMorphClass())->where('owner_id', $item->getKey())->delete();
             $this->references->clear($item);
             $this->logger->log($type->key().'.deleted', $item, [], $user);
         });
@@ -132,6 +141,15 @@ class ContentService
             $item->setAttribute('lock_version', (int) $item->getAttribute('lock_version') + 1);
             $item->save();
             $this->blocks->save($item, $blocks, $user);
+            foreach ($type->relationFields() as $name => $field) {
+                if (isset($revision->snapshot['relations'][$name])) {
+                    $this->saveRelation($item, $name, $field, (array) $revision->snapshot['relations'][$name]);
+                }
+            }
+            if ($item instanceof Gallery && isset($revision->snapshot['gallery_items'])) {
+                $rows = array_filter((array) $revision->snapshot['gallery_items'], fn ($row) => is_array($row) && (empty($row['media_id']) || Media::query()->whereKey((int) $row['media_id'])->exists()));
+                $this->saveGalleryItems($item, $rows);
+            }
             if ($type->documents() && isset($revision->snapshot['documents'])) {
                 // Documents deleted from the library since then are left out.
                 $rows = array_filter((array) $revision->snapshot['documents'], fn ($row) => is_array($row) && Media::query()->whereKey((int) ($row['media_id'] ?? 0))->exists());
@@ -154,8 +172,11 @@ class ContentService
      */
     public function availableActions(ContentType $type, ContentItem $item, User $user): array
     {
+        // Managed modules (team, partners) are simply active or inactive.
+        $actions = $type->isManaged() ? [WorkflowAction::Publish, WorkflowAction::Unpublish] : WorkflowAction::cases();
+
         return array_values(array_filter(
-            WorkflowAction::cases(),
+            $actions,
             fn (WorkflowAction $action) => $this->allowedFromState($item, $action) && $this->userMay($type, $item, $action, $user),
         ));
     }
@@ -169,6 +190,10 @@ class ContentService
     {
         if ($user !== null && ! $this->userMay($type, $item, $action, $user)) {
             throw new AuthorizationException(__('You are not allowed to :action this :item.', ['action' => strtolower($action->label()), 'item' => $type->singular()]));
+        }
+
+        if ($type->isManaged() && ! in_array($action, [WorkflowAction::Publish, WorkflowAction::Unpublish], true)) {
+            throw ValidationException::withMessages(['action' => __(':Items are only made active or inactive.', ['items' => $type->label()])]);
         }
 
         if (! $this->allowedFromState($item, $action)) {
@@ -250,6 +275,13 @@ class ContentService
                 }
             }
         }
+        if ($item instanceof Gallery) {
+            foreach ($item->items()->with('media')->get() as $galleryItem) {
+                if ($galleryItem->media !== null) {
+                    $references[] = ['target' => $galleryItem->media, 'context' => 'gallery_item'];
+                }
+            }
+        }
         $og = $item->seo?->og_image_media_id;
         if ($og && ($media = Media::query()->find($og))) {
             $references[] = ['target' => $media, 'context' => 'og_image'];
@@ -269,7 +301,7 @@ class ContentService
             $common['sidebar_global_block_id'] = null;
         }
 
-        return $common + $type->prepare(Arr::only($data, array_keys($type->fields())));
+        return $common + $type->prepare(Arr::only($data, array_keys($type->columnFields())));
     }
 
     /**
@@ -290,7 +322,62 @@ class ContentService
         if ($type->documents() && array_key_exists('documents', $data)) {
             $this->saveDocuments($item, (array) $data['documents']);
         }
+        foreach ($type->relationFields() as $name => $field) {
+            if (array_key_exists($name, $data)) {
+                $this->saveRelation($item, $name, $field, (array) ($data[$name] ?? []));
+            }
+        }
+        if ($item instanceof Gallery && array_key_exists('gallery_items', $data)) {
+            $this->saveGalleryItems($item, (array) $data['gallery_items']);
+        }
         $this->syncReferences($item);
+    }
+
+    /**
+     * @param  array<string, mixed>  $field
+     * @param  array<int|string, mixed>  $ids
+     */
+    private function saveRelation(ContentItem $item, string $name, array $field, array $ids): void
+    {
+        $model = $this->types->get((string) $field['target'])->modelClass();
+        $ids = array_values(array_filter(array_map('intval', $ids)));
+        if (empty($field['multiple'])) {
+            $ids = array_slice($ids, 0, 1);
+        }
+        // Only items that exist (deleted ones are dropped); order as chosen.
+        $existing = $model::query()->whereKey($ids)->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $item->syncRelated($name, (new $model)->getMorphClass(), array_values(array_filter($ids, fn (int $id) => in_array($id, $existing, true))));
+    }
+
+    /**
+     * Replace a gallery's photos and videos (rows: media_id or video_url, caption, alt_override, credit).
+     *
+     * @param  array<int|string, mixed>  $rows
+     */
+    private function saveGalleryItems(Gallery $gallery, array $rows): void
+    {
+        $gallery->items()->delete();
+        $position = 0;
+        ksort($rows); // validated() can return rows out of their submitted order
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+            $mediaId = empty($row['media_id']) ? null : (int) $row['media_id'];
+            $videoUrl = $mediaId === null && ! empty($row['video_url']) ? mb_substr(trim((string) $row['video_url']), 0, 1024) : null;
+            if ($mediaId === null && $videoUrl === null) {
+                continue;
+            }
+            $text = fn (string $key, int $max) => ($value = trim((string) ($row[$key] ?? ''))) === '' ? null : mb_substr($value, 0, $max);
+            $gallery->items()->create([
+                'media_id' => $mediaId,
+                'video_url' => $videoUrl,
+                'caption' => $text('caption', 1000),
+                'alt_override' => $text('alt_override', 255),
+                'credit' => $text('credit', 191),
+                'position' => $position++,
+            ]);
+        }
     }
 
     /**
@@ -302,6 +389,7 @@ class ContentService
     {
         $item->attachments()->delete();
         $position = 0;
+        ksort($rows); // validated() can return rows out of their submitted order
         foreach ($rows as $row) {
             if (! is_array($row) || empty($row['media_id'])) {
                 continue;
@@ -350,7 +438,7 @@ class ContentService
 
     private function userMay(ContentType $type, ContentItem $item, WorkflowAction $action, User $user): bool
     {
-        if (! $user->can($type->permissionKey().'.'.$action->permission())) {
+        if (! $user->can($type->ability($action->permission()))) {
             return false;
         }
 
