@@ -1231,3 +1231,38 @@ $sidebar-bg: #0F172A;
 legend.form-label {
     font-size: 1rem;
 }
+
+// Repeaters and document lists in content forms (Phase 8B). Own class names: the builder's
+// .pa-repeater rows look different.
+.pa-list-editor__row {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    gap: 0.5rem;
+    align-items: start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.pa-list-editor__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: 1.5rem;
+    border-radius: 50%;
+    background: var(--bs-secondary-bg);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.pa-list-editor__fields {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.pa-list-editor__actions {
+    display: flex;
+    margin-top: 1.25rem;
+}

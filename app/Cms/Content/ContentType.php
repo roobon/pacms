@@ -50,8 +50,11 @@ abstract class ContentType
     }
 
     /**
-     * Module-specific form fields: name => [type, label, rules, help?, options?, placeholder?].
-     * Types: text, textarea, url, email, date, datetime, checkbox, select, timezone.
+     * Module-specific form fields: name => [type, label, rules, help?, options?, placeholder?, section?].
+     * Types: text, textarea, url, email, date, datetime, checkbox, select, timezone,
+     * media (a document from the library: 'media_kind' => 'document'), and repeater
+     * (an ordered list of rows: 'fields' => [sub => [type: text|textarea, label, rules]],
+     * 'max' => rows, 'add_label' => button text).
      *
      * @return array<string, array<string, mixed>>
      */
@@ -69,9 +72,15 @@ abstract class ContentType
     public function prepare(array $data): array
     {
         foreach ($this->fields() as $name => $field) {
-            if ($field['type'] === 'checkbox') {
-                $data[$name] = ! empty($data[$name]);
+            if (! array_key_exists($name, $data) && $field['type'] !== 'checkbox') {
+                continue;
             }
+            $data[$name] = match ($field['type']) {
+                'checkbox' => ! empty($data[$name]),
+                'media' => empty($data[$name]) ? null : (int) $data[$name],
+                'repeater' => $this->cleanRows((array) $data[$name], $field),
+                default => $data[$name],
+            };
         }
 
         return $data;
@@ -82,7 +91,54 @@ abstract class ContentType
      */
     public function formValue(ContentItem $item, string $field): mixed
     {
-        return $item->getAttribute($field);
+        $value = $item->getAttribute($field);
+        $type = $this->fields()[$field]['type'] ?? null;
+
+        return match (true) {
+            $type === 'date' && $value instanceof \DateTimeInterface => $value->format('Y-m-d'),
+            $type === 'repeater' => is_array($value) ? $value : [],
+            default => $value,
+        };
+    }
+
+    /**
+     * Whether the detail page shows the date it was published on the website (news).
+     */
+    public function showsPublishDate(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Whether items have a "Documents" list (attachments: reports, briefs…).
+     */
+    public function documents(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Repeater rows as saved: known sub-fields only, trimmed, empty rows dropped, re-indexed.
+     *
+     * @param  array<int|string, mixed>  $rows
+     * @param  array<string, mixed>  $field
+     * @return list<array<string, string|null>>|null
+     */
+    protected function cleanRows(array $rows, array $field): ?array
+    {
+        $clean = [];
+        foreach ($rows as $row) {
+            $values = [];
+            foreach (array_keys($field['fields']) as $sub) {
+                $value = trim((string) (is_array($row) ? ($row[$sub] ?? '') : ''));
+                $values[$sub] = $value === '' ? null : $value;
+            }
+            if (array_filter($values, fn ($value) => $value !== null) !== []) {
+                $clean[] = $values;
+            }
+        }
+
+        return $clean === [] ? null : $clean;
     }
 
     /**

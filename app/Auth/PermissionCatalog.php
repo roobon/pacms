@@ -49,7 +49,7 @@ final class PermissionCatalog
             'Testimonials' => ['testimonials.view', 'testimonials.moderate', 'testimonials.publish', 'testimonials.delete'],
             'Media' => ['media.view', 'media.upload', 'media.update', 'media.delete', 'media.force_delete', 'media.upload_svg'],
             'Blocks & Design' => [
-                'blocks.custom_css', 'blocks.custom_attributes', 'block_types.manage', 'templates.manage',
+                'blocks.custom_css', 'blocks.custom_attributes', 'blocks.custom_html', 'block_types.manage', 'templates.manage',
                 'global_blocks.manage', 'global_blocks.detach', 'menus.manage', 'design_tokens.manage',
             ],
             'Integrations' => ['external_sources.manage', 'external_sources.sync', 'facebook.connect'],

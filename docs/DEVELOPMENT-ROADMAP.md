@@ -84,6 +84,13 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
 - **Module sidebars** (agreed 2026-10-07): global blocks of kind `sidebar`, built in the builder. Settings choose a sidebar and its side (left or right) per content type (news, events, projects, programs…). Each item can override it or turn it off. On desktop the content takes about two-thirds and the sidebar one-third; on phones the sidebar goes below the content.
 - Admin CRUD for all (shared Blade components), dynamic sources and cards for each, search indexing.
 - Tests: per module CRUD + policies + leak tests, moderation state machine, testimonial privacy assertions, source-check classification.
+- **Delivered in parts (agreed 2026-10-08), each reviewed before the next:**
+  - **8A**: content engine (Content Type Registry), full News, Events, module sidebars. *Merged.*
+  - **8B**: Projects, Programs, Publications, documents, module sitemaps; Document and HTML blocks, "Save page as template".
+  - **8C**: Team, Partners, Testimonials (submission + moderation), Media Coverage, Galleries, search indexing; links from projects/programs to partners, team and galleries.
+  - **8D — admin-made content types** ("custom post types", added at the team lead's request; not in the master prompt): a *Design → Content types* screen (permission "Manage content types") to create types without code. You set the names, icon, URL prefix, categories, documents and listing page, and build the fields with the Custom Blocks field builder, each shown in the details box, as its own section, or hidden. Every such type gets everything the built-in modules have (workflow, revisions, SEO, preview, sidebar, archive, detail page, sitemap, builder block, permissions). All admin-made types share one table with JSON fields, so no deployment is needed. Built-in modules stay in code. The admin content menu is reorganised here to handle any number of types.
+  - **Starter kit**: designed page templates (Home, About, Contact, module landing pages), section templates and global blocks (footer, CTA band, sidebars), installed with one command and editable afterwards.
+- Tag **v0.8.0** after the starter kit.
 
 ### Phase 9 — Navigation (M)
 - Menus + Menu Builder island, item types, visibility, mega-menu block trees, header/footer global blocks, site-wide default header/footer, mobile offcanvas/accordion, accessible disclosure navigation.

@@ -111,9 +111,9 @@ export function VideoBlock({ node, preview }) {
     );
 }
 
-const LIST_ICONS = { check: 'bi-check-circle-fill', bullet: null, number: null };
+const LIST_ICONS = { check: 'bi-check-circle-fill', bullet: null, number: null, none: null };
 
-/** List of short items: bullets, numbers (<ol>), check marks or icons; items may link. */
+/** List of short items: plain, bullets, numbers (<ol>), check marks or icons; items may link. */
 export function ListBlock({ node, preview }) {
     const { style = 'check', icon, columns = '1', item_padding: padding = 'none', dividers = false, items = [] } = node.content;
     const Tag = style === 'number' ? 'ol' : 'ul';
@@ -131,5 +131,46 @@ export function ListBlock({ node, preview }) {
                 );
             })}
         </Tag>
+    );
+}
+
+/** HTML block: markup cleaned on the server (HtmlSanitizer::html), rendered as-is. */
+export function HtmlBlock({ node, preview }) {
+    const html = node.content.html ?? '';
+    if (!html) return preview ? <div {...frameProps(node, preview, 'pa-placeholder')}>Add your HTML</div> : null;
+
+    return <div {...frameProps(node, preview, 'pa-html')} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+const DOCUMENT_HEIGHTS = { sm: 480, md: 720, lg: 960 };
+
+/**
+ * A document from the library: a PDF in an embedded viewer, or a download card. The
+ * download link is always there (phones and some browsers can't show embedded PDFs).
+ */
+export function DocumentBlock({ node, preview }) {
+    const { file, title, description, display = 'viewer', height = 'md' } = node.content;
+    if (!file?.url) return preview ? <div {...frameProps(node, preview, 'pa-placeholder')}>Choose a document</div> : null;
+
+    const name = title || file.name;
+    const extension = (file.extension || '').toUpperCase();
+    const viewer = display === 'viewer' && file.extension === 'pdf';
+
+    return (
+        <figure {...frameProps(node, preview, `pa-document${viewer ? ' pa-document--viewer' : ''}`)}>
+            {viewer && <iframe className="pa-document__frame" src={file.url} title={name} style={{ height: DOCUMENT_HEIGHTS[height] ?? 720 }} loading="lazy" />}
+            <figcaption className="pa-document__card">
+                <i className="bi bi-file-earmark-text pa-document__icon" aria-hidden="true" />
+                <span className="pa-document__text">
+                    <span className="pa-document__name">{name}</span>
+                    {description && <span className="pa-document__description">{description}</span>}
+                    <span className="pa-document__meta">{[extension, file.size].filter(Boolean).join(' · ')}</span>
+                </span>
+                <a className="btn btn-outline-primary btn-sm" href={file.url} download>
+                    <i className="bi bi-download me-1" aria-hidden="true" />
+                    Download<span className="visually-hidden"> {name}</span>
+                </a>
+            </figcaption>
+        </figure>
     );
 }

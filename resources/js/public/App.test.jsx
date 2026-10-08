@@ -188,6 +188,28 @@ describe('public SPA', () => {
         expect(screen.getByRole('link', { name: /Next/ })).toHaveAttribute('href', '/events?view=past&page=2');
     });
 
+    it('renders facts, actions, lists and documents of a module item', () => {
+        renderAt('/programs/green-schools', {
+            content: eventData({
+                type: 'programs',
+                title: 'Green schools',
+                event: undefined,
+                sidebar: null,
+                facts: [{ icon: 'bi-flag', label: 'Status', value: 'Ongoing' }],
+                actions: [{ label: 'Download PDF', url: '/storage/media/plan.pdf', icon: 'bi-download', external: false, download: true, meta: '1.2 MB' }],
+                lists: [{ key: 'objectives', title: 'Objectives', items: [{ title: null, text: 'Plant trees' }, { title: null, text: 'Teach recycling' }] }],
+                documents: [{ label: 'Baseline survey', url: '/storage/media/survey.pdf', extension: 'PDF', size: '800 KB' }],
+            }),
+        });
+
+        expect(screen.getByRole('region', { name: 'Details' })).toHaveTextContent('StatusOngoing');
+        expect(screen.getByRole('link', { name: /Download PDF/ })).toHaveAttribute('download');
+        const objectives = screen.getByRole('region', { name: 'Objectives' });
+        expect(within(objectives).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['Plant trees', 'Teach recycling']);
+        expect(screen.getByRole('link', { name: /Baseline survey/ })).toHaveAttribute('href', '/storage/media/survey.pdf');
+        expect(screen.queryByRole('complementary')).not.toBeInTheDocument();
+    });
+
     it('previews a content item', () => {
         renderAt('/preview/events/4', { content: eventData({ preview: true }), preview: true });
         expect(screen.getByRole('status')).toHaveTextContent('Preview');

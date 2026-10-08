@@ -6,6 +6,7 @@ use App\Cms\Blocks\BlockPayloadResolver;
 use App\Cms\Blocks\BlockTreeRepository;
 use App\Cms\Content\ContentType;
 use App\Cms\Content\ContentTypeRegistry;
+use App\Models\Attachment;
 use App\Models\ContentItem;
 use App\Models\GlobalBlock;
 use App\Models\SeoMetadata;
@@ -158,11 +159,35 @@ class ContentPayloadBuilder
             'category' => $categories[0]['name'] ?? null,
             'categories' => $categories,
             'published_at' => $item->published_at?->toIso8601String(),
+            'show_date' => $type->showsPublishDate(),
             'breadcrumbs' => $breadcrumbs,
             'seo' => $seo,
             'blocks' => $this->blocks->resolve($this->tree->load($item), includeHidden: false),
             'sidebar' => $this->sidebar($type, $item),
+            'documents' => $this->documents($type, $item),
         ] + $type->details($item);
+    }
+
+    /**
+     * Downloadable documents (public files only).
+     *
+     * @return list<array{label: string, url: string, extension: string, size: string}>
+     */
+    private function documents(ContentType $type, ContentItem $item): array
+    {
+        if (! $type->documents()) {
+            return [];
+        }
+
+        return $item->attachments()->with('media')->get()
+            ->filter(fn (Attachment $attachment) => $attachment->media?->isPublic() === true)
+            ->map(fn (Attachment $attachment) => [
+                'label' => $attachment->label ?: (string) $attachment->media->original_name,
+                'url' => (string) $attachment->media->url(),
+                'extension' => strtoupper((string) $attachment->media->extension),
+                'size' => $attachment->media->humanSize(),
+            ])
+            ->values()->all();
     }
 
     /**

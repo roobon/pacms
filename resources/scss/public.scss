@@ -302,9 +302,15 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
     }
 }
 
+// Summary under the page title: regular weight (Bootstrap's .lead is 300 and reads faint)
+// and as wide as the title above it, so both share the same edges.
 .pa-page-lead {
-    max-width: 46rem;
-    color: var(--pa-color-muted);
+    margin-top: var(--pa-space-3);
+    font-size: 1.1875rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--pa-color-body);
+    opacity: .85;
 }
 
 // Formatted summary (paragraphs, bold, italic, links).
@@ -945,6 +951,103 @@ img.pa-ratio {
 }
 
 .pa-pre-line { white-space: pre-line; }
+
+// Document block: embedded PDF viewer and/or download card.
+.pa-document {
+    margin: 0 0 var(--pa-space-4);
+    border: 1px solid var(--pa-color-border);
+    border-radius: var(--pa-radius-lg);
+    overflow: hidden;
+    background: #fff;
+
+    &__frame {
+        display: block;
+        width: 100%;
+        border: 0;
+        border-bottom: 1px solid var(--pa-color-border);
+    }
+
+    &__card {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--pa-space-3);
+        align-items: center;
+        padding: var(--pa-space-4);
+    }
+
+    &__icon {
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--pa-color-primary);
+    }
+
+    &__text {
+        display: flex;
+        flex: 1 1 12rem;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__name {
+        font-weight: 600;
+        color: var(--pa-color-heading);
+        overflow-wrap: anywhere;
+    }
+
+    &__description { color: var(--pa-color-body); }
+
+    &__meta {
+        font-size: var(--pa-font-size-sm);
+        color: var(--pa-color-muted);
+    }
+
+    // Small screens: the embedded viewer is often blank on phones; the card remains.
+    @include media-breakpoint-down(md) {
+        &__frame { display: none; }
+    }
+}
+
+// Program objectives / activities and downloadable documents (Phase 8B).
+.pa-content-list,
+.pa-documents {
+    margin: var(--pa-space-6, 2.5rem) 0;
+}
+
+.pa-content-list__items {
+    display: grid;
+    gap: var(--pa-space-3);
+    padding-left: 1.5rem;
+
+    li::marker {
+        font-weight: 700;
+        color: var(--pa-color-primary);
+    }
+}
+
+.pa-documents li + li {
+    margin-top: var(--pa-space-2);
+}
+
+.pa-documents__link {
+    display: flex;
+    gap: var(--pa-space-3);
+    align-items: flex-start;
+    padding: var(--pa-space-3) var(--pa-space-4);
+    border: 1px solid var(--pa-color-border);
+    border-radius: var(--pa-radius-md, 0.5rem);
+    text-decoration: none;
+    color: var(--pa-color-heading);
+
+    .bi {
+        font-size: 1.5rem;
+        line-height: 1;
+        color: var(--pa-color-primary);
+    }
+
+    &:hover {
+        border-color: var(--pa-color-primary);
+    }
+}
 
 .pa-badge-public--muted {
     background: var(--pa-color-border);

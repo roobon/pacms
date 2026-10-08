@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import ColorInput from './ColorInput.jsx';
 import IconPicker from './IconPicker.jsx';
+import HtmlInput from './HtmlInput.jsx';
 import ImageInput from './ImageInput.jsx';
 import LinkInput from './LinkInput.jsx';
 import RepeaterInput from './RepeaterInput.jsx';
@@ -23,6 +24,11 @@ export default function FieldInput({ field, value, onChange, errors = {}, path =
     switch (field.type) {
         case 'textarea':
             control = <textarea id={id} rows={3} className={`form-control form-control-sm${invalid}`} value={value ?? ''} maxLength={field.max} disabled={disabled} aria-describedby={describedBy} onChange={(e) => onChange(e.target.value)} />;
+            break;
+        case 'html':
+            control = (
+                <HtmlInput id={id} value={value ?? ''} max={field.max} invalid={invalid} disabled={disabled} describedBy={describedBy} onChange={onChange} />
+            );
             break;
         case 'rich-text':
             control = <RichTextInput id={id} value={value ?? ''} onChange={onChange} disabled={disabled} describedBy={describedBy} />;
@@ -112,7 +118,7 @@ export default function FieldInput({ field, value, onChange, errors = {}, path =
             break;
         case 'image':
         case 'media':
-            control = <ImageInput value={value ?? null} onChange={onChange} label={field.label} disabled={disabled} />;
+            control = <ImageInput value={value ?? null} onChange={onChange} label={field.label} disabled={disabled} kind={field.accept === 'document' ? 'document' : 'image'} />;
             break;
         case 'color':
             control = <ColorInput id={id} value={value ?? null} onChange={onChange} disabled={disabled} />;

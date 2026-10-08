@@ -60,18 +60,15 @@
                             <div class="card-header"><h2 id="section-{{ Str::slug($section) }}" class="h6 mb-0">{{ $section }}</h2></div>
                             <div class="card-body">
                                 @foreach ($fields as $name => $field)
-                                    @php($value = $type->formValue($item, $name))
-                                    @switch($field['type'])
-                                        @case('checkbox')
+                                    @php $value = $type->formValue($item, $name); @endphp
+                                    @if ($field['type'] === 'checkbox')
                                             <div class="form-check mb-3">
                                                 <input type="hidden" name="{{ $name }}" value="0">
                                                 <input class="form-check-input" type="checkbox" name="{{ $name }}" value="1" id="field-{{ $name }}" @checked(old($name, $value))>
                                                 <label class="form-check-label" for="field-{{ $name }}">{{ $field['label'] }}</label>
                                             </div>
-                                            @break
-                                        @case('timezone')
-                                        @case('select')
-                                            @php($options = $field['type'] === 'timezone' ? array_combine($timezones, $timezones) : $field['options'])
+                                        @elseif (in_array($field['type'], ['timezone', 'select'], true))
+                                            @php $options = $field['type'] === 'timezone' ? array_combine($timezones, $timezones) : $field['options']; @endphp
                                             <div class="mb-3">
                                                 <label for="field-{{ $name }}" class="form-label">{{ $field['label'] }}</label>
                                                 <select id="field-{{ $name }}" name="{{ $name }}" class="form-select @error($name) is-invalid @enderror" @if (! empty($field['help'])) aria-describedby="field-{{ $name }}-help" @endif>
@@ -82,11 +79,33 @@
                                                 @if (! empty($field['help']))<div id="field-{{ $name }}-help" class="form-text">{{ $field['help'] }}</div>@endif
                                                 @error($name)<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
-                                            @break
-                                        @default
+                                        @elseif ($field['type'] === 'media')
+                                            <x-admin.media-picker :name="$name" :label="$field['label']" :media="$mediaFields[$name] ?? null" :kind="$field['media_kind'] ?? 'image'"
+                                                :help="$field['help'] ?? null" :disabled="$readonly" />
+                                        @elseif ($field['type'] === 'repeater')
+                                            @php
+                                                $rows = array_values((array) old($name, $value ?? []));
+                                                $rowErrors = collect($errors->getMessages())->filter(fn ($m, $k) => $k === $name || str_starts_with($k, $name.'.'))->map(fn ($m) => $m[0])->all();
+                                                $repeaterConfig = [
+                                                    'name' => $name, 'label' => $field['label'], 'addLabel' => $field['add_label'] ?? 'Add', 'max' => $field['max'] ?? 30,
+                                                    'fields' => collect($field['fields'])->map(fn ($sub) => ['type' => $sub['type'], 'label' => $sub['label']])->all(),
+                                                    'rows' => $rows, 'errors' => (object) $rowErrors, 'disabled' => $readonly,
+                                                ];
+                                            @endphp
+                                            <div data-repeater-field data-config="{{ json_encode($repeaterConfig) }}">
+                                                {{-- Without JavaScript: the saved rows as plain inputs. --}}
+                                                <p class="form-label">{{ $field['label'] }}</p>
+                                                @foreach ($rows as $i => $row)
+                                                    @foreach ($field['fields'] as $sub => $subField)
+                                                        <label class="form-label small" for="{{ $name }}-{{ $i }}-{{ $sub }}">{{ $subField['label'] }} {{ $i + 1 }}</label>
+                                                        <input class="form-control form-control-sm mb-2" id="{{ $name }}-{{ $i }}-{{ $sub }}" name="{{ $name }}[{{ $i }}][{{ $sub }}]" value="{{ $row[$sub] ?? '' }}">
+                                                    @endforeach
+                                                @endforeach
+                                            </div>
+                                        @else
                                             <x-admin.field :name="$name" :label="$field['label']" :type="$field['type'] === 'datetime' ? 'datetime-local' : $field['type']"
                                                 :value="$value" :help="$field['help'] ?? null" :required="in_array('required', $field['rules'], true)" :placeholder="$field['placeholder'] ?? null" />
-                                    @endswitch
+                                    @endif
                                 @endforeach
                                 @if ($section === 'When' && isset($type->fields()['timezone']))
                                     <p class="small text-body-secondary mb-0">Enter times as they are at the event's location. Visitors see them with the time zone.</p>
@@ -95,12 +114,46 @@
                         </section>
                     @endforeach
 
+                    @if ($type->documents())
+                        @php
+                            $oldDocuments = old('documents');
+                            if (is_array($oldDocuments)) {
+                                $names = \App\Models\Media::query()->whereKey(collect($oldDocuments)->pluck('media_id')->filter()->all())->get()->keyBy('id');
+                                $documents = collect($oldDocuments)->filter(fn ($row) => isset($names[(int) ($row['media_id'] ?? 0)]))
+                                    ->map(fn ($row) => ['media_id' => (int) $row['media_id'], 'label' => $row['label'] ?? null, 'name' => $names[(int) $row['media_id']]->original_name, 'size' => $names[(int) $row['media_id']]->humanSize()])
+                                    ->values()->all();
+                            }
+                            $documentsConfig = [
+                                'rows' => $documents,
+                                'endpoint' => route('admin.api.media.index'),
+                                'uploadEndpoint' => route('admin.api.media.store'),
+                                'canUpload' => auth()->user()->can('media.upload'),
+                                'disabled' => $readonly,
+                                'errors' => (object) collect($errors->getMessages())->filter(fn ($m, $k) => str_starts_with($k, 'documents'))->map(fn ($m) => $m[0])->all(),
+                            ];
+                        @endphp
+                        <section class="card pa-card mb-4" aria-labelledby="documents-heading">
+                            <div class="card-header"><h2 id="documents-heading" class="h6 mb-0">Documents</h2></div>
+                            <div class="card-body">
+                                <p class="small text-body-secondary">Reports, briefs and other files visitors can download from this {{ $type->singular() }}'s page. Only public files from the Media Library can be used.</p>
+                                <div data-documents-field data-config="{{ json_encode($documentsConfig) }}">
+                                    {{-- Without JavaScript: keep the current list as it is. --}}
+                                    @foreach ($documents as $i => $document)
+                                        <input type="hidden" name="documents[{{ $i }}][media_id]" value="{{ $document['media_id'] }}">
+                                        <input type="hidden" name="documents[{{ $i }}][label]" value="{{ $document['label'] }}">
+                                        <p class="mb-1"><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>{{ $document['label'] ?: $document['name'] }}</p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </section>
+                    @endif
+
                     <section class="card pa-card mb-4" aria-labelledby="media-heading">
                         <div class="card-header"><h2 id="media-heading" class="h6 mb-0">Image &amp; categories</h2></div>
                         <div class="card-body">
                             <x-admin.media-picker name="featured_media_id" label="Image" :media="$item->featuredMedia" :disabled="$readonly" />
                             @if ($categories->isNotEmpty())
-                                @php($selected = array_map('intval', old('terms', $editing ? $item->terms->where('taxonomy', $type->taxonomy())->pluck('id')->all() : [])))
+                                @php $selected = array_map('intval', old('terms', $editing ? $item->terms->where('taxonomy', $type->taxonomy())->pluck('id')->all() : [])); @endphp
                                 <fieldset class="mb-3">
                                     <legend class="form-label fs-6">Categories</legend>
                                     @foreach ($categories as $category)
@@ -125,7 +178,7 @@
                     <section class="card pa-card mb-4" aria-labelledby="sidebar-heading">
                         <div class="card-header"><h2 id="sidebar-heading" class="h6 mb-0">Sidebar</h2></div>
                         <div class="card-body">
-                            @php($mode = old('sidebar_mode', $item->sidebar_mode ?? 'default'))
+                            @php $mode = old('sidebar_mode', $item->sidebar_mode ?? 'default'); @endphp
                             <fieldset class="mb-3">
                                 <legend class="form-label fs-6">Show next to the content</legend>
                                 @foreach (['default' => 'The default sidebar for '.strtolower($type->label()).' (set in Settings)', 'none' => 'No sidebar', 'custom' => 'A sidebar chosen for this '.$type->singular()] as $value => $label)
@@ -306,5 +359,6 @@
     {{-- React refresh is already added by the block builder component. --}}
     @push('islands')
         @vite('resources/js/admin/islands/summary-editor.jsx')
+        @vite('resources/js/admin/islands/content-fields.jsx')
     @endpush
 </x-admin.layout>

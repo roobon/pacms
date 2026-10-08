@@ -10,15 +10,20 @@ use App\Cms\Blocks\Types\ColumnsBlock;
 use App\Cms\Blocks\Types\ContainerBlock;
 use App\Cms\Blocks\Types\CtaBlock;
 use App\Cms\Blocks\Types\DividerBlock;
+use App\Cms\Blocks\Types\DocumentBlock;
 use App\Cms\Blocks\Types\EventsBlock;
 use App\Cms\Blocks\Types\FaqBlock;
 use App\Cms\Blocks\Types\GlobalRefBlock;
 use App\Cms\Blocks\Types\HeadingBlock;
 use App\Cms\Blocks\Types\HeroBlock;
+use App\Cms\Blocks\Types\HtmlBlock;
 use App\Cms\Blocks\Types\IconBlock;
 use App\Cms\Blocks\Types\ImageBlock;
 use App\Cms\Blocks\Types\ListBlock;
 use App\Cms\Blocks\Types\NewsBlock;
+use App\Cms\Blocks\Types\ProgramsBlock;
+use App\Cms\Blocks\Types\ProjectsBlock;
+use App\Cms\Blocks\Types\PublicationsBlock;
 use App\Cms\Blocks\Types\QuoteBlock;
 use App\Cms\Blocks\Types\RepeatBlock;
 use App\Cms\Blocks\Types\RichTextBlock;
@@ -29,6 +34,9 @@ use App\Cms\Blocks\Types\VideoBlock;
 use App\Cms\Blocks\Types\WhenBlock;
 use App\Cms\Content\Types\EventType;
 use App\Cms\Content\Types\NewsType;
+use App\Cms\Content\Types\ProgramType;
+use App\Cms\Content\Types\ProjectType;
+use App\Cms\Content\Types\PublicationType;
 
 return [
 
@@ -176,6 +184,11 @@ return [
             CtaBlock::class,
             NewsBlock::class,
             EventsBlock::class,
+            ProjectsBlock::class,
+            ProgramsBlock::class,
+            PublicationsBlock::class,
+            DocumentBlock::class,
+            HtmlBlock::class,
             GlobalRefBlock::class,
             RepeatBlock::class,
             WhenBlock::class,
@@ -188,12 +201,16 @@ return [
     'content_types' => [
         NewsType::class,
         EventType::class,
+        ProjectType::class,
+        ProgramType::class,
+        PublicationType::class,
     ],
 
     // Registered taxonomies. Content types add theirs as they are built.
     'taxonomies' => [
         'news_category' => ['label' => 'News categories', 'singular' => 'News category', 'hierarchical' => true],
         'event_category' => ['label' => 'Event categories', 'singular' => 'Event category', 'hierarchical' => true],
+        'publication_category' => ['label' => 'Publication categories', 'singular' => 'Publication category', 'hierarchical' => true],
         'media_category' => ['label' => 'Media categories', 'singular' => 'Media category', 'hierarchical' => true],
         'tag' => ['label' => 'Tags', 'singular' => 'Tag', 'hierarchical' => false],
     ],

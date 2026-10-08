@@ -94,6 +94,15 @@ final class FieldValidator
 
                 return $this->maxLength($this->html->sanitize($value), $field, $path);
 
+            case 'html':
+                if (! is_string($value)) {
+                    $errors->add($path, __('Enter HTML.'));
+
+                    return null;
+                }
+
+                return $this->maxLength($this->html->html($value), $field, $path);
+
             case 'number':
                 if (! is_numeric($value)) {
                     $errors->add($path, __('Enter a number.'));
@@ -169,7 +178,7 @@ final class FieldValidator
                 return $this->values->mediaRef($value, $path, MediaKind::Image);
 
             case 'media':
-                return $this->values->mediaRef($value, $path);
+                return $this->values->mediaRef($value, $path, isset($field['accept']) ? MediaKind::tryFrom((string) $field['accept']) : null);
 
             case 'icon':
                 if (! is_string($value) || ! preg_match('/^bi-[a-z0-9-]{1,60}$/', $value)) {

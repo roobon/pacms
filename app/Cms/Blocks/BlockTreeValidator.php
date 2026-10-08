@@ -45,6 +45,8 @@ class BlockTreeValidator
 
     private bool $mayUseAttributes = false;
 
+    private bool $mayUseHtml = false;
+
     private string $context = self::CONTEXT_PAGE;
 
     /** @var array<int, bool> global block id => usable */
@@ -76,6 +78,7 @@ class BlockTreeValidator
         $this->globals = [];
         $this->context = $context;
         $this->mayUseAttributes = (bool) $user?->can('blocks.custom_attributes');
+        $this->mayUseHtml = (bool) $user?->can('blocks.custom_html');
 
         if (! array_is_list($nodes)) {
             throw ValidationException::withMessages(['blocks' => __('Invalid block structure.')]);
@@ -91,6 +94,32 @@ class BlockTreeValidator
         $this->errors->throwIfAny();
 
         return $clean;
+    }
+
+    /**
+     * Signature of an HTML block's markup. Only roles with blocks.custom_html can add or change
+     * HTML blocks; everyone else may keep, move or delete existing ones unchanged, which the
+     * signature (made by the server when a permitted user saved it) proves.
+     */
+    public static function htmlSignature(string $html): string
+    {
+        return hash_hmac('sha256', 'pacms-html-block|'.$html, (string) config('app.key'));
+    }
+
+    /**
+     * @param  array<string, mixed>  $clean  validated content
+     * @param  array<string, mixed>  $raw  submitted content (with the signature)
+     * @return array<string, mixed>
+     */
+    private function signedHtml(array $clean, array $raw, string $path): array
+    {
+        $signature = self::htmlSignature((string) ($clean['html'] ?? ''));
+
+        if (! $this->mayUseHtml && ! hash_equals($signature, (string) ($raw['signature'] ?? ''))) {
+            $this->errors->add("{$path}.content.html", __('Only roles with the “HTML blocks” permission can add or change HTML blocks.'));
+        }
+
+        return $clean + ['signature' => $signature];
     }
 
     /**
@@ -183,6 +212,10 @@ class BlockTreeValidator
             'responsive' => (new StyleValidator($this->values))->responsive((array) ($node['responsive'] ?? []), "{$path}.responsive"),
             'advanced' => (new StyleValidator($this->values))->advanced((array) ($node['advanced'] ?? []), "{$path}.advanced", $this->mayUseAttributes),
         ], fn ($value) => $value !== null && $value !== []);
+
+        if ($type->slug() === 'html') {
+            $clean['content'] = $this->signedHtml((array) ($clean['content'] ?? []), (array) ($node['content'] ?? []), $path);
+        }
 
         $childBindings = $this->structural($type, (array) ($clean['content'] ?? []), $bindings, $path) ?? $bindings;
 

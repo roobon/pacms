@@ -3,12 +3,13 @@ import { MediaPickerDialog } from '../../islands/media-picker/MediaPickerDialog.
 import { useBuilder } from '../store.js';
 
 /**
- * Image field: stores {"$media": id}; keeps a small preview cache for the inspector.
- * The resolved image (srcset, alt…) comes from the server for the live preview.
+ * Image or document field: stores {"$media": id}; keeps a small preview cache for the
+ * inspector. The resolved file (srcset, alt, URL…) comes from the server for the live preview.
  *
- * @param {{value: Object|null, onChange: (value: Object|null) => void, label: string, disabled?: boolean}} props
+ * @param {{value: Object|null, onChange: (value: Object|null) => void, label: string, disabled?: boolean, kind?: 'image'|'document'}} props
  */
-export default function ImageInput({ value, onChange, label, disabled = false }) {
+export default function ImageInput({ value, onChange, label, disabled = false, kind = 'image' }) {
+    const noun = kind === 'image' ? 'image' : 'document';
     const [open, setOpen] = useState(false);
     const [preview, setPreview] = useState(null);
     const endpoints = useBuilder((state) => state.definitions?.endpoints);
@@ -20,11 +21,16 @@ export default function ImageInput({ value, onChange, label, disabled = false })
             {mediaId ? (
                 preview?.id === mediaId && preview.thumbnail ? (
                     <img src={preview.thumbnail} alt={preview.alt ?? ''} className="pa-media-field__preview" />
+                ) : preview?.id === mediaId && preview.name ? (
+                    <span className="small">
+                        <i className="bi bi-file-earmark-text me-1" aria-hidden="true" />
+                        {preview.name}
+                    </span>
                 ) : (
-                    <span className="small">Image #{mediaId}</span>
+                    <span className="small">{kind === 'image' ? 'Image' : 'Document'} #{mediaId}</span>
                 )
             ) : (
-                <span className="small text-body-secondary">No image selected.</span>
+                <span className="small text-body-secondary">No {noun} selected.</span>
             )}
             <div className="d-flex gap-2">
                 <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setOpen(true)} disabled={disabled}>
@@ -40,6 +46,7 @@ export default function ImageInput({ value, onChange, label, disabled = false })
             {open && (
                 <MediaPickerDialog
                     title={`Choose ${label.toLowerCase()}`}
+                    kind={kind}
                     endpoint={endpoints.media}
                     uploadEndpoint={endpoints.mediaUpload}
                     canUpload={Boolean(canUpload)}

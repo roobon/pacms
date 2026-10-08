@@ -111,6 +111,8 @@ class ContentService
     {
         DB::transaction(function () use ($type, $user, $item) {
             $item->delete();
+            // Its documents stay in the revisions; the rows would otherwise keep the files from being deleted.
+            $item->attachments()->delete();
             $this->references->clear($item);
             $this->logger->log($type->key().'.deleted', $item, [], $user);
         });
@@ -130,6 +132,11 @@ class ContentService
             $item->setAttribute('lock_version', (int) $item->getAttribute('lock_version') + 1);
             $item->save();
             $this->blocks->save($item, $blocks, $user);
+            if ($type->documents() && isset($revision->snapshot['documents'])) {
+                // Documents deleted from the library since then are left out.
+                $rows = array_filter((array) $revision->snapshot['documents'], fn ($row) => is_array($row) && Media::query()->whereKey((int) ($row['media_id'] ?? 0))->exists());
+                $this->saveDocuments($item, $rows);
+            }
             $this->syncReferences($item);
 
             $this->revisions->record($item, RevisionKind::Restore, $user, __('Restored revision #:number', ['number' => $revision->number]));
@@ -229,6 +236,20 @@ class ContentService
         if ($item->featured_media_id && ($media = Media::query()->find($item->featured_media_id))) {
             $references[] = ['target' => $media, 'context' => 'featured_image'];
         }
+        // Documents and other media fields: a used file cannot be deleted or made private.
+        foreach ($item->type()->fields() as $name => $field) {
+            $id = $field['type'] === 'media' ? $item->getAttribute($name) : null;
+            if ($id && ($media = Media::query()->find((int) $id))) {
+                $references[] = ['target' => $media, 'context' => $name];
+            }
+        }
+        if ($item->type()->documents()) {
+            foreach ($item->attachments()->with('media')->get() as $attachment) {
+                if ($attachment->media !== null) {
+                    $references[] = ['target' => $attachment->media, 'context' => 'document'];
+                }
+            }
+        }
         $og = $item->seo?->og_image_media_id;
         if ($og && ($media = Media::query()->find($og))) {
             $references[] = ['target' => $media, 'context' => 'og_image'];
@@ -266,7 +287,28 @@ class ContentService
         if ($blocks !== null) {
             $this->blocks->save($item, $blocks, $user);
         }
+        if ($type->documents() && array_key_exists('documents', $data)) {
+            $this->saveDocuments($item, (array) $data['documents']);
+        }
         $this->syncReferences($item);
+    }
+
+    /**
+     * Replace the item's document list (rows: media_id, label), keeping the given order.
+     *
+     * @param  array<int|string, mixed>  $rows
+     */
+    private function saveDocuments(ContentItem $item, array $rows): void
+    {
+        $item->attachments()->delete();
+        $position = 0;
+        foreach ($rows as $row) {
+            if (! is_array($row) || empty($row['media_id'])) {
+                continue;
+            }
+            $label = trim((string) ($row['label'] ?? ''));
+            $item->attachments()->create(['media_id' => (int) $row['media_id'], 'label' => $label === '' ? null : mb_substr($label, 0, 255), 'position' => $position++]);
+        }
     }
 
     private function publish(ContentItem $item): void

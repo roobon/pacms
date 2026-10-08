@@ -15,6 +15,9 @@ use App\Models\ImportJob;
 use App\Models\Media;
 use App\Models\News;
 use App\Models\Page;
+use App\Models\Program;
+use App\Models\Project;
+use App\Models\Publication;
 use App\Models\Term;
 use App\Models\User;
 use App\Services\ActivityLog\ActivityLogger;
@@ -52,6 +55,9 @@ class AppServiceProvider extends ServiceProvider
             'term' => Term::class,
             'news' => News::class,
             'event' => EventItem::class,
+            'project' => Project::class,
+            'program' => Program::class,
+            'publication' => Publication::class,
             'global_block' => GlobalBlock::class,
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,

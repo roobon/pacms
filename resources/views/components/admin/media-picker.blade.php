@@ -1,4 +1,4 @@
-@props(['name', 'label', 'media' => null, 'help' => null, 'disabled' => false])
+@props(['name', 'label', 'media' => null, 'help' => null, 'disabled' => false, 'kind' => 'image'])
 @php($id = 'picker-'.str_replace(['[', ']', '.'], '-', $name))
 @php($errorKey = str_replace(['[', ']'], ['.', ''], $name))
 {{-- Progressive enhancement: the React media picker island (resources/js/admin/islands/media-picker.jsx)
@@ -8,6 +8,7 @@
     <div class="pa-media-field" data-media-picker
          data-name="{{ $name }}"
          data-label="{{ $label }}"
+         data-kind="{{ $kind }}"
          data-value="{{ old($errorKey, $media?->id) }}"
          data-preview="{{ $media?->thumbnailUrl(640) }}"
          data-alt="{{ $media?->alt }}"
@@ -18,10 +19,12 @@
          data-disabled="{{ $disabled ? '1' : '0' }}"
          aria-labelledby="{{ $id }}-label">
         <input type="hidden" name="{{ $name }}" value="{{ old($errorKey, $media?->id) }}">
-        @if ($media)
+        @if ($media && $kind === 'document')
+            <p class="mb-0"><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>{{ $media->original_name }}</p>
+        @elseif ($media)
             <img src="{{ $media->thumbnailUrl(640) }}" alt="{{ $media->alt }}" class="pa-media-field__preview">
         @else
-            <p class="text-body-secondary small mb-0">No image selected.</p>
+            <p class="text-body-secondary small mb-0">No {{ $kind === 'document' ? 'document' : 'image' }} selected.</p>
         @endif
     </div>
     @if ($help)

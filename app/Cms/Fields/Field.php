@@ -6,7 +6,7 @@ namespace App\Cms\Fields;
  * A field definition (CMS-ARCHITECTURE.md §11.2). One definition drives the builder's
  * inspector form, server-side validation and (Phase 6) the generated JSON Schema.
  *
- * Supported types: text, textarea, rich-text, number, checkbox, select, radio, multi-select,
+ * Supported types: text, textarea, rich-text, html, number, checkbox, select, radio, multi-select,
  * link, url, email, image, media, icon, color, date, time, datetime, video-url, repeater.
  */
 final class Field
@@ -32,6 +32,12 @@ final class Field
     public static function richText(string $key): self
     {
         return (new self('rich-text', $key))->max(100000);
+    }
+
+    /** HTML markup for the HTML block (cleaned with HtmlSanitizer::html()). */
+    public static function html(string $key): self
+    {
+        return (new self('html', $key))->max(100000);
     }
 
     public static function number(string $key): self
@@ -205,6 +211,16 @@ final class Field
     {
         $this->definition['min_items'] = $min;
         $this->definition['max_items'] = $max;
+
+        return $this;
+    }
+
+    /**
+     * Media fields: accept only one kind of file ("document" for PDFs and Office files).
+     */
+    public function accept(string $kind): self
+    {
+        $this->definition['accept'] = $kind;
 
         return $this;
     }

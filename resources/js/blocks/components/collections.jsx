@@ -22,17 +22,18 @@ export function NewsBlock({ node, preview }) {
 }
 
 /**
- * Events collection (upcoming by default). Cards show the event's own date label and venue.
+ * Collection of one content module (events, projects, programs, publications). Cards show
+ * the module's own meta, such as an event's date label and place or a project's status.
  */
-export function EventsBlock({ node, preview }) {
+export function CollectionBlock({ node, preview }) {
     const items = node.items ?? [];
     const { heading, empty_text: emptyText, show_excerpt: showExcerpt = true, show_date: showDate = true } = node.content;
 
     return (
-        <div {...frameProps(node, preview, 'pa-collection pa-collection--events')}>
+        <div {...frameProps(node, preview, `pa-collection pa-collection--${node.type}`)}>
             {heading && <h2 className="pa-block-heading">{heading}</h2>}
             {items.length === 0 ? (
-                <p className="text-body-secondary">{emptyText || 'No upcoming events right now.'}</p>
+                <p className="text-body-secondary">{emptyText || 'Nothing to show yet.'}</p>
             ) : (
                 <ItemsDisplay items={items} display={node.display} showExcerpt={showExcerpt} showDate={showDate} headingLevel={heading ? 3 : 2} />
             )}

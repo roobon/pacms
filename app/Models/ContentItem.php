@@ -13,6 +13,7 @@ use App\Models\Contracts\Revisionable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -93,6 +94,16 @@ abstract class ContentItem extends Model implements Revisionable
     }
 
     /**
+     * Documents listed on the item (modules with ContentType::documents()).
+     *
+     * @return MorphMany<Attachment, $this>
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable')->orderBy('position');
+    }
+
+    /**
      * @return BelongsTo<GlobalBlock, $this>
      */
     public function sidebarBlock(): BelongsTo
@@ -139,6 +150,9 @@ abstract class ContentItem extends Model implements Revisionable
             'terms' => $this->exists ? $this->terms()->pluck('terms.id')->all() : [],
             'seo' => $this->seoSnapshot(),
             'blocks' => $this->exists ? app(BlockTreeRepository::class)->load($this) : [],
+            'documents' => $this->exists && $this->type()->documents()
+                ? $this->attachments()->get(['media_id', 'label'])->map(fn (Attachment $a) => ['media_id' => $a->media_id, 'label' => $a->label])->all()
+                : [],
         ];
     }
 
@@ -152,8 +166,12 @@ abstract class ContentItem extends Model implements Revisionable
         $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip($allowed));
         unset($fields['slug']); // never move a live URL by restoring
 
-        if (isset($fields['featured_media_id']) && ! Media::query()->whereKey($fields['featured_media_id'])->exists()) {
-            $fields['featured_media_id'] = null;
+        // Media deleted since the revision was taken are dropped instead of breaking the item.
+        $mediaFields = ['featured_media_id', ...array_keys(array_filter($this->type()->fields(), fn (array $field) => $field['type'] === 'media'))];
+        foreach ($mediaFields as $field) {
+            if (isset($fields[$field]) && ! Media::query()->whereKey($fields[$field])->exists()) {
+                $fields[$field] = null;
+            }
         }
 
         $this->forceFill($fields);

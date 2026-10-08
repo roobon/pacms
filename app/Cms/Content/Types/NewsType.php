@@ -38,6 +38,11 @@ class NewsType extends ContentType
         return 'news_category';
     }
 
+    public function showsPublishDate(): bool
+    {
+        return true;
+    }
+
     public function jsonLd(ContentItem $item, array $seo, string $siteName): ?array
     {
         return array_filter([

@@ -12,7 +12,7 @@ import Summary from '../components/common/Summary.jsx';
  * @param {{item: Object}} props
  */
 export default function ContentView({ item }) {
-    const date = item.type !== 'events' && item.published_at ? formatDate(item.published_at) : null;
+    const date = item.show_date && item.published_at ? formatDate(item.published_at) : null;
     const sidebar = item.sidebar?.blocks?.length ? item.sidebar : null;
     const blocks = item.blocks ?? [];
 
@@ -20,10 +20,15 @@ export default function ContentView({ item }) {
         <>
             {item.featured_image && <Image image={item.featured_image} priority className="pa-page-featured" sizes={sidebar ? '(min-width: 992px) 66vw, 100vw' : '(min-width: 1320px) 1280px, 100vw'} />}
             {item.event && <EventDetails event={item.event} />}
+            {(item.facts?.length > 0 || item.actions?.length > 0) && <Facts facts={item.facts ?? []} actions={item.actions ?? []} />}
             {item.body && (
                 // Article text: rich text cleaned on the server (same allowlist as Text blocks).
                 <div className="pa-rich-text pa-article-body" dangerouslySetInnerHTML={{ __html: item.body }} />
             )}
+            {(item.lists ?? []).map((list) => (
+                <ContentList key={list.key} list={list} />
+            ))}
+            {item.documents?.length > 0 && <Documents documents={item.documents} />}
             {blocks.length > 0 && (
                 <div className="pa-content-blocks">
                     <BlockStyles nodes={blocks} />
@@ -63,6 +68,89 @@ export default function ContentView({ item }) {
                 <div className="container pa-container-narrow">{main}</div>
             )}
         </article>
+    );
+}
+
+/** Key facts (status, period, author…) and actions (download, website) of a module item. */
+function Facts({ facts, actions }) {
+    return (
+        <section className="pa-event-details" aria-label="Details">
+            {facts.length > 0 && (
+                <dl className="mb-0">
+                    {facts.map((fact) => (
+                        <div key={fact.label}>
+                            <dt>
+                                {fact.icon && <i className={`bi ${fact.icon}`} aria-hidden="true" />} {fact.label}
+                            </dt>
+                            <dd>{fact.value}</dd>
+                        </div>
+                    ))}
+                </dl>
+            )}
+            {actions.length > 0 && (
+                <div className={`d-flex flex-wrap gap-2${facts.length > 0 ? ' mt-3' : ''}`}>
+                    {actions.map((action, index) => (
+                        <a
+                            key={action.url}
+                            className={`btn ${index === 0 ? 'btn-accent' : 'btn-outline-primary'}`}
+                            href={action.url}
+                            {...(action.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                            {...(action.download ? { download: '' } : {})}
+                        >
+                            {action.icon && <i className={`bi ${action.icon} me-1`} aria-hidden="true" />}
+                            {action.label}
+                            {action.meta && <span className="small opacity-75"> ({action.meta})</span>}
+                            {action.external && <span className="visually-hidden"> (opens in new tab)</span>}
+                        </a>
+                    ))}
+                </div>
+            )}
+        </section>
+    );
+}
+
+/** A numbered list such as a program's objectives or activities. */
+function ContentList({ list }) {
+    return (
+        <section className="pa-content-list" aria-labelledby={`list-${list.key}`}>
+            <h2 id={`list-${list.key}`} className="h4">
+                {list.title}
+            </h2>
+            <ol className="pa-content-list__items">
+                {list.items.map((entry, index) => (
+                    <li key={index}>
+                        {entry.title && <strong className="d-block">{entry.title}</strong>}
+                        {entry.text && <span className="pa-pre-line">{entry.text}</span>}
+                    </li>
+                ))}
+            </ol>
+        </section>
+    );
+}
+
+/** Files to download (reports, briefs…). */
+function Documents({ documents }) {
+    return (
+        <section className="pa-documents" aria-labelledby="documents-heading">
+            <h2 id="documents-heading" className="h4">
+                Documents
+            </h2>
+            <ul className="list-unstyled mb-0">
+                {documents.map((document) => (
+                    <li key={document.url}>
+                        <a href={document.url} download className="pa-documents__link">
+                            <i className="bi bi-file-earmark-arrow-down" aria-hidden="true" />
+                            <span>
+                                {document.label}
+                                <span className="d-block small text-body-secondary">
+                                    {document.extension} · {document.size}
+                                </span>
+                            </span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </section>
     );
 }
 
