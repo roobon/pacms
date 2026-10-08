@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 8 — Content Modules, in parts.** Parts 8A (content engine, News, Events, sidebars — [report](phase-reports/PHASE-8A-REPORT.md)) and 8B (Projects, Programs, Publications — [report](phase-reports/PHASE-8B-REPORT.md)) approved and merged; 8C is next. Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
+Current phase: **Phase 8 — Content Modules, in parts.** Parts 8A (content engine, News, Events, sidebars — [report](phase-reports/PHASE-8A-REPORT.md)) and 8B (Projects, Programs, Publications — [report](phase-reports/PHASE-8B-REPORT.md)) approved and merged, and so is 8C.1 (Team, Partners, Galleries — [report](phase-reports/PHASE-8C1-REPORT.md)); 8C.2 is next. Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
 
 | Document | Purpose |
 |---|---|

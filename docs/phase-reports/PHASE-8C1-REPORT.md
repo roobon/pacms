@@ -3,13 +3,13 @@
 | | |
 |---|---|
 | Date | 2026-10-08 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-08 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). **Needs team review before 8C.2.** |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-08. |
 
 ```
 PHASE:   8C.1 — Team, Partners, Galleries; links between content items
-STATUS:  Built and tested on the branch; waiting for the team lead's review.
+STATUS:  APPROVED by the team lead (2026-10-08) and merged into main.
          8C.2 (Testimonials, Media Coverage, search) follows after review.
 ```
 
