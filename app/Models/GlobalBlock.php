@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Cms\Blocks\BlockTreeRepository;
 use App\Models\Concerns\HasRevisions;
 use App\Models\Contracts\Revisionable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -57,6 +58,19 @@ class GlobalBlock extends Model implements Revisionable
     public function publishedRevision(): BelongsTo
     {
         return $this->belongsTo(Revision::class, 'published_revision_id');
+    }
+
+    /**
+     * Global blocks that can be shown as a module sidebar: any published one, with the
+     * "Sidebar" kind listed first (Settings → Sidebars, and per item).
+     *
+     * @param  Builder<GlobalBlock>  $query
+     */
+    public function scopeSidebarChoices(Builder $query): void
+    {
+        $query->whereNotNull('published_revision_id')
+            ->orderByRaw("CASE WHEN kind = 'sidebar' THEN 0 ELSE 1 END")
+            ->orderBy('name');
     }
 
     public function isPublished(): bool

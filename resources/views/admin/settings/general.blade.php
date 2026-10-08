@@ -62,7 +62,7 @@
                     <div class="card-body">
                         <p class="small text-body-secondary">
                             The sidebar shown next to each {{ strtolower(collect($contentTypes)->map->singular()->join(', ', ' and ')) }} page. Each item can still choose its own sidebar or none.
-                            Sidebars are global blocks of the kind “Sidebar”.
+                            Any published global block can be a sidebar; blocks set to “Used as: Sidebar” are listed first.
                         </p>
                         @foreach ($contentTypes as $key => $type)
                             @php($current = (array) ($sidebars[$key] ?? []))
@@ -73,9 +73,7 @@
                                         <label for="sidebar-{{ $key }}" class="form-label small">Sidebar</label>
                                         <select id="sidebar-{{ $key }}" name="sidebars[{{ $key }}][global_block_id]" class="form-select @error("sidebars.$key.global_block_id") is-invalid @enderror">
                                             <option value="">None</option>
-                                            @foreach ($sidebarBlocks as $block)
-                                                <option value="{{ $block->id }}" @selected((int) old("sidebars.$key.global_block_id", $current['global_block_id'] ?? 0) === $block->id)>{{ $block->name }}</option>
-                                            @endforeach
+                                            <x-admin.sidebar-options :blocks="$sidebarBlocks" :selected="old('sidebars.'.$key.'.global_block_id', $current['global_block_id'] ?? null)" />
                                         </select>
                                         @error("sidebars.$key.global_block_id")<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
@@ -91,7 +89,7 @@
                             </fieldset>
                         @endforeach
                         @if ($sidebarBlocks->isEmpty())
-                            <p class="small mb-0">No sidebars yet.@can('global_blocks.manage') <a href="{{ route('admin.global-blocks.create') }}">Create a global block</a> and set “Used as” to “Sidebar”, then publish it.@endcan</p>
+                            <p class="small mb-0">No published global blocks yet.@can('global_blocks.manage') <a href="{{ route('admin.global-blocks.create') }}">Create a global block</a> (set “Used as” to “Sidebar”), then publish it.@endcan</p>
                         @endif
                     </div>
                 </section>

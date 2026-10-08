@@ -32,7 +32,7 @@ class SettingsController extends Controller
             'livePages' => Page::query()->live()->orderBy('published_path')->get(['id', 'title', 'published_path']),
             'contentTypes' => $this->types->all(),
             'sidebars' => (array) $this->settings->get('content', 'sidebars', []),
-            'sidebarBlocks' => GlobalBlock::query()->where('kind', 'sidebar')->whereNotNull('published_revision_id')->orderBy('name')->get(['id', 'name']),
+            'sidebarBlocks' => GlobalBlock::query()->sidebarChoices()->get(['id', 'name', 'kind']),
         ]);
     }
 
@@ -50,7 +50,7 @@ class SettingsController extends Controller
             'robots_txt' => ['nullable', 'string', 'max:5000'],
             'allow_svg' => ['boolean'],
             'sidebars' => ['array'],
-            'sidebars.*.global_block_id' => ['nullable', 'integer', Rule::exists('global_blocks', 'id')->where('kind', 'sidebar')->whereNull('deleted_at')],
+            'sidebars.*.global_block_id' => ['nullable', 'integer', Rule::exists('global_blocks', 'id')->whereNotNull('published_revision_id')->whereNull('deleted_at')],
             'sidebars.*.position' => ['nullable', Rule::in(['left', 'right'])],
         ], [], ['sidebars.*.global_block_id' => 'sidebar']);
 

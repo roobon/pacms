@@ -137,14 +137,25 @@ it('shows the module sidebar unless the item chooses another or none', function 
     $this->getJson('/api/v1/resolve?path=/events/fair')->assertJsonPath('data.sidebar', null);
 });
 
-it('only accepts sidebar global blocks as sidebars', function () {
+it('offers any published global block as a sidebar, Sidebar kind first', function () {
     $admin = userWithRole('super-admin');
-    $generic = app(GlobalBlockService::class)->create($admin, ['name' => 'Banner', 'blocks' => []]);
+    $globals = app(GlobalBlockService::class);
+    $draft = $globals->create($admin, ['name' => 'Draft box', 'blocks' => []]);
+    $generic = $globals->publish($admin, $globals->create($admin, ['name' => 'A banner', 'blocks' => []]));
+    $sidebar = $globals->publish($admin, $globals->create($admin, ['name' => 'Z sidebar', 'kind' => 'sidebar', 'blocks' => []]));
+    $fields = ['title' => 'Fair', 'start_at' => '2030-01-01T10:00', 'timezone' => 'Asia/Dhaka', 'sidebar_mode' => 'custom'];
 
-    $this->actingAs($admin)->post(route('admin.events.store'), [
-        'title' => 'Fair', 'start_at' => '2030-01-01T10:00', 'timezone' => 'Asia/Dhaka',
-        'sidebar_mode' => 'custom', 'sidebar_global_block_id' => $generic->id,
-    ])->assertSessionHasErrors('sidebar_global_block_id');
+    // Unpublished blocks would show nothing on the site, so they are refused.
+    $this->actingAs($admin)->post(route('admin.events.store'), $fields + ['sidebar_global_block_id' => $draft->id])
+        ->assertSessionHasErrors('sidebar_global_block_id');
+    $this->actingAs($admin)->post(route('admin.events.store'), $fields + ['sidebar_global_block_id' => $generic->id])
+        ->assertSessionHasNoErrors();
+    expect(Event::query()->firstOrFail()->sidebar_global_block_id)->toBe($generic->id);
+
+    $this->actingAs($admin)->get(route('admin.events.create'))
+        ->assertOk()
+        ->assertSeeInOrder(['<optgroup label="Sidebars">', 'Z sidebar', '<optgroup label="Other global blocks">', 'A banner'], false)
+        ->assertDontSee('Draft box');
 });
 
 it('publishes scheduled events when their time comes', function () {

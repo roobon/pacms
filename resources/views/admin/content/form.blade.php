@@ -139,12 +139,11 @@
                                 <label for="field-sidebar" class="form-label">Sidebar for this {{ $type->singular() }}</label>
                                 <select id="field-sidebar" name="sidebar_global_block_id" class="form-select @error('sidebar_global_block_id') is-invalid @enderror" aria-describedby="sidebar-help">
                                     <option value="">— Choose —</option>
-                                    @foreach ($sidebars as $sidebar)
-                                        <option value="{{ $sidebar->id }}" @selected((int) old('sidebar_global_block_id', $item->sidebar_global_block_id) === $sidebar->id)>{{ $sidebar->name }}</option>
-                                    @endforeach
+                                    <x-admin.sidebar-options :blocks="$sidebars" :selected="old('sidebar_global_block_id', $item->sidebar_global_block_id)" />
                                 </select>
                                 <div id="sidebar-help" class="form-text">
-                                    Only used with “A sidebar chosen for this {{ $type->singular() }}”. Sidebars are global blocks of the kind “Sidebar”@can('global_blocks.manage') — <a href="{{ route('admin.global-blocks.create') }}">create one</a>@endcan.
+                                    Only used with “A sidebar chosen for this {{ $type->singular() }}”. Any published global block can be a sidebar; blocks set to “Used as: Sidebar” are listed first.
+                                    @can('global_blocks.manage')<a href="{{ route('admin.global-blocks.create') }}">Create a sidebar</a>.@endcan
                                 </div>
                                 @error('sidebar_global_block_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
