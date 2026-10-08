@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-08 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-08 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). **Needs team review before Part 8C.** |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-08. |
 
 ```
 PHASE:   8B — Projects, Programs, Publications on the content engine; documents;
          module sitemaps
-STATUS:  Built and tested on the branch; waiting for the team lead's review.
+STATUS:  APPROVED by the team lead (2026-10-08) and merged into main.
 ```
 
 Part 8B adds three modules to the engine built in 8A. Each one got the same admin screens, workflow, revisions, preview, sidebar, archive page, detail page and page-builder block without new engine code. The new work is mostly what makes these modules different: documents, repeaters and the new detail sections.
