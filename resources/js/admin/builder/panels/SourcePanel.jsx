@@ -74,8 +74,8 @@ export default function SourcePanel({ type, source, onChange, errors, disabled =
                                 <label className="form-label small" htmlFor={`${id}-${key}`}>
                                     {filter.label}
                                 </label>
-                                <select id={`${id}-${key}`} className="form-select form-select-sm" value={source.filters?.[key] ?? ''} disabled={disabled} onChange={(e) => set({ filters: { ...(source.filters ?? {}), [key]: e.target.value ? Number(e.target.value) : undefined } })}>
-                                    <option value="">All</option>
+                                <select id={`${id}-${key}`} className="form-select form-select-sm" value={source.filters?.[key] ?? ''} disabled={disabled} onChange={(e) => set({ filters: { ...(source.filters ?? {}), [key]: e.target.value ? (filter.type === 'select' ? e.target.value : Number(e.target.value)) : undefined } })}>
+                                    <option value="">{filter.type === 'item' ? 'Any' : 'All'}</option>
                                     {Object.entries(filter.options ?? {}).map(([value, label]) => (
                                         <option key={value} value={value}>
                                             {label}
@@ -86,7 +86,7 @@ export default function SourcePanel({ type, source, onChange, errors, disabled =
                             </div>
                         ),
                     )}
-                    <p className="form-text">Only published items are shown. The list updates automatically when news is published.</p>
+                    <p className="form-text">Only published items are shown. The list updates automatically when items are published.</p>
                 </>
             )}
         </fieldset>

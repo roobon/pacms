@@ -57,6 +57,8 @@ class ProgramType extends ContentType
                     'text' => ['type' => 'textarea', 'label' => 'Description', 'rules' => ['nullable', 'string', 'max:2000']],
                 ],
             ],
+            'partners' => ['type' => 'relation', 'target' => 'partners', 'multiple' => true, 'display' => 'logos', 'label' => 'Partners', 'title' => 'Partners', 'section' => 'Partners and gallery'],
+            'gallery' => ['type' => 'relation', 'target' => 'galleries', 'multiple' => false, 'display' => 'gallery', 'label' => 'Gallery', 'title' => 'Gallery', 'section' => 'Partners and gallery'],
         ];
     }
 

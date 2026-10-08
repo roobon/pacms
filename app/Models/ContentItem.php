@@ -104,6 +104,67 @@ abstract class ContentItem extends Model implements Revisionable
     }
 
     /**
+     * Ids chosen in a relation field, in order.
+     *
+     * @return list<int>
+     */
+    public function relatedIds(string $field): array
+    {
+        return ContentRelation::query()
+            ->where('owner_type', $this->getMorphClass())
+            ->where('owner_id', $this->getKey())
+            ->where('field', $field)
+            ->orderBy('position')
+            ->pluck('related_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * Items chosen in a relation field, in order (only those that still exist).
+     *
+     * @return list<ContentItem>
+     */
+    public function related(string $field, bool $publishedOnly = true): array
+    {
+        $definition = $this->type()->relationFields()[$field] ?? null;
+        if ($definition === null) {
+            return [];
+        }
+
+        $ids = $this->relatedIds($field);
+        $target = app(ContentTypeRegistry::class)->get((string) $definition['target']);
+        $model = $target->modelClass();
+        $items = $model::query()->whereKey($ids)->with('featuredMedia')
+            ->when($publishedOnly, fn ($query) => $query->published())
+            ->get()->keyBy('id');
+        $ordered = array_values(array_filter(array_map(fn (int $id) => $items[$id] ?? null, $ids)));
+
+        // Partners and team members keep their own display order.
+        if ($target->positioned()) {
+            usort($ordered, fn (ContentItem $a, ContentItem $b) => [(int) $a->getAttribute('position'), $a->title] <=> [(int) $b->getAttribute('position'), $b->title]);
+        }
+
+        return $ordered;
+    }
+
+    /**
+     * Replace the ids of a relation field (order kept; unknown ids are dropped by the caller).
+     *
+     * @param  list<int>  $ids
+     */
+    public function syncRelated(string $field, string $relatedType, array $ids): void
+    {
+        ContentRelation::query()->where('owner_type', $this->getMorphClass())->where('owner_id', $this->getKey())->where('field', $field)->delete();
+        foreach (array_values(array_unique($ids)) as $position => $id) {
+            ContentRelation::query()->create([
+                'owner_type' => $this->getMorphClass(), 'owner_id' => $this->getKey(), 'field' => $field,
+                'related_type' => $relatedType, 'related_id' => $id, 'position' => $position,
+            ]);
+        }
+    }
+
+    /**
      * @return BelongsTo<GlobalBlock, $this>
      */
     public function sidebarBlock(): BelongsTo
@@ -141,7 +202,7 @@ abstract class ContentItem extends Model implements Revisionable
 
     public function toSnapshot(): array
     {
-        $fields = $this->only([...self::COMMON_FIELDS, ...array_keys($this->type()->fields())]);
+        $fields = $this->only([...self::COMMON_FIELDS, ...array_keys($this->type()->columnFields())]);
 
         return [
             'schema_version' => '1.0',
@@ -153,6 +214,11 @@ abstract class ContentItem extends Model implements Revisionable
             'documents' => $this->exists && $this->type()->documents()
                 ? $this->attachments()->get(['media_id', 'label'])->map(fn (Attachment $a) => ['media_id' => $a->media_id, 'label' => $a->label])->all()
                 : [],
+            'relations' => $this->exists ? array_map(fn (string $field) => $this->relatedIds($field), array_combine(array_keys($this->type()->relationFields()), array_keys($this->type()->relationFields()))) : [],
+            'gallery_items' => $this instanceof Gallery && $this->exists
+                ? $this->items()->get(['media_id', 'video_url', 'caption', 'alt_override', 'credit'])
+                    ->map(fn (GalleryItem $row) => $row->only(['media_id', 'video_url', 'caption', 'alt_override', 'credit']))->all()
+                : [],
         ];
     }
 
@@ -162,7 +228,7 @@ abstract class ContentItem extends Model implements Revisionable
      */
     public function applySnapshot(array $snapshot): void
     {
-        $allowed = [...self::COMMON_FIELDS, ...array_keys($this->type()->fields())];
+        $allowed = [...self::COMMON_FIELDS, ...array_keys($this->type()->columnFields())];
         $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip($allowed));
         unset($fields['slug']); // never move a live URL by restoring
 

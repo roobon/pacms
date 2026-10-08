@@ -48,7 +48,8 @@ class PathResolver
                 return ['kind' => 'archive', 'type' => $type];
             }
             $model = $type->modelClass();
-            $item = $model::query()->published()->where('slug', $match[2])->first();
+            // Modules without pages of their own (partners) only have the listing.
+            $item = $type->hasDetailPages() ? $model::query()->published()->where('slug', $match[2])->first() : null;
             if ($item !== null) {
                 return ['kind' => 'content', 'type' => $type, 'item' => $item];
             }

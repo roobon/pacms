@@ -5,6 +5,7 @@
     $seo = $item->seo;
     $key = $type->key();
     $heading = $editing ? $item->title : 'New '.$type->singular();
+    $labels = $type->labels();
     $sections = collect($type->fields())->groupBy(fn ($field) => $field['section'] ?? 'Details', preserveKeys: true);
 @endphp
 <x-admin.layout :title="$heading">
@@ -36,7 +37,7 @@
                     <section class="card pa-card mb-4" aria-labelledby="content-heading">
                         <div class="card-header"><h2 id="content-heading" class="h6 mb-0">Content</h2></div>
                         <div class="card-body">
-                            <x-admin.field name="title" label="Title" :value="$item->title" required data-slug-source="#field-slug" />
+                            <x-admin.field name="title" :label="$labels['title']" :value="$item->title" required data-slug-source="#field-slug" />
                             <div class="mb-3">
                                 <label for="field-slug" class="form-label">URL</label>
                                 <div class="input-group has-validation">
@@ -47,9 +48,9 @@
                                 </div>
                                 <div id="slug-help" class="form-text">Lowercase letters, numbers and hyphens. Leave empty to create it from the title.</div>
                             </div>
-                            <x-admin.field name="excerpt" label="Summary" type="textarea" :value="$item->excerpt" data-summary-editor
+                            <x-admin.field name="excerpt" :label="$labels['excerpt']" type="textarea" :value="$item->excerpt" data-summary-editor
                                 help="Shown on cards and as the search-engine description (formatting is removed there)." />
-                            <x-admin.field name="body" label="Article text" type="textarea" rows="12" :value="$item->body" data-rich-editor
+                            <x-admin.field name="body" :label="$labels['body']" type="textarea" rows="12" :value="$item->body" data-rich-editor
                                 help="The main text, shown under the image. Headings, lists, quotes and links are available." />
                             <p class="small text-body-secondary mb-0"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i> Optional: add galleries, buttons, cards and more in <a href="#builder-heading">Additional content</a> below.</p>
                         </div>
@@ -82,6 +83,60 @@
                                         @elseif ($field['type'] === 'media')
                                             <x-admin.media-picker :name="$name" :label="$field['label']" :media="$mediaFields[$name] ?? null" :kind="$field['media_kind'] ?? 'image'"
                                                 :help="$field['help'] ?? null" :disabled="$readonly" />
+                                        @elseif ($field['type'] === 'relation')
+                                            @php
+                                                $chosen = array_map('intval', (array) old($name, $relationValues[$name] ?? []));
+                                                $options = $relationOptions[$name] ?? [];
+                                                $targetType = app(\App\Cms\Content\ContentTypeRegistry::class)->get($field['target']);
+                                            @endphp
+                                            @if (empty($field['multiple']))
+                                                <div class="mb-3">
+                                                    <label for="field-{{ $name }}" class="form-label">{{ $field['label'] }}</label>
+                                                    <select id="field-{{ $name }}" name="{{ $name }}[]" class="form-select @error($name) is-invalid @enderror" @if (! empty($field['help'])) aria-describedby="field-{{ $name }}-help" @endif>
+                                                        <option value="">— None —</option>
+                                                        @foreach ($options as $optionId => $optionLabel)
+                                                            <option value="{{ $optionId }}" @selected(in_array((int) $optionId, $chosen, true))>{{ $optionLabel }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @if (! empty($field['help']))<div id="field-{{ $name }}-help" class="form-text">{{ $field['help'] }}</div>@endif
+                                                </div>
+                                            @else
+                                                <fieldset class="mb-3">
+                                                    <legend class="form-label fs-6">{{ $field['label'] }}</legend>
+                                                    @if ($options === [])
+                                                        <p class="small text-body-secondary mb-0">No {{ strtolower($targetType->label()) }} yet.@can($targetType->ability('create')) <a href="{{ route('admin.'.$targetType->key().'.create') }}">Add one</a>.@endcan</p>
+                                                    @else
+                                                        <div class="pa-checklist">
+                                                            @foreach ($options as $optionId => $optionLabel)
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="{{ $name }}[]" value="{{ $optionId }}" id="field-{{ $name }}-{{ $optionId }}" @checked(in_array((int) $optionId, $chosen, true))>
+                                                                    <label class="form-check-label" for="field-{{ $name }}-{{ $optionId }}">{{ $optionLabel }}</label>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </fieldset>
+                                            @endif
+                                        @elseif ($field['type'] === 'gallery')
+                                            @php
+                                                $galleryConfig = [
+                                                    'rows' => old('gallery_items') === null ? $galleryItems : array_values((array) old('gallery_items')),
+                                                    'endpoint' => route('admin.api.media.index'),
+                                                    'uploadEndpoint' => route('admin.api.media.store'),
+                                                    'canUpload' => auth()->user()->can('media.upload'),
+                                                    'disabled' => $readonly,
+                                                    'errors' => (object) collect($errors->getMessages())->filter(fn ($m, $k) => str_starts_with($k, 'gallery_items'))->map(fn ($m) => $m[0])->all(),
+                                                ];
+                                            @endphp
+                                            <div data-gallery-field data-config="{{ json_encode($galleryConfig) }}">
+                                                {{-- Without JavaScript: keep the current photos and videos as they are. --}}
+                                                @foreach ($galleryItems as $i => $galleryRow)
+                                                    @foreach (['media_id', 'video_url', 'caption', 'alt_override', 'credit'] as $key)
+                                                        <input type="hidden" name="gallery_items[{{ $i }}][{{ $key }}]" value="{{ $galleryRow[$key] }}">
+                                                    @endforeach
+                                                @endforeach
+                                                <p class="small text-body-secondary">{{ count($galleryItems) }} photos and videos.</p>
+                                            </div>
                                         @elseif ($field['type'] === 'repeater')
                                             @php
                                                 $rows = array_values((array) old($name, $value ?? []));
@@ -149,9 +204,9 @@
                     @endif
 
                     <section class="card pa-card mb-4" aria-labelledby="media-heading">
-                        <div class="card-header"><h2 id="media-heading" class="h6 mb-0">Image &amp; categories</h2></div>
+                        <div class="card-header"><h2 id="media-heading" class="h6 mb-0">{{ $labels['image'] }}{{ $categories->isNotEmpty() || $type->taxonomy() ? ' & categories' : '' }}</h2></div>
                         <div class="card-body">
-                            <x-admin.media-picker name="featured_media_id" label="Image" :media="$item->featuredMedia" :disabled="$readonly" />
+                            <x-admin.media-picker name="featured_media_id" :label="$labels['image']" :media="$item->featuredMedia" :disabled="$readonly" />
                             @if ($categories->isNotEmpty())
                                 @php $selected = array_map('intval', old('terms', $editing ? $item->terms->where('taxonomy', $type->taxonomy())->pluck('id')->all() : [])); @endphp
                                 <fieldset class="mb-3">

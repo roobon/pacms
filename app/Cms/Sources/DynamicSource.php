@@ -17,7 +17,8 @@ abstract class DynamicSource
     abstract public function entity(): string;
 
     /**
-     * filter key => definition ['type' => 'bool'|'term'|'select', 'taxonomy' => …, 'options' => …, 'label' => …]
+     * filter key => definition ['type' => 'bool'|'term'|'select'|'item', 'taxonomy' => …, 'options' => …,
+     * 'model' => class (item: one published item of that model), 'label' => …]
      *
      * @return array<string, array<string, mixed>>
      */
@@ -66,6 +67,13 @@ abstract class DynamicSource
                 if ($choice !== null) {
                     $filters[$key] = $choice;
                 }
+            } elseif ($definition['type'] === 'item') {
+                $model = $definition['model'];
+                if (is_numeric($value) && $model::query()->whereKey((int) $value)->exists()) {
+                    $filters[$key] = (int) $value;
+                } else {
+                    $values->errors()->add("{$path}.filters.{$key}", __('This item no longer exists.'));
+                }
             } elseif ($definition['type'] === 'term') {
                 $exists = is_numeric($value) && Term::query()
                     ->where('taxonomy', $definition['taxonomy'])
@@ -95,11 +103,11 @@ abstract class DynamicSource
     {
         $filters = [];
         foreach ($this->filters() as $key => $definition) {
-            $filters[$key] = $definition + (
-                $definition['type'] === 'term'
-                    ? ['options' => Term::query()->where('taxonomy', $definition['taxonomy'])->orderBy('name')->pluck('name', 'id')->all()]
-                    : []
-            );
+            $filters[$key] = match ($definition['type']) {
+                'term' => $definition + ['options' => Term::query()->where('taxonomy', $definition['taxonomy'])->orderBy('name')->pluck('name', 'id')->all()],
+                'item' => array_diff_key($definition, ['model' => true]) + ['options' => $definition['model']::query()->published()->orderBy('title')->pluck('title', 'id')->all()],
+                default => $definition,
+            };
         }
 
         return ['entity' => $this->entity(), 'filters' => $filters, 'orders' => $this->orders(), 'max_limit' => self::MAX_LIMIT];

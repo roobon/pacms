@@ -1266,3 +1266,44 @@ legend.form-label {
     display: flex;
     margin-top: 1.25rem;
 }
+
+// Long checkbox lists (e.g. a project's partners).
+.pa-checklist {
+    max-height: 16rem;
+    overflow-y: auto;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+// Gallery items editor.
+.pa-gallery-editor {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 0.75rem;
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+        padding: 0.5rem;
+        border: 1px solid var(--bs-border-color);
+        border-radius: var(--bs-border-radius);
+        background: var(--bs-body-bg);
+    }
+
+    &__thumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: var(--bs-border-radius-sm);
+        background: var(--bs-secondary-bg);
+
+        img { width: 100%; height: 100%; object-fit: cover; }
+        .bi { font-size: 2rem; }
+    }
+
+    &__actions { display: flex; justify-content: space-between; }
+}

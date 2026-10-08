@@ -105,16 +105,19 @@ class SeoFilesController extends Controller
             $writer->writeElement('loc', url('/'.$type->routePrefix()));
             $writer->endElement();
 
+            // Modules without pages of their own (partners) only list their archive page.
             $model = $type->modelClass();
-            $model::query()->published()->with('seo')->orderByDesc('published_at')->each(function (ContentItem $item) use ($writer) {
-                if ($item->seo !== null && $item->seo->robots_index === false) {
-                    return;
-                }
-                $writer->startElement('url');
-                $writer->writeElement('loc', url($item->url()));
-                $writer->writeElement('lastmod', (string) ($item->updated_at ?? $item->published_at)?->toAtomString());
-                $writer->endElement();
-            });
+            if ($type->hasDetailPages()) {
+                $model::query()->published()->with('seo')->orderByDesc('published_at')->each(function (ContentItem $item) use ($writer) {
+                    if ($item->seo !== null && $item->seo->robots_index === false) {
+                        return;
+                    }
+                    $writer->startElement('url');
+                    $writer->writeElement('loc', url($item->url()));
+                    $writer->writeElement('lastmod', (string) ($item->updated_at ?? $item->published_at)?->toAtomString());
+                    $writer->endElement();
+                });
+            }
 
             $writer->endElement();
 

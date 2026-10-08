@@ -1,4 +1,8 @@
+import { Link } from 'react-router';
 import BlockRenderer from '../../blocks/BlockRenderer.jsx';
+import GalleryGrid from '../../blocks/display/GalleryGrid.jsx';
+import ItemsDisplay from '../../blocks/display/ItemsDisplay.jsx';
+import LogoWall from '../../blocks/display/LogoWall.jsx';
 import BlockStyles from '../../blocks/BlockStyles.jsx';
 import Breadcrumbs from '../components/common/Breadcrumbs.jsx';
 import Image from '../components/common/Image.jsx';
@@ -25,8 +29,12 @@ export default function ContentView({ item }) {
                 // Article text: rich text cleaned on the server (same allowlist as Text blocks).
                 <div className="pa-rich-text pa-article-body" dangerouslySetInnerHTML={{ __html: item.body }} />
             )}
+            {item.gallery?.length > 0 && <GalleryGrid items={item.gallery} columns={sidebar ? 3 : 4} showCaptions label={item.title} />}
             {(item.lists ?? []).map((list) => (
                 <ContentList key={list.key} list={list} />
+            ))}
+            {(item.related ?? []).map((section) => (
+                <Related key={section.key} section={section} narrow={Boolean(sidebar)} />
             ))}
             {item.documents?.length > 0 && <Documents documents={item.documents} />}
             {blocks.length > 0 && (
@@ -82,7 +90,7 @@ function Facts({ facts, actions }) {
                             <dt>
                                 {fact.icon && <i className={`bi ${fact.icon}`} aria-hidden="true" />} {fact.label}
                             </dt>
-                            <dd>{fact.value}</dd>
+                            <dd>{fact.url ? <Link to={fact.url}>{fact.value}</Link> : fact.value}</dd>
                         </div>
                     ))}
                 </dl>
@@ -104,6 +112,32 @@ function Facts({ facts, actions }) {
                         </a>
                     ))}
                 </div>
+            )}
+        </section>
+    );
+}
+
+/** Items linked from this one: partner logos, people or other cards, or an embedded gallery. */
+function Related({ section, narrow }) {
+    const headingId = `related-${section.key}`;
+    return (
+        <section className="pa-related" aria-labelledby={headingId}>
+            <h2 id={headingId} className="h4">
+                {section.title}
+            </h2>
+            {section.display === 'logos' && <LogoWall items={section.items} size="sm" label={section.title} />}
+            {section.display === 'cards' && <ItemsDisplay items={section.items} display={{ mode: 'grid', columns: { desktop: narrow ? 2 : 3, tablet: 2, mobile: 1 } }} headingLevel={3} />}
+            {section.display === 'gallery' && (
+                <>
+                    <GalleryGrid items={section.items} columns={narrow ? 3 : 4} label={section.link_label || section.title} />
+                    {section.url && (
+                        <p className="mt-2">
+                            <Link to={section.url}>
+                                View the gallery “{section.link_label}” <i className="bi bi-arrow-right" aria-hidden="true" />
+                            </Link>
+                        </p>
+                    )}
+                </>
             )}
         </section>
     );
