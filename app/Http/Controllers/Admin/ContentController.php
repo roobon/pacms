@@ -11,6 +11,7 @@ use App\Enums\WorkflowAction;
 use App\Http\Controllers\Controller;
 use App\Models\ContentItem;
 use App\Models\GlobalBlock;
+use App\Models\Media;
 use App\Models\Revision;
 use App\Models\Term;
 use App\Rules\SummaryText;
@@ -223,6 +224,16 @@ class ContentController extends Controller
             'timezones' => DateTimeZone::listIdentifiers(),
             'revisions' => $item->exists ? $item->revisions()->with('author:id,name')->limit(10)->get() : collect(),
             'blocks' => $item->exists ? app(BlockTreeRepository::class)->load($item) : [],
+            // Current documents (file names shown in the list) and media chosen in media fields.
+            'documents' => $type->documents() && $item->exists
+                ? $item->attachments()->with('media')->get()->filter(fn ($attachment) => $attachment->media !== null)
+                    ->map(fn ($attachment) => ['media_id' => $attachment->media_id, 'label' => $attachment->label, 'name' => $attachment->media->original_name, 'size' => $attachment->media->humanSize()])
+                    ->values()->all()
+                : [],
+            'mediaFields' => collect($type->fields())
+                ->filter(fn (array $field) => $field['type'] === 'media')
+                ->map(fn (array $field, string $name) => ($id = $item->getAttribute($name)) ? Media::query()->find((int) $id) : null)
+                ->all(),
             'siteTimezone' => $this->siteTimezone(),
         ];
     }
@@ -283,6 +294,20 @@ class ContentController extends Controller
         foreach ($type->fields() as $name => $field) {
             $rules[$name] = $field['rules'];
             $attributes[$name] = strtolower((string) $field['label']);
+            foreach ($field['type'] === 'repeater' ? $field['fields'] : [] as $sub => $subField) {
+                $rules["{$name}.*"] = ['array'];
+                $rules["{$name}.*.{$sub}"] = $subField['rules'];
+                $attributes["{$name}.*.{$sub}"] = strtolower((string) $subField['label']);
+            }
+        }
+        if ($type->documents()) {
+            $rules['documents'] = ['nullable', 'array', 'max:30'];
+            $rules['documents.*'] = ['array'];
+            // Public library documents only: visitors download them from the item's page.
+            $rules['documents.*.media_id'] = ['required', 'integer', Rule::exists('media', 'id')->where('kind', MediaKind::Document->value)->where('disk', config('pacms.media.disk'))];
+            $rules['documents.*.label'] = ['nullable', 'string', 'max:255'];
+            $attributes['documents.*.media_id'] = 'document';
+            $attributes['documents.*.label'] = 'document label';
         }
 
         $data = $request->validate($rules, [], $attributes);
@@ -290,6 +315,15 @@ class ContentController extends Controller
 
         if ($type->taxonomy() !== null) {
             $data['terms'] ??= [];
+        }
+        // Lists the editor emptied are not sent by the browser at all.
+        foreach ($type->fields() as $name => $field) {
+            if ($field['type'] === 'repeater') {
+                $data[$name] ??= [];
+            }
+        }
+        if ($type->documents()) {
+            $data['documents'] ??= [];
         }
         if ($request->filled('blocks')) {
             $data['blocks'] = json_decode((string) $request->input('blocks'), true, 64) ?? [];

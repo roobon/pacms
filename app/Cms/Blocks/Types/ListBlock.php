@@ -11,7 +11,7 @@ use App\Cms\Fields\Field;
  */
 class ListBlock extends BlockType
 {
-    public const STYLES = ['bullet' => 'Bullets', 'number' => 'Numbers', 'check' => 'Check marks', 'icon' => 'Icons'];
+    public const STYLES = ['none' => 'None (plain lines)', 'bullet' => 'Bullets', 'number' => 'Numbers', 'check' => 'Check marks', 'icon' => 'Icons'];
 
     public function slug(): string
     {
@@ -25,7 +25,7 @@ class ListBlock extends BlockType
 
     public function description(): string
     {
-        return 'Short items with bullets, numbers, check marks or icons.';
+        return 'Short items: plain, or with bullets, numbers, check marks or icons.';
     }
 
     public function category(): string

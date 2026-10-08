@@ -115,10 +115,9 @@ it('shows the module sidebar unless the item chooses another or none', function 
         'name' => 'Example', 'timezone' => 'Asia/Dhaka',
         'sidebars' => ['events' => ['global_block_id' => $default->id, 'position' => 'left']],
     ])->assertRedirect();
-    expect(app(SettingsService::class)->get('content', 'sidebars'))->toEqual([
-        'news' => ['global_block_id' => null, 'position' => 'right'],
-        'events' => ['global_block_id' => $default->id, 'position' => 'left'],
-    ]);
+    $saved = app(SettingsService::class)->get('content', 'sidebars');
+    expect($saved['events'])->toEqual(['global_block_id' => $default->id, 'position' => 'left'])
+        ->and($saved['news'])->toEqual(['global_block_id' => null, 'position' => 'right']);
 
     $event = publishedEvent(['title' => 'Fair', 'start_at' => now()->addDays(5)->format('Y-m-d\TH:i')]);
     $this->getJson('/api/v1/resolve?path=/events/fair')

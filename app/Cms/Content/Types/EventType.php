@@ -141,7 +141,7 @@ class EventType extends ContentType
         $base['date'] = $item->start_at->toIso8601String();
         $base['meta'] = array_filter($base['meta'] + [
             'when' => $this->dateLabel($item),
-            'venue' => $item->venue,
+            'place' => $item->venue,
             'status' => $item->isUpcoming() ? null : 'Past event',
         ]);
 

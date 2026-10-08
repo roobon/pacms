@@ -17,6 +17,8 @@ final class HtmlSanitizer
 
     private SymfonySanitizer $inline;
 
+    private ?SymfonySanitizer $htmlBlock = null;
+
     public function __construct()
     {
         $config = (new HtmlSanitizerConfig)
@@ -76,6 +78,55 @@ final class HtmlSanitizer
     public function sanitize(string $html): string
     {
         return trim($this->sanitizer->sanitize($html));
+    }
+
+    /**
+     * HTML block (trusted roles only): layout and formatting markup with classes, ids,
+     * ARIA attributes and inline styles. Scripts, <style>, iframes, forms, event handlers and
+     * javascript:/data: URLs are removed, and so are inline styles that load anything
+     * (url(), @import, expression()).
+     */
+    public function html(string $html): string
+    {
+        $this->htmlBlock ??= new SymfonySanitizer($this->htmlBlockConfig());
+        $clean = $this->htmlBlock->sanitize($html);
+
+        $clean = (string) preg_replace_callback('/\sstyle="([^"]*)"/i', function (array $match) {
+            $css = html_entity_decode($match[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            return preg_match('/url\s*\(|@import|expression\s*\(|javascript:|behavior\s*:|-moz-binding/i', $css) ? '' : $match[0];
+        }, $clean);
+
+        return trim($clean);
+    }
+
+    private function htmlBlockConfig(): HtmlSanitizerConfig
+    {
+        $config = (new HtmlSanitizerConfig)
+            ->allowLinkSchemes(['http', 'https', 'mailto', 'tel'])
+            ->allowRelativeLinks()
+            ->allowMediaSchemes(['http', 'https'])
+            ->allowRelativeMedias()
+            ->forceAttribute('a', 'rel', 'noopener noreferrer')
+            ->withMaxInputLength(100000);
+
+        $common = ['class', 'id', 'title', 'style', 'role', 'aria-label', 'aria-hidden', 'aria-describedby', 'lang', 'dir'];
+        $elements = [
+            'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav', 'span', 'p', 'br', 'hr',
+            'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'b', 'em', 'i', 'u', 's', 'small', 'mark', 'sub', 'sup',
+            'abbr', 'cite', 'q', 'blockquote', 'code', 'pre', 'kbd', 'time', 'address',
+            'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'figure', 'figcaption', 'details', 'summary',
+            'table', 'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot', 'tr',
+        ];
+        foreach ($elements as $element) {
+            $config = $config->allowElement($element, $common);
+        }
+
+        return $config
+            ->allowElement('a', [...$common, 'href', 'target', 'rel'])
+            ->allowElement('img', [...$common, 'src', 'alt', 'width', 'height', 'loading'])
+            ->allowElement('th', [...$common, 'colspan', 'rowspan', 'scope'])
+            ->allowElement('td', [...$common, 'colspan', 'rowspan']);
     }
 
     /**

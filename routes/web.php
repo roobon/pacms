@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('robots.txt', [SeoFilesController::class, 'robots'])->name('robots');
 Route::get('sitemap.xml', [SeoFilesController::class, 'index'])->name('sitemap');
 Route::get('sitemaps/pages.xml', [SeoFilesController::class, 'pages'])->name('sitemap.pages');
+Route::get('sitemaps/{module}.xml', [SeoFilesController::class, 'module'])->where('module', '[a-z0-9-]+')->name('sitemap.module');
 
 // Secure preview: valid signature AND a signed-in user who may view the page.
 Route::get('preview/pages/{page}', [PreviewController::class, 'page'])

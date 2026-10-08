@@ -297,12 +297,18 @@ All publishable modules share these **publishable columns**:
 ### projects
 `id, name, slug UNIQUE, excerpt, featured_media_id, project_status varchar(16) (planned/ongoing/completed/paused), start_date date null, end_date date null, location varchar(255), manager_team_member_id FK team_members SET NULL, manager_name varchar(191) null, gallery_id FK galleries SET NULL, website_url` + publishable. Partners via `partnerables`. Documents via `attachments`. Body = blocks.
 
+**Phase 8B (built):** `title` (not `name`, so every module shares the engine's columns), `project_status` (default `ongoing`), `start_date`, `end_date`, `location`, `manager_name`, `website_url`, plus the common content columns (`body`, `sidebar_*`) and publishable columns with `lock_version`. `INDEX(status, project_status)`. `manager_team_member_id`, `gallery_id` and partners arrive with Team, Galleries and Partners in 8C. Morph alias `project`.
+
 ### programs
 `id, name, slug UNIQUE, excerpt, featured_media_id, objectives json (repeater: text), activities json (repeater: title, text), gallery_id FK galleries SET NULL` + publishable. Partners via `partnerables`. Documents via `attachments`. Body = blocks.
 (Objectives and activities are ordered lists of text that are only ever displayed, so JSON repeaters are appropriate. If they later need their own pages or filters they become tables.)
 
+**Phase 8B (built):** `title`, `objectives json` ([{text}]), `activities json` ([{title, text}]), common and publishable columns. `gallery_id` and partners arrive in 8C. Morph alias `program`.
+
 ### publications
 `id, title, slug UNIQUE, description (sanitized rich text), cover_media_id, publication_date date, author_text varchar(255), document_media_id FK media SET NULL, external_url` + publishable (with `featured`). Category via terms.
+
+**Phase 8B (built):** the cover is `featured_media_id` and the description is `body` (common columns); `publication_date`, `author_text`, `document_media_id` (public library documents only), `external_url`. `INDEX(status, publication_date)`. Category taxonomy `publication_category`. Morph alias `publication`.
 
 ### team_members
 `id, name, slug UNIQUE, designation, photo_media_id, biography (rich text), email varchar(191) null, show_email bool default 0, phone null, show_phone bool default 0, social_links json (repeater: network, url), position int, status (active/inactive), timestamps, deleted_at`. Department via terms (`department`). `INDEX(status, position)`.
@@ -315,6 +321,8 @@ All publishable modules share these **publishable columns**:
 
 ### attachments
 `id, media_id FK media RESTRICT, attachable_type, attachable_id, label varchar(255) null, position, timestamps` · INDEX(attachable_type, attachable_id, position).
+
+**Phase 8B (built):** used by projects and programs ("Documents"). Only public library documents can be attached; each one is recorded in `content_references` (context `document`), so it cannot be deleted or made private while listed. Rows are removed when their item is deleted (the list stays in the item's revisions).
 
 ### testimonials
 | Column | Type | Notes |

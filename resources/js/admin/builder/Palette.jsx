@@ -57,10 +57,12 @@ function BlockTypes({ parentUuid, query, onDone }) {
     const nodes = useBuilder((state) => state.nodes);
     const context = useBuilder((state) => state.context);
     const add = useBuilder((state) => state.add);
+    const mayUseHtml = useBuilder((state) => Boolean(state.definitions?.permissions?.custom_html));
 
     const options = Object.values(types).filter(
         (type) =>
             type.slug !== 'global-ref' &&
+            (type.slug !== 'html' || mayUseHtml) &&
             type.insertable !== false &&
             allowedInContext(type, context) &&
             canInsert(nodes, type.slug, parentUuid, types) &&

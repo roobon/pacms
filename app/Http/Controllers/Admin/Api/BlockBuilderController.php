@@ -52,6 +52,7 @@ class BlockBuilderController extends Controller
             'bindings' => Bindings::compatibility(),
             'permissions' => [
                 'custom_attributes' => $request->user()->can('blocks.custom_attributes'),
+                'custom_html' => $request->user()->can('blocks.custom_html'),
                 'media_upload' => $request->user()->can('media.upload'),
                 'templates' => $request->user()->can('templates.manage'),
                 'global_blocks' => $request->user()->can('global_blocks.manage'),

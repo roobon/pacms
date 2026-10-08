@@ -1,7 +1,7 @@
 /**
  * Media Picker island (CMS-ARCHITECTURE.md §14): mounts on every [data-media-picker]
  * element rendered by <x-admin.media-picker>. It keeps the hidden form input in sync
- * and offers a searchable image grid plus upload in an accessible <dialog>.
+ * and offers a searchable image (or document) grid plus upload in an accessible <dialog>.
  */
 import { createRoot } from 'react-dom/client';
 import { MediaPickerField } from './media-picker/MediaPickerField.jsx';
@@ -15,6 +15,7 @@ document.querySelectorAll('[data-media-picker]').forEach((element) => {
         uploadEndpoint: element.dataset.uploadEndpoint,
         canUpload: element.dataset.canUpload === '1',
         disabled: element.dataset.disabled === '1',
+        kind: element.dataset.kind === 'document' ? 'document' : 'image',
         initial: input?.value
             ? { id: Number(input.value), thumbnail: element.dataset.preview || null, alt: element.dataset.alt || '', name: element.dataset.filename || '' }
             : null,

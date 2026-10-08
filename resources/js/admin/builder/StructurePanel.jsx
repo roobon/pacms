@@ -9,6 +9,42 @@ import { errorsFor, useBuilder } from './store.js';
 import { canInsert, findNode, flatten, labelOf, projectDrop, removeNode } from './tree.js';
 import { adminHttp } from '../http.js';
 
+/**
+ * Saves every block of the page as one "Whole page" template, offered later in the
+ * Templates tab of "Add block" (for a new page, or to add the same layout again).
+ */
+function SavePageAsTemplate({ nodes }) {
+    const [open, setOpen] = useState(false);
+    const permissions = useBuilder((state) => state.definitions?.permissions ?? {});
+    const endpoints = useBuilder((state) => state.definitions?.endpoints ?? {});
+    const { announce } = useBuilder.getState();
+    const title = typeof document !== 'undefined' ? document.getElementById('field-title')?.value ?? '' : '';
+
+    if (!permissions.templates || nodes.length === 0) return null;
+
+    return (
+        <>
+            <IconButton icon="bi-layout-wtf" label="Save page as template" onClick={() => setOpen(true)} />
+            {open && (
+                <ActionDialog
+                    title="Save page as template"
+                    description="All blocks on this page, as they are now (including unsaved changes), become a “Whole page” template. Find it later under Add block → Templates."
+                    submitLabel="Save template"
+                    fields={[
+                        { key: 'name', label: 'Template name', required: true, initial: title ? `${title} layout` : '' },
+                        { key: 'category', label: 'Category (optional)' },
+                    ]}
+                    onSubmit={async ({ name, category }) => {
+                        await adminHttp.post(endpoints.storeTemplate, { name, category, scope: 'page', blocks: nodes });
+                        announce(`Saved the page as the template “${name}”`);
+                    }}
+                    onClose={() => setOpen(false)}
+                />
+            )}
+        </>
+    );
+}
+
 /** Horizontal drag distance for one nesting level. */
 const INDENT = 18;
 
@@ -35,6 +71,7 @@ export default function StructurePanel() {
                     <IconButton icon="bi-arrow-counterclockwise" label="Undo (Ctrl+Z)" disabled={!canUndo} onClick={undo} />
                     <IconButton icon="bi-arrow-clockwise" label="Redo (Ctrl+Shift+Z)" disabled={!canRedo} onClick={redo} />
                     <IconButton icon="bi-clipboard" label="Paste (Ctrl+V)" onClick={paste} />
+                    {context === 'page' && <SavePageAsTemplate nodes={nodes} />}
                 </div>
             )}
             {nodes.length === 0 ? (

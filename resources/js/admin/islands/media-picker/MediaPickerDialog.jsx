@@ -3,15 +3,17 @@ import { createPortal } from 'react-dom';
 import { adminHttp, errorMessage } from '../../http.js';
 
 /**
- * Modal image browser. Uses the native <dialog> element: focus is trapped, Esc closes
+ * Modal media browser (images, or documents such as PDFs). Uses the native <dialog> element: focus is trapped, Esc closes
  * and focus returns to the trigger automatically.
  *
  * @param {{
  *   title: string, endpoint: string, uploadEndpoint: string, canUpload: boolean,
- *   selectedId: number|null, onClose: () => void, onSelect: (media: any) => void
+ *   selectedId: number|null, onClose: () => void, onSelect: (media: any) => void, kind?: 'image'|'document'
  * }} props
  */
-export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, selectedId, onClose, onSelect }) {
+export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, selectedId, onClose, onSelect, kind = 'image' }) {
+    const isImage = kind === 'image';
+    const noun = isImage ? 'image' : 'document';
     const dialogRef = useRef(/** @type {HTMLDialogElement|null} */ (null));
     const headingId = useId();
     const [query, setQuery] = useState('');
@@ -34,7 +36,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             setLoading(true);
             setError('');
             try {
-                const { data } = await adminHttp.get(endpoint, { params: { kind: 'image', q: search || undefined, page: pageNumber } });
+                const { data } = await adminHttp.get(endpoint, { params: { kind, q: search || undefined, page: pageNumber, visibility: isImage ? undefined : 'public' } });
                 setItems((previous) => (pageNumber === 1 ? data.data : [...previous, ...data.data]));
                 setHasMore(data.meta.current_page < data.meta.last_page);
                 setPage(pageNumber);
@@ -44,7 +46,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                 setLoading(false);
             }
         },
-        [endpoint],
+        [endpoint, kind, isImage],
     );
 
     // Debounced search (and initial load).
@@ -61,7 +63,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
         try {
             const form = new FormData();
             form.append('file', upload.file);
-            form.append('alt', upload.alt);
+            if (isImage) form.append('alt', upload.alt);
             const { data } = await adminHttp.post(uploadEndpoint, form);
             onSelect(data.data);
         } catch (e) {
@@ -90,18 +92,19 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
 
                 {canUpload && (
                     <form className="border rounded p-3 mb-3 row g-2 align-items-end" onSubmit={submitUpload}>
-                        <div className="col-md-5">
+                        <div className={isImage ? 'col-md-5' : 'col-md-10'}>
                             <label htmlFor={`${headingId}-file`} className="form-label small">
-                                Upload a new image
+                                Upload a new {noun}
                             </label>
                             <input
                                 id={`${headingId}-file`}
                                 type="file"
-                                accept=".jpg,.jpeg,.png,.webp,.gif,.avif"
+                                accept={isImage ? '.jpg,.jpeg,.png,.webp,.gif,.avif' : '.pdf,.docx,.xlsx,.pptx,.odt,.ods,.odp,.txt,.csv'}
                                 className="form-control form-control-sm"
                                 onChange={(e) => setUpload((u) => ({ ...u, file: e.target.files?.[0] ?? null }))}
                             />
                         </div>
+                        {isImage && (
                         <div className="col-md-5">
                             <label htmlFor={`${headingId}-alt`} className="form-label small">
                                 Alternative text
@@ -115,6 +118,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                                 placeholder="What does the image show?"
                             />
                         </div>
+                        )}
                         <div className="col-md-2">
                             <button type="submit" className="btn btn-sm btn-primary w-100" disabled={!upload.file || upload.busy}>
                                 {upload.busy ? 'Uploading…' : 'Upload'}
@@ -136,7 +140,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                 />
 
                 <div aria-live="polite" aria-busy={loading}>
-                    {!loading && items.length === 0 && <p className="text-body-secondary">No images found.</p>}
+                    {!loading && items.length === 0 && <p className="text-body-secondary">No {noun}s found.</p>}
                     <ul className="pa-media-grid list-unstyled mb-0">
                         {items.map((item) => {
                             const isChosen = (chosen?.id ?? selectedId) === item.id;
@@ -150,11 +154,11 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                                         onDoubleClick={() => onSelect(item)}
                                     >
                                         <span className="pa-media-tile__thumb">
-                                            {item.thumbnail ? <img src={item.thumbnail} alt="" loading="lazy" /> : <i className="bi bi-image" aria-hidden="true" />}
+                                            {item.thumbnail ? <img src={item.thumbnail} alt="" loading="lazy" /> : <i className={`bi ${isImage ? 'bi-image' : 'bi-file-earmark-text'}`} aria-hidden="true" />}
                                         </span>
                                         <span className="pa-media-tile__name">
                                             {item.name}
-                                            {!item.alt && !item.is_decorative && <span className="pa-badge pa-badge--warning d-block mt-1">Needs alt text</span>}
+                                            {isImage && !item.alt && !item.is_decorative && <span className="pa-badge pa-badge--warning d-block mt-1">Needs alt text</span>}
                                         </span>
                                     </button>
                                 </li>
@@ -171,13 +175,13 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             </div>
 
             <div className="pa-dialog__footer">
-                <span className="small text-body-secondary">{chosen ? `Selected: ${chosen.name}` : 'Select an image, then confirm.'}</span>
+                <span className="small text-body-secondary">{chosen ? `Selected: ${chosen.name}` : `Select ${isImage ? 'an image' : 'a document'}, then confirm.`}</span>
                 <div className="d-flex gap-2">
                     <button type="button" className="btn btn-link" onClick={onClose}>
                         Cancel
                     </button>
                     <button type="button" className="btn btn-primary" disabled={!chosen} onClick={() => chosen && onSelect(chosen)}>
-                        Use this image
+                        Use this {noun}
                     </button>
                 </div>
             </div>

@@ -216,7 +216,7 @@ final class SchemaGenerator
     private function fieldSchema(array $field): array
     {
         $schema = match ($field['type']) {
-            'text', 'textarea', 'rich-text', 'email', 'video-url' => ['type' => 'string'],
+            'text', 'textarea', 'rich-text', 'html', 'email', 'video-url' => ['type' => 'string'],
             'url' => ['oneOf' => [['type' => 'string'], ['$ref' => '#/$defs/link']]],
             'number' => array_filter(['type' => 'number', 'minimum' => $field['min'] ?? null, 'maximum' => $field['max'] ?? null], fn ($v) => $v !== null),
             'checkbox' => ['type' => 'boolean'],
@@ -242,7 +242,7 @@ final class SchemaGenerator
             default => [],
         };
 
-        if (in_array($field['type'], ['text', 'textarea', 'rich-text', 'email', 'video-url'], true) && isset($field['max'])) {
+        if (in_array($field['type'], ['text', 'textarea', 'rich-text', 'html', 'email', 'video-url'], true) && isset($field['max'])) {
             $schema['maxLength'] = $field['max'];
         }
 

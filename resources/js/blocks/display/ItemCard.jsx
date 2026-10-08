@@ -39,9 +39,9 @@ export default function ItemCard({ item, layout = 'card', showExcerpt = true, sh
                         item.title
                     )}
                 </Heading>
-                {item.meta?.venue && (
+                {item.meta?.place && (
                     <p className="pa-item__place">
-                        <i className="bi bi-geo-alt" aria-hidden="true" /> {item.meta.venue}
+                        <i className="bi bi-geo-alt" aria-hidden="true" /> {item.meta.place}
                     </p>
                 )}
                 {showExcerpt && item.excerpt && <p className="pa-item__excerpt">{item.excerpt}</p>}

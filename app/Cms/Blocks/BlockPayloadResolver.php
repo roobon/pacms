@@ -187,7 +187,7 @@ class BlockPayloadResolver
 
         return $media->isImage()
             ? $media->toImageArray()
-            : ['url' => $media->url(), 'name' => $media->original_name, 'kind' => $media->kind->value, 'size' => $media->humanSize()];
+            : ['url' => $media->url(), 'name' => $media->original_name, 'kind' => $media->kind->value, 'size' => $media->humanSize(), 'extension' => strtolower((string) $media->extension)];
     }
 
     /**

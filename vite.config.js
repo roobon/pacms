@@ -9,6 +9,7 @@ export default defineConfig({
                 // Admin: Blade pages + small enhancements (React islands are added per feature).
                 'resources/scss/admin.scss',
                 'resources/js/admin/app.js',
+                'resources/js/admin/islands/content-fields.jsx',
                 'resources/js/admin/islands/media-picker.jsx',
                 'resources/js/admin/islands/page-builder.jsx',
                 'resources/js/admin/islands/summary-editor.jsx',
