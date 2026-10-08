@@ -115,7 +115,10 @@ it('shows the module sidebar unless the item chooses another or none', function 
         'name' => 'Example', 'timezone' => 'Asia/Dhaka',
         'sidebars' => ['events' => ['global_block_id' => $default->id, 'position' => 'left']],
     ])->assertRedirect();
-    expect(app(SettingsService::class)->get('content', 'sidebars'))->toEqual(['events' => ['global_block_id' => $default->id, 'position' => 'left']]);
+    expect(app(SettingsService::class)->get('content', 'sidebars'))->toEqual([
+        'news' => ['global_block_id' => null, 'position' => 'right'],
+        'events' => ['global_block_id' => $default->id, 'position' => 'left'],
+    ]);
 
     $event = publishedEvent(['title' => 'Fair', 'start_at' => now()->addDays(5)->format('Y-m-d\TH:i')]);
     $this->getJson('/api/v1/resolve?path=/events/fair')
@@ -179,4 +182,26 @@ it('shows Events in the admin navigation for users who may view them', function 
 
     $this->actingAs(userWithRole('moderator', twoFactor: false))->get(route('admin.dashboard'))
         ->assertDontSee(route('admin.events.index'), false);
+});
+
+it('keeps the sidebar position without a default sidebar, for items with their own', function () {
+    $admin = userWithRole('super-admin');
+    $globals = app(GlobalBlockService::class);
+    $own = $globals->publish($admin, $globals->create($admin, ['name' => 'Left Side Bar', 'blocks' => [['type' => 'heading', 'content' => ['text' => 'Partners', 'level' => '2']]]]));
+
+    $this->actingAs($admin)->put(route('admin.settings.general.update'), [
+        'name' => 'Example', 'timezone' => 'Asia/Dhaka',
+        'sidebars' => ['events' => ['global_block_id' => '', 'position' => 'left']],
+    ])->assertRedirect();
+
+    $event = publishedEvent(['title' => 'Fair', 'start_at' => now()->addDays(5)->format('Y-m-d\TH:i')]);
+    $this->getJson('/api/v1/resolve?path=/events/fair')->assertJsonPath('data.sidebar', null);
+
+    $this->actingAs($admin)->put(route('admin.events.update', $event), [
+        'title' => 'Fair', 'start_at' => now()->addDays(5)->format('Y-m-d\TH:i'), 'timezone' => 'Asia/Dhaka',
+        'sidebar_mode' => 'custom', 'sidebar_global_block_id' => $own->id, 'lock_version' => $event->lock_version,
+    ])->assertRedirect();
+    $this->getJson('/api/v1/resolve?path=/events/fair')
+        ->assertJsonPath('data.sidebar.position', 'left')
+        ->assertJsonPath('data.sidebar.blocks.0.children.0.content.text', 'Partners');
 });

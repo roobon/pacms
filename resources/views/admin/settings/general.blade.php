@@ -63,6 +63,7 @@
                         <p class="small text-body-secondary">
                             The sidebar shown next to each {{ strtolower(collect($contentTypes)->map->singular()->join(', ', ' and ')) }} page. Each item can still choose its own sidebar or none.
                             Any published global block can be a sidebar; blocks set to “Used as: Sidebar” are listed first.
+                            <strong>Position</strong> (left or right) applies to every item of that module, including items that choose their own sidebar.
                         </p>
                         @foreach ($contentTypes as $key => $type)
                             @php($current = (array) ($sidebars[$key] ?? []))

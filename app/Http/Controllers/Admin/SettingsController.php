@@ -83,12 +83,19 @@ class SettingsController extends Controller
      */
     private function saveSidebars(array $input, Request $request): void
     {
+        if (! $request->has('sidebars')) {
+            return;
+        }
+
+        // The position is kept even without a default sidebar: items that choose their own
+        // sidebar use it too.
         $sidebars = [];
         foreach (array_keys($this->types->all()) as $key) {
             $row = (array) ($input[$key] ?? []);
-            if (! empty($row['global_block_id'])) {
-                $sidebars[$key] = ['global_block_id' => (int) $row['global_block_id'], 'position' => ($row['position'] ?? 'right') === 'left' ? 'left' : 'right'];
-            }
+            $sidebars[$key] = [
+                'global_block_id' => empty($row['global_block_id']) ? null : (int) $row['global_block_id'],
+                'position' => ($row['position'] ?? 'right') === 'left' ? 'left' : 'right',
+            ];
         }
 
         // Saving bumps the "settings" cache group, which detail payloads (with their sidebar) depend on.

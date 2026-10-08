@@ -143,6 +143,7 @@
                                 </select>
                                 <div id="sidebar-help" class="form-text">
                                     Only used with “A sidebar chosen for this {{ $type->singular() }}”. Any published global block can be a sidebar; blocks set to “Used as: Sidebar” are listed first.
+                                    Left or right is set for all {{ strtolower($type->label()) }} in @can('settings.manage')<a href="{{ route('admin.settings.general') }}#sidebars-heading">Settings → Sidebars</a>@else Settings → Sidebars @endcan.
                                     @can('global_blocks.manage')<a href="{{ route('admin.global-blocks.create') }}">Create a sidebar</a>.@endcan
                                 </div>
                                 @error('sidebar_global_block_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
