@@ -197,11 +197,11 @@ Tree loading: `SELECT … WHERE owner_type=? AND owner_id=? ORDER BY parent_id, 
 |---|---|---|
 | id, name | | |
 | slug | varchar(191) UNIQUE | |
-| kind | varchar(16) | `header`, `footer`, `generic` |
+| kind | varchar(16) | `header`, `footer`, `generic`, `sidebar` (Phase 8) |
 | status, has_unpublished_changes, published_revision_id, published_at | | staged publishing |
 | lock_version, created_by, updated_by, timestamps, deleted_at | | |
 
-**Phase 5 implementation notes:** a `description` column was added. Only `kind = generic` is offered in the admin now; `header`/`footer` come with navigation in Phase 9. Usage is tracked in `content_references` (context `global_ref`), and a global block cannot be deleted while it is used.
+**Phase 5 implementation notes:** a `description` column was added. Only `kind = generic` is offered in the admin now (Phase 8 adds `sidebar`: global blocks shown next to news, events and other module items); `header`/`footer` come with navigation in Phase 9. Usage is tracked in `content_references` (context `global_ref`), and a global block cannot be deleted while it is used.
 
 ### block_templates
 | Column | Type | Notes |
@@ -287,8 +287,12 @@ All publishable modules share these **publishable columns**:
 
 **Phase 4 (minimal News, decision D-04):** created without `publish_at` (no scheduling yet) and without staged publishing. Category taxonomy `news_category`. Body blocks, scheduling, revisions and the archive page arrive with the full News module in Phase 8.
 
+**Phase 8 (full module):** adds `publish_at`, `lock_version`, `sidebar_mode varchar(16) default 'default'` (default / none / custom), `sidebar_global_block_id FK global_blocks SET NULL` and `INDEX(status, publish_at)`. Article text stays in `body` (cleaned rich text); the optional block tree (owner `news`) is "Additional content". Every save records a revision.
+
 ### events
 `id, title, slug UNIQUE, excerpt, featured_media_id, start_at datetime, end_at datetime null, all_day bool, timezone varchar(64), venue varchar(255), address text, map_url varchar(1024) null, registration_url varchar(1024) null, organizer varchar(255)` + publishable. `INDEX(status, start_at)` for "upcoming". Body = blocks.
+
+**Phase 8 (built):** as above, plus `body longText` (article text), `sidebar_mode`, `sidebar_global_block_id`, `lock_version` and `publish_at`. `start_at`/`end_at` are stored in the app time zone (UTC); `timezone` (default `Asia/Dhaka`) is the zone the editor entered them in and the one visitors see. Category taxonomy `event_category`. Morph alias `event`.
 
 ### projects
 `id, name, slug UNIQUE, excerpt, featured_media_id, project_status varchar(16) (planned/ongoing/completed/paused), start_date date null, end_date date null, location varchar(255), manager_team_member_id FK team_members SET NULL, manager_name varchar(191) null, gallery_id FK galleries SET NULL, website_url` + publishable. Partners via `partnerables`. Documents via `attachments`. Body = blocks.

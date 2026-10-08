@@ -32,7 +32,7 @@ export default function AppRoutes() {
             />
             <Route element={<SiteShell />}>
                 <Route index element={<ContentRoute />} />
-                <Route path="preview/pages/:id" element={<PreviewPage />} />
+                <Route path="preview/:kind/:id" element={<PreviewPage />} />
                 <Route
                     path="account"
                     element={

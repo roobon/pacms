@@ -1,11 +1,13 @@
 <?php
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Api\BlockBuilderController;
 use App\Http\Controllers\Admin\Api\MediaController as MediaApiController;
 use App\Http\Controllers\Admin\Api\ReusableBlockController;
 use App\Http\Controllers\Admin\BlockTemplateController;
+use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CustomBlockTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
@@ -13,7 +15,6 @@ use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\GlobalBlockController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
-use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PagePreviewController;
 use App\Http\Controllers\Admin\PageRevisionController;
@@ -76,9 +77,26 @@ Route::middleware('can:redirects.manage')->group(function () {
     Route::delete('redirects/{redirect}', [RedirectController::class, 'destroy'])->name('redirects.destroy');
 });
 
-// News (minimal, Phase 4 — full module in Phase 8)
-Route::resource('news', NewsController::class)->except('show')->parameters(['news' => 'news']);
-Route::post('news/{news}/publish', [NewsController::class, 'publish'])->name('news.publish');
+// Content modules (Phase 8): the same screens for every registered type (news, events…).
+foreach (app(ContentTypeRegistry::class)->all() as $contentType) {
+    $key = $contentType->key();
+    Route::prefix($contentType->routePrefix())
+        ->name($key.'.')
+        ->controller(ContentController::class)
+        ->whereNumber(['item', 'revision'])
+        ->group(function () use ($key) {
+            Route::get('/', 'index')->name('index')->defaults('type', $key);
+            Route::get('create', 'create')->name('create')->defaults('type', $key);
+            Route::post('/', 'store')->name('store')->defaults('type', $key);
+            Route::get('{item}/edit', 'edit')->name('edit')->defaults('type', $key);
+            Route::put('{item}', 'update')->name('update')->defaults('type', $key);
+            Route::delete('{item}', 'destroy')->name('destroy')->defaults('type', $key);
+            Route::post('{item}/workflow', 'workflow')->name('workflow')->defaults('type', $key);
+            Route::get('{item}/revisions', 'revisions')->name('revisions')->defaults('type', $key);
+            Route::post('{item}/revisions/{revision}/restore', 'restore')->name('revisions.restore')->defaults('type', $key);
+            Route::get('{item}/preview', 'preview')->name('preview')->defaults('type', $key);
+        });
+}
 
 // Reusable blocks (Phase 5): global blocks, templates, custom block types
 Route::middleware('can:global_blocks.manage')->group(function () {

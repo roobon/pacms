@@ -6,13 +6,13 @@ use App\Cms\Blocks\BlockExpander;
 use App\Cms\Blocks\BlockPayloadResolver;
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Blocks\BlockTreeValidator;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Design\TokenCatalog;
 use App\Cms\Display\DisplayModeRegistry;
 use App\Cms\Fields\Bindings;
 use App\Cms\Fields\FieldDefinitionValidator;
 use App\Cms\Sources\SourceRegistry;
 use App\Http\Controllers\Controller;
-use App\Models\News;
 use App\Models\Page;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -93,7 +93,7 @@ class BlockBuilderController extends Controller
     }
 
     /**
-     * Internal link targets for link fields (pages and news), searchable.
+     * Internal link targets for link fields (pages and content modules), searchable.
      */
     public function linkTargets(Request $request): JsonResponse
     {
@@ -104,13 +104,20 @@ class BlockBuilderController extends Controller
         $pages = Page::query()
             ->when($q !== '', fn ($query) => $query->where('title', 'like', "%{$q}%"))
             ->orderBy('path')->limit(20)->get(['id', 'title', 'path'])
-            ->map(fn (Page $page) => ['entity' => 'pages', 'id' => $page->id, 'title' => $page->title, 'path' => '/'.$page->path]);
+            ->map(fn (Page $page) => ['entity' => 'pages', 'id' => $page->id, 'title' => $page->title, 'path' => '/'.$page->path])
+            ->all();
 
-        $news = News::query()
-            ->when($q !== '', fn ($query) => $query->where('title', 'like', "%{$q}%"))
-            ->latest('id')->limit(10)->get(['id', 'title', 'slug'])
-            ->map(fn (News $item) => ['entity' => 'news', 'id' => $item->id, 'title' => $item->title, 'path' => $item->url()]);
+        $targets = array_values($pages);
+        foreach (app(ContentTypeRegistry::class)->all() as $key => $type) {
+            $model = $type->modelClass();
+            $items = $model::query()
+                ->when($q !== '', fn ($query) => $query->where('title', 'like', "%{$q}%"))
+                ->latest('id')->limit(10)->get(['id', 'title', 'slug']);
+            foreach ($items as $item) {
+                $targets[] = ['entity' => $key, 'id' => $item->id, 'title' => $item->title, 'path' => $item->url()];
+            }
+        }
 
-        return response()->json(['data' => $pages->concat($news)->values()]);
+        return response()->json(['data' => $targets]);
     }
 }

@@ -1,9 +1,10 @@
 import { Navigate, useLocation } from 'react-router';
+import ArchiveView from './ArchiveView.jsx';
+import ContentView from './ContentView.jsx';
 import { useResolvedPath } from '../hooks/useResolvedPath.js';
 import PageSkeleton from '../components/common/PageSkeleton.jsx';
 import HomePage from './HomePage.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
-import NewsView from './NewsView.jsx';
 import PageView from './PageView.jsx';
 
 /**
@@ -11,8 +12,8 @@ import PageView from './PageView.jsx';
  * through the API (or the server-rendered initial data) and renders what it maps to.
  */
 export default function ContentRoute() {
-    const { pathname } = useLocation();
-    const { data, isPending, isError, refetch } = useResolvedPath(pathname);
+    const { pathname, search } = useLocation();
+    const { data, isPending, isError, refetch } = useResolvedPath(pathname, search);
 
     if (isPending) return <PageSkeleton />;
 
@@ -33,8 +34,10 @@ export default function ContentRoute() {
     switch (data.kind) {
         case 'page':
             return <PageView page={data.data} />;
-        case 'news':
-            return <NewsView news={data.data} />;
+        case 'content':
+            return <ContentView item={data.data} />;
+        case 'archive':
+            return <ArchiveView archive={data.data} />;
         case 'home':
             return <HomePage />;
         case 'redirect':

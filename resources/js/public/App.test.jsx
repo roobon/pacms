@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { QueryClient } from '@tanstack/react-query';
 import App from './App.jsx';
@@ -51,11 +51,57 @@ function pageData(overrides = {}) {
     };
 }
 
-function renderAt(path, { status = 200, page = null, preview = false } = {}) {
+function eventData(overrides = {}) {
+    return {
+        type: 'events',
+        type_label: 'Events',
+        archive_path: '/events',
+        id: 4,
+        title: 'Tree fair',
+        path: '/events/tree-fair',
+        url: 'http://example.test/events/tree-fair',
+        excerpt: 'Seedlings for every school.',
+        excerpt_html: null,
+        body: '<p>Bring a bag.</p>',
+        featured_image: null,
+        category: null,
+        categories: [],
+        published_at: '2027-01-01T00:00:00+06:00',
+        breadcrumbs: [{ title: 'Home', url: '/' }, { title: 'Events', url: '/events' }, { title: 'Tree fair', url: '/events/tree-fair' }],
+        seo: { title: 'Tree fair', robots: 'index,follow', og: {} },
+        blocks: [],
+        sidebar: { position: 'right', blocks: [{ uuid: 'sssssssssssssssssssssssss1', type: 'heading', content: { text: 'Join us', level: 2 }, settings: {}, children: [] }] },
+        event: {
+            start_at: '2027-03-12T10:00:00+06:00', end_at: '2027-03-12T16:00:00+06:00', all_day: false, timezone: 'Asia/Dhaka',
+            when: '12 March 2027, 10:00–16:00', upcoming: true, venue: 'Bangla Academy', address: 'Dhaka',
+            map_url: null, registration_url: 'https://example.org/register', organizer: null,
+        },
+        ...overrides,
+    };
+}
+
+function archiveData() {
+    return {
+        type: 'events',
+        title: 'Events',
+        path: '/events',
+        views: { upcoming: 'Upcoming', past: 'Past' },
+        view: 'past',
+        categories: [{ name: 'Workshops', slug: 'workshops' }],
+        category: null,
+        items: [{ key: 'events:1', kind: 'events', title: 'Old fair', url: '/events/old-fair', external: false, excerpt: null, image: null, date: '2026-01-05T10:00:00Z', meta: { when: '5 January 2026', status: 'Past event' } }],
+        pagination: { page: 1, pages: 2, total: 13 },
+        breadcrumbs: [{ title: 'Home', url: '/' }, { title: 'Events', url: '/events' }],
+        seo: { title: 'Events', robots: 'index,follow', og: {} },
+    };
+}
+
+function renderAt(path, { status = 200, page = null, preview = false, content = undefined, archive = undefined } = {}) {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const [pathname, search = ''] = path.split('?');
     return render(
         <MemoryRouter initialEntries={[path]}>
-            <App initialData={{ site, route: { path, status, preview }, page }} queryClient={queryClient} />
+            <App initialData={{ site, route: { path: pathname, search: search ? `?${search}` : '', status, preview }, page, content, archive }} queryClient={queryClient} />
         </MemoryRouter>,
     );
 }
@@ -115,6 +161,37 @@ describe('public SPA', () => {
         renderAt('/preview/pages/7', { page: pageData({ preview: true }), preview: true });
         expect(screen.getByRole('status')).toHaveTextContent('Preview');
         expect(screen.getByRole('heading', { level: 1, name: 'Our Team' })).toBeInTheDocument();
+    });
+
+    it('renders an event from the initial payload with its date, place and sidebar', () => {
+        renderAt('/events/tree-fair', { content: eventData() });
+
+        expect(screen.getByRole('heading', { level: 1, name: 'Tree fair' })).toBeInTheDocument();
+        const details = screen.getByRole('region', { name: 'Event details' });
+        expect(details).toHaveTextContent('12 March 2027, 10:00–16:00');
+        expect(details).toHaveTextContent('Bangla Academy');
+        expect(screen.getByRole('link', { name: /Register/ })).toHaveAttribute('href', 'https://example.org/register');
+        expect(screen.getByRole('complementary', { name: 'Sidebar' })).toHaveTextContent('Join us');
+        expect(vi.mocked(api.get)).not.toHaveBeenCalledWith('/resolve', expect.anything());
+    });
+
+    it('renders a module archive with view and category links', () => {
+        renderAt('/events?view=past', { archive: archiveData() });
+
+        expect(screen.getByRole('heading', { level: 1, name: 'Events' })).toBeInTheDocument();
+        const filters = screen.getByRole('navigation', { name: 'Filter events' });
+        expect(within(filters).getByRole('link', { name: 'Past' })).toHaveAttribute('aria-current', 'page');
+        expect(within(filters).getByRole('link', { name: 'Upcoming' })).toHaveAttribute('href', '/events');
+        expect(within(filters).getByRole('link', { name: 'Workshops' })).toHaveAttribute('href', '/events?view=past&category=workshops');
+        expect(screen.getByRole('link', { name: 'Old fair' })).toHaveAttribute('href', '/events/old-fair');
+        expect(screen.getByText('Past event')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /Next/ })).toHaveAttribute('href', '/events?view=past&page=2');
+    });
+
+    it('previews a content item', () => {
+        renderAt('/preview/events/4', { content: eventData({ preview: true }), preview: true });
+        expect(screen.getByRole('status')).toHaveTextContent('Preview');
+        expect(screen.getByRole('heading', { level: 1, name: 'Tree fair' })).toBeInTheDocument();
     });
 
     it('shows a sign-in link for guests', async () => {

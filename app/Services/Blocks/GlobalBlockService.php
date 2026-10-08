@@ -42,7 +42,7 @@ class GlobalBlockService
 
         return DB::transaction(function () use ($user, $data, $nodes) {
             $global = new GlobalBlock;
-            $global->fill(['name' => $data['name'], 'description' => $data['description'] ?? null, 'kind' => 'generic']);
+            $global->fill(['name' => $data['name'], 'description' => $data['description'] ?? null, 'kind' => $data['kind'] ?? 'generic']);
             $global->slug = $this->uniqueSlug(GlobalBlock::class, (string) ($data['slug'] ?? '') ?: (string) $data['name']);
             $global->created_by = $global->updated_by = $user->id;
             $global->save();
@@ -68,7 +68,7 @@ class GlobalBlockService
             $global = $this->lockFresh($global, $lockVersion);
             $before = $global->toSnapshot();
 
-            $global->fill(['name' => $data['name'], 'description' => $data['description'] ?? null]);
+            $global->fill(['name' => $data['name'], 'description' => $data['description'] ?? null, 'kind' => $data['kind'] ?? $global->kind]);
             if (! empty($data['slug']) && $data['slug'] !== $global->slug) {
                 $global->slug = $this->uniqueSlug(GlobalBlock::class, (string) $data['slug'], $global->id);
             }

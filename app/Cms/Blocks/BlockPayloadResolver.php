@@ -2,10 +2,10 @@
 
 namespace App\Cms\Blocks;
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Fields\VideoUrl;
 use App\Cms\Sources\SourceRegistry;
 use App\Models\Media;
-use App\Models\News;
 use App\Models\Page;
 
 /**
@@ -266,7 +266,8 @@ class BlockPayloadResolver
      */
     private function collectLinks(array $nodes): array
     {
-        $ids = ['pages' => [], 'news' => []];
+        $models = app(ContentTypeRegistry::class)->models();
+        $ids = array_fill_keys(['pages', ...array_keys($models)], []);
 
         $walk = function (mixed $value) use (&$walk, &$ids) {
             if (! is_array($value)) {
@@ -281,7 +282,7 @@ class BlockPayloadResolver
         };
         $walk($nodes);
 
-        $links = ['pages' => [], 'news' => []];
+        $links = array_fill_keys(array_keys($ids), []);
 
         if ($ids['pages'] !== []) {
             foreach (Page::query()->whereKey(array_unique($ids['pages']))->get() as $page) {
@@ -289,9 +290,11 @@ class BlockPayloadResolver
             }
         }
 
-        if ($ids['news'] !== []) {
-            foreach (News::query()->whereKey(array_unique($ids['news']))->get() as $news) {
-                $links['news'][$news->id] = $news->isPublished() ? $news->url() : null;
+        foreach ($models as $key => $model) {
+            if ($ids[$key] !== []) {
+                foreach ($model::query()->whereKey(array_unique($ids[$key]))->get() as $item) {
+                    $links[$key][$item->id] = $item->isPublished() ? $item->url() : null;
+                }
             }
         }
 

@@ -54,8 +54,8 @@
                             <li class="list-group-item d-flex justify-content-between">
                                 @if ($usage->owner instanceof \App\Models\Page)
                                     <a href="{{ route('admin.pages.edit', $usage->owner) }}">{{ $usage->owner->title }}</a>
-                                @elseif ($usage->owner instanceof \App\Models\News)
-                                    <a href="{{ route('admin.news.edit', $usage->owner) }}">{{ $usage->owner->title }}</a> <span class="text-body-secondary">news</span>
+                                @elseif ($usage->owner instanceof \App\Models\ContentItem)
+                                    <a href="{{ route('admin.'.$usage->owner::typeKey().'.edit', $usage->owner) }}">{{ $usage->owner->title }}</a> <span class="text-body-secondary">{{ $usage->owner->type()->singular() }}</span>
                                 @elseif ($usage->owner instanceof \App\Models\GlobalBlock)
                                     <a href="{{ route('admin.global-blocks.edit', $usage->owner) }}">{{ $usage->owner->name }}</a> <span class="text-body-secondary">global block</span>
                                 @elseif ($usage->owner instanceof \App\Models\BlockTemplate)

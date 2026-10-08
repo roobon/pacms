@@ -3,11 +3,11 @@
 namespace App\Cms\Exchange;
 
 use App\Cms\Blocks\BlockTreeRepository;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Models\BlockTemplate;
 use App\Models\BlockType;
 use App\Models\GlobalBlock;
 use App\Models\Media;
-use App\Models\News;
 use App\Models\Page;
 use App\Models\Term;
 
@@ -190,9 +190,10 @@ final class Exporter
      */
     private function link(array $link): array
     {
-        $ref = match ($link['entity']) {
-            'pages' => ($page = Page::query()->find($link['id'])) ? ['entity' => 'pages', 'path' => $page->path] : null,
-            'news' => ($news = News::query()->find($link['id'])) ? ['entity' => 'news', 'slug' => $news->slug] : null,
+        $model = app(ContentTypeRegistry::class)->models()[$link['entity']] ?? null;
+        $ref = match (true) {
+            $link['entity'] === 'pages' => ($page = Page::query()->find($link['id'])) ? ['entity' => 'pages', 'path' => $page->path] : null,
+            $model !== null => ($item = $model::query()->find((int) $link['id'])) ? ['entity' => $link['entity'], 'slug' => $item->slug] : null,
             default => null,
         };
 

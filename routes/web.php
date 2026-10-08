@@ -23,6 +23,10 @@ Route::get('sitemaps/pages.xml', [SeoFilesController::class, 'pages'])->name('si
 Route::get('preview/pages/{page}', [PreviewController::class, 'page'])
     ->middleware(['signed:relative', 'auth'])
     ->name('preview.page');
+Route::get('preview/{type}/{id}', [PreviewController::class, 'content'])
+    ->where(['type' => '[a-z0-9-]+', 'id' => '[0-9]+'])
+    ->middleware(['signed:relative', 'auth'])
+    ->name('preview.content');
 
 // Builder live preview frame: the SPA renders trees the builder posts to it (same origin).
 Route::get('__builder-preview', [PreviewController::class, 'builder'])

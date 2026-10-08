@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Http\Controllers\Controller;
+use App\Models\GlobalBlock;
 use App\Models\Page;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Settings\SettingsService;
@@ -15,7 +17,10 @@ use Illuminate\View\View;
 
 class SettingsController extends Controller
 {
-    public function __construct(private readonly SettingsService $settings) {}
+    public function __construct(
+        private readonly SettingsService $settings,
+        private readonly ContentTypeRegistry $types,
+    ) {}
 
     public function edit(): View
     {
@@ -25,6 +30,9 @@ class SettingsController extends Controller
             'media' => $this->settings->group('media'),
             'timezones' => DateTimeZone::listIdentifiers(),
             'livePages' => Page::query()->live()->orderBy('published_path')->get(['id', 'title', 'published_path']),
+            'contentTypes' => $this->types->all(),
+            'sidebars' => (array) $this->settings->get('content', 'sidebars', []),
+            'sidebarBlocks' => GlobalBlock::query()->where('kind', 'sidebar')->whereNotNull('published_revision_id')->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -41,9 +49,12 @@ class SettingsController extends Controller
             'homepage_page_id' => ['nullable', 'integer', Rule::exists('pages', 'id')->whereNotNull('published_revision_id')->whereNull('deleted_at')],
             'robots_txt' => ['nullable', 'string', 'max:5000'],
             'allow_svg' => ['boolean'],
-        ]);
+            'sidebars' => ['array'],
+            'sidebars.*.global_block_id' => ['nullable', 'integer', Rule::exists('global_blocks', 'id')->where('kind', 'sidebar')->whereNull('deleted_at')],
+            'sidebars.*.position' => ['nullable', Rule::in(['left', 'right'])],
+        ], [], ['sidebars.*.global_block_id' => 'sidebar']);
 
-        $site = array_map(fn ($value) => $value ?? '', Arr::except($data, ['homepage_page_id', 'robots_txt', 'allow_svg']));
+        $site = array_map(fn ($value) => $value ?? '', Arr::except($data, ['homepage_page_id', 'robots_txt', 'allow_svg', 'sidebars']));
         $site['homepage_page_id'] = isset($data['homepage_page_id']) ? (int) $data['homepage_page_id'] : null;
         $before = $this->settings->group('site');
 
@@ -55,11 +66,34 @@ class SettingsController extends Controller
             $logger->log($allowSvg ? 'settings.svg_enabled' : 'settings.svg_disabled', null, [], subjectLabel: 'Media settings');
         }
 
+        $this->saveSidebars((array) ($data['sidebars'] ?? []), $request);
+
         $logger->log('settings.updated', null, [
             'group' => 'site',
             'changed' => array_keys(array_diff_assoc(array_map('strval', $site), array_map('strval', array_intersect_key($before, $site)))),
         ], subjectLabel: 'General settings');
 
         return back()->with('success', __('Settings saved.'));
+    }
+
+    /**
+     * Default sidebar per content module (only registered modules are kept).
+     *
+     * @param  array<string, mixed>  $input
+     */
+    private function saveSidebars(array $input, Request $request): void
+    {
+        $sidebars = [];
+        foreach (array_keys($this->types->all()) as $key) {
+            $row = (array) ($input[$key] ?? []);
+            if (! empty($row['global_block_id'])) {
+                $sidebars[$key] = ['global_block_id' => (int) $row['global_block_id'], 'position' => ($row['position'] ?? 'right') === 'left' ? 'left' : 'right'];
+            }
+        }
+
+        // Saving bumps the "settings" cache group, which detail payloads (with their sidebar) depend on.
+        if ($sidebars != (array) $this->settings->get('content', 'sidebars', [])) {
+            $this->settings->set('content', ['sidebars' => $sidebars], $request->user());
+        }
     }
 }

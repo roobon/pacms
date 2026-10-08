@@ -48,8 +48,10 @@
 /**
  * @typedef {Object} InitialData
  * @property {SiteData|null} site
- * @property {{path: string, status: number, preview?: boolean}|null} route
+ * @property {{path: string, search?: string, status: number, preview?: boolean}|null} route
  * @property {PageData|null} page
+ * @property {Object} [content] content item (news, event…) on its detail page or in a preview
+ * @property {Object} [archive] module archive (/news, /events)
  */
 
 /**
@@ -70,7 +72,9 @@ export function readInitialData(doc) {
     try {
         const data = JSON.parse(element.textContent || '{}');
         const result = { site: data.site ?? null, route: data.route ?? null, page: data.page ?? null };
-        if (data.news) result.news = data.news;
+        // Content modules: an item detail page or a module archive (/news, /events).
+        if (data.content) result.content = data.content;
+        if (data.archive) result.archive = data.archive;
         return result;
     } catch {
         return empty;

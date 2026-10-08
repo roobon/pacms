@@ -56,6 +56,45 @@
                         <div id="allow-svg-help" class="form-text">Only for roles with the “Upload SVG” permission (Administrator by default). Every SVG is cleaned: scripts, event handlers and external references are removed. Off by default because SVG files can contain code.</div>
                     </div>
                 </section>
+
+                <section class="card pa-card mt-4" aria-labelledby="sidebars-heading">
+                    <div class="card-header"><h2 id="sidebars-heading" class="h6 mb-0">Sidebars</h2></div>
+                    <div class="card-body">
+                        <p class="small text-body-secondary">
+                            The sidebar shown next to each {{ strtolower(collect($contentTypes)->map->singular()->join(', ', ' and ')) }} page. Each item can still choose its own sidebar or none.
+                            Sidebars are global blocks of the kind “Sidebar”.
+                        </p>
+                        @foreach ($contentTypes as $key => $type)
+                            @php($current = (array) ($sidebars[$key] ?? []))
+                            <fieldset class="pa-settings-row mb-3">
+                                <legend class="form-label fs-6 fw-semibold">{{ $type->label() }}</legend>
+                                <div class="row g-2">
+                                    <div class="col-sm-8">
+                                        <label for="sidebar-{{ $key }}" class="form-label small">Sidebar</label>
+                                        <select id="sidebar-{{ $key }}" name="sidebars[{{ $key }}][global_block_id]" class="form-select @error("sidebars.$key.global_block_id") is-invalid @enderror">
+                                            <option value="">None</option>
+                                            @foreach ($sidebarBlocks as $block)
+                                                <option value="{{ $block->id }}" @selected((int) old("sidebars.$key.global_block_id", $current['global_block_id'] ?? 0) === $block->id)>{{ $block->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error("sidebars.$key.global_block_id")<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="sidebar-{{ $key }}-position" class="form-label small">Position</label>
+                                        <select id="sidebar-{{ $key }}-position" name="sidebars[{{ $key }}][position]" class="form-select">
+                                            @foreach (['right' => 'Right', 'left' => 'Left'] as $value => $label)
+                                                <option value="{{ $value }}" @selected(old("sidebars.$key.position", $current['position'] ?? 'right') === $value)>{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        @endforeach
+                        @if ($sidebarBlocks->isEmpty())
+                            <p class="small mb-0">No sidebars yet.@can('global_blocks.manage') <a href="{{ route('admin.global-blocks.create') }}">Create a global block</a> and set “Used as” to “Sidebar”, then publish it.@endcan</p>
+                        @endif
+                    </div>
+                </section>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Save settings</button>

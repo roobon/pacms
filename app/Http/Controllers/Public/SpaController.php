@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\Redirect;
-use App\Services\News\NewsPayloadBuilder;
+use App\Services\Content\ContentPayloadBuilder;
 use App\Services\Pages\PagePayloadBuilder;
 use App\Services\Public\PathResolver;
 use App\Services\Public\SitePayload;
@@ -36,7 +36,7 @@ class SpaController extends Controller
         PathResolver $resolver,
         PagePayloadBuilder $pages,
         RedirectService $redirects,
-        NewsPayloadBuilder $newsPayload,
+        ContentPayloadBuilder $contentPayload,
     ): Response|RedirectResponse {
         $path = trim($request->path(), '/');
 
@@ -58,7 +58,8 @@ class SpaController extends Controller
 
         return match ($resolved['kind']) {
             'page' => $this->pageResponse($site, $path, $pages->forLivePage($resolved['page'])),
-            'news' => $this->shell($site, $path, 200, ($news = $newsPayload->build($resolved['news']))['seo'], ['news' => $news]),
+            'content' => $this->shell($site, $path, 200, ($item = $contentPayload->item($resolved['item']))['seo'], ['content' => $item]),
+            'archive' => $this->shell($site, $path, 200, ($archive = $contentPayload->archiveForRequest($resolved['type'], $request))['seo'], ['archive' => $archive]),
             'home' => $this->shell($site, $path, 200, $this->basicSeo($site, null, $site['url'].'/', organization: true)),
             'redirect' => $this->redirectResponse($resolved['redirect'], $redirects),
             default => $this->shell($site, $path, 404, $this->basicSeo($site, 'Page not found', null, noindex: true)),
@@ -104,7 +105,7 @@ class SpaController extends Controller
             'seo' => $seo,
             'initial' => [
                 'site' => $site,
-                'route' => ['path' => '/'.$path, 'status' => $status],
+                'route' => ['path' => '/'.$path, 'status' => $status, 'search' => ($query = request()->getQueryString()) ? '?'.$query : ''],
             ] + $extra,
         ], $status)->header('Cache-Control', 'no-cache, private');
     }

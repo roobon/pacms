@@ -1,0 +1,166 @@
+<?php
+
+namespace App\Models;
+
+use App\Cms\Blocks\BlockTreeRepository;
+use App\Cms\Content\ContentType;
+use App\Cms\Content\ContentTypeRegistry;
+use App\Enums\ContentStatus;
+use App\Models\Concerns\HasRevisions;
+use App\Models\Concerns\HasSeo;
+use App\Models\Concerns\HasTerms;
+use App\Models\Contracts\Revisionable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+
+/**
+ * Base for directly published content modules (news, events, projects…; CMS-ARCHITECTURE.md
+ * §3, §4.2 "Direct"): the row is live once published. Shared behaviour: workflow status,
+ * scheduling, revisions of every save, SEO, terms, builder content and a sidebar choice.
+ * What differs per module is described by its ContentType.
+ *
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string|null $body
+ * @property int|null $featured_media_id
+ * @property bool $featured
+ * @property string $sidebar_mode
+ * @property int|null $sidebar_global_block_id
+ * @property ContentStatus $status
+ * @property Carbon|null $published_at
+ * @property Carbon|null $publish_at
+ * @property int|null $author_id
+ * @property int $lock_version
+ * @property int|null $created_by
+ * @property int|null $updated_by
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
+abstract class ContentItem extends Model implements Revisionable
+{
+    use HasRevisions, HasSeo, HasTerms, SoftDeletes;
+
+    /** Columns every module edits in its form, besides its own (ContentType::fields()). */
+    public const COMMON_FIELDS = ['title', 'slug', 'excerpt', 'body', 'featured_media_id', 'featured', 'sidebar_mode', 'sidebar_global_block_id'];
+
+    public const SIDEBAR_MODES = ['default' => 'Use the default sidebar', 'none' => 'No sidebar', 'custom' => 'Choose a sidebar'];
+
+    /** Registry key, e.g. "news". */
+    abstract public static function typeKey(): string;
+
+    public function type(): ContentType
+    {
+        return app(ContentTypeRegistry::class)->get(static::typeKey());
+    }
+
+    public function contentType(): string
+    {
+        return $this->type()->permissionKey();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => ContentStatus::class,
+            'featured' => 'boolean',
+            'published_at' => 'datetime',
+            'publish_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * @return BelongsTo<Media, $this>
+     */
+    public function featuredMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'featured_media_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id')->withTrashed();
+    }
+
+    /**
+     * @return BelongsTo<GlobalBlock, $this>
+     */
+    public function sidebarBlock(): BelongsTo
+    {
+        return $this->belongsTo(GlobalBlock::class, 'sidebar_global_block_id');
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     */
+    public function scopePublished(Builder $query): void
+    {
+        $query->where('status', ContentStatus::Published)->whereNotNull('published_at')->where('published_at', '<=', now());
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === ContentStatus::Published && $this->published_at !== null && ! $this->published_at->isFuture() && ! $this->trashed();
+    }
+
+    public function url(): string
+    {
+        return '/'.$this->type()->routePrefix().'/'.$this->slug;
+    }
+
+    /**
+     * Normalised item for collection blocks and archives (CMS-ARCHITECTURE.md §6.4).
+     *
+     * @return array<string, mixed>
+     */
+    public function toItem(): array
+    {
+        return $this->type()->toItem($this);
+    }
+
+    public function toSnapshot(): array
+    {
+        $fields = $this->only([...self::COMMON_FIELDS, ...array_keys($this->type()->fields())]);
+
+        return [
+            'schema_version' => '1.0',
+            'type' => static::typeKey(),
+            'fields' => $fields,
+            'terms' => $this->exists ? $this->terms()->pluck('terms.id')->all() : [],
+            'seo' => $this->seoSnapshot(),
+            'blocks' => $this->exists ? app(BlockTreeRepository::class)->load($this) : [],
+        ];
+    }
+
+    /**
+     * Restores fields, terms and SEO; the block tree is restored (re-validated) by the
+     * content service, which knows the acting user.
+     */
+    public function applySnapshot(array $snapshot): void
+    {
+        $allowed = [...self::COMMON_FIELDS, ...array_keys($this->type()->fields())];
+        $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip($allowed));
+        unset($fields['slug']); // never move a live URL by restoring
+
+        if (isset($fields['featured_media_id']) && ! Media::query()->whereKey($fields['featured_media_id'])->exists()) {
+            $fields['featured_media_id'] = null;
+        }
+
+        $this->forceFill($fields);
+        $this->saveSeo($snapshot['seo'] ?? null);
+
+        if (isset($snapshot['terms']) && $this->type()->taxonomy() !== null) {
+            $this->syncTerms((string) $this->type()->taxonomy(), array_map('intval', (array) $snapshot['terms']));
+        }
+    }
+}

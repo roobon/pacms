@@ -23,8 +23,8 @@ class GlobalBlock extends Model implements Revisionable
 
     public const SNAPSHOT_FIELDS = ['name', 'slug', 'kind', 'description'];
 
-    /** Kinds offered in the admin now; header/footer arrive with navigation (Phase 9). */
-    public const KINDS = ['generic' => 'Reusable section'];
+    /** Kinds offered in the admin now (sidebars: content modules, Phase 8); header/footer arrive with navigation (Phase 9). */
+    public const KINDS = ['generic' => 'Reusable section', 'sidebar' => 'Sidebar'];
 
     protected $fillable = ['name', 'slug', 'kind', 'description'];
 
