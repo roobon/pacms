@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 8 (Content Modules) approved and merged (v0.8.0). Phase 9 (Navigation) in progress: 9A (menus, Menu Builder, header and footer, mobile navigation) approved and merged; 9B (mega panels, starter-kit header and footer) is next.** See [docs/phase-reports/PHASE-9A-REPORT.md](docs/phase-reports/PHASE-9A-REPORT.md).
+- Current status: **Phase 8 (Content Modules) approved and merged (v0.8.0). Phase 9 (Navigation) in progress: 9A (menus, Menu Builder, header and footer, mobile navigation) approved and merged; 9B (mega panels, starter-kit header and footer) ready for review.** See [docs/phase-reports/PHASE-9B-REPORT.md](docs/phase-reports/PHASE-9B-REPORT.md).
 
 ## Requirements
 
@@ -26,7 +26,7 @@ php artisan pacms:doctor
 
 ### Starter kit
 
-`php artisan pacms:starter` installs designed page templates (Home, About us, Contact, Get involved, and landing pages for News, Events, Projects, Programmes and Publications), 14 section templates (heroes, impact numbers, feature cards, collections, FAQ, contact details, call to action) and global blocks (a call to action, contact details and three sidebars). They are in the builder's Templates tab, and **New page → Start from** copies a page template. Running it again only adds what is missing; `--pages` also creates draft Home, About us, Contact and Get involved pages (never over existing ones); `--restore=<slug>` or `--restore=all` puts shipped templates back to their original design. The kit's files are in `resources/starter-kit/`, in the JSON import format.
+`php artisan pacms:starter` installs designed page templates (Home, About us, Contact, Get involved, and landing pages for News, Events, Projects, Programmes and Publications), 14 section templates (heroes, impact numbers, feature cards, collections, FAQ, contact details, call to action) and global blocks (a main header and footer, a call to action, contact details and three sidebars). It also creates the menus "main" and "footer" (filled with your published top-level pages when empty) and, if no header or footer is chosen yet, makes the kit's the site's. They are in the builder's Templates tab, and **New page → Start from** copies a page template. Running it again only adds what is missing; `--pages` also creates draft Home, About us, Contact and Get involved pages (never over existing ones); `--restore=<slug>` or `--restore=all` puts shipped templates back to their original design. The kit's files are in `resources/starter-kit/`, in the JSON import format.
 
 In the `local` environment, `DevelopmentSeeder` creates one account per role (`<role>@pacms.test`, password in `database/seeders/DevelopmentSeeder.php`). Set `PACMS_ENFORCE_2FA=false` locally to skip the two-factor requirement for privileged roles.
 

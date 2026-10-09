@@ -14,6 +14,7 @@ use App\Models\Page;
 use App\Models\User;
 use App\Services\Blocks\BlockTemplateService;
 use App\Services\Blocks\GlobalBlockService;
+use App\Services\Navigation\MenuService;
 use App\Services\Pages\PageService;
 use App\Services\Settings\SettingsService;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,10 @@ class StarterKitService
     public function install(User $user, bool $pages = false): array
     {
         $manifest = $this->manifest();
-        $done = $this->installGlobals($user);
+        // Menus first: the kit's header and footer show them.
+        $done = app(MenuService::class)->prefill($user);
+        $done = [...$done, ...$this->installGlobals($user)];
+        $done = [...$done, ...$this->chooseHeaderAndFooter($user)];
 
         foreach ($manifest['templates'] as $file) {
             $document = $this->blocks($file, $user, BlockTreeValidator::CONTEXT_TEMPLATE);
@@ -83,6 +87,28 @@ class StarterKitService
         if ($pages) {
             foreach ($manifest['pages'] as $definition) {
                 $done[] = ['Page', (string) $definition['title'], $this->page($user, $definition)];
+            }
+        }
+
+        return $done;
+    }
+
+    /**
+     * The kit's header and footer become the site's when none is chosen yet.
+     *
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function chooseHeaderAndFooter(User $user): array
+    {
+        $done = [];
+        foreach (['header' => 'main-header', 'footer' => 'main-footer'] as $role => $slug) {
+            if ($this->settings->get('navigation', "{$role}_global_block_id")) {
+                continue;
+            }
+            $id = GlobalBlock::query()->where('slug', $slug)->where('kind', $role)->whereNotNull('published_revision_id')->value('id');
+            if ($id) {
+                $this->settings->set('navigation', ["{$role}_global_block_id" => (int) $id], $user);
+                $done[] = ['Setting', ucfirst($role), 'set to the starter kit\'s'];
             }
         }
 
@@ -132,7 +158,9 @@ class StarterKitService
      */
     public function restore(User $user, ?string $slug = null): array
     {
-        // Templates place the kit's global blocks; put back any that were deleted.
+        // Templates place the kit's global blocks (and the header and footer show the menus);
+        // put back any that were deleted.
+        app(MenuService::class)->prefill($user);
         $done = array_values(array_filter($this->installGlobals($user), fn (array $row) => $row[2] !== 'already there'));
         $found = false;
         foreach ($this->manifest()['templates'] as $file) {

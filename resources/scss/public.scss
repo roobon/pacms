@@ -544,6 +544,48 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         right: 0;
     }
 
+    // Mega panel: as wide as the header, below it (the header is the positioning box).
+    &--horizontal:has(&__has-sub--mega),
+    &__has-sub--mega {
+        position: static;
+    }
+
+    &__panel--mega,
+    &__has-sub--mega:last-child &__panel--mega {
+        left: 0;
+        right: 0;
+        min-width: 0;
+        padding: var(--pa-space-6) 0;
+        border-width: 1px 0;
+        border-radius: 0;
+        text-align: start;
+        color: var(--pa-color-body);
+
+        .pa-section {
+            padding-block: 0;
+        }
+
+        // Inside the header, but laid out like page content (not as the header's bar).
+        .pa-column {
+            display: block;
+        }
+
+        // A panel is a menu, not a page: smaller headings.
+        .pa-block-heading,
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: var(--pa-space-4);
+        }
+
+        h3 {
+            font-size: 1.125rem;
+        }
+    }
+
+    &__drawer-panel {
+        padding: 0 0 var(--pa-space-4) var(--pa-space-4);
+    }
+
     // Vertical (footers, sidebars): every level listed.
     &--vertical &__list .pa-menu__list {
         padding-left: var(--pa-space-4);

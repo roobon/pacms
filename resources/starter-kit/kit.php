@@ -10,7 +10,13 @@
  */
 
 return [
+    // Menus "main" and "footer" are created (with the site's published top-level pages)
+    // before these, because the header and footer show them.
     'globals' => [
+        'main-header' => ['name' => 'Main header', 'kind' => 'header', 'file' => 'globals/main-header.json',
+            'description' => 'Logo, main menu and account link. Chosen in Design → Header & footer.'],
+        'main-footer' => ['name' => 'Main footer', 'kind' => 'footer', 'file' => 'globals/main-footer.json',
+            'description' => 'Logo, a sentence about you, social links, footer menu, contact details and copyright.'],
         'call-to-action' => ['name' => 'Call to action', 'kind' => 'generic', 'file' => 'globals/call-to-action.json',
             'description' => 'The band at the bottom of the starter pages. Edit it once and it changes everywhere.'],
         'contact-details' => ['name' => 'Contact details', 'kind' => 'generic', 'file' => 'globals/contact-details.json',

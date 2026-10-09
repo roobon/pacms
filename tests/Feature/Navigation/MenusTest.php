@@ -6,6 +6,7 @@ use App\Cms\Blocks\BlockTreeRepository;
 use App\Cms\Blocks\BlockTreeValidator;
 use App\Enums\ContentStatus;
 use App\Enums\WorkflowAction;
+use App\Models\Block;
 use App\Models\BlockType;
 use App\Models\GlobalBlock;
 use App\Models\Menu;
@@ -203,7 +204,7 @@ it('validates the page header choice and the header & footer settings', function
     $this->actingAs($admin)->put(route('admin.settings.navigation.update'), ['footer_global_block_id' => $sidebar->id])->assertSessionHasErrors('footer_global_block_id');
 
     $this->actingAs($admin)->get(route('admin.pages.create'))->assertOk()->assertSee('Header')->assertSee('Site default');
-    $this->actingAs($admin)->get(route('admin.settings.navigation'))->assertOk()->assertSee('Social profiles');
+    $this->actingAs($admin)->get(route('admin.settings.navigation'))->assertOk()->assertSee('Social profiles')->assertDontSee('&amp;amp;', false);
     $this->actingAs($admin)->get(route('admin.dashboard'))->assertSee('Menus')->assertSee('Header &amp; footer', false);
 });
 
@@ -233,4 +234,46 @@ it('saves a logo and shows it in Site logo blocks', function () {
 
     // Only images of the public library.
     $this->actingAs($admin)->put(route('admin.settings.navigation.update'), ['logo_media_id' => 999999])->assertSessionHasErrors('logo_media_id');
+});
+
+it('gives a top-level item a mega panel built from blocks', function () {
+    $admin = userWithRole('administrator');
+    $menu = menuWith([
+        ['type' => 'group', 'label' => 'Our work', 'children' => [['type' => 'custom_url', 'label' => 'Projects', 'url' => '/projects']]],
+        ['type' => 'custom_url', 'label' => 'Contact', 'url' => '/contact'],
+    ]);
+    $top = MenuItem::query()->where('label', 'Our work')->firstOrFail();
+    $child = MenuItem::query()->where('label', 'Projects')->firstOrFail();
+
+    $this->actingAs($admin)->get(route('admin.menus.panel.edit', [$menu, $top]))->assertOk()->assertSee('Mega panel: Our work');
+    $this->actingAs($admin)->get(route('admin.menus.panel.edit', [$menu, $child]))->assertNotFound();
+    $this->actingAs(userWithRole('author', twoFactor: false))->get(route('admin.menus.panel.edit', [$menu, $top]))->assertForbidden();
+
+    $blocks = [['type' => 'columns', 'layout' => ['columns' => ['desktop' => [6, 6], 'mobile' => [12, 12]]], 'children' => [
+        ['type' => 'column', 'children' => [['type' => 'heading', 'content' => ['text' => 'Programmes', 'level' => '3']]]],
+        ['type' => 'column', 'children' => [['type' => 'button', 'content' => ['label' => 'All projects', 'link' => ['type' => 'url', 'url' => '/projects']]]]],
+    ]]];
+    $this->actingAs($admin)->put(route('admin.menus.panel.update', [$menu, $top]), ['blocks' => json_encode($blocks)])->assertSessionHasNoErrors();
+    expect($top->fresh()->is_mega)->toBeTrue();
+
+    $items = app(MenuService::class)->resolve($menu->slug);
+    expect($items[0]['panel'][0]['type'])->toBe('columns')
+        ->and($items[0]['panel'][0]['children'][0]['children'][0]['content']['text'])->toBe('Programmes')
+        ->and($items[1]['panel'])->toBeNull();
+
+    // Saving the menu keeps the panel; moving the item under another one drops it.
+    $tree = $this->actingAs($admin)->getJson(route('admin.api.menus.tree', $menu))->json('data');
+    expect($tree['items'][0]['is_mega'])->toBeTrue()->and($tree['items'][0]['panel_url'])->toContain('/panel');
+    $save = fn (array $items) => app(MenuService::class)->saveTree($admin, $menu->fresh(), $items, $menu->fresh()->lock_version);
+    $save([['id' => $top->id, 'type' => 'group', 'label' => 'Our work'], ['type' => 'custom_url', 'label' => 'Contact', 'url' => '/contact']]);
+    expect($top->fresh()->is_mega)->toBeTrue();
+    $save([['type' => 'custom_url', 'label' => 'Contact', 'url' => '/contact', 'children' => [['id' => $top->id, 'type' => 'group', 'label' => 'Our work']]]]);
+    expect($top->fresh()->is_mega)->toBeFalse()
+        ->and(Block::query()->where('owner_type', 'menu_item')->count())->toBe(0);
+
+    // Removing the panel.
+    $last = MenuItem::query()->whereNull('parent_id')->firstOrFail();
+    app(MenuService::class)->savePanel($admin, $last, $blocks);
+    $this->actingAs($admin)->delete(route('admin.menus.panel.destroy', [$menu, $last]))->assertRedirect(route('admin.menus.edit', $menu));
+    expect($last->fresh()->is_mega)->toBeFalse();
 });

@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MediaCoverageController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\MenuPanelController;
 use App\Http\Controllers\Admin\NavigationSettingsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PagePreviewController;
@@ -146,6 +147,9 @@ Route::post('media-coverage/{item}/check-source', [MediaCoverageController::clas
 // Phase 9: menus and their builder.
 Route::middleware('can:menus.manage')->group(function () {
     Route::resource('menus', MenuController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::get('menus/{menu}/items/{item}/panel', [MenuPanelController::class, 'edit'])->name('menus.panel.edit');
+    Route::put('menus/{menu}/items/{item}/panel', [MenuPanelController::class, 'update'])->name('menus.panel.update');
+    Route::delete('menus/{menu}/items/{item}/panel', [MenuPanelController::class, 'destroy'])->name('menus.panel.destroy');
 });
 
 Route::middleware('can:global_blocks.manage')->group(function () {

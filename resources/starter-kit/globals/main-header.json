@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Main header"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                3,
+                9
+              ],
+              "mobile": [
+                6,
+                6
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "default",
+                    "size": "md",
+                    "show_name": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "menu",
+                  "content": {
+                    "menu": "main",
+                    "style": "horizontal",
+                    "aria_label": "Main"
+                  }
+                },
+                {
+                  "type": "account-link",
+                  "content": {
+                    "sign_in_label": "Sign in",
+                    "account_label": "My account"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

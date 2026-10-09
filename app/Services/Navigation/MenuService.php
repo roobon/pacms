@@ -2,6 +2,9 @@
 
 namespace App\Services\Navigation;
 
+use App\Cms\Blocks\BlockPayloadResolver;
+use App\Cms\Blocks\BlockTreeRepository;
+use App\Cms\Blocks\BlockTreeValidator;
 use App\Cms\Content\ContentType;
 use App\Cms\Content\ContentTypeRegistry;
 use App\Models\ContentItem;
@@ -12,6 +15,7 @@ use App\Models\Term;
 use App\Models\User;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Cache\CacheVersions;
+use App\Services\Content\ContentReferenceService;
 use App\Services\Settings\SettingsService;
 use App\Support\Html\HtmlSanitizer;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -41,6 +45,10 @@ class MenuService
         private readonly CacheVersions $versions,
         private readonly ActivityLogger $logger,
         private readonly SettingsService $settings,
+        private readonly BlockTreeRepository $tree,
+        private readonly BlockTreeValidator $validator,
+        private readonly ContentReferenceService $references,
+        private readonly BlockPayloadResolver $blocks,
     ) {}
 
     /**
@@ -110,12 +118,23 @@ class MenuService
                     'position' => $row['position'],
                 ];
                 $item = in_array($row['id'], $existing, true) ? MenuItem::query()->find($row['id']) : new MenuItem;
+                // A mega panel stays with its item while the item stays at the top level.
+                $attributes['is_mega'] = $item->is_mega && $attributes['parent_id'] === null;
+                if ($item->is_mega && ! $attributes['is_mega']) {
+                    $this->tree->save($item, []);
+                }
                 $item->forceFill($attributes)->save();
                 $ids[$row['key']] = $item->id;
                 $kept[] = $item->id;
             }
-            // Children first, so no foreign key points at a removed parent.
-            MenuItem::query()->where('menu_id', $menu->id)->whereNotIn('id', $kept)->orderByDesc('id')->get()->each->delete();
+            // Children first, so no foreign key points at a removed parent; panels go with their item.
+            foreach (MenuItem::query()->where('menu_id', $menu->id)->whereNotIn('id', $kept)->orderByDesc('id')->get() as $removed) {
+                if ($removed->is_mega) {
+                    $this->tree->save($removed, []);
+                    $this->references->clear($removed);
+                }
+                $removed->delete();
+            }
 
             $menu->forceFill(['lock_version' => $menu->lock_version + 1, 'updated_by' => $user->id])->save();
             $this->logger->log('menu.items_saved', $menu, ['items' => count($rows)], $user, $menu->name);
@@ -126,13 +145,90 @@ class MenuService
     }
 
     /**
+     * Save the mega panel of a top-level item (Phase 9B): a block tree shown when the item
+     * opens, instead of a list of its sub-items. Menus are not staged, so it is live at once.
+     *
+     * @param  list<array<string, mixed>>  $nodes
+     *
+     * @throws ValidationException
+     */
+    public function savePanel(User $user, MenuItem $item, array $nodes): void
+    {
+        if ($item->parent_id !== null) {
+            throw ValidationException::withMessages(['blocks' => __('Only top-level items can open a mega panel.')]);
+        }
+        $clean = $this->validator->validate($nodes, $user, BlockTreeValidator::CONTEXT_GLOBAL);
+
+        DB::transaction(function () use ($user, $item, $clean) {
+            $this->tree->save($item, $clean, $user);
+            $this->references->sync($item, $this->tree->references($clean));
+            $item->forceFill(['is_mega' => true])->save();
+            $item->menu()->first()?->forceFill(['updated_by' => $user->id])->save();
+        });
+        $this->logger->log('menu.panel_saved', $item->menu()->first(), ['item' => $item->id], $user);
+        $this->changed();
+    }
+
+    public function removePanel(User $user, MenuItem $item): void
+    {
+        DB::transaction(function () use ($item) {
+            $this->tree->save($item, []);
+            $this->references->clear($item);
+            $item->forceFill(['is_mega' => false])->save();
+        });
+        $this->logger->log('menu.panel_removed', $item->menu()->first(), ['item' => $item->id], $user);
+        $this->changed();
+    }
+
+    /**
+     * The label an item shows: its own, or its target's title.
+     */
+    public function labelOf(MenuItem $item): string
+    {
+        if ($item->label) {
+            return $item->label;
+        }
+        $target = $item->linkable_type ? ($this->targets(collect([$item]))[$item->linkable_type.':'.$item->linkable_id] ?? null) : null;
+
+        return $target['title'] ?? __('Menu item');
+    }
+
+    /**
+     * Menus "main" and "footer" for a new site (starter kit): created when missing and, when
+     * empty, filled with the home page and the published top-level pages. Menus with
+     * items are left alone.
+     *
+     * @return list<array{0: string, 1: string, 2: string}> [kind, name, result] rows
+     */
+    public function prefill(User $user): array
+    {
+        $home = (int) $this->settings->get('site', 'homepage_page_id');
+        $pages = Page::query()->live()->whereNull('parent_id')->orderByRaw('id = ? desc', [$home])->orderBy('published_path')->limit(7)->get(['id']);
+        $items = $pages->map(fn (Page $page) => ['type' => 'page', 'target' => ['id' => $page->id]])->all();
+
+        $done = [];
+        foreach (['main' => 'Main', 'footer' => 'Footer'] as $slug => $name) {
+            $menu = Menu::query()->where('slug', $slug)->first() ?? $this->create($user, ['name' => $name, 'slug' => $slug]);
+            if (MenuItem::query()->where('menu_id', $menu->id)->exists()) {
+                $done[] = ['Menu', $menu->name, 'already has items'];
+
+                continue;
+            }
+            $this->saveTree($user, $menu, $items, $menu->lock_version);
+            $done[] = ['Menu', $menu->name, $items === [] ? 'created (empty: no published pages yet)' : 'created with '.count($items).' pages'];
+        }
+
+        return $done;
+    }
+
+    /**
      * The menu as the website shows it (cached), or [] for an unknown menu.
      *
      * @return list<array<string, mixed>>
      */
     public function resolve(string $slug): array
     {
-        $key = 'pacms:menu:'.sha1($slug).':'.$this->versions->fingerprint('menus', 'pages', 'settings', ...array_keys($this->types->all()));
+        $key = 'pacms:menu:'.sha1($slug).':'.$this->versions->fingerprint('menus', 'pages', 'settings', 'media', 'globals', 'block_types', 'testimonials', ...array_keys($this->types->all()));
 
         return Cache::remember($key, now()->addDay(), function () use ($slug) {
             $menu = Menu::query()->where('slug', $slug)->first();
@@ -186,7 +282,7 @@ class MenuService
                 };
                 $public = match ($item->type) {
                     'page', 'content', 'term' => $target !== null && $target['public'],
-                    'group' => $children !== [] || $admin,
+                    'group' => $children !== [] || $item->is_mega || $admin,
                     default => true,
                 };
                 if (! $admin && ! $public) {
@@ -195,6 +291,8 @@ class MenuService
 
                 $node = [
                     'id' => $item->id,
+                    // Top-level items with a mega panel: its blocks (shown instead of the sub-items list).
+                    'panel' => $item->is_mega && $item->parent_id === null && ! $admin ? $this->blocks->resolve($this->tree->load($item)) : null,
                     'label' => $item->label ?: ($target['title'] ?? ''),
                     'url' => $url,
                     'external' => $item->type === 'external_url',
@@ -216,6 +314,7 @@ class MenuService
                         ], fn ($value) => $value !== null),
                         'public' => $public,
                         'is_mega' => $item->is_mega,
+                        'panel_url' => $item->parent_id === null ? route('admin.menus.panel.edit', ['menu' => $item->menu_id, 'item' => $item->id]) : null,
                     ];
                 }
                 $out[] = $node;

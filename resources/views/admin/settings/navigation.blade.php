@@ -1,5 +1,5 @@
 <x-admin.layout title="Header & footer">
-    <x-admin.page-header title="Header &amp; footer" subtitle="The header and footer every page shows (a page can choose another one, or none), the logo and your social profiles." />
+    <x-admin.page-header title="Header & footer" subtitle="The header and footer every page shows (a page can choose another one, or none), the logo and your social profiles." />
 
     <form method="POST" action="{{ route('admin.settings.navigation.update') }}" novalidate>
         @csrf @method('PUT')

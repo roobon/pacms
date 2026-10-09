@@ -193,6 +193,7 @@ function Row({ row, open, errors, onToggle, onChange, actions, types, visibility
                     </span>
                     {item.public === false && item.type !== 'group' && <span className="pa-badge pa-badge--warning ms-2">Not published: hidden on the website</span>}
                     {item.visibility && item.visibility !== 'everyone' && <span className="pa-badge pa-badge--neutral ms-2">{visibility[item.visibility]}</span>}
+                    {item.is_mega && row.depth === 0 && <span className="pa-badge pa-badge--success ms-2">Mega panel</span>}
                 </button>
                 <div className="pa-menu-builder__actions" role="group" aria-label={`Move ${title}`}>
                     <button type="button" className="btn btn-icon btn-sm" onClick={actions.up} aria-label={`Move ${title} up`}>
@@ -221,14 +222,14 @@ function Row({ row, open, errors, onToggle, onChange, actions, types, visibility
             )}
             {open && (
                 <div id={panelId} className="pa-menu-builder__panel">
-                    <ItemForm item={item} onChange={onChange} types={types} visibility={visibility} categories={categories} targetsUrl={targetsUrl} />
+                    <ItemForm item={item} depth={row.depth} onChange={onChange} types={types} visibility={visibility} categories={categories} targetsUrl={targetsUrl} />
                 </div>
             )}
         </li>
     );
 }
 
-function ItemForm({ item, onChange, types, visibility, categories, targetsUrl }) {
+function ItemForm({ item, depth, onChange, types, visibility, categories, targetsUrl }) {
     const id = useId();
     const linked = ['page', 'content'].includes(item.type);
     const needsLabel = ['external_url', 'custom_url', 'group'].includes(item.type);
@@ -328,6 +329,20 @@ function ItemForm({ item, onChange, types, visibility, categories, targetsUrl })
                 </label>
                 <input id={`${id}-class`} className="form-control" value={item.class ?? ''} maxLength={191} onChange={(event) => onChange({ class: event.target.value })} />
             </div>
+            {depth === 0 && (
+                <div className="col-12">
+                    <p className="form-label mb-1">Mega panel</p>
+                    {item.panel_url ? (
+                        <p className="small mb-0">
+                            {item.is_mega ? 'This item opens a wide panel built from blocks. ' : 'Open a wide panel built from blocks (columns, links, an image…) instead of a list of sub-items. '}
+                            <a href={item.panel_url}>{item.is_mega ? 'Edit the panel' : 'Add a mega panel'}</a>
+                            {item.is_mega ? '' : ' (save the menu first if you changed it).'}
+                        </p>
+                    ) : (
+                        <p className="small text-body-secondary mb-0">Save the menu first; then a top-level item can get a mega panel.</p>
+                    )}
+                </div>
+            )}
             {item.type !== 'group' && (
                 <div className="col-12">
                     <div className="form-check">
