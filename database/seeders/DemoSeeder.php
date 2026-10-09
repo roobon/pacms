@@ -168,6 +168,11 @@ class DemoSeeder extends Seeder
             $this->media[$key] = $this->image("{$key}.jpg", $alt, $rgb, $w, $h);
         }
 
+        // Slider backgrounds (no caption: the slide's headline goes on top).
+        foreach (['slide-coast' => ['Coastline with young mangroves', [10, 107, 102]], 'slide-mangroves' => ['Mangrove roots at low tide', [16, 94, 63]], 'slide-school' => ['Students in a school garden', [37, 99, 158]]] as $key => [$alt, $rgb]) {
+            $this->media[$key] = $this->image("{$key}.jpg", $alt, $rgb, 1920, 1080, caption: false);
+        }
+
         // Portraits and logos (square).
         $portraits = ['ayesha' => [148, 63, 107], 'karim' => [15, 118, 110], 'mitu' => [194, 65, 12], 'jahid' => [67, 56, 202], 'sumi' => [190, 24, 93], 'arif' => [3, 105, 161]];
         foreach ($portraits as $key => $rgb) {
@@ -191,7 +196,7 @@ class DemoSeeder extends Seeder
      *
      * @param  array{0: int, 1: int, 2: int}  $rgb
      */
-    private function image(string $name, string $alt, array $rgb, int $width, int $height, ?string $initials = null, bool $png = false): Media
+    private function image(string $name, string $alt, array $rgb, int $width, int $height, ?string $initials = null, bool $png = false, bool $caption = true): Media
     {
         $image = imagecreatetruecolor($width, $height);
         [$r, $g, $b] = $rgb;
@@ -219,7 +224,9 @@ class DemoSeeder extends Seeder
         $text = $initials ?? $alt;
         $white = imagecolorallocate($image, 255, 255, 255);
         $font = $this->font();
-        if ($font !== null) {
+        if (! $caption) {
+            // Slide backgrounds: the slide's own headline goes on top.
+        } elseif ($font !== null) {
             $size = $initials !== null ? $width / (strlen($initials) > 2 ? 5.5 : 4) : $width / 34;
             $lines = $initials !== null ? [$initials] : explode("\n", wordwrap($text, 22, "\n"));
             $lineHeight = $size * 1.5;
@@ -691,16 +698,18 @@ class DemoSeeder extends Seeder
 
         $home = $this->page('Home', 'home', 'Environmental education for every school in Bangladesh.', [
             [
-                'type' => 'hero',
-                'layout' => ['container' => 'boxed', 'min_height' => ['value' => 60, 'unit' => 'vh']],
-                'style' => ['background' => ['type' => 'color', 'color' => ['$token' => 'color.bg-dark']]],
+                'type' => 'slider',
+                'content' => ['aria_label' => 'Highlights', 'height' => 'medium', 'autoplay' => true, 'interval' => 7, 'show_arrows' => true, 'show_dots' => true],
                 'children' => [
-                    ['type' => 'heading', 'content' => ['eyebrow' => 'Probha Aurora', 'text' => 'Young people restoring Bangladesh’s environment', 'level' => '1']],
-                    ['type' => 'rich-text', 'content' => ['html' => '<p>We bring environmental education to schools and communities, from the mangrove coast to the tea gardens.</p>']],
-                    ['type' => 'button-group', 'children' => [
-                        ['type' => 'button', 'content' => ['label' => 'Our programmes', 'variant' => 'accent', 'link' => ['type' => 'url', 'url' => '/our-programmes']]],
-                        ['type' => 'button', 'content' => ['label' => 'Get involved', 'variant' => 'outline', 'link' => ['type' => 'url', 'url' => '/get-involved']]],
-                    ]],
+                    $this->slide('slide-coast', 'Probha Aurora', 'Young people restoring Bangladesh’s environment', 'We bring environmental education to schools and communities, from the mangrove coast to the tea gardens.', [
+                        ['Our programmes', '/our-programmes', 'accent'], ['Get involved', '/get-involved', 'outline'],
+                    ], level: '1'),
+                    $this->slide('slide-mangroves', 'Coastal Mangrove Restoration', '125,000 mangroves planted along the coast', 'Students and families protect their villages from storms, one seedling at a time.', [
+                        ['See the project', '/projects/coastal-mangrove-restoration', 'accent'],
+                    ]),
+                    $this->slide('slide-school', 'Eco-Schools', '312 schools on the path to a Green Flag', 'Eco-Committees cut waste, save water and lead their communities.', [
+                        ['Bring Eco-Schools to your school', '/programs/eco-schools', 'accent'],
+                    ], align: 'center'),
                 ],
             ],
             $section([['type' => 'statistics', 'content' => ['heading' => 'Our impact', 'items' => [
@@ -767,6 +776,28 @@ class DemoSeeder extends Seeder
             'address' => 'House 12, Road 5, Dhanmondi, Dhaka 1205',
             'homepage_page_id' => $home->id,
         ], $this->admin);
+    }
+
+    /**
+     * One slide of the home page slider: a photo from the library with an eyebrow, headline,
+     * text and buttons ([label, url, variant]).
+     *
+     * @param  list<array{0: string, 1: string, 2: string}>  $buttons
+     * @return array<string, mixed>
+     */
+    private function slide(string $image, string $eyebrow, string $headline, string $text, array $buttons, string $level = '2', string $align = 'start'): array
+    {
+        return [
+            'type' => 'slide',
+            'content' => ['image' => ['$media' => $this->mediaId($image)], 'shade' => 'dark', 'align' => $align],
+            'children' => [
+                ['type' => 'heading', 'content' => ['eyebrow' => $eyebrow, 'text' => $headline, 'level' => $level]],
+                ['type' => 'rich-text', 'content' => ['html' => "<p>{$text}</p>"]],
+                ['type' => 'button-group', 'children' => array_map(fn (array $button) => [
+                    'type' => 'button', 'content' => ['label' => $button[0], 'variant' => $button[2], 'link' => ['type' => 'url', 'url' => $button[1]]],
+                ], $buttons)],
+            ],
+        ];
     }
 
     /**

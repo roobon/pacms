@@ -413,7 +413,7 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
 
 // Blocks placed directly on the page (outside a section) line up with the site width
 // instead of running edge to edge.
-.pa-page-blocks > :where(:not(.pa-section, .pa-hero, .pa-global-block, .pa-custom-block, style)) {
+.pa-page-blocks > :where(:not(.pa-section, .pa-hero, .pa-slider, .pa-global-block, .pa-custom-block, style)) {
     @include make-container();
 
     @each $breakpoint, $max in $container-max-widths {
@@ -428,7 +428,7 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
 }
 
 // The same for the blocks of a global block placed directly on the page (e.g. a call to action).
-.pa-page-blocks > .pa-global-block > :where(:not(.pa-section, .pa-hero, .pa-global-block, .pa-custom-block, style)) {
+.pa-page-blocks > .pa-global-block > :where(:not(.pa-section, .pa-hero, .pa-slider, .pa-global-block, .pa-custom-block, style)) {
     @include make-container();
 
     @each $breakpoint, $max in $container-max-widths {
@@ -1493,4 +1493,138 @@ h1[tabindex="-1"]:focus {
     color: var(--pa-color-heading);
 
     p:last-child { margin-bottom: 0; }
+}
+
+// Slider (full-width slideshow) --------------------------------------------------------
+.pa-slider {
+    position: relative;
+    background: var(--pa-color-bg-dark);
+
+    &__slides {
+        display: grid; // slides stacked in one cell, so the tallest one sets the height
+    }
+
+    &__slide {
+        grid-area: 1 / 1;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .7s ease, visibility 0s linear .7s;
+
+        &.is-active {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity .7s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none !important;
+        }
+    }
+
+    --pa-slider-height: 70vh;
+    &--small { --pa-slider-height: 50vh; }
+    &--large { --pa-slider-height: 90vh; }
+
+    &__controls {
+        position: absolute;
+        inset: auto 0 var(--pa-space-5);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--pa-space-3);
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .9);
+        color: #0B1628;
+        font-size: 1.25rem;
+        box-shadow: var(--pa-shadow-sm);
+
+        &:hover { background: #fff; }
+        &:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(0, 0, 0, .5); }
+    }
+
+    &__dots {
+        display: flex;
+        gap: var(--pa-space-2);
+    }
+
+    &__dot {
+        width: .875rem;
+        height: .875rem;
+        padding: 0;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, .35);
+
+        &[aria-current="true"] { background: #fff; }
+        &:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    }
+}
+
+.pa-slide {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--pa-slider-height, 70vh);
+    padding-block: var(--pa-space-9) calc(var(--pa-space-9) + 2rem); // room for the controls
+    overflow: hidden;
+
+    &__image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    // The shade keeps text readable on any photo.
+    &--dark::before,
+    &--light::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+
+    &--dark::before { background: linear-gradient(90deg, rgba(11, 22, 40, .82) 0%, rgba(11, 22, 40, .45) 60%, rgba(11, 22, 40, .25) 100%); }
+    &--light::before { background: linear-gradient(90deg, rgba(255, 255, 255, .9) 0%, rgba(255, 255, 255, .55) 60%, rgba(255, 255, 255, .3) 100%); }
+    &--center.pa-slide--dark::before { background: rgba(11, 22, 40, .6); }
+    &--center.pa-slide--light::before { background: rgba(255, 255, 255, .72); }
+
+    &--dark {
+        color: #fff;
+        --pa-color-heading: #fff;
+        --pa-color-body: #fff;
+        --bs-heading-color: #fff;
+        --bs-body-color: #fff;
+        --pa-color-muted: rgba(255, 255, 255, .85);
+        --pa-color-eyebrow: #fff;
+        --pa-btn-outline: #fff;
+        --pa-btn-outline-hover: #0B1628;
+    }
+
+    &__content {
+        position: relative;
+        z-index: 1;
+
+        > * { max-width: 40rem; }
+        .pa-button-group { margin-top: var(--pa-space-5); }
+    }
+
+    &--center &__content {
+        text-align: center;
+
+        > * { margin-inline: auto; }
+        .pa-button-group { justify-content: center; }
+    }
 }

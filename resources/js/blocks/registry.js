@@ -3,6 +3,7 @@ import { ColumnBlock, ColumnsBlock, ContainerBlock, SectionBlock } from './compo
 import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, QuoteBlock, StatisticsBlock } from './components/content.jsx';
 import { CollectionBlock, GalleryBlock, NewsBlock, PartnersBlock, TestimonialsBlock } from './components/collections.jsx';
 import { CustomBlock, GlobalRefBlock } from './components/reusable.jsx';
+import { SlideBlock, SliderBlock } from './components/slider.jsx';
 
 /**
  * Block type slug → React component. Must mirror config('pacms.blocks.types').
@@ -26,6 +27,8 @@ export const components = {
     divider: DividerBlock,
     spacer: SpacerBlock,
     hero: HeroBlock,
+    slider: SliderBlock,
+    slide: SlideBlock,
     cards: CardsBlock,
     statistics: StatisticsBlock,
     accordion: AccordionBlock,

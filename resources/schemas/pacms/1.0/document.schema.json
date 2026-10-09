@@ -400,6 +400,8 @@
                         "divider",
                         "spacer",
                         "hero",
+                        "slider",
+                        "slide",
                         "cards",
                         "statistics",
                         "accordion",
@@ -721,6 +723,38 @@
                         "properties": {
                             "content": {
                                 "$ref": "#/$defs/content__hero"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "slider"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__slider"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "slide"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__slide"
                             }
                         }
                     }
@@ -1379,6 +1413,70 @@
             "type": "object",
             "description": "Hero",
             "properties": {},
+            "additionalProperties": false
+        },
+        "content__slider": {
+            "type": "object",
+            "description": "Slider",
+            "properties": {
+                "aria_label": {
+                    "description": "Name for screen readers",
+                    "type": "string",
+                    "maxLength": 80
+                },
+                "height": {
+                    "description": "Height",
+                    "enum": [
+                        "small",
+                        "medium",
+                        "large"
+                    ]
+                },
+                "autoplay": {
+                    "description": "Move to the next slide automatically",
+                    "type": "boolean"
+                },
+                "interval": {
+                    "description": "Seconds per slide",
+                    "type": "number",
+                    "minimum": 4,
+                    "maximum": 20
+                },
+                "show_arrows": {
+                    "description": "Show arrows",
+                    "type": "boolean"
+                },
+                "show_dots": {
+                    "description": "Show dots",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__slide": {
+            "type": "object",
+            "description": "Slide",
+            "properties": {
+                "image": {
+                    "description": "Background image",
+                    "$ref": "#/$defs/image"
+                },
+                "shade": {
+                    "description": "Shade over the image",
+                    "enum": [
+                        "dark",
+                        "light",
+                        "none"
+                    ]
+                },
+                "align": {
+                    "description": "Text position",
+                    "enum": [
+                        "start",
+                        "center"
+                    ]
+                }
+            },
             "additionalProperties": false
         },
         "content__cards": {

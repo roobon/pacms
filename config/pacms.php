@@ -32,6 +32,8 @@ use App\Cms\Blocks\Types\QuoteBlock;
 use App\Cms\Blocks\Types\RepeatBlock;
 use App\Cms\Blocks\Types\RichTextBlock;
 use App\Cms\Blocks\Types\SectionBlock;
+use App\Cms\Blocks\Types\SlideBlock;
+use App\Cms\Blocks\Types\SliderBlock;
 use App\Cms\Blocks\Types\SpacerBlock;
 use App\Cms\Blocks\Types\StatisticsBlock;
 use App\Cms\Blocks\Types\TeamBlock;
@@ -185,6 +187,8 @@ return [
             DividerBlock::class,
             SpacerBlock::class,
             HeroBlock::class,
+            SliderBlock::class,
+            SlideBlock::class,
             CardsBlock::class,
             StatisticsBlock::class,
             AccordionBlock::class,

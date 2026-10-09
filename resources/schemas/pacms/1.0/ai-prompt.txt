@@ -27,6 +27,8 @@ Block types available on this site (fields: key:type, * = required; children: al
 - divider (Divider): line:select(solid|dashed|dotted)
 - spacer (Spacer): size:select(space.4|space.6|space.8|space.10)
 - hero (Hero): no fields; children: heading, rich-text, button, button-group, image, icon, container, spacer; top level only
+- slider (Slider): aria_label:text, height:select(small|medium|large), autoplay:checkbox, interval:number, show_arrows:checkbox, show_dots:checkbox; children: slide; top level only
+- slide (Slide): image:image, shade:select(dark|light|none), align:select(start|center); children: heading, rich-text, button, button-group, icon, spacer; only inside slider
 - cards (Cards): heading:text, items:list of {image:image, icon:icon, title:text*, text:textarea, link:link}
 - statistics (Statistics): heading:text, items:list of {value:number*, prefix:text, suffix:text, label:text*, icon:icon}
 - accordion (Accordion): heading:text; children: accordion-item
