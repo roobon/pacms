@@ -3,15 +3,15 @@
 | | |
 |---|---|
 | Date | 2026-10-09 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-09 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-09. |
 
 ```
 PHASE:   8D.2 — completes admin-made content types: a builder block per type, categories and
          documents, redirects when a type's address changes, several taxonomies per module
          (media coverage tags), and a grouped admin menu
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-09) and merged into main.
          Decisions applied (team lead, 2026-10-09: "use your defaults"):
          - D-1 a type whose block is used on a page, global block or template cannot be deleted;
                the message names the places
