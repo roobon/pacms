@@ -229,6 +229,18 @@ class BlockRegistry
      */
     public function ids(): array
     {
-        return $this->ids ??= BlockTypeModel::withTrashed()->pluck('id', 'slug')->all();
+        if ($this->ids !== null) {
+            return $this->ids;
+        }
+
+        $ids = BlockTypeModel::withTrashed()->pluck('id', 'slug')->all();
+        // Block types added by an update are registered on first use, so a site whose
+        // database was migrated without "pacms:blocks:sync" can still save them.
+        if (array_diff_key($this->types + $this->contentTypeBlocks(), $ids) !== []) {
+            $this->sync();
+            $ids = BlockTypeModel::withTrashed()->pluck('id', 'slug')->all();
+        }
+
+        return $this->ids = $ids;
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
+use App\Cms\Blocks\BlockRegistry;
+use App\Cms\Blocks\BlockTreeRepository;
 use App\Enums\ContentStatus;
 use App\Enums\WorkflowAction;
+use App\Models\BlockType;
 use App\Models\GlobalBlock;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -198,4 +201,15 @@ it('validates the page header choice and the header & footer settings', function
     $this->actingAs($admin)->get(route('admin.pages.create'))->assertOk()->assertSee('Header')->assertSee('Site default');
     $this->actingAs($admin)->get(route('admin.settings.navigation'))->assertOk()->assertSee('Social profiles');
     $this->actingAs($admin)->get(route('admin.dashboard'))->assertSee('Menus')->assertSee('Header &amp; footer', false);
+});
+
+it('registers new block types on first use when the block sync was not run', function () {
+    $admin = userWithRole('administrator');
+    // As on a site that ran "migrate" but not "pacms:blocks:sync" after an update.
+    BlockType::query()->where('slug', 'menu')->forceDelete();
+    app()->forgetInstance(BlockRegistry::class);
+
+    $page = makePage($admin, ['title' => 'With a menu', 'blocks' => [['type' => 'menu', 'content' => ['style' => 'vertical']]]]);
+
+    expect(app(BlockTreeRepository::class)->load($page)[0]['type'])->toBe('menu');
 });

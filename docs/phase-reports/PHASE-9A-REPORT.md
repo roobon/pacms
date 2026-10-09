@@ -42,6 +42,7 @@ I planned two cached versions of each menu on the server (visitors / members). W
 - **Restoring a page revision could fail** (a new column was empty in snapshots of new pages). Pages now start with "Site default", and older revisions restore with the default.
 - **Menus did not refresh when the home page changed** (cache key). Fixed and tested.
 - **Phones scrolled sideways** on pages with a list of cards (e.g. Programmes on the home page): the list grew with long titles. Fixed for every list.
+- **Saving a header with the new blocks failed on an existing site** (found by the team lead: "Undefined array key menu"). New built-in block types were only registered by `pacms:blocks:sync`, which deployments run but a local `migrate` does not. Missing built-in types are now registered on first use. Test added.
 - In the Menu Builder, saving copied each page's current title into the item's label (renaming the page later would not have changed the menu). Fixed and tested.
 
 ## Files
@@ -60,7 +61,7 @@ I planned two cached versions of each menu on the server (visitors / members). W
 
 | Check | Result |
 |---|---|
-| Pest (full suite) | **337 passed** (1,945 assertions) |
+| Pest (full suite) | **338 passed** (1,946 assertions) |
 | Vitest | **85 passed** (16 files) |
 | Larastan (level 6) | No errors |
 | Pint, ESLint | Clean |
