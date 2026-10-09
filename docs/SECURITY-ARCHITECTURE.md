@@ -17,7 +17,7 @@ Security is a design constraint, not a later phase. Phase 12 *audits* what these
 | Unpublished content | Direct URL/API access, preview link leakage, cache poisoning | Published-only scopes and snapshots, 404 for drafts, signed **and** authenticated preview, `no-store` on preview |
 | Admin accounts | Credential stuffing, session hijack, privilege escalation | Rate limits, lockout, 2FA for staff roles, secure cookies, session regeneration, server-side policies |
 | Public visitors | Stored XSS through content, imports, feeds, custom CSS and attributes | Sanitise on write, escape on output, allowlists, CSP |
-| Server / internal network | SSRF through RSS URLs, asset downloads and source checks | SafeHttpClient (IP validation, pinning, redirect re-validation) |
+| Server / internal network | SSRF through feed URLs, asset downloads and source checks | SafeHttpClient (IP validation, pinning, redirect re-validation) |
 | Server | Malicious uploads, XML bombs/XXE, oversized input | Upload guard, re-encoding, safe XML, size and depth limits |
 | Secrets | Leakage in repo, ZIP, logs or API | `.env` only, encrypted provider tokens, no secrets in settings/API/logs |
 | Registered users' data | Exposure of email, IP or user ID through testimonials | Resource allowlists, leak tests, IP retention limit |
@@ -164,7 +164,7 @@ A **Content Security Policy** is the second line of defence (§10).
 
 ### 9.1 SafeHttpClient: the only way PACMS makes outbound requests
 
-Used by RSS sync, gallery providers, media-coverage checks, JSON-import asset downloads and Facebook image caching. The Meta Graph API client also goes through it, with host pinned to `graph.facebook.com`.
+Used by feed sync, gallery providers, media-coverage checks, JSON-import asset downloads and Facebook image caching. The Meta Graph API client also goes through it, with host pinned to `graph.facebook.com`.
 
 1. **Scheme**: `https` (and `http` only where the admin explicitly allowed it for that source). All other schemes (`file`, `ftp`, `gopher`, `data`, `php`, `phar`, …) are rejected.
 2. **Port**: 443 or 80 only.
@@ -173,13 +173,13 @@ Used by RSS sync, gallery providers, media-coverage checks, JSON-import asset do
    `0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16 (incl. cloud metadata 169.254.169.254), 172.16.0.0/12, 192.0.0.0/24, 192.0.2.0/24, 192.168.0.0/16, 198.18.0.0/15, 198.51.100.0/24, 203.0.113.0/24, 224.0.0.0/4, 240.0.0.0/4, 255.255.255.255/32, ::/128, ::1/128, ::ffff:0:0/96 (mapped — check embedded IPv4), 64:ff9b::/96, fc00::/7, fe80::/10, ff00::/8`.
 5. **Pinning**: connect to the **validated IP** (cURL `CURLOPT_RESOLVE`) so DNS rebinding between check and connect can't redirect the request.
 6. **Redirects**: followed manually, at most 3, and **each hop is re-validated** through steps 1–5.
-7. **Limits**: connect timeout 5 s, total 15 s. Response body streamed and aborted beyond the per-use limit (RSS 5 MB, asset 20 MB, source check 1 MB). Content-Type checked against the expected type.
+7. **Limits**: connect timeout 5 s, total 15 s. Response body streamed and aborted beyond the per-use limit (feed 5 MB, asset 20 MB, source check 1 MB). Content-Type checked against the expected type.
 8. **Hygiene**: no cookies, no forwarding of internal headers, a fixed `User-Agent: PACMS/1.0 (+site URL)`, and credentials only for the provider's own host.
 9. **Errors**: normalised messages stored on the source. Raw internal details are logged only.
 
 Unit tests cover every blocked range, IPv6-mapped addresses, redirect to a private IP, and a DNS answer that mixes public and private addresses.
 
-### 9.2 Safe XML (RSS/Atom)
+### 9.2 Safe XML (RSS/Atom fallback; JSON Feed is decoded with a depth limit)
 
 - Size is checked **before** parsing.
 - **Reject any document containing `<!DOCTYPE`** with `<!ENTITY`. Legitimate feeds don't need DTDs. This blocks XXE and billion-laughs attacks outright.
@@ -230,7 +230,7 @@ Set by `SecurityHeaders` middleware (web, admin, API) and mirrored in web-server
 2. Drafts and soft-deleted items return **404**, not 403, on public endpoints.
 3. Preview requires signature **plus** an authenticated session with the `view` policy. Responses are `no-store` and `noindex`.
 4. The public payload cache is only written by public builders. Preview builders have no cache write path.
-5. Menus, search, sitemap, RSS, dynamic blocks, related-item lists and JSON-LD all read from the same published scopes.
+5. Menus, search, sitemap, JSON feeds, dynamic blocks, related-item lists and JSON-LD all read from the same published scopes.
 6. Scheduled publishing and unpublishing bump cache versions immediately.
 
 ---

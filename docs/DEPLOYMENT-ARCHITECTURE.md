@@ -84,7 +84,7 @@ scripts/release  → probha-aurora-cms-<version>.zip  (+ SHA-256 checksum)
 11. Permissions: storage/ and bootstrap/cache/ writable by the PHP user; everything else read-only
 12. Cron:  * * * * * cd /home/<site>/pacms && php artisan schedule:run >> /dev/null 2>&1
 13. php artisan pacms:doctor                               (checks below)
-14. Verify: site loads, /admin login, upload an image, publish a test page, /rss.xml, /sitemap.xml
+14. Verify: site loads, /admin login, upload an image, publish a test page, /feed.json, /sitemap.xml
 ```
 
 ### Queue without Supervisor (default)
@@ -125,7 +125,7 @@ server {
 
     location /build/ { expires 1y; add_header Cache-Control "public, immutable"; }
     location /storage/ { expires 30d; add_header X-Content-Type-Options nosniff; }
-    gzip on; gzip_types text/css application/javascript application/json application/rss+xml image/svg+xml;
+    gzip on; gzip_types text/css application/javascript application/json application/feed+json image/svg+xml;
 }
 ```
 

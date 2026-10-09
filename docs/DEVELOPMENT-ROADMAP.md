@@ -96,8 +96,8 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
 - Menus + Menu Builder island, item types, visibility, mega-menu block trees, header/footer global blocks, site-wide default header/footer, mobile offcanvas/accordion, accessible disclosure navigation.
 
 ### Phase 10 — External Providers (L)
-- Re-verify Meta requirements. SafeHttpClient + SafeXml (if not already built for Phase 6 asset downloads), provider framework, RSS provider, RSS block, outbound RSS feeds, Facebook provider (connect, token storage, image caching), gallery providers (Flickr/YouTube, if confirmed in scope), sync scheduling, admin status screens.
-- Tests: the SSRF suite, the XML attack suite, provider sync with faked HTTP, stale-while-error behaviour, feed XML validity.
+- Re-verify Meta requirements. SafeHttpClient + SafeXml (if not already built for Phase 6 asset downloads), provider framework, feed provider (JSON Feed first, RSS/Atom fallback), feed block, outbound JSON Feeds (D-15), Facebook provider (connect, token storage, image caching), gallery providers (Flickr/YouTube, if confirmed in scope), sync scheduling, admin status screens.
+- Tests: the SSRF suite, the XML attack suite, provider sync with faked HTTP, stale-while-error behaviour, JSON Feed 1.1 validity and leak tests.
 
 ### Phase 11 — Public React SPA (L)
 - Homepage from blocks, generic page route, archives and details for all types, search UI, account area (testimonial submission), SEO head sync, JSON-LD, sitemap, galleries + lightbox, external content blocks, loading/error/empty states, accessibility pass, prefetching, code-splitting review, OpenAPI for the public API.
