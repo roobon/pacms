@@ -99,7 +99,7 @@
                             {{-- Warnings must be acknowledged (CMS-BLOCK-SCHEMA.md §16): shown first so it is not missed. --}}
                             <div class="pa-ack mb-3 @error('acknowledge') is-invalid @enderror">
                                 <div class="form-check mb-0">
-                                    <input class="form-check-input" type="checkbox" name="acknowledge" value="1" id="acknowledge" aria-describedby="acknowledge-help">
+                                    <input class="form-check-input" type="checkbox" name="acknowledge" value="1" id="acknowledge" aria-describedby="acknowledge-help" @checked(old('acknowledge'))>
                                     <label class="form-check-label small fw-semibold" for="acknowledge">I have read the {{ trans_choice(':count warning|:count warnings', $counts['warning'], ['count' => $counts['warning']]) }} in the report</label>
                                 </div>
                                 <div id="acknowledge-help" class="form-text mb-0">Warnings name what was changed or left out. The rest imports normally.</div>
