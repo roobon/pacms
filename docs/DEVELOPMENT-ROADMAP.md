@@ -94,7 +94,7 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
 
 ### Phase 9 — Navigation (M)
 - Menus + Menu Builder island, item types, visibility, mega-menu block trees, header/footer global blocks, site-wide default header/footer, mobile offcanvas/accordion, accessible disclosure navigation. Starter-kit header and footer global blocks (deferred from the Phase 8 starter kit).
-- **Delivered in parts (agreed 2026-10-09):** **9A** menus, Menu Builder, header/footer global blocks and their blocks, Design → Header & footer, page header/footer choice, mobile drawer, `/api/v1/menus/{slug}`. **9B** mega panels, starter-kit header and footer, pre-filled menus for existing sites. *9A merged.*
+- **Delivered in parts (agreed 2026-10-09):** **9A** menus, Menu Builder, header/footer global blocks and their blocks, Design → Header & footer, page header/footer choice, mobile drawer, `/api/v1/menus/{slug}`. **9B** mega panels, starter-kit header and footer, pre-filled menus for existing sites. *Merged (9A, 9B); tagged v0.9.0.*
 
 ### Phase 10 — External Providers (L)
 - Re-verify Meta requirements. SafeHttpClient + SafeXml (if not already built for Phase 6 asset downloads), provider framework, feed provider (JSON Feed first, RSS/Atom fallback), feed block, outbound JSON Feeds (D-15), Facebook provider (connect, token storage, image caching), gallery providers (Flickr/YouTube, if confirmed in scope), sync scheduling, admin status screens.

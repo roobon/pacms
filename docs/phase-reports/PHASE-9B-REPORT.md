@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-09 |
-| Branch | `phase/9-navigation` (not merged) |
+| Branch | `phase/9-navigation` → merged into `main` 2026-10-09, tagged `v0.9.0` |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-09. |
 
 ```
 PHASE:   9B — mega panels; the starter kit's Main header and Main footer; menus filled for
          existing sites. Completes Phase 9 (Navigation).
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-09), merged into main and tagged v0.9.0.
          Scope agreed with Phase 9 (N-1, N-4; team lead, 2026-10-09).
 ```
 
@@ -73,4 +73,4 @@ On a separate copy with the demo (port 8765, test database; your data untouched,
 
 ## Next
 
-After review and merge: tag **v0.9.0**, then **Phase 10 — External Providers** (JSON Feed, RSS/Atom reading, Facebook).
+Tagged **v0.9.0**. Next: **Phase 10 — External Providers** (JSON Feed, RSS/Atom reading, Facebook).
