@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\Term;
 use App\Services\ActivityLog\ActivityLogger;
@@ -14,7 +15,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /**
- * Category and tag management for every registered taxonomy (config pacms.taxonomies).
+ * Category and tag management for every registered taxonomy (config pacms.taxonomies and
+ * the categories of admin-made content types).
  */
 class TermController extends Controller
 {
@@ -36,7 +38,7 @@ class TermController extends Controller
             'definition' => $definition,
             'terms' => $terms,
             'usage' => $usage,
-            'taxonomies' => config('pacms.taxonomies'),
+            'taxonomies' => app(ContentTypeRegistry::class)->taxonomies(),
         ]);
     }
 
@@ -106,7 +108,7 @@ class TermController extends Controller
      */
     private function definition(string $taxonomy): array
     {
-        $definition = config('pacms.taxonomies.'.$taxonomy);
+        $definition = app(ContentTypeRegistry::class)->taxonomies()[$taxonomy] ?? null;
         abort_if($definition === null, 404);
 
         return $definition;

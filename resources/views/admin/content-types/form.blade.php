@@ -39,7 +39,7 @@
                                            pattern="[a-z0-9]+(-[a-z0-9]+)*" aria-describedby="prefix-help">
                                     @error('route_prefix')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
-                                <div id="prefix-help" class="form-text">Items appear at /address/item-name. Leave empty to make it from the name.</div>
+                                <div id="prefix-help" class="form-text">Items appear at /address/item-name. Leave empty to make it from the name.@if ($editing) If you change it, the old addresses redirect to the new ones.@endif</div>
                             </div>
                             <div class="col-md-6">
                                 <x-admin.field name="icon" label="Menu icon" :value="$contentType->icon ?: 'bi-collection'" help="A Bootstrap Icons name, e.g. bi-star, bi-briefcase, bi-trophy." />
@@ -68,12 +68,14 @@
                             <p class="small mb-3"><strong>Publishing:</strong> {{ $contentType->workflow === 'managed' ? 'active or inactive, with a display order' : 'editorial workflow (drafts, review, approval, scheduling)' }}.</p>
                         @endif
                         @foreach ([
-                            'has_archive' => ['A listing page at /'.($contentType->route_prefix ?: 'address'), 'Turn off if items are only shown in blocks on your pages.', $contentType->has_archive],
-                            'searchable' => ['Include items in the site search', null, $contentType->searchable],
-                        ] as $name => [$label, $help, $current])
+                            'has_archive' => ['A listing page at /'.($contentType->route_prefix ?: 'address'), 'Turn off if items are only shown in blocks on your pages.', $contentType->has_archive, true],
+                            'searchable' => ['Include items in the site search', null, $contentType->searchable, true],
+                            'has_categories' => ['Categories', 'Sort items into categories (managed under Content). Listings and blocks can then be filtered by category.', $contentType->has_categories, true],
+                            'has_documents' => ['Documents', 'Attach files to download (reports, briefs…), listed on each item\'s page.', $contentType->has_documents, false],
+                        ] as $name => [$label, $help, $current, $default])
                             <div class="form-check mb-2">
                                 <input type="hidden" name="{{ $name }}" value="0">
-                                <input class="form-check-input" type="checkbox" name="{{ $name }}" value="1" id="field-{{ $name }}" @checked(old($name, $editing ? $current : true))>
+                                <input class="form-check-input" type="checkbox" name="{{ $name }}" value="1" id="field-{{ $name }}" @checked(old($name, $editing ? $current : $default))>
                                 <label class="form-check-label" for="field-{{ $name }}">{{ $label }}</label>
                                 @if ($help)<div class="form-text mt-0">{{ $help }}</div>@endif
                             </div>
@@ -128,6 +130,7 @@
                             @if ($contentType->items_count > 0)
                                 <p class="mb-0">A type with items cannot be deleted. Delete its {{ $contentType->items_count }} {{ Str::plural('item', $contentType->items_count) }} first, or disable the type above.</p>
                             @else
+                                <p>A type whose “{{ $contentType->label }}” block is still on a page, global block or template cannot be deleted.</p>
                                 <form method="POST" action="{{ route('admin.content-types.destroy', $contentType) }}" data-confirm="Delete the content type “{{ $contentType->label }}” and its permissions?">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete content type</button>

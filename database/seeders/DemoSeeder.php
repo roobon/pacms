@@ -130,6 +130,8 @@ class DemoSeeder extends Seeder
             'publication_category' => ['Annual reports', 'Toolkits', 'Policy briefs'],
             'media_coverage_category' => ['Environment', 'Education', 'Interviews'],
             'tag' => ['Mangroves', 'Recycling', 'Youth', 'Water', 'Trees'],
+            // Categories of the admin-made "Success stories" type (created later).
+            'ct_success_stories' => ['Green Flag schools', 'Community action'],
         ];
         foreach ($sets as $taxonomy => $names) {
             foreach ($names as $position => $name) {
@@ -570,12 +572,12 @@ class DemoSeeder extends Seeder
             'coverage_type' => 'newspaper', 'publication_date' => now()->subDays(20)->toDateString(), 'featured' => true, 'featured_media_id' => $this->mediaId('mangroves'),
             'archive_pdf_media_id' => $this->mediaId('clipping'), 'archive_rights_confirmed' => true, 'archive_rights_note' => 'Permission by e-mail from the features editor (demo).',
             'program' => [$this->id('programs:eco-schools')], 'project' => [$this->id('projects:mangroves')],
-            'excerpt' => 'A feature on the coastal restoration project.', 'terms' => $this->term('media_coverage_category', 'Environment'),
+            'excerpt' => 'A feature on the coastal restoration project.', 'terms' => [...$this->term('media_coverage_category', 'Environment'), ...$this->term('tag', 'Mangroves', 'Youth')],
         ]);
         $this->item('media_coverage', 'channel-i', $base + [
             'title' => 'Eco-Schools on the evening news', 'source_name' => 'Channel i', 'source_url' => 'https://www.example.com/channel-i/eco-schools',
             'coverage_type' => 'tv', 'publication_date' => now()->subDays(45)->toDateString(), 'featured_media_id' => $this->mediaId('classroom'),
-            'program' => [$this->id('programs:eco-schools')], 'terms' => $this->term('media_coverage_category', 'Education'),
+            'program' => [$this->id('programs:eco-schools')], 'terms' => [...$this->term('media_coverage_category', 'Education'), ...$this->term('tag', 'Youth')],
         ]);
         $radio = $this->item('media_coverage', 'radio', $base + [
             'title' => 'Interview: youth and climate action', 'source_name' => 'Radio Foorti', 'source_url' => 'https://www.example.com/radio/interview-gone',
@@ -651,6 +653,7 @@ class DemoSeeder extends Seeder
     {
         app(ContentTypeService::class)->create($this->admin, [
             'label' => 'Success stories', 'singular' => 'success story', 'icon' => 'bi-trophy', 'workflow' => 'editorial',
+            'has_categories' => true, 'has_documents' => true,
             'fields' => [
                 ['key' => 'school', 'type' => 'text', 'label' => 'School', 'required' => true],
                 ['key' => 'district', 'type' => 'select', 'label' => 'District', 'options' => ['dhaka' => 'Dhaka', 'khulna' => 'Khulna', 'satkhira' => 'Satkhira', 'sylhet' => 'Sylhet']],
@@ -663,12 +666,14 @@ class DemoSeeder extends Seeder
             'display' => ['contact_note' => 'hidden'],
         ]);
         $stories = [
-            ['Green Flag for Dhaka Model School', 'Dhaka Model School', 'dhaka', 2025, ['waste', 'water'], 'classroom'],
-            ['A mangrove nursery run by students', 'Shyamnagar High School', 'satkhira', 2024, ['trees'], 'mangroves'],
-            ['Solar lamps for evening study', 'Sreemangal Girls School', 'sylhet', 2026, ['energy'], 'workshop'],
+            ['Green Flag for Dhaka Model School', 'Dhaka Model School', 'dhaka', 2025, ['waste', 'water'], 'classroom', 'Green Flag schools'],
+            ['A mangrove nursery run by students', 'Shyamnagar High School', 'satkhira', 2024, ['trees'], 'mangroves', 'Community action'],
+            ['Solar lamps for evening study', 'Sreemangal Girls School', 'sylhet', 2026, ['energy'], 'workshop', 'Community action'],
         ];
-        foreach ($stories as [$title, $school, $district, $year, $themes, $image]) {
+        foreach ($stories as [$title, $school, $district, $year, $themes, $image, $category]) {
             $this->item('success_stories', Str::slug($title), [
+                'terms' => $this->term('ct_success_stories', $category),
+                'documents' => $category === 'Green Flag schools' ? [['media_id' => $this->mediaId('annual-report'), 'label' => 'Green Flag assessment (PDF)']] : [],
                 'title' => $title, 'featured_media_id' => $this->mediaId($image), 'excerpt' => "How {$school} did it.",
                 'school' => $school, 'district' => $district, 'year' => $year, 'themes' => $themes,
                 'story' => "<p>The Eco-Committee of {$school} set a goal, involved families and kept going for two years.</p>",
@@ -770,6 +775,8 @@ class DemoSeeder extends Seeder
                 ['type' => 'column', 'children' => [$dynamic('events', 'events', ['order' => 'soonest', 'limit' => 3, 'filters' => ['when' => 'upcoming']], ['heading' => 'Upcoming events', 'show_excerpt' => false], ['mode' => 'list', 'show_image' => false])]],
             ]]]),
             $section([$dynamic('testimonials', 'testimonials', ['order' => 'position', 'limit' => 6], ['heading' => 'What people say'], ['mode' => 'quote-slider'])]),
+            // Blocks of the admin-made types (8D.2).
+            $section([$dynamic('type/success_stories', 'success_stories', ['order' => 'latest', 'limit' => 3], ['heading' => 'Success stories'])]),
             $section([$dynamic('media-coverage', 'media_coverage', ['order' => 'latest', 'limit' => 3], ['heading' => 'In the media'])]),
             $section([$dynamic('partners', 'partners', ['order' => 'position', 'limit' => 12], ['heading' => 'Our partners', 'style' => 'logos', 'grayscale' => true])]),
             ['type' => 'global-ref', 'global_block_id' => $this->ctaId],
@@ -780,6 +787,7 @@ class DemoSeeder extends Seeder
                 ['type' => 'heading', 'content' => ['text' => 'Our story', 'level' => '2']],
                 ['type' => 'rich-text', 'content' => ['html' => '<p>Founded in 2010 by teachers in Khulna, Probha Aurora now works with schools in 64 districts.</p><p>We believe young people are the strongest voice for the environment.</p>']],
             ]),
+            $section([$dynamic('type/board_members', 'board_members', ['order' => 'position', 'limit' => 12], ['heading' => 'Our board', 'show_date' => false, 'show_excerpt' => false], ['mode' => 'list', 'show_image' => false])]),
             $section([$dynamic('team', 'team', ['order' => 'position', 'limit' => 12], ['heading' => 'Our team'])]),
             $section([$dynamic('partners', 'partners', ['order' => 'position', 'limit' => 12], ['heading' => 'Partners', 'style' => 'cards'])]),
             $section([$dynamic('gallery', 'galleries', ['filters' => ['gallery' => $this->id('galleries:mangrove-day')]], ['heading' => 'In pictures'])]),

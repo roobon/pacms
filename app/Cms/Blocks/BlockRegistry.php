@@ -2,15 +2,19 @@
 
 namespace App\Cms\Blocks;
 
+use App\Cms\Blocks\Types\ContentTypeBlock;
 use App\Models\BlockType as BlockTypeModel;
+use App\Models\CustomContentType;
 use App\Models\Revision;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 /**
  * All available block types. Core types come from config('pacms.blocks.types'); tests can
  * register more at runtime. Custom block types (CMS-ARCHITECTURE.md §11) are loaded from
- * their published revisions on first use.
+ * their published revisions on first use, and every content type made in the admin has a
+ * collection block ("type/{key}", Phase 8D.2).
  */
 class BlockRegistry
 {
@@ -19,6 +23,9 @@ class BlockRegistry
 
     /** @var array<string, CustomBlockType>|null */
     private ?array $custom = null;
+
+    /** @var array<string, ContentTypeBlock>|null */
+    private ?array $contentTypes = null;
 
     /** @var array<string, int>|null */
     private ?array $ids = null;
@@ -51,17 +58,55 @@ class BlockRegistry
             return $this->types[$slug];
         }
 
-        return str_starts_with($slug, BlockTypeModel::CUSTOM_PREFIX) ? ($this->customTypes()[$slug] ?? null) : null;
+        return match (true) {
+            str_starts_with($slug, BlockTypeModel::CUSTOM_PREFIX) => $this->customTypes()[$slug] ?? null,
+            str_starts_with($slug, ContentTypeBlock::PREFIX) => $this->contentTypeBlocks()[$slug] ?? null,
+            default => null,
+        };
     }
 
     /**
-     * Core types and published custom types.
+     * Core types, the blocks of admin-made content types and published custom types.
      *
      * @return array<string, BlockType>
      */
     public function all(): array
     {
-        return $this->types + $this->customTypes();
+        return $this->types + $this->contentTypeBlocks() + $this->customTypes();
+    }
+
+    /**
+     * One collection block per content type made in the admin, disabled types included
+     * (their blocks stay valid on pages but cannot be added).
+     *
+     * @return array<string, ContentTypeBlock>
+     */
+    public function contentTypeBlocks(): array
+    {
+        if ($this->contentTypes !== null) {
+            return $this->contentTypes;
+        }
+
+        try {
+            $definitions = CustomContentType::query()->orderBy('position')->orderBy('label')->get();
+        } catch (QueryException) {
+            $definitions = []; // before the 8D migration has run
+        }
+
+        $this->contentTypes = [];
+        foreach ($definitions as $definition) {
+            $block = new ContentTypeBlock($definition);
+            $this->contentTypes[$block->slug()] = $block;
+        }
+
+        return $this->contentTypes;
+    }
+
+    /** Call after a content type made in the admin is created, changed or deleted. */
+    public function forgetContentTypes(): void
+    {
+        $this->contentTypes = null;
+        $this->ids = null;
     }
 
     /**
@@ -126,28 +171,54 @@ class BlockRegistry
         $created = $updated = 0;
 
         DB::transaction(function () use (&$created, &$updated) {
-            foreach ($this->types as $type) {
-                $data = $type->toArray();
-                $model = BlockTypeModel::query()->firstOrNew(['slug' => $data['slug']]);
-                $model->exists ? $updated++ : $created++;
-
-                $model->forceFill([
-                    'name' => $data['label'],
-                    'description' => $data['description'] ?: null,
-                    'category' => $data['category'],
-                    'icon' => $data['icon'],
-                    'is_core' => true,
-                    'status' => 'published',
-                    'fields' => $data['fields'],
-                    'capabilities' => $data['capabilities'],
-                    'defaults' => $data['defaults'],
-                ])->save();
+            foreach ($this->types + $this->contentTypeBlocks() as $type) {
+                $this->store($type) ? $created++ : $updated++;
             }
         });
 
         $this->ids = null;
 
         return compact('created', 'updated');
+    }
+
+    /**
+     * Upsert the rows of the admin-made content types' blocks (after a type is created or
+     * changed), so pages can store them at once.
+     */
+    public function syncContentTypes(): void
+    {
+        $this->forgetContentTypes();
+        DB::transaction(function () {
+            foreach ($this->contentTypeBlocks() as $type) {
+                $this->store($type);
+            }
+        });
+        $this->ids = null;
+    }
+
+    /**
+     * Write one system-defined type into block_types; true when the row is new.
+     */
+    private function store(BlockType $type): bool
+    {
+        $data = $type->toArray();
+        $model = BlockTypeModel::withTrashed()->firstOrNew(['slug' => $data['slug']]);
+        $created = ! $model->exists;
+
+        $model->forceFill([
+            'name' => $data['label'],
+            'description' => $data['description'] ?: null,
+            'category' => $data['category'],
+            'icon' => $data['icon'],
+            'is_core' => true,
+            'status' => 'published',
+            'fields' => $data['fields'],
+            'capabilities' => $data['capabilities'],
+            'defaults' => $data['defaults'],
+            'deleted_at' => null,
+        ])->save();
+
+        return $created;
     }
 
     /**

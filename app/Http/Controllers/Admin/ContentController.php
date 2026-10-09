@@ -220,7 +220,8 @@ class ContentController extends Controller
                 ? Gate::allows('update', $item) && ($item->status !== ContentStatus::Published || $request->user()->can($type->ability('publish')))
                 : true,
             'actions' => $item->exists ? $this->content->availableActions($type, $item, $request->user()) : [],
-            'categories' => $type->taxonomy() === null ? collect() : Term::query()->inTaxonomy((string) $type->taxonomy())->orderBy('name')->get(['id', 'name']),
+            // Terms to choose from, per taxonomy (categories, tags…).
+            'termChoices' => collect($type->taxonomies())->map(fn (string $label, string $taxonomy) => Term::query()->inTaxonomy($taxonomy)->orderBy('name')->get(['id', 'name'])),
             'sidebars' => GlobalBlock::query()->sidebarChoices()->get(['id', 'name', 'kind']),
             'timezones' => DateTimeZone::listIdentifiers(),
             'revisions' => $item->exists ? $item->revisions()->with('author:id,name')->limit(10)->get() : collect(),
@@ -299,9 +300,9 @@ class ContentController extends Controller
             'seo.og_description' => ['nullable', 'string', 'max:500'],
             'seo.og_image_media_id' => ['nullable', 'integer', $image],
         ];
-        if ($type->taxonomy() !== null) {
+        if ($type->taxonomies() !== []) {
             $rules['terms'] = ['array'];
-            $rules['terms.*'] = ['integer', Rule::exists('terms', 'id')->where('taxonomy', $type->taxonomy())];
+            $rules['terms.*'] = ['integer', Rule::exists('terms', 'id')->whereIn('taxonomy', array_keys($type->taxonomies()))];
         }
         $attributes = ['featured_media_id' => 'image', 'sidebar_global_block_id' => 'sidebar', 'seo.og_image_media_id' => 'social image'];
         foreach ($type->relationFields() as $name => $field) {
@@ -359,7 +360,7 @@ class ContentController extends Controller
             }
         }
 
-        if ($type->taxonomy() !== null) {
+        if ($type->taxonomies() !== []) {
             $data['terms'] ??= [];
         }
         // Lists the editor emptied are not sent by the browser at all.

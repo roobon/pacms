@@ -34,7 +34,7 @@ export function CollectionBlock({ node, preview }) {
     const { heading, empty_text: emptyText, show_excerpt: showExcerpt = true, show_date: showDate = true } = node.content;
 
     return (
-        <div {...frameProps(node, preview, `pa-collection pa-collection--${node.type}`)}>
+        <div {...frameProps(node, preview, `pa-collection pa-collection--${node.type.replace('/', '-')}`)}>
             {heading && <h2 className="pa-block-heading">{heading}</h2>}
             {items.length === 0 ? (
                 <p className="text-body-secondary">{emptyText || 'Nothing to show yet.'}</p>

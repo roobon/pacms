@@ -94,6 +94,8 @@ class ContentTypeController extends Controller
         $request->merge([
             'has_archive' => $request->boolean('has_archive'),
             'searchable' => $request->boolean('searchable'),
+            'has_categories' => $request->boolean('has_categories'),
+            'has_documents' => $request->boolean('has_documents'),
             'is_active' => $creating || $request->boolean('is_active'),
         ]);
 
@@ -105,6 +107,8 @@ class ContentTypeController extends Controller
             'workflow' => $creating ? ['required', 'in:editorial,managed'] : ['prohibited'],
             'has_archive' => ['boolean'],
             'searchable' => ['boolean'],
+            'has_categories' => ['boolean'],
+            'has_documents' => ['boolean'],
             'is_active' => ['boolean'],
             'fields' => ['nullable', 'string', 'max:200000', 'json'],
             'display' => ['nullable', 'array'],

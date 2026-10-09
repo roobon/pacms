@@ -3,6 +3,7 @@
 namespace App\Services\Pages;
 
 use App\Cms\Content\ContentTypeRegistry;
+use App\Models\CustomContentType;
 use App\Models\Page;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -38,6 +39,10 @@ class PagePathService
         // Content types made in the admin own their URL prefix too.
         if ($parent === null && ($type = app(ContentTypeRegistry::class)->forRoutePrefix($slug)) !== null) {
             throw ValidationException::withMessages(['slug' => __('/:slug is the address of :label. Choose another URL.', ['slug' => $slug, 'label' => $type->label()])]);
+        }
+        // …and so do disabled types, and addresses a type used before (they redirect).
+        if ($parent === null && CustomContentType::query()->where(fn ($query) => $query->where('route_prefix', $slug)->orWhereJsonContains('former_prefixes', $slug))->exists()) {
+            throw ValidationException::withMessages(['slug' => __('/:slug is used by a content type. Choose another URL.', ['slug' => $slug])]);
         }
 
         if ($parent !== null && $page->exists) {

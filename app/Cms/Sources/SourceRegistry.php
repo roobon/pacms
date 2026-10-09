@@ -3,6 +3,7 @@
 namespace App\Cms\Sources;
 
 use App\Cms\Blocks\BlockType;
+use App\Cms\Blocks\Types\ContentTypeBlock;
 use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Validation\ValueValidator;
 
@@ -70,6 +71,10 @@ class SourceRegistry
 
         if ($mode === 'dynamic') {
             $dynamic = $this->dynamic((string) $type->dynamicEntity());
+            if ($dynamic === null && $type instanceof ContentTypeBlock && ! $type->active()) {
+                // A disabled type's block stays on its page (showing nothing) until removed.
+                return ['mode' => 'dynamic', 'provider' => 'cms', 'entity' => $type->dynamicEntity()];
+            }
             if ($dynamic === null) {
                 $values->errors()->add("{$path}.entity", __('Dynamic content is not available for this block.'));
 

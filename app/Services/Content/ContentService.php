@@ -307,8 +307,11 @@ class ContentService
      */
     private function saveRelations(ContentType $type, ContentItem $item, array $data, ?array $blocks, User $user): void
     {
-        if ($type->taxonomy() !== null && array_key_exists('terms', $data)) {
-            $item->syncTerms((string) $type->taxonomy(), array_map('intval', (array) $data['terms']));
+        if (array_key_exists('terms', $data)) {
+            // One list of term ids from the form; each taxonomy keeps the ids that are its own.
+            foreach (array_keys($type->taxonomies()) as $taxonomy) {
+                $item->syncTerms($taxonomy, array_map('intval', (array) $data['terms']));
+            }
         }
         if (array_key_exists('seo', $data)) {
             $item->saveSeo((array) $data['seo']);

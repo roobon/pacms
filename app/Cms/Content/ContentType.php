@@ -161,6 +161,17 @@ abstract class ContentType
     }
 
     /**
+     * Every taxonomy items are sorted into: key => label in the form. The category taxonomy
+     * comes first; modules may add more (media coverage: tags).
+     *
+     * @return array<string, string>
+     */
+    public function taxonomies(): array
+    {
+        return $this->taxonomy() === null ? [] : [$this->taxonomy() => 'Categories'];
+    }
+
+    /**
      * Module-specific form fields: name => [type, label, rules, help?, options?, placeholder?, section?,
      * ability? (only users with this module permission may change it, e.g. 'publish')].
      * Types: text, textarea, url, email, date, datetime, checkbox, select, timezone,

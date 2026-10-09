@@ -231,23 +231,25 @@
                     @endif
 
                     <section class="card pa-card mb-4" aria-labelledby="media-heading">
-                        <div class="card-header"><h2 id="media-heading" class="h6 mb-0">{{ $labels['image'] }}{{ $categories->isNotEmpty() || $type->taxonomy() ? ' & categories' : '' }}</h2></div>
+                        <div class="card-header"><h2 id="media-heading" class="h6 mb-0">{{ $labels['image'] }}{{ $type->taxonomies() ? ' & '.strtolower(implode(', ', $type->taxonomies())) : '' }}</h2></div>
                         <div class="card-body">
                             <x-admin.media-picker name="featured_media_id" :label="$labels['image']" :media="$item->featuredMedia" :disabled="$readonly" />
-                            @if ($categories->isNotEmpty())
-                                @php $selected = array_map('intval', old('terms', $editing ? $item->terms->where('taxonomy', $type->taxonomy())->pluck('id')->all() : [])); @endphp
-                                <fieldset class="mb-3">
-                                    <legend class="form-label fs-6">Categories</legend>
-                                    @foreach ($categories as $category)
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" name="terms[]" value="{{ $category->id }}" id="cat-{{ $category->id }}" @checked(in_array($category->id, $selected, true))>
-                                            <label class="form-check-label" for="cat-{{ $category->id }}">{{ $category->name }}</label>
-                                        </div>
-                                    @endforeach
-                                </fieldset>
-                            @elseif ($type->taxonomy() && auth()->user()->can('taxonomies.manage'))
-                                <p class="small text-body-secondary">No categories yet. <a href="{{ route('admin.terms.index', ['taxonomy' => $type->taxonomy()]) }}">Add categories</a>.</p>
-                            @endif
+                            @php $selectedTerms = array_map('intval', old('terms', $editing ? $item->terms->pluck('id')->all() : [])); @endphp
+                            @foreach ($type->taxonomies() as $taxonomy => $taxonomyLabel)
+                                @if ($termChoices[$taxonomy]->isNotEmpty())
+                                    <fieldset class="mb-3">
+                                        <legend class="form-label fs-6">{{ $taxonomyLabel }}</legend>
+                                        @foreach ($termChoices[$taxonomy] as $term)
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" name="terms[]" value="{{ $term->id }}" id="term-{{ $term->id }}" @checked(in_array($term->id, $selectedTerms, true))>
+                                                <label class="form-check-label" for="term-{{ $term->id }}">{{ $term->name }}</label>
+                                            </div>
+                                        @endforeach
+                                    </fieldset>
+                                @elseif (auth()->user()->can('taxonomies.manage'))
+                                    <p class="small text-body-secondary">No {{ strtolower($taxonomyLabel) }} yet. <a href="{{ route('admin.terms.index', ['taxonomy' => $taxonomy]) }}">Add {{ strtolower($taxonomyLabel) }}</a>.</p>
+                                @endif
+                            @endforeach
                             <div class="form-check">
                                 <input type="hidden" name="featured" value="0">
                                 <input class="form-check-input" type="checkbox" name="featured" value="1" id="featured" aria-describedby="featured-help" @checked(old('featured', $item->featured))>

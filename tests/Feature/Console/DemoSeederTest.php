@@ -26,7 +26,7 @@ it('fills every area with linked demo content through the real services', functi
     $home = $this->getJson('/api/v1/resolve?path=%2F')->assertOk()->json('data.blocks');
     $counts = collect($home)->flatMap(fn ($node) => $node['type'] === 'section' ? $node['children'] : [$node])
         ->filter(fn ($node) => isset($node['items']))->mapWithKeys(fn ($node) => [$node['type'] => count($node['items'])]);
-    expect($counts->all())->toMatchArray(['news' => 3, 'testimonials' => 4, 'media-coverage' => 3, 'partners' => 6]);
+    expect($counts->all())->toMatchArray(['news' => 3, 'testimonials' => 4, 'media-coverage' => 3, 'partners' => 6, 'type/success_stories' => 3]);
 
     // Links between items: the project shows its manager, partners, gallery and documents.
     $project = $this->getJson('/api/v1/resolve?path=/projects/coastal-mangrove-restoration')->assertOk()->json('data');
@@ -35,7 +35,13 @@ it('fills every area with linked demo content through the real services', functi
         ->and($project['documents'][0]['label'])->toBe('Project plan (PDF)');
 
     // Content types made in the admin, with items.
-    $this->getJson('/api/v1/resolve?path=/success-stories')->assertJsonPath('kind', 'archive')->assertJsonCount(3, 'data.items');
+    $this->getJson('/api/v1/resolve?path=/success-stories')->assertJsonPath('kind', 'archive')->assertJsonCount(3, 'data.items')->assertJsonCount(2, 'data.categories');
+    $this->getJson('/api/v1/resolve?path=/success-stories/green-flag-for-dhaka-model-school')
+        ->assertJsonPath('data.category', 'Green Flag schools')
+        ->assertJsonPath('data.documents.0.label', 'Green Flag assessment (PDF)');
+    // Coverage carries tags besides its category.
+    $this->getJson('/api/v1/resolve?path=/media-coverage/'.MediaCoverage::query()->where('source_name', 'The Daily Star')->value('slug'))
+        ->assertJsonPath('data.taxonomies.0.terms.1.name', 'Youth');
 
     // Running it again on a site with content is refused (use --fresh).
     $this->artisan('pacms:demo')->assertFailed();

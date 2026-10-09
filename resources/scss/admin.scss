@@ -151,6 +151,42 @@ $sidebar-bg: #0F172A;
         }
     }
 
+    // Folding groups (Modules, Your content types, Categories and tags).
+    &__summary {
+        cursor: pointer;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid #F2A93B;
+            outline-offset: -2px;
+        }
+    }
+
+    &__chevron {
+        margin-left: auto;
+        font-size: .75rem;
+        transition: transform .15s ease;
+
+        details[open] > summary & {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__sub {
+        margin: .125rem 0 .25rem 1.25rem;
+        padding-left: .5rem;
+        border-left: 1px solid rgba(255, 255, 255, .12);
+
+        .pa-sidebar__link {
+            padding-block: .375rem;
+            font-size: .9375rem;
+        }
+    }
+
     // Items waiting for attention (e.g. testimonials to moderate).
     &__count {
         margin-left: auto;

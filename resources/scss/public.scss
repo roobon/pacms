@@ -1031,6 +1031,10 @@ img.pa-ratio {
 
 // Program objectives / activities and downloadable documents (Phase 8B).
 .pa-content-list,
+.pa-term-list {
+    margin-block: 1.5rem;
+}
+
 .pa-documents {
     margin: var(--pa-space-6, 2.5rem) 0;
 }

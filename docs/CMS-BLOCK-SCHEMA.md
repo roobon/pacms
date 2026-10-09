@@ -231,6 +231,7 @@ Shared collection `content` fields: `heading`?, `intro`?, `empty_text`?, `more_l
 | `site-logo`, `social-links`, `contact-info`, `copyright`, `newsletter` | – | Header/footer building blocks reading site settings |
 | `repeat` | ✔ | Only in custom block structures: `content.field` = repeater field key |
 | `custom/<slug>` | per type | Instance of a custom block type; `content` = its field values |
+| `type/<key>` | – | Collection of an admin-made content type (8D.2), e.g. `type/success_stories`; same content, source and display as the built-in collections. Only valid on sites that have the type |
 
 ---
 

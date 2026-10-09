@@ -121,6 +121,22 @@ class AdminContentType extends ContentType
         return $this->definition->searchable;
     }
 
+    /** Category taxonomy key of an admin-made type ("ct_researches"). */
+    public static function taxonomyFor(string $key): string
+    {
+        return 'ct_'.$key;
+    }
+
+    public function taxonomy(): ?string
+    {
+        return $this->definition->has_categories ? self::taxonomyFor($this->key()) : null;
+    }
+
+    public function documents(): bool
+    {
+        return $this->definition->has_documents;
+    }
+
     /**
      * The field-builder definitions (validated when the type was saved).
      *
