@@ -37,6 +37,10 @@ STATUS:  READY FOR REVIEW. Not merged.
 
 I planned two cached versions of each menu on the server (visitors / members). While building it I found that menus also sit inside cached page content, which would have needed a guest and a member copy of every page. Instead, the server sends **one** menu with each item's "shown to" setting, and the website hides the items that do not apply. Visitors see exactly the same; the only difference is that the address of a members-only link is in the page data, which is fine because, as agreed, these are links, not protected content. Protected pages are still protected by their own permissions.
 
+## Width names (asked during review)
+
+Sections and containers now use the same names, with their real sizes: **Narrow (760px)**, **Site width (1280px)**, **Wide (1440px)**, **Full width**. Containers called "Site width" "Xxl" before. Sections also get **Wide** (before only containers had it), and keep "Full width, with side margins" and "Edge to edge (backgrounds and sliders)". No more widths were added. The sizes are fixed in this version (not editable under Design Tokens).
+
 ## Fixes found on the way
 
 - **Restoring a page revision could fail** (a new column was empty in snapshots of new pages). Pages now start with "Site default", and older revisions restore with the default.
@@ -62,8 +66,8 @@ I planned two cached versions of each menu on the server (visitors / members). W
 
 | Check | Result |
 |---|---|
-| Pest (full suite) | **339 passed** (1,951 assertions) |
-| Vitest | **85 passed** (16 files) |
+| Pest (full suite) | **340 passed** (1,954 assertions) |
+| Vitest | **86 passed** (16 files) |
 | Larastan (level 6) | No errors |
 | Pint, ESLint | Clean |
 | Production build (Vite) | OK |

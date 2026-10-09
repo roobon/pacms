@@ -763,6 +763,11 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
     max-width: var(--pa-container-narrow);
 }
 
+// Wider than the site width (on screens wide enough), e.g. for galleries and big grids.
+.pa-container-wide {
+    max-width: var(--pa-container-wide);
+}
+
 .pa-block-heading {
     margin-bottom: var(--pa-space-5);
 }
