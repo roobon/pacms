@@ -46,6 +46,19 @@ class SettingsService
             // Module sidebars (Phase 8): type key => ['global_block_id' => int, 'position' => left|right].
             'sidebars' => [[], false],
         ],
+        // Phase 9: the site's header, footer, logo and social profiles.
+        'navigation' => [
+            'header_global_block_id' => [null, true],
+            'footer_global_block_id' => [null, true],
+            'sticky_header' => [true, true],
+            'transparent_header' => [false, true],
+            'logo_media_id' => [null, true],
+            'logo_dark_media_id' => [null, true],
+            // network => URL (facebook, youtube, linkedin, instagram, x).
+            'social' => [[], true],
+            // Only {{year}} and {{site_name}} are replaced.
+            'copyright' => ['© {{year}} {{site_name}}', true],
+        ],
         'media' => [
             // D-10: SVG uploads are off by default. When on, only users with
             // media.upload_svg may upload them, and every file is sanitised.

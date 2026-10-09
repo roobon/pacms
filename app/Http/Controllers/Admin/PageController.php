@@ -7,6 +7,7 @@ use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PageRequest;
 use App\Models\BlockTemplate;
+use App\Models\GlobalBlock;
 use App\Models\Page;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
@@ -114,6 +115,8 @@ class PageController extends Controller
             'page' => $page,
             'parents' => $parents,
             'templates' => config('pacms.pages.templates'),
+            'headers' => GlobalBlock::query()->where('kind', 'header')->orderBy('name')->get(['id', 'name', 'published_revision_id']),
+            'footers' => GlobalBlock::query()->where('kind', 'footer')->orderBy('name')->get(['id', 'name', 'published_revision_id']),
             'pageTemplates' => $page->exists ? collect() : BlockTemplate::query()->where('scope', 'page')->where('status', 'published')->orderByDesc('is_system')->orderBy('name')->get(['id', 'name', 'description']),
             'canEdit' => $page->exists ? Gate::allows('update', $page) : true,
             'actions' => $page->exists ? app(PublishingService::class)->availableActions($page, $request->user()) : [],

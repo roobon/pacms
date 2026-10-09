@@ -268,6 +268,419 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     }
 }
 
+// Phase 9: headers and footers built from blocks.
+.pa-site-header {
+    &.is-static {
+        position: relative;
+    }
+
+    // Over a hero or slider (Design → Header & footer): transparent with light text until
+    // the page scrolls.
+    &.is-over-hero {
+        position: fixed;
+        inset: 0 0 auto;
+        background: transparent;
+        backdrop-filter: none;
+        border-bottom-color: transparent;
+        transition: background-color .2s ease, box-shadow .2s ease;
+        --pa-color-heading: #fff;
+        --pa-color-body: #fff;
+        --pa-btn-outline: #fff;
+        color: #fff;
+
+        .pa-menu__link,
+        .pa-menu__chevron,
+        .pa-menu__toggle,
+        .pa-site-logo__name,
+        .pa-social__link {
+            color: #fff;
+        }
+
+        &.is-scrolled {
+            background: rgba(255, 255, 255, .96);
+            border-bottom-color: var(--pa-color-border);
+            color: inherit;
+            --pa-color-heading: initial;
+            --pa-color-body: initial;
+            --pa-btn-outline: initial;
+
+            .pa-menu__link,
+            .pa-menu__chevron,
+            .pa-menu__toggle,
+            .pa-site-logo__name,
+            .pa-social__link {
+                color: var(--pa-color-heading);
+            }
+        }
+    }
+
+    &--blocks {
+        // Sections in a header are compact bars, not page sections.
+        .pa-section {
+            padding-block: var(--pa-space-3);
+        }
+
+        .pa-columns,
+        .pa-column {
+            align-items: center;
+        }
+
+        .pa-column {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: var(--pa-space-3);
+            min-width: 0;
+
+            @include media-breakpoint-up(lg) {
+                gap: var(--pa-space-5);
+            }
+        }
+
+        .pa-column:last-child {
+            justify-content: flex-end;
+        }
+    }
+}
+
+.pa-site-footer--blocks {
+    padding: 0;
+
+    .pa-section {
+        padding-block: var(--pa-space-7);
+    }
+
+    // A last strip (copyright) after the main footer is compact.
+    .pa-section:last-child:not(:first-child) {
+        padding-block: var(--pa-space-4);
+    }
+
+    // On the dark footer the current page is underlined, not coloured.
+    .pa-menu__link[aria-current="page"],
+    .pa-menu__link:hover {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+    .pa-menu__heading {
+        color: var(--pa-color-on-bg-dark);
+    }
+}
+
+.pa-site-logo {
+    &__link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--pa-space-3);
+        text-decoration: none;
+    }
+
+    &__image {
+        height: 40px;
+        width: auto;
+    }
+
+    &--sm &__image {
+        height: 28px;
+    }
+
+    &--lg &__image {
+        height: 56px;
+    }
+
+    &__name {
+        font-family: var(--pa-font-heading);
+        font-weight: 800;
+        font-size: 1.125rem;
+        color: var(--pa-color-heading);
+    }
+}
+
+// Menus: disclosure navigation (buttons open sub-menus; never hover only).
+.pa-menu {
+    position: relative;
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__heading {
+        font-size: .875rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: var(--pa-space-3);
+    }
+
+    &__link,
+    &__sublink {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        color: var(--pa-color-heading);
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover,
+        &.is-current,
+        &[aria-current="page"] {
+            color: var(--pa-color-primary);
+        }
+    }
+
+    &__button,
+    &__chevron,
+    &__toggle,
+    &__close {
+        border: 0;
+        background: none;
+        padding: 0 var(--pa-space-2);
+        color: inherit;
+        font: inherit;
+        min-height: 44px;
+        min-width: 44px;
+        cursor: pointer;
+    }
+
+    &__button {
+        padding: 0;
+        font-weight: 600;
+        color: var(--pa-color-heading);
+    }
+
+    // The arrow beside a link: a slim button on wide screens (still 44px tall).
+    &__split &__chevron {
+        min-width: 28px;
+        padding: 0;
+    }
+
+    &__chevron i,
+    &__caret {
+        font-size: .75em;
+        transition: transform .15s ease;
+    }
+
+    [aria-expanded="true"] > &__caret,
+    &__chevron[aria-expanded="true"] i {
+        transform: rotate(180deg);
+    }
+
+    &__group {
+        display: block;
+        padding: var(--pa-space-2) 0 var(--pa-space-1);
+        font-size: .8125rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: var(--pa-color-muted);
+    }
+
+    // Horizontal: a bar on wide screens, a "Menu" button and drawer below.
+    &--horizontal &__bar {
+        display: none;
+    }
+
+    &__toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--pa-space-2);
+        font-weight: 600;
+        white-space: nowrap;
+
+        i {
+            font-size: 1.5rem;
+        }
+    }
+
+    @include media-breakpoint-up(lg) {
+        &--horizontal &__bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--pa-space-5);
+        }
+
+        &__toggle {
+            display: none;
+        }
+    }
+
+    &__has-sub {
+        position: relative;
+    }
+
+    &__split {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__panel {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1030;
+        min-width: 15rem;
+        padding: var(--pa-space-3) var(--pa-space-4);
+        border: 1px solid var(--pa-color-border);
+        border-radius: var(--pa-radius-md);
+        background: #fff;
+        box-shadow: var(--pa-shadow-md);
+
+        .pa-menu__sublink {
+            min-height: 40px;
+            color: var(--pa-color-body);
+            font-weight: 500;
+        }
+
+        .pa-menu__sub .pa-menu__sub {
+            padding-left: var(--pa-space-4);
+        }
+    }
+
+    &__has-sub:last-child &__panel {
+        left: auto;
+        right: 0;
+    }
+
+    // Vertical (footers, sidebars): every level listed.
+    &--vertical &__list .pa-menu__list {
+        padding-left: var(--pa-space-4);
+    }
+
+    &--vertical &__link {
+        min-height: 36px;
+        font-weight: 500;
+    }
+
+    // Drawer on small screens.
+    &__overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        background: rgba(15, 23, 42, .5);
+    }
+
+    &__drawer {
+        position: absolute;
+        inset: 0 0 0 auto;
+        width: min(22rem, 88vw);
+        overflow-y: auto;
+        padding: var(--pa-space-3) var(--pa-space-5) var(--pa-space-6);
+        background: #fff;
+        color: var(--pa-color-body);
+        box-shadow: var(--pa-shadow-lg);
+
+        .pa-menu__link,
+        .pa-menu__chevron {
+            color: var(--pa-color-heading);
+        }
+    }
+
+    &__drawer-head {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    // The drawer is rendered at page level, outside .pa-menu.
+    &__accordion {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        > li + li {
+            border-top: 1px solid var(--pa-color-border);
+        }
+
+        .pa-menu__accordion {
+            padding-left: var(--pa-space-4);
+            border-top: 0;
+
+            .pa-menu__link {
+                font-weight: 500;
+            }
+        }
+    }
+
+    &__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    // A heading in the drawer: the whole row opens it, the arrow sits at the end.
+    &__button--row {
+        flex: 1;
+        justify-content: space-between;
+        padding-right: var(--pa-space-2);
+    }
+}
+
+.pa-social {
+    &__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--pa-space-3);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--pa-space-2);
+        min-height: 44px;
+        min-width: 44px;
+        justify-content: center;
+        color: inherit;
+        font-size: 1.25rem;
+        text-decoration: none;
+
+        span {
+            font-size: 1rem;
+        }
+    }
+}
+
+.pa-contact-info {
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            display: flex;
+            gap: var(--pa-space-2);
+            margin-bottom: var(--pa-space-2);
+        }
+    }
+
+    &--inline &__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--pa-space-2) var(--pa-space-5);
+
+        li {
+            margin: 0;
+        }
+    }
+
+    &__address {
+        white-space: pre-line;
+    }
+}
+
+.pa-account-link .btn {
+    white-space: nowrap;
+}
+
+.pa-copyright {
+    margin: 0;
+    font-size: .875rem;
+}
+
 .pa-site-footer {
     background: var(--pa-color-bg-dark);
     color: color-mix(in srgb, var(--pa-color-on-bg-dark) 80%, transparent);
@@ -577,6 +990,9 @@ img.pa-ratio {
 
 .pa-items-list {
     display: grid;
+    // One column no wider than its container (an auto column grew with long titles and
+    // made phones scroll sideways).
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--pa-space-4);
 }
 
@@ -670,6 +1086,10 @@ img.pa-ratio {
 
         .pa-item__media {
             flex: 0 0 min(14rem, 35%);
+        }
+
+        .pa-item__body {
+            min-width: 0;
         }
     }
 

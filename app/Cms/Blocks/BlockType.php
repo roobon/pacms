@@ -122,6 +122,18 @@ abstract class BlockType
     }
 
     /**
+     * Public data the block shows besides its own fields, added to the payload as `data`
+     * (e.g. a Menu block's resolved menu, the site logo). null = none.
+     *
+     * @param  array<string, mixed>  $content  the block's validated content
+     * @return array<string, mixed>|null
+     */
+    public function data(array $content): ?array
+    {
+        return null;
+    }
+
+    /**
      * Default values for a newly inserted block (content/layout/style/display/children).
      *
      * @return array<string, mixed>

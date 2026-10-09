@@ -464,6 +464,10 @@ Indexes: `INDEX(kind, created_at)`, `FULLTEXT(original_name, alt, caption)` for 
 
 Index: `INDEX(menu_id, parent_id, position)`.
 
+**Phase 9A (built):** as above, plus `created_by`/`updated_by` on `menus` and `INDEX(linkable_type, linkable_id)` on `menu_items`. `linkable_type` is the morph alias (`page`, `term`, or a module's alias such as `news` or `custom_item`). The Menu Builder saves the whole tree at once with `lock_version`; item ids stay stable across saves (9B's mega panels hang off them). URLs are resolved when rendered (`MenuService`, cached with the menus, pages, settings and module versions): items whose target is unpublished, deleted, a disabled type, or a category without a listing page are left out with their sub-items; a heading without visible sub-items is left out; the home page links to `/`. Visibility is sent with each item and applied by the website (one cached menu for everyone; the links are not secret). Morph aliases `menu`, `menu_item`.
+
+**Pages (Phase 9A):** `header_mode`, `footer_mode` varchar(8) (`default` | `none` | `custom`) and `header_global_block_id`, `footer_global_block_id` (FK global_blocks, NULL ON DELETE, kinds `header`/`footer`). They are part of the page snapshot, so a new choice goes live when the page is published. **Global blocks** gain the kinds `header` and `footer`. **Settings** group `navigation`: default header and footer, sticky and see-through header, logo and dark logo (public library images), social profile URLs (https only), copyright line.
+
 ---
 
 ## 10. External providers

@@ -17,6 +17,8 @@ use App\Models\GlobalBlock;
 use App\Models\ImportJob;
 use App\Models\Media;
 use App\Models\MediaCoverage;
+use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Models\News;
 use App\Models\Page;
 use App\Models\Partner;
@@ -77,6 +79,8 @@ class AppServiceProvider extends ServiceProvider
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,
             'import_job' => ImportJob::class,
+            'menu' => Menu::class,
+            'menu_item' => MenuItem::class,
         ]);
 
         // Catch N+1 queries and silently dropped attributes during development and tests.

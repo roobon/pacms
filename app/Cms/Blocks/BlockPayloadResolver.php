@@ -84,6 +84,10 @@ class BlockPayloadResolver
                 $out['locked'] = true;
             }
 
+            if (($data = $type->data((array) ($node['content'] ?? []))) !== null) {
+                $out['data'] = $data;
+            }
+
             $source = (array) ($node['source'] ?? []);
             $items = $this->sources->items($source);
             if ($items !== null) {
