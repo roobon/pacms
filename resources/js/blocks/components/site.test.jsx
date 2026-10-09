@@ -100,6 +100,45 @@ describe('MenuBlock', () => {
     });
 });
 
+describe('Mega panels', () => {
+    beforeEach(() => {
+        window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
+    });
+
+    const megaMenu = {
+        uuid: '01k0000000000000000000mega',
+        type: 'menu',
+        content: { menu: 'main', style: 'horizontal', aria_label: 'Main' },
+        data: {
+            items: [
+                item(1, 'Our work', null, {
+                    panel: [{ uuid: '01k00000000000000000000phd', type: 'heading', content: { text: 'Explore our programmes', level: '3' } }],
+                }),
+            ],
+        },
+    };
+
+    it('opens a panel of blocks from a top-level item', () => {
+        show([megaMenu]);
+        const button = document.querySelector('.pa-menu__bar button');
+        const panel = document.getElementById(button.getAttribute('aria-controls'));
+        expect(panel.classList.contains('pa-menu__panel--mega')).toBe(true);
+        expect(panel.hidden).toBe(true);
+        fireEvent.click(button);
+        expect(panel.hidden).toBe(false);
+        expect(panel.textContent).toContain('Explore our programmes');
+    });
+
+    it('shows the panel in the drawer when the item has no sub-items', () => {
+        show([megaMenu]);
+        fireEvent.click(screen.getByRole('button', { name: 'Menu' }));
+        const drawer = screen.getByRole('dialog', { name: 'Main navigation' });
+        const toggle = [...drawer.querySelectorAll('button')].find((b) => b.textContent.includes('Our work'));
+        fireEvent.click(toggle);
+        expect(drawer.textContent).toContain('Explore our programmes');
+    });
+});
+
 describe('Site blocks', () => {
     it('shows the logo, contact details, social links and copyright from the server data', () => {
         show([

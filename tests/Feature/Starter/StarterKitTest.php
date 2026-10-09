@@ -4,8 +4,10 @@ use App\Cms\Blocks\BlockTreeRepository;
 use App\Enums\WorkflowAction;
 use App\Models\BlockTemplate;
 use App\Models\GlobalBlock;
+use App\Models\MenuItem;
 use App\Models\Page;
 use App\Services\Blocks\BlockTemplateService;
+use App\Services\Navigation\MenuService;
 use App\Services\Publishing\PublishingService;
 use App\Services\Settings\SettingsService;
 use App\Services\Starter\StarterKitService;
@@ -85,4 +87,33 @@ it('lets a new page start from a page template', function () {
     // Section templates are not offered as a start.
     $section = BlockTemplate::query()->where('slug', 'kit-faq')->firstOrFail();
     $this->actingAs($admin)->post(route('admin.pages.store'), ['title' => 'Other', 'template' => 'default', 'start_template_id' => $section->id])->assertSessionHasErrors('start_template_id');
+});
+
+it('gives a new site its menus, header and footer, without touching ones already chosen', function () {
+    $admin = userWithRole('super-admin');
+    $about = livePage(['title' => 'About us', 'slug' => 'about']);
+    $home = livePage(['title' => 'Home', 'slug' => 'home']);
+    makePage($admin, ['title' => 'Draft', 'slug' => 'draft']);
+    app(SettingsService::class)->set('site', ['homepage_page_id' => $home->id]);
+
+    $this->artisan('pacms:starter')->assertSuccessful();
+
+    // Menus: the home page first, then the other published top-level pages.
+    $main = app(MenuService::class)->resolve('main');
+    expect(array_column($main, 'url'))->toBe(['/', '/about'])
+        ->and(app(MenuService::class)->resolve('footer'))->toHaveCount(2);
+
+    // The kit's header and footer are now the site's, and show the logo, menu and copyright.
+    $chrome = $this->getJson('/api/v1/site')->json('data.chrome');
+    $types = collect($chrome['header'][0]['children'][0]['children'][0]['children'])->flatMap(fn ($column) => array_column($column['children'], 'type'))->all();
+    expect($types)->toBe(['site-logo', 'menu', 'account-link'])
+        ->and($chrome['footer'])->toHaveCount(1);
+
+    // A second run leaves menus with items and a chosen header alone.
+    $other = GlobalBlock::query()->forceCreate(['name' => 'Mine', 'slug' => 'mine', 'kind' => 'header']);
+    app(SettingsService::class)->set('navigation', ['header_global_block_id' => $other->id]);
+    MenuItem::query()->where('label', null)->first()->update(['label' => 'Start']);
+    $this->artisan('pacms:starter')->assertSuccessful();
+    expect(app(SettingsService::class)->get('navigation', 'header_global_block_id'))->toBe($other->id)
+        ->and(MenuItem::query()->where('label', 'Start')->exists())->toBeTrue();
 });

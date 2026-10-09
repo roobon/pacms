@@ -3,7 +3,9 @@ import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router';
 import { frameProps } from '../common/frame.js';
 import SmartLink from '../common/SmartLink.jsx';
-import { VisitorContext, visibleItems } from '../common/visitor.js';
+import { VisitorContext, hasPanel, visibleItems } from '../common/visitor.js';
+import BlockRenderer from '../BlockRenderer.jsx';
+import BlockStyles from '../BlockStyles.jsx';
 
 /**
  * Header and footer building blocks (Phase 9). They show site data the server adds as
@@ -139,8 +141,9 @@ function TopItem({ item, open, onToggle, onClose, pathname }) {
     const buttonRef = useRef(null);
     const panelId = useId();
     const current = hasCurrent(item, pathname);
+    const mega = hasPanel(item);
 
-    if (item.children.length === 0) {
+    if (item.children.length === 0 && !mega) {
         return (
             <li className={item.class || undefined}>
                 <SmartLink link={linkOf(item)} className={`pa-menu__link${current ? ' is-current' : ''}`} aria-current={isCurrent(item, pathname) ? 'page' : undefined}>
@@ -159,7 +162,7 @@ function TopItem({ item, open, onToggle, onClose, pathname }) {
     };
 
     return (
-        <li className={`pa-menu__has-sub${item.class ? ` ${item.class}` : ''}`} onKeyDown={onKeyDown}>
+        <li className={`pa-menu__has-sub${mega ? ' pa-menu__has-sub--mega' : ''}${item.class ? ` ${item.class}` : ''}`} onKeyDown={onKeyDown}>
             {/* A parent with its own page: the link plus a separate button for its sub-menu. */}
             {item.url ? (
                 <span className="pa-menu__split">
@@ -177,8 +180,15 @@ function TopItem({ item, open, onToggle, onClose, pathname }) {
                     <i className="bi bi-chevron-down ms-1 pa-menu__caret" aria-hidden="true" />
                 </button>
             )}
-            <div id={panelId} className="pa-menu__panel" hidden={!open}>
-                <SubList items={item.children} pathname={pathname} />
+            <div id={panelId} className={`pa-menu__panel${mega ? ' pa-menu__panel--mega' : ''}`} hidden={!open}>
+                {mega ? (
+                    <div className="container">
+                        <BlockStyles nodes={item.panel} />
+                        <BlockRenderer nodes={item.panel} />
+                    </div>
+                ) : (
+                    <SubList items={item.children} pathname={pathname} />
+                )}
             </div>
         </li>
     );
@@ -276,6 +286,9 @@ function AccordionList({ items, pathname }) {
 function AccordionItem({ item, pathname }) {
     const [open, setOpen] = useState(() => hasCurrent(item, pathname) && item.children.length > 0);
     const panelId = useId();
+    // On phones a mega item lists its sub-items; without any, its panel is shown.
+    const panelOnly = item.children.length === 0 && hasPanel(item);
+    const expandable = item.children.length > 0 || panelOnly;
 
     return (
         <li className={item.class || undefined}>
@@ -290,16 +303,23 @@ function AccordionItem({ item, pathname }) {
                         <i className="bi bi-chevron-down pa-menu__caret" aria-hidden="true" />
                     </button>
                 )}
-                {item.url && item.children.length > 0 && (
+                {item.url && expandable && (
                     <button type="button" className="pa-menu__chevron" aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(!open)}>
                         <i className="bi bi-chevron-down" aria-hidden="true" />
                         <span className="visually-hidden">{item.label}: more</span>
                     </button>
                 )}
             </div>
-            {item.children.length > 0 && (
+            {expandable && (
                 <div id={panelId} hidden={!open}>
-                    <AccordionList items={item.children} pathname={pathname} />
+                    {panelOnly ? (
+                        <div className="pa-menu__drawer-panel">
+                            <BlockStyles nodes={item.panel} />
+                            <BlockRenderer nodes={item.panel} />
+                        </div>
+                    ) : (
+                        <AccordionList items={item.children} pathname={pathname} />
+                    )}
                 </div>
             )}
         </li>

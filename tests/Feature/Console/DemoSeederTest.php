@@ -48,7 +48,8 @@ it('fills every area with linked demo content through the real services', functi
     $chrome = $this->getJson('/api/v1/site')->json('data.chrome');
     $menu = collect($chrome['header'][0]['children'][0]['children'][0]['children'][1]['children'])->firstWhere('type', 'menu');
     expect(array_column($menu['data']['items'], 'label'))->toContain('About us', 'Programmes', 'News & media')
-        ->and($chrome['footer'])->not->toBeNull();
+        ->and($chrome['footer'])->not->toBeNull()
+        ->and(collect($menu['data']['items'])->firstWhere('label', 'Programmes')['panel'][0]['type'])->toBe('columns');
 
     // The starter kit's templates and global blocks are installed too.
     expect(BlockTemplate::query()->where('is_system', true)->count())->toBe(23);

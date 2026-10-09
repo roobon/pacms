@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Main footer"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed"
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                5,
+                3,
+                4
+              ],
+              "tablet": [
+                12,
+                6,
+                6
+              ],
+              "mobile": [
+                12,
+                12,
+                12
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "dark",
+                    "size": "md",
+                    "show_name": true
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Say in one sentence what your organisation does and for whom.</p>"
+                  }
+                },
+                {
+                  "type": "social-links",
+                  "content": {
+                    "style": "icons"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "menu",
+                  "content": {
+                    "menu": "footer",
+                    "style": "vertical",
+                    "aria_label": "Footer",
+                    "heading": "Explore"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "contact-info",
+                  "content": {
+                    "heading": "Contact",
+                    "show_email": true,
+                    "show_phone": true,
+                    "show_address": true,
+                    "layout": "stacked"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-dark"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "copyright",
+          "content": {}
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-dark"
+          }
+        },
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border-strong"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

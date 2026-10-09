@@ -9,6 +9,7 @@ use App\Enums\WorkflowAction;
 use App\Models\ContentItem;
 use App\Models\Media;
 use App\Models\MediaCoverage;
+use App\Models\MenuItem;
 use App\Models\Page;
 use App\Models\Term;
 use App\Models\Testimonial;
@@ -838,8 +839,8 @@ class DemoSeeder extends Seeder
     }
 
     /**
-     * Phase 9: a main menu with sub-menus, a footer menu, and the header and footer that show
-     * them (with the site logo, social links, contact details and copyright).
+     * Phase 9: a main menu with sub-menus and a footer menu, social profiles and the copyright
+     * line. The starter kit's header and footer show them.
      */
     private function navigation(): void
     {
@@ -863,41 +864,33 @@ class DemoSeeder extends Seeder
             $url('My account', '/account', ['visibility' => 'members', 'icon' => 'bi-person-circle']),
         ], 0);
 
+        // "Programmes" opens a mega panel on desktop (phones list its sub-items).
+        $programmes = MenuItem::query()->where('menu_id', $main->id)->whereNull('parent_id')->where('linkable_type', 'page')
+            ->where('linkable_id', Page::query()->where('slug', 'our-programmes')->value('id'))->firstOrFail();
+        $menus->savePanel($this->admin, $programmes, [[
+            'type' => 'columns', 'layout' => ['columns' => ['desktop' => [8, 4], 'mobile' => [12, 12]], 'gap' => ['$token' => 'space.6']],
+            'children' => [
+                ['type' => 'column', 'children' => [[
+                    'type' => 'programs', 'content' => ['heading' => 'Our programmes', 'show_date' => false, 'show_excerpt' => true],
+                    'source' => ['mode' => 'dynamic', 'provider' => 'cms', 'entity' => 'programs', 'order' => 'latest', 'limit' => 3],
+                    'display' => ['mode' => 'list'],
+                ]]],
+                ['type' => 'column', 'children' => [
+                    ['type' => 'heading', 'content' => ['text' => 'Projects across the country', 'level' => '3']],
+                    ['type' => 'rich-text', 'content' => ['html' => '<p>From the mangrove coast to the tea gardens: see what schools and communities are doing now.</p>']],
+                    ['type' => 'button', 'content' => ['label' => 'All projects', 'variant' => 'primary', 'link' => ['type' => 'url', 'url' => '/projects']]],
+                ]],
+            ],
+        ]]);
+
         $footerMenu = $menus->create($this->admin, ['name' => 'Footer', 'slug' => 'footer']);
         $menus->saveTree($this->admin, $footerMenu, [
             $page('about'), $url('News', '/news'), $url('Events', '/events'), $url('Publications', '/publications'), $page('get-involved'),
             ['type' => 'external_url', 'label' => 'Eco-Schools international', 'url' => 'https://www.ecoschools.global', 'new_tab' => true],
         ], 0);
 
-        $section = fn (array $children, array $extra = []) => ['type' => 'section', 'layout' => ['container' => 'boxed']] + $extra + ['children' => $children];
-        $header = $this->globals->create($this->admin, ['name' => 'Main header', 'kind' => 'header', 'blocks' => [
-            $section([['type' => 'columns', 'layout' => ['columns' => ['desktop' => [3, 9], 'mobile' => [6, 6]]], 'children' => [
-                ['type' => 'column', 'children' => [['type' => 'site-logo', 'content' => ['variant' => 'default', 'size' => 'md', 'show_name' => true]]]],
-                ['type' => 'column', 'children' => [
-                    ['type' => 'menu', 'content' => ['menu' => 'main', 'style' => 'horizontal', 'aria_label' => 'Main']],
-                    ['type' => 'account-link', 'content' => ['sign_in_label' => 'Sign in', 'account_label' => 'My account']],
-                ]],
-            ]]]),
-        ]]);
-        $this->globals->publish($this->admin, $header);
-
-        $footer = $this->globals->create($this->admin, ['name' => 'Main footer', 'kind' => 'footer', 'blocks' => [
-            $section([['type' => 'columns', 'layout' => ['columns' => ['desktop' => [5, 3, 4], 'tablet' => [12, 6, 6], 'mobile' => [12, 12, 12]]], 'children' => [
-                ['type' => 'column', 'children' => [
-                    ['type' => 'site-logo', 'content' => ['variant' => 'dark', 'size' => 'md', 'show_name' => true]],
-                    ['type' => 'rich-text', 'content' => ['html' => '<p>Environmental education for every school in Bangladesh, from the mangrove coast to the tea gardens.</p>']],
-                    ['type' => 'social-links', 'content' => ['style' => 'icons']],
-                ]],
-                ['type' => 'column', 'children' => [['type' => 'menu', 'content' => ['menu' => 'footer', 'style' => 'vertical', 'aria_label' => 'Footer', 'heading' => 'Explore']]]],
-                ['type' => 'column', 'children' => [['type' => 'contact-info', 'content' => ['heading' => 'Contact', 'show_email' => true, 'show_phone' => true, 'show_address' => true, 'layout' => 'stacked']]]],
-            ]]], ['style' => ['background' => ['type' => 'color', 'color' => ['$token' => 'color.bg-dark']]]]),
-            $section([['type' => 'copyright', 'content' => ['text' => '© {{year}} {{site_name}}. Demo content for testing.']]], ['style' => ['background' => ['type' => 'color', 'color' => ['$token' => 'color.bg-dark']], 'border' => ['width' => ['value' => 1, 'unit' => 'px'], 'style' => 'solid', 'color' => '#1E293B', 'sides' => ['top']]]]),
-        ]]);
-        $this->globals->publish($this->admin, $footer);
-
+        // The header and footer come from the starter kit (installed next), which shows these menus.
         $this->settings->set('navigation', [
-            'header_global_block_id' => $header->id,
-            'footer_global_block_id' => $footer->id,
             'sticky_header' => true,
             'transparent_header' => false,
             'social' => ['facebook' => 'https://www.facebook.com/example', 'youtube' => 'https://www.youtube.com/@example', 'linkedin' => 'https://www.linkedin.com/company/example'],
