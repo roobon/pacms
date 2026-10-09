@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $singular
  * @property string $icon
  * @property string $route_prefix
+ * @property list<string>|null $former_prefixes
  * @property string $workflow
  * @property list<array<string, mixed>>|null $fields
  * @property array<string, string>|null $display
@@ -44,6 +45,7 @@ class CustomContentType extends Model
         return [
             'fields' => 'array',
             'display' => 'array',
+            'former_prefixes' => 'array',
             'has_archive' => 'boolean',
             'searchable' => 'boolean',
             'has_categories' => 'boolean',

@@ -9,6 +9,7 @@ use App\Models\ActivityLog;
 use App\Models\Media;
 use App\Models\MediaCoverage;
 use App\Models\Program;
+use App\Models\Term;
 use App\Services\Cache\CacheVersions;
 use App\Services\Content\ContentService;
 use App\Services\Media\MediaService;
@@ -228,4 +229,31 @@ it('lists coverage in the Media Coverage block by type and keeps check details p
         ->assertJsonPath('data.items.0.title', 'In print')
         ->assertDontSee('Internal detail')
         ->assertDontSee('http_status');
+});
+
+it('tags coverage with the shared tags, besides its category', function () {
+    $editor = userWithRole('editor');
+    $tag = Term::query()->create(['taxonomy' => 'tag', 'name' => 'Climate', 'slug' => 'climate']);
+    $category = Term::query()->create(['taxonomy' => 'media_coverage_category', 'name' => 'Interviews', 'slug' => 'interviews']);
+
+    $this->actingAs($editor)->get(route('admin.media_coverage.create'))->assertOk()->assertSee('Tags')->assertSee('Climate');
+    $this->actingAs($editor)->post(route('admin.media_coverage.store'), [
+        'title' => 'Tagged coverage', 'source_name' => 'Channel i', 'coverage_type' => 'tv', 'availability_override' => 'auto',
+        'terms' => [$tag->id, $category->id],
+    ])->assertSessionHasNoErrors();
+    $item = MediaCoverage::query()->firstOrFail();
+    expect($item->terms()->pluck('name')->sort()->values()->all())->toBe(['Climate', 'Interviews']);
+    $this->actingAs($editor)->post(route('admin.media_coverage.workflow', $item), ['action' => 'publish'])->assertRedirect();
+
+    $this->getJson('/api/v1/resolve?path=/media-coverage/'.$item->slug)
+        ->assertJsonPath('data.category', 'Interviews')
+        ->assertJsonPath('data.taxonomies.0.label', 'Tags')
+        ->assertJsonPath('data.taxonomies.0.terms.0.name', 'Climate');
+
+    // Saving with only the category keeps the category and removes the tag.
+    $this->actingAs($editor)->put(route('admin.media_coverage.update', $item), [
+        'title' => 'Tagged coverage', 'source_name' => 'Channel i', 'coverage_type' => 'tv', 'availability_override' => 'auto',
+        'terms' => [$category->id], 'lock_version' => $item->fresh()->lock_version,
+    ])->assertSessionHasNoErrors();
+    expect($item->terms()->pluck('name')->all())->toBe(['Interviews']);
 });

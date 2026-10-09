@@ -56,6 +56,11 @@ class MediaCoverageType extends ContentType
         return 'media_coverage_category';
     }
 
+    public function taxonomies(): array
+    {
+        return parent::taxonomies() + ['tag' => 'Tags'];
+    }
+
     public function labels(): array
     {
         return ['title' => 'Headline', 'excerpt' => 'Summary', 'body' => 'Description', 'image' => 'Image'];

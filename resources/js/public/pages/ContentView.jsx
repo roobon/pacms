@@ -42,6 +42,9 @@ export default function ContentView({ item }) {
                 <Related key={section.key} section={section} narrow={Boolean(sidebar)} />
             ))}
             {item.documents?.length > 0 && <Documents documents={item.documents} />}
+            {(item.taxonomies ?? []).map((taxonomy) => (
+                <TermList key={taxonomy.key} taxonomy={taxonomy} />
+            ))}
             {blocks.length > 0 && (
                 <div className="pa-content-blocks">
                     <BlockStyles nodes={blocks} />
@@ -249,6 +252,22 @@ function ContentList({ list }) {
 }
 
 /** Files to download (reports, briefs…). */
+/** Terms besides the category, e.g. a coverage item's tags. */
+function TermList({ taxonomy }) {
+    return (
+        <section className="pa-term-list" aria-label={taxonomy.label}>
+            <h2 className="visually-hidden">{taxonomy.label}</h2>
+            <ul className="list-unstyled d-flex flex-wrap gap-2 mb-0">
+                {taxonomy.terms.map((term) => (
+                    <li key={term.slug} className="pa-badge-public">
+                        {term.name}
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+}
+
 function Documents({ documents }) {
     return (
         <section className="pa-documents" aria-labelledby="documents-heading">

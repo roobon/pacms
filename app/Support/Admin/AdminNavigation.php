@@ -24,18 +24,26 @@ final class AdminNavigation
             ['label' => '', 'items' => [
                 ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'bi-speedometer2', 'active' => 'admin.dashboard', 'can' => 'admin.access'],
             ]],
+            // Folding groups keep the menu short however many content types there are (8D.2).
             ['label' => 'Content', 'items' => [
                 ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
-                ...self::contentModules(),
-                ['label' => 'Testimonials', 'route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'active' => 'admin.testimonials.*', 'can' => 'testimonials.view',
-                    'badge' => $user->can('testimonials.view') ? self::moderationQueue() : null, 'badge_label' => 'waiting for moderation'],
-                ['label' => 'Import JSON', 'route' => 'admin.import.index', 'icon' => 'bi-filetype-json', 'active' => 'admin.import.*', 'can' => 'import.run'],
-                ...self::contentCategories(),
+                ['group' => 'modules', 'label' => 'Modules', 'icon' => 'bi-grid', 'items' => [
+                    ...self::contentModules(adminMade: false),
+                    ['label' => 'Testimonials', 'route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'active' => 'admin.testimonials.*', 'can' => 'testimonials.view',
+                        'badge' => $user->can('testimonials.view') ? self::moderationQueue() : null, 'badge_label' => 'waiting for moderation'],
+                ]],
+                ['group' => 'types', 'label' => 'Your content types', 'icon' => 'bi-collection', 'items' => self::contentModules(adminMade: true)],
+                ['group' => 'terms', 'label' => 'Categories and tags', 'icon' => 'bi-bookmarks', 'items' => [
+                    ...self::contentCategories(),
+                    ['label' => 'Tags', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'tag'], 'icon' => 'bi-tags', 'can' => 'taxonomies.manage'],
+                ]],
             ]],
             ['label' => 'Media', 'items' => [
                 ['label' => 'Library', 'route' => 'admin.media.index', 'icon' => 'bi-images', 'active' => 'admin.media.*', 'can' => 'media.view'],
-                ['label' => 'Media categories', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'media_category'], 'icon' => 'bi-folder2', 'active' => 'admin.terms.*', 'can' => 'taxonomies.manage'],
-                ['label' => 'Tags', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'tag'], 'icon' => 'bi-tags', 'can' => 'taxonomies.manage'],
+                ['label' => 'Media categories', 'route' => 'admin.terms.index', 'params' => ['taxonomy' => 'media_category'], 'icon' => 'bi-folder2', 'can' => 'taxonomies.manage'],
+            ]],
+            ['label' => 'Tools', 'items' => [
+                ['label' => 'Import JSON', 'route' => 'admin.import.index', 'icon' => 'bi-filetype-json', 'active' => 'admin.import.*', 'can' => 'import.run'],
             ]],
             ['label' => 'SEO', 'items' => [
                 ['label' => 'Redirects', 'route' => 'admin.redirects.index', 'icon' => 'bi-signpost-split', 'active' => 'admin.redirects.*', 'can' => 'redirects.manage'],
@@ -57,10 +65,45 @@ final class AdminNavigation
 
         $visible = [];
         foreach ($sections as $section) {
-            $items = array_values(array_filter($section['items'], fn (array $item) => $user->can($item['can'])));
+            $items = self::visible($section['items'], $user);
             if ($items !== []) {
                 $visible[] = ['label' => $section['label'], 'items' => $items];
             }
+        }
+
+        return $visible;
+    }
+
+    /**
+     * Entries the user may open, each with its URL and whether it is the current page; a
+     * group is kept when one of its entries is, and is open when it holds the current page.
+     *
+     * @param  list<array<string, mixed>>  $items
+     * @return list<array<string, mixed>>
+     */
+    private static function visible(array $items, User $user): array
+    {
+        $visible = [];
+        foreach ($items as $item) {
+            if (isset($item['group'])) {
+                $children = self::visible($item['items'], $user);
+                if ($children !== []) {
+                    $visible[] = ['items' => $children, 'active' => in_array(true, array_column($children, 'active'), true)] + $item;
+                }
+
+                continue;
+            }
+            if (! $user->can($item['can'])) {
+                continue;
+            }
+            $url = $item['url'] ?? route($item['route'], $item['params'] ?? []);
+            $current = url()->current();
+            $visible[] = ['url' => $url, 'active' => match (true) {
+                // Content types: their list and everything below it.
+                isset($item['route']) && ! isset($item['params']) => request()->routeIs($item['active']),
+                isset($item['params']) => $current === $url,
+                default => $current === $url || str_starts_with($current, $url.'/'),
+            }] + $item;
         }
 
         return $visible;
@@ -77,32 +120,38 @@ final class AdminNavigation
     }
 
     /**
-     * One entry per registered content module (news, events…).
+     * One entry per content module: the built-in ones (news, events…) or those made in the admin.
      *
      * @return list<array<string, mixed>>
      */
-    private static function contentModules(): array
+    private static function contentModules(bool $adminMade): array
     {
+        $types = array_filter(app(ContentTypeRegistry::class)->all(), fn (ContentType $type) => $type->isAdminMade() === $adminMade);
+
         return array_values(array_map(fn (ContentType $type) => [
             'label' => $type->label(),
             'url' => $type->adminUrl(),
             'icon' => $type->icon(),
             'can' => $type->ability('view'),
-        ], app(ContentTypeRegistry::class)->all()));
+        ], $types));
     }
 
     /**
+     * The category list of every module that has one.
+     *
      * @return list<array<string, mixed>>
      */
     private static function contentCategories(): array
     {
-        $types = array_filter(app(ContentTypeRegistry::class)->all(), fn (ContentType $type) => $type->taxonomy() !== null && $type->taxonomy() !== 'tag'); // Tags has its own entry
+        $registry = app(ContentTypeRegistry::class);
+        $definitions = $registry->taxonomies();
+        $types = array_filter($registry->all(), fn (ContentType $type) => $type->taxonomy() !== null && $type->taxonomy() !== 'tag'); // Tags has its own entry
 
         return array_values(array_map(fn (ContentType $type) => [
-            'label' => (string) config('pacms.taxonomies.'.$type->taxonomy().'.label'),
+            'label' => (string) ($definitions[$type->taxonomy()]['label'] ?? $type->taxonomy()),
             'route' => 'admin.terms.index',
             'params' => ['taxonomy' => $type->taxonomy()],
-            'icon' => 'bi-bookmarks',
+            'icon' => 'bi-bookmark',
             'can' => 'taxonomies.manage',
         ], $types));
     }

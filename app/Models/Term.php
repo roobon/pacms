@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 /**
- * A category or tag in one of the registered taxonomies (config pacms.taxonomies).
+ * A category or tag in one of the registered taxonomies (ContentTypeRegistry::taxonomies()).
  */
 class Term extends Model
 {

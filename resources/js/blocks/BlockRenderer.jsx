@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { CUSTOM_COMPONENT, components } from './registry.js';
+import { CONTENT_TYPE_COMPONENT, CUSTOM_COMPONENT, components } from './registry.js';
 import { useIsPreview } from './common/frame.js';
 
 /**
@@ -14,7 +14,9 @@ export default function BlockRenderer({ nodes }) {
 
 function BlockNode({ node }) {
     const preview = useIsPreview();
-    const Block = components[node.type] ?? (String(node.type).startsWith('custom/') ? components[CUSTOM_COMPONENT] : undefined);
+    // "custom/…" blocks share one component, and so do "type/…" (admin-made content types).
+    const type = String(node.type);
+    const Block = components[node.type] ?? (type.startsWith('custom/') ? components[CUSTOM_COMPONENT] : type.startsWith('type/') ? components[CONTENT_TYPE_COMPONENT] : undefined);
 
     if (!Block) {
         return preview ? (
@@ -57,3 +59,4 @@ class BlockBoundary extends Component {
         ) : null;
     }
 }
+

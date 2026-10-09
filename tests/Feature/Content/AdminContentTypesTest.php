@@ -1,11 +1,19 @@
 <?php
 
+use App\Cms\Blocks\BlockPayloadResolver;
+use App\Cms\Blocks\BlockTreeValidator;
 use App\Cms\Content\ContentTypeRegistry;
+use App\Enums\WorkflowAction;
+use App\Models\BlockType;
 use App\Models\CustomContentType;
 use App\Models\CustomItem;
+use App\Models\Term;
 use App\Models\User;
+use App\Services\Pages\PageService;
+use App\Services\Publishing\PublishingService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -220,4 +228,112 @@ it('disables a type without losing items, and deletes only empty types', functio
     expect(CustomContentType::query()->count())->toBe(0)
         ->and(Permission::query()->where('name', 'like', 'success_stories.%')->count())->toBe(0)
         ->and(User::query()->count())->toBeGreaterThan(0);
+});
+
+/*
+ * Phase 8D.2: blocks, categories, documents, address changes, the grouped menu and tags.
+ */
+
+function publishedStory(array $overrides = []): CustomItem
+{
+    $editor = userWithRole('editor');
+    test()->actingAs($editor)->post(route('admin.types.store', ['type' => 'success_stories']), storyInput($overrides))->assertSessionHasNoErrors();
+    $item = CustomItem::query()->latest('id')->firstOrFail();
+    test()->actingAs($editor)->post(route('admin.types.workflow', ['type' => 'success_stories', 'item' => $item->id]), ['action' => 'publish'])->assertRedirect();
+
+    return $item->fresh();
+}
+
+it('gives every type its own dynamic block that lists its published items', function () {
+    makeStoriesType();
+    publishedStory();
+
+    $types = collect($this->actingAs(userWithRole('editor'))->getJson(route('admin.api.blocks.definitions'))->assertOk()->json('types'))->keyBy('slug');
+    expect($types['type/success_stories'])->toMatchArray(['label' => 'Success stories', 'category' => 'dynamic', 'icon' => 'bi-trophy', 'insertable' => true])
+        ->and($types['type/success_stories']['capabilities']['dynamic_entity'])->toBe('success_stories');
+
+    $page = livePage(['title' => 'Stories', 'blocks' => [['type' => 'type/success_stories', 'source' => ['mode' => 'dynamic', 'entity' => 'success_stories', 'limit' => 3]]]]);
+    $block = $this->getJson('/api/v1/resolve?path=/'.$page->path)->assertJsonPath('kind', 'page')->json('data.blocks.0');
+    expect($block['type'])->toBe('type/success_stories')
+        ->and(array_column($block['items'], 'title'))->toBe(['Green Flag for Dhaka Model School'])
+        ->and($block['items'][0]['meta']['role'])->toBe('Dhaka Model School');
+});
+
+it('keeps a disabled type\'s blocks valid but hidden, and refuses to delete a type whose block is used', function () {
+    $type = makeStoriesType();
+    $admin = userWithRole('administrator');
+    $page = livePage(['title' => 'Stories', 'blocks' => [['type' => 'type/success_stories', 'source' => ['mode' => 'dynamic', 'entity' => 'success_stories']]]]);
+    $update = fn (array $changes) => $this->actingAs($admin)->put(route('admin.content-types.update', $type), array_merge(Arr::except(storiesType(), 'workflow'), ['is_active' => '1'], $changes));
+
+    $update(['is_active' => '0'])->assertSessionHasNoErrors();
+    $types = collect($this->actingAs($admin)->getJson(route('admin.api.blocks.definitions'))->json('types'))->keyBy('slug');
+    expect($types['type/success_stories']['insertable'])->toBeFalse();
+    // The page still saves with the block, and the website leaves it out.
+    $this->actingAs($admin)->postJson(route('admin.api.autosave'), ['owner' => 'page', 'id' => $page->id, 'blocks' => [['type' => 'type/success_stories', 'source' => ['mode' => 'dynamic']]]])->assertOk();
+    expect($this->getJson('/api/v1/resolve?path=/'.$page->path)->json('data.blocks'))->toBe([]);
+
+    $this->actingAs($admin)->delete(route('admin.content-types.destroy', $type))->assertSessionHasErrors(['type' => 'The "Success stories" block is used in 1 place (page "Stories"). Remove it there first, or disable the type instead.']);
+
+    app(PageService::class)->update($admin, $page->fresh(), ['blocks' => []], $page->fresh()->lock_version);
+    app(PublishingService::class)->transition($page->fresh(), WorkflowAction::Publish, userWithRole('super-admin'));
+    $this->actingAs($admin)->delete(route('admin.content-types.destroy', $type))->assertSessionHasNoErrors();
+    expect(BlockType::query()->where('slug', 'type/success_stories')->exists())->toBeFalse();
+});
+
+it('sorts items into the type\'s own categories, for listings and blocks', function () {
+    makeStoriesType(['has_categories' => '1', 'has_documents' => '1']);
+    $admin = userWithRole('administrator');
+
+    $this->actingAs($admin)->get(route('admin.terms.index', ['taxonomy' => 'ct_success_stories']))->assertOk()->assertSee('Success story categories');
+    $this->actingAs($admin)->post(route('admin.terms.store', ['taxonomy' => 'ct_success_stories']), ['name' => 'Green Flag'])->assertSessionHasNoErrors();
+    $category = Term::query()->where('taxonomy', 'ct_success_stories')->firstOrFail();
+    // Terms of other taxonomies are refused.
+    $news = Term::query()->create(['taxonomy' => 'news_category', 'name' => 'Other', 'slug' => 'other']);
+    $this->actingAs(userWithRole('editor'))->post(route('admin.types.store', ['type' => 'success_stories']), storyInput(['terms' => [$news->id]]))->assertSessionHasErrors('terms.0');
+
+    $this->actingAs($admin)->get(route('admin.types.create', ['type' => 'success_stories']))->assertOk()->assertSee('Green Flag')->assertSee('Documents');
+    publishedStory(['terms' => [$category->id]]);
+    publishedStory(['title' => 'Without a category']);
+
+    $this->getJson('/api/v1/resolve?path=/success-stories/green-flag-for-dhaka-model-school')->assertJsonPath('data.category', 'Green Flag');
+    $this->getJson('/api/v1/resolve?path=/success-stories')->assertJsonPath('data.categories.0.name', 'Green Flag');
+    $clean = app(BlockTreeValidator::class)->validate([['type' => 'type/success_stories', 'source' => ['mode' => 'dynamic', 'filters' => ['category' => $category->id]]]], $admin);
+    $block = app(BlockPayloadResolver::class)->resolve($clean)[0];
+    expect(array_column($block['items'], 'title'))->toBe(['Green Flag for Dhaka Model School']);
+
+    // The category list sits in the menu's "Categories and tags" group.
+    $this->actingAs($admin)->get(route('admin.dashboard'))->assertSee('Categories and tags')->assertSee('Success story categories');
+});
+
+it('redirects the old address when a type moves, and keeps it reserved', function () {
+    $type = makeStoriesType();
+    $admin = userWithRole('administrator');
+    publishedStory();
+
+    $this->actingAs($admin)->put(route('admin.content-types.update', $type), array_merge(Arr::except(storiesType(), 'workflow'), ['is_active' => '1', 'route_prefix' => 'stories']))->assertSessionHasNoErrors();
+    expect($type->fresh()->former_prefixes)->toBe(['success-stories']);
+
+    $this->get('/success-stories/green-flag-for-dhaka-model-school')->assertRedirect('/stories/green-flag-for-dhaka-model-school')->assertStatus(301);
+    $this->get('/success-stories')->assertRedirect('/stories');
+    $this->getJson('/api/v1/resolve?path=/stories/green-flag-for-dhaka-model-school')->assertJsonPath('kind', 'content');
+
+    // Pages and other types cannot take the old address.
+    expect(fn () => makePage($admin, ['title' => 'Old', 'slug' => 'success-stories']))->toThrow(ValidationException::class);
+    $this->actingAs($admin)->post(route('admin.content-types.store'), storiesType(['label' => 'Other stories', 'route_prefix' => 'success-stories']))->assertSessionHasErrors('route_prefix');
+
+    // Moving back frees it again.
+    $this->actingAs($admin)->put(route('admin.content-types.update', $type), array_merge(Arr::except(storiesType(), 'workflow'), ['is_active' => '1', 'route_prefix' => 'success-stories']))->assertSessionHasNoErrors();
+    expect($type->fresh()->former_prefixes)->toBe(['stories']);
+    $this->getJson('/api/v1/resolve?path=/success-stories/green-flag-for-dhaka-model-school')->assertJsonPath('kind', 'content');
+});
+
+it('groups the admin menu and keeps built-in and admin-made types apart', function () {
+    makeStoriesType();
+    $html = $this->actingAs(userWithRole('administrator'))->get(route('admin.types.index', ['type' => 'success_stories']))->assertOk()->getContent();
+
+    expect($html)->toContain('data-nav-group="modules"')
+        ->and($html)->toContain('Your content types')
+        // The group holding the current page is open.
+        ->and($html)->toMatch('/data-nav-group="types"\s+open data-nav-current/')
+        ->and($html)->not->toMatch('/data-nav-group="modules"\s+open/');
 });

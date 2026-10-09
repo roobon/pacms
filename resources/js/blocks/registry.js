@@ -49,6 +49,9 @@ export const components = {
     'global-ref': GlobalRefBlock,
     // Every custom block type ("custom/…") shares one component.
     'custom/*': CustomBlock,
+    // Blocks of content types made in the admin ("type/…") are plain collections.
+    'type/*': CollectionBlock,
 };
 
 export const CUSTOM_COMPONENT = 'custom/*';
+export const CONTENT_TYPE_COMPONENT = 'type/*';

@@ -10,6 +10,31 @@ void Dropdown;
 void Offcanvas;
 void Collapse;
 
+// Sidebar groups: remember which ones the user opened; the one holding the current page
+// is always open (rendered with data-nav-current).
+const NAV_KEY = 'pacms.nav.open';
+function readOpenGroups() {
+    try {
+        return JSON.parse(window.localStorage.getItem(NAV_KEY) ?? '[]');
+    } catch {
+        return [];
+    }
+}
+document.querySelectorAll('details[data-nav-group]').forEach((group) => {
+    if (readOpenGroups().includes(group.dataset.navGroup)) group.open = true;
+    group.addEventListener('toggle', () => {
+        if (group.hasAttribute('data-nav-current')) return;
+        const open = new Set(readOpenGroups());
+        if (group.open) open.add(group.dataset.navGroup);
+        else open.delete(group.dataset.navGroup);
+        try {
+            window.localStorage.setItem(NAV_KEY, JSON.stringify([...open]));
+        } catch {
+            // Storage blocked: groups simply start closed.
+        }
+    });
+});
+
 // Confirm destructive actions: <form data-confirm="Delete X?">
 document.addEventListener('submit', (event) => {
     const form = event.target;

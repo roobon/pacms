@@ -251,8 +251,10 @@ abstract class ContentItem extends Model implements Revisionable
         $this->forceFill($fields);
         $this->saveSeo($snapshot['seo'] ?? null);
 
-        if (isset($snapshot['terms']) && $this->type()->taxonomy() !== null) {
-            $this->syncTerms((string) $this->type()->taxonomy(), array_map('intval', (array) $snapshot['terms']));
+        if (isset($snapshot['terms'])) {
+            foreach (array_keys($this->type()->taxonomies()) as $taxonomy) {
+                $this->syncTerms($taxonomy, array_map('intval', (array) $snapshot['terms']));
+            }
         }
     }
 }

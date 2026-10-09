@@ -2,6 +2,7 @@
 
 namespace App\Cms\Blocks;
 
+use App\Cms\Blocks\Types\ContentTypeBlock;
 use App\Models\Block;
 use App\Models\BlockType as BlockTypeModel;
 use App\Models\GlobalBlock;
@@ -159,7 +160,7 @@ class BlockTreeRepository
 
     /**
      * Everything a tree uses, for content_references ("where is X used?"): media, global
-     * blocks and custom block types.
+     * blocks, custom block types and the blocks of admin-made content types.
      *
      * @param  list<array<string, mixed>>  $nodes
      * @return list<array{target: Model, context: string, block_uuid: string}>
@@ -182,7 +183,7 @@ class BlockTreeRepository
                 if (! empty($node['global_block_id'])) {
                     $globals[(string) $node['uuid']] = (int) $node['global_block_id'];
                 }
-                if (str_starts_with((string) $node['type'], BlockTypeModel::CUSTOM_PREFIX)) {
+                if (str_starts_with((string) $node['type'], BlockTypeModel::CUSTOM_PREFIX) || str_starts_with((string) $node['type'], ContentTypeBlock::PREFIX)) {
                     $custom[(string) $node['uuid']] = (string) $node['type'];
                 }
                 $visit($node['children'] ?? []);
@@ -203,7 +204,8 @@ class BlockTreeRepository
             $models = BlockTypeModel::withTrashed()->whereIn('slug', array_unique($custom))->get()->keyBy('slug');
             foreach ($custom as $uuid => $slug) {
                 if (isset($models[$slug])) {
-                    $references[] = ['target' => $models[$slug], 'context' => 'custom_block', 'block_uuid' => $uuid];
+                    $context = str_starts_with($slug, ContentTypeBlock::PREFIX) ? 'content_type_block' : 'custom_block';
+                    $references[] = ['target' => $models[$slug], 'context' => $context, 'block_uuid' => $uuid];
                 }
             }
         }

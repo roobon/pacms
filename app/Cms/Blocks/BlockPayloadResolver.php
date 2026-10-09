@@ -2,6 +2,7 @@
 
 namespace App\Cms\Blocks;
 
+use App\Cms\Blocks\Types\ContentTypeBlock;
 use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Fields\VideoUrl;
 use App\Cms\Sources\SourceRegistry;
@@ -59,7 +60,8 @@ class BlockPayloadResolver
             }
 
             $type = $this->registry->find((string) $node['type']);
-            if ($type === null) {
+            // Blocks of a disabled content type show nothing.
+            if ($type === null || ($type instanceof ContentTypeBlock && ! $type->active())) {
                 continue;
             }
 

@@ -97,6 +97,28 @@ class ContentTypeRegistry
     }
 
     /**
+     * Every taxonomy that can be managed: the configured ones (config pacms.taxonomies) and
+     * the categories of admin-made types that use them.
+     *
+     * @return array<string, array{label: string, singular: string, hierarchical: bool}>
+     */
+    public function taxonomies(): array
+    {
+        $taxonomies = (array) config('pacms.taxonomies', []);
+        foreach ($this->custom as $type) {
+            if (($taxonomy = $type->taxonomy()) !== null) {
+                $taxonomies[$taxonomy] ??= [
+                    'label' => ucfirst($type->singular()).' categories',
+                    'singular' => ucfirst($type->singular()).' category',
+                    'hierarchical' => true,
+                ];
+            }
+        }
+
+        return $taxonomies;
+    }
+
+    /**
      * Model class of every module: key => class (entity links, exports, lookups).
      * Admin-made types share one class; query items through ContentType::query().
      *

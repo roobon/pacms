@@ -119,7 +119,7 @@ class ContentPayloadBuilder
      */
     private function build(ContentType $type, ContentItem $item): array
     {
-        $item->loadMissing(['featuredMedia', 'seo', ...($type->taxonomy() ? ['terms'] : [])]);
+        $item->loadMissing(['featuredMedia', 'seo', ...($type->taxonomies() ? ['terms'] : [])]);
         $site = (string) $this->settings->get('site', 'name');
         $url = $this->seo->absolute($item->url());
         $breadcrumbs = [
@@ -143,6 +143,14 @@ class ContentPayloadBuilder
         $categories = $type->taxonomy() === null ? [] : $item->terms
             ->where('taxonomy', $type->taxonomy())
             ->map(fn (Term $term) => ['name' => $term->name, 'slug' => $term->slug])->values()->all();
+        // Terms of the other taxonomies (e.g. tags), shown as lists on the page.
+        $taxonomies = [];
+        foreach (array_slice($type->taxonomies(), $type->taxonomy() === null ? 0 : 1, null, true) as $taxonomy => $label) {
+            $terms = $item->terms->where('taxonomy', $taxonomy)->map(fn (Term $term) => ['name' => $term->name, 'slug' => $term->slug])->values()->all();
+            if ($terms !== []) {
+                $taxonomies[] = ['key' => $taxonomy, 'label' => $label, 'terms' => $terms];
+            }
+        }
 
         return [
             'type' => $type->key(),
@@ -159,6 +167,7 @@ class ContentPayloadBuilder
             'featured_image' => $item->featuredMedia?->toImageArray('(min-width: 1320px) 1280px, 100vw'),
             'category' => $categories[0]['name'] ?? null,
             'categories' => $categories,
+            'taxonomies' => $taxonomies,
             'published_at' => $item->published_at?->toIso8601String(),
             'show_date' => $type->showsPublishDate(),
             'breadcrumbs' => $breadcrumbs,

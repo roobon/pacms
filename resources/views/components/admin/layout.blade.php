@@ -30,22 +30,25 @@
                     @endif
                     <ul class="list-unstyled mb-3">
                         @foreach ($section['items'] as $item)
-                            @php($url = $item['url'] ?? route($item['route'], $item['params'] ?? []))
-                            @php($isActive = match (true) {
-                                // Content types: their list and everything below it.
-                                isset($item['url']) => url()->current() === $url || str_starts_with(url()->current(), $url.'/'),
-                                isset($item['params']) => url()->current() === $url,
-                                default => request()->routeIs($item['active']),
-                            })
-                            <li>
-                                <a href="{{ $url }}" @class(['pa-sidebar__link', 'is-active' => $isActive]) @if ($isActive) aria-current="page" @endif>
-                                    <i class="bi {{ $item['icon'] }}" aria-hidden="true"></i>
-                                    <span>{{ $item['label'] }}</span>
-                                    @if (! empty($item['badge']))
-                                        <span class="pa-sidebar__count">{{ $item['badge'] }}<span class="visually-hidden"> {{ $item['badge_label'] ?? '' }}</span></span>
-                                    @endif
-                                </a>
-                            </li>
+                            @if (isset($item['group']))
+                                <li>
+                                    {{-- Folding group; app.js remembers which ones were opened. --}}
+                                    <details class="pa-sidebar__group" data-nav-group="{{ $item['group'] }}" @if ($item['active']) open data-nav-current @endif>
+                                        <summary class="pa-sidebar__link pa-sidebar__summary">
+                                            <i class="bi {{ $item['icon'] }}" aria-hidden="true"></i>
+                                            <span>{{ $item['label'] }}</span>
+                                            <i class="bi bi-chevron-down pa-sidebar__chevron" aria-hidden="true"></i>
+                                        </summary>
+                                        <ul class="list-unstyled pa-sidebar__sub">
+                                            @foreach ($item['items'] as $child)
+                                                @include('components.admin.nav-link', ['item' => $child])
+                                            @endforeach
+                                        </ul>
+                                    </details>
+                                </li>
+                            @else
+                                @include('components.admin.nav-link', ['item' => $item])
+                            @endif
                         @endforeach
                     </ul>
                 @endforeach
