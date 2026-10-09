@@ -82,8 +82,7 @@ class ContentPayloadBuilder
      */
     public function archive(ContentType $type, ?string $view = null, ?string $category = null, int $page = 1): array
     {
-        $model = $type->modelClass();
-        $query = $model::query()->published()->with(array_filter(['featuredMedia', $type->taxonomy() ? 'terms' : null]));
+        $query = $type->query()->published()->with(array_filter(['featuredMedia', $type->taxonomy() ? 'terms' : null]));
 
         $views = $type->archiveViews();
         $view = $views === [] ? null : (isset($views[(string) $view]) ? $view : array_key_first($views));

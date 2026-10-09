@@ -1,9 +1,9 @@
 @php($key = $type->key())
 <x-admin.layout :title="$type->label()">
     <x-admin.page-header :title="$type->label()" :subtitle="'Published '.strtolower($type->label()).' appear at /'.$type->routePrefix().' and in '.$type->label().' blocks on pages.'">
-        @can('create', $type->modelClass())
+        @can($type->ability('create'))
             <x-slot:actions>
-                <a href="{{ route("admin.{$key}.create") }}" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> New {{ $type->singular() }}</a>
+                <a href="{{ $type->adminUrl('create') }}" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> New {{ $type->singular() }}</a>
             </x-slot:actions>
         @endcan
     </x-admin.page-header>
@@ -34,7 +34,7 @@
                         @foreach ($items as $item)
                             <tr>
                                 <td>
-                                    <a href="{{ route("admin.{$key}.edit", $item) }}" class="fw-semibold">{{ $item->title }}</a>
+                                    <a href="{{ $type->adminUrl('edit', $item) }}" class="fw-semibold">{{ $item->title }}</a>
                                     @if ($item->featured)<span class="pa-badge pa-badge--info ms-1">Featured</span>@endif
                                     @if ($subtitle = $type->listSubtitle($item))<div class="small">{{ $subtitle }}</div>@endif
                                     <div class="small text-body-secondary">{{ $item->url() }} · {{ $item->author?->name ?? '—' }}</div>
@@ -44,7 +44,7 @@
                                     @if ($item->publish_at)<span class="pa-badge pa-badge--warning">Scheduled</span>@endif
                                 </td>
                                 <td class="small">{{ $item->published_at?->diffForHumans() ?? '—' }}</td>
-                                <td class="text-end"><a href="{{ route("admin.{$key}.edit", $item) }}" class="btn btn-sm btn-outline-secondary">Open<span class="visually-hidden"> {{ $item->title }}</span></a></td>
+                                <td class="text-end"><a href="{{ $type->adminUrl('edit', $item) }}" class="btn btn-sm btn-outline-secondary">Open<span class="visually-hidden"> {{ $item->title }}</span></a></td>
                             </tr>
                         @endforeach
                     </tbody>

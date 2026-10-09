@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) approved and merged; Part 8C.1 (Team, Partners, Galleries) approved and merged; 8C.2 (Testimonials, Media Coverage, search) approved and merged; 8D (admin-made content types) is next.** See [docs/phase-reports/PHASE-8C2-REPORT.md](docs/phase-reports/PHASE-8C2-REPORT.md).
+- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) approved and merged; Part 8C.1 (Team, Partners, Galleries) approved and merged; 8C.2 (Testimonials, Media Coverage, search) approved and merged; 8D.1 (admin-made content types: engine and types) ready for review.** See [docs/phase-reports/PHASE-8D1-REPORT.md](docs/phase-reports/PHASE-8D1-REPORT.md).
 
 ## Requirements
 
@@ -28,6 +28,17 @@ In the `local` environment, `DevelopmentSeeder` creates one account per role (`<
 - Admin: `/admin` (sign in at `/auth/login`)
 - Public site: `/`
 - Public API: `/api/v1/*`
+
+## Demo content
+
+```bash
+php artisan pacms:demo --fresh   # wipes the database and uploaded media, then fills every area
+```
+
+Creates linked demo content through the real services: team, partners, galleries, programs, projects, events, news, publications, media coverage and testimonials in several workflow and moderation states, plus categories, media (images, PDFs, a private archive file), a sidebar and a call-to-action global block, and pages with blocks (Home is set as the home page). Run it again any time for a clean start. Local environment only; never in production.
+
+- Staff: `<role>@pacms.test` / `Aurora-dev-2026` (e.g. `editor@pacms.test`, `moderator@pacms.test`)
+- Registered users: `rahim@`, `nadia@`, `tanvir@`, `farzana@demo.pacms.test` / `Aurora-demo-2026`; `unverified@demo.pacms.test` has no verified e-mail
 
 ## Quality checks
 

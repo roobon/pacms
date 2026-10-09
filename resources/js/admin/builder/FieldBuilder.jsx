@@ -29,7 +29,7 @@ export default function FieldBuilder() {
     );
 }
 
-function FieldList({ list, path, depth, errors, types, disabled, onChange }) {
+export function FieldList({ list, path, depth, errors, types, disabled, onChange }) {
     const [open, setOpen] = useState(null);
     const update = (index, field) => onChange(list.map((current, i) => (i === index ? field : current)));
     const move = (index, delta) => {

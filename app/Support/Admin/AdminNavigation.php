@@ -44,6 +44,7 @@ final class AdminNavigation
                 ['label' => 'Global blocks', 'route' => 'admin.global-blocks.index', 'icon' => 'bi-globe2', 'active' => 'admin.global-blocks.*', 'can' => 'global_blocks.manage'],
                 ['label' => 'Templates', 'route' => 'admin.block-templates.index', 'icon' => 'bi-layout-wtf', 'active' => 'admin.block-templates.*', 'can' => 'templates.manage'],
                 ['label' => 'Custom blocks', 'route' => 'admin.block-types.index', 'icon' => 'bi-puzzle', 'active' => 'admin.block-types.*', 'can' => 'block_types.manage'],
+                ['label' => 'Content types', 'route' => 'admin.content-types.index', 'icon' => 'bi-collection', 'active' => 'admin.content-types.*', 'can' => 'content_types.manage'],
                 ['label' => 'Design Tokens', 'route' => 'admin.design.tokens', 'icon' => 'bi-palette', 'active' => 'admin.design.*', 'can' => 'design_tokens.manage'],
             ]],
             ['label' => 'System', 'items' => [
@@ -84,9 +85,8 @@ final class AdminNavigation
     {
         return array_values(array_map(fn (ContentType $type) => [
             'label' => $type->label(),
-            'route' => 'admin.'.$type->key().'.index',
+            'url' => $type->adminUrl(),
             'icon' => $type->icon(),
-            'active' => 'admin.'.$type->key().'.*',
             'can' => $type->ability('view'),
         ], app(ContentTypeRegistry::class)->all()));
     }

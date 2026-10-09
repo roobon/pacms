@@ -30,8 +30,7 @@ class ContentSource extends DynamicSource
 
     public function items(array $config): array
     {
-        $model = $this->type->modelClass();
-        $query = $model::query()->published()->with(array_filter([
+        $query = $this->type->query()->published()->with(array_filter([
             'featuredMedia',
             $this->type->taxonomy() ? 'terms' : null,
         ]));

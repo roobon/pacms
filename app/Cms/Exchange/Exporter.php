@@ -190,10 +190,10 @@ final class Exporter
      */
     private function link(array $link): array
     {
-        $model = app(ContentTypeRegistry::class)->models()[$link['entity']] ?? null;
+        $type = app(ContentTypeRegistry::class)->find((string) $link['entity']);
         $ref = match (true) {
             $link['entity'] === 'pages' => ($page = Page::query()->find($link['id'])) ? ['entity' => 'pages', 'path' => $page->path] : null,
-            $model !== null => ($item = $model::query()->find((int) $link['id'])) ? ['entity' => $link['entity'], 'slug' => $item->slug] : null,
+            $type !== null => ($item = $type->query()->find((int) $link['id'])) ? ['entity' => $link['entity'], 'slug' => $item->slug] : null,
             default => null,
         };
 

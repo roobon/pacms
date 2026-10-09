@@ -146,12 +146,14 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     @include pa-button(var(--pa-color-accent), color-mix(in srgb, var(--pa-color-accent) 88%, black), var(--pa-color-on-accent));
 }
 
+// On filled backgrounds the block styles set --pa-btn-outline (the readable text colour) and
+// --pa-btn-outline-hover (the fill), so outline buttons stay visible.
 .btn-outline-primary {
-    --bs-btn-color: var(--pa-color-primary);
-    --bs-btn-border-color: var(--pa-color-primary);
-    --bs-btn-hover-bg: var(--pa-color-primary);
-    --bs-btn-hover-border-color: var(--pa-color-primary);
-    --bs-btn-hover-color: var(--pa-color-on-primary);
+    --bs-btn-color: var(--pa-btn-outline, var(--pa-color-primary));
+    --bs-btn-border-color: var(--pa-btn-outline, var(--pa-color-primary));
+    --bs-btn-hover-bg: var(--pa-btn-outline, var(--pa-color-primary));
+    --bs-btn-hover-border-color: var(--pa-btn-outline, var(--pa-color-primary));
+    --bs-btn-hover-color: var(--pa-btn-outline-hover, var(--pa-color-on-primary));
     --bs-btn-active-bg: var(--pa-color-primary-strong);
     --bs-btn-active-color: var(--pa-color-on-primary);
 }
@@ -173,7 +175,8 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--pa-color-primary);
+    // On filled backgrounds the block styles set --pa-color-eyebrow to the readable text colour.
+    color: var(--pa-color-eyebrow, var(--pa-color-primary));
     margin-bottom: .5rem;
 }
 
@@ -410,7 +413,7 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
 
 // Blocks placed directly on the page (outside a section) line up with the site width
 // instead of running edge to edge.
-.pa-page-blocks > :where(:not(.pa-section, .pa-hero, .pa-global-block, .pa-custom-block, style)) {
+.pa-page-blocks > :where(:not(.pa-section, .pa-hero, .pa-slider, .pa-global-block, .pa-custom-block, style)) {
     @include make-container();
 
     @each $breakpoint, $max in $container-max-widths {
@@ -422,6 +425,17 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
 
 .pa-page-blocks > :where(.pa-cta) {
     padding-inline: calc(var(--bs-gutter-x, 1.5rem) * .5);
+}
+
+// The same for the blocks of a global block placed directly on the page (e.g. a call to action).
+.pa-page-blocks > .pa-global-block > :where(:not(.pa-section, .pa-hero, .pa-slider, .pa-global-block, .pa-custom-block, style)) {
+    @include make-container();
+
+    @each $breakpoint, $max in $container-max-widths {
+        @include media-breakpoint-up($breakpoint) {
+            max-width: $max;
+        }
+    }
 }
 
 .pa-columns {
@@ -1283,7 +1297,9 @@ img.pa-ratio {
         &:focus-visible { outline: 3px solid var(--pa-color-focus); outline-offset: 4px; }
     }
 
-    &__image img {
+    // The class is on the <img> itself (Image component).
+    &__image {
+        display: block;
         max-width: 100%;
         max-height: var(--pa-logo-height, 4rem);
         width: auto;
@@ -1298,9 +1314,9 @@ img.pa-ratio {
         text-align: center;
     }
 
-    &--grayscale &__image img { filter: grayscale(1); opacity: .75; }
-    &--grayscale &__link:hover &__image img,
-    &--grayscale &__link:focus-visible &__image img { filter: none; opacity: 1; }
+    &--grayscale &__image { filter: grayscale(1); opacity: .75; }
+    &--grayscale &__link:hover &__image,
+    &--grayscale &__link:focus-visible &__image { filter: none; opacity: 1; }
 }
 
 // Testimonials ----------------------------------------------------------------------
@@ -1385,7 +1401,7 @@ img.pa-ratio {
             font-family: var(--pa-font-heading);
         }
 
-        .pa-testimonial__by { text-align: start; }
+        .pa-testimonial__by { justify-content: center; }
     }
 }
 
@@ -1445,4 +1461,197 @@ img.pa-ratio {
     width: 1px;
     height: 1px;
     overflow: hidden;
+}
+
+// Partner cards: logos are shown whole, never cropped to the card's image ratio.
+.pa-collection--partners .pa-item__media img {
+    object-fit: contain;
+    padding: var(--pa-space-4);
+    // No blurred loading placeholder behind a logo shown whole (it would show around it).
+    background: #fff !important;
+}
+
+// Headings that receive focus after a page change (for screen readers) show no focus ring:
+// they are not interactive.
+h1[tabindex="-1"]:focus {
+    outline: none;
+}
+
+// Sidebars: the blocks of a sidebar (a global block) get the same breathing room as page text.
+.pa-with-sidebar__aside > * + *,
+.pa-with-sidebar__aside .pa-global-block > * + * {
+    margin-top: var(--pa-space-5);
+}
+
+// Quotes in rich text (article text, Text blocks).
+.pa-rich-text blockquote {
+    margin: var(--pa-space-5) 0;
+    padding: var(--pa-space-2) 0 var(--pa-space-2) var(--pa-space-5);
+    border-left: 4px solid var(--pa-color-primary);
+    font-size: var(--pa-font-size-lg, 1.125rem);
+    font-style: italic;
+    color: var(--pa-color-heading);
+
+    p:last-child { margin-bottom: 0; }
+}
+
+// Slider (full-width slideshow) --------------------------------------------------------
+.pa-slider {
+    position: relative;
+    background: var(--pa-color-bg-dark);
+
+    &__slides {
+        display: grid; // slides stacked in one cell, so the tallest one sets the height
+    }
+
+    &__slide {
+        grid-area: 1 / 1;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .7s ease, visibility 0s linear .7s;
+
+        &.is-active {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity .7s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none !important;
+        }
+    }
+
+    --pa-slider-height: 70vh;
+    &--small { --pa-slider-height: 50vh; }
+    &--large { --pa-slider-height: 90vh; }
+
+    &__controls {
+        position: absolute;
+        inset: auto 0 var(--pa-space-5);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--pa-space-3);
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .9);
+        color: #0B1628;
+        font-size: 1.25rem;
+        box-shadow: var(--pa-shadow-sm);
+
+        &:hover { background: #fff; }
+        &:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(0, 0, 0, .5); }
+    }
+
+    &__dots {
+        display: flex;
+        gap: var(--pa-space-2);
+    }
+
+    &__dot {
+        width: .875rem;
+        height: .875rem;
+        padding: 0;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, .35);
+
+        &[aria-current="true"] { background: #fff; }
+        &:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    }
+}
+
+.pa-slide {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--pa-slider-height, 70vh);
+    padding-block: var(--pa-space-9) calc(var(--pa-space-9) + 2rem); // room for the controls
+    overflow: hidden;
+
+    &__image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    // The shade keeps text readable on any photo.
+    &--dark::before,
+    &--light::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+
+    &--dark::before { background: linear-gradient(90deg, rgba(11, 22, 40, .82) 0%, rgba(11, 22, 40, .45) 60%, rgba(11, 22, 40, .25) 100%); }
+    &--light::before { background: linear-gradient(90deg, rgba(255, 255, 255, .9) 0%, rgba(255, 255, 255, .55) 60%, rgba(255, 255, 255, .3) 100%); }
+    &--center.pa-slide--dark::before { background: rgba(11, 22, 40, .6); }
+    &--center.pa-slide--light::before { background: rgba(255, 255, 255, .72); }
+
+    &--dark {
+        color: #fff;
+        --pa-color-heading: #fff;
+        --pa-color-body: #fff;
+        --bs-heading-color: #fff;
+        --bs-body-color: #fff;
+        --pa-color-muted: rgba(255, 255, 255, .85);
+        --pa-color-eyebrow: #fff;
+        --pa-btn-outline: #fff;
+        --pa-btn-outline-hover: #0B1628;
+    }
+
+    &__content {
+        position: relative;
+        z-index: 1;
+
+        > * { max-width: 40rem; }
+        .pa-button-group { margin-top: var(--pa-space-5); }
+    }
+
+    &--center &__content {
+        text-align: center;
+
+        > * { margin-inline: auto; }
+        .pa-button-group { justify-content: center; }
+    }
+}
+
+// Sections of admin-made content types (one per field shown as a section).
+.pa-field-section {
+    margin: var(--pa-space-6, 2rem) 0;
+
+    &__image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--pa-radius-lg);
+    }
+
+    &__rows {
+        display: grid;
+        gap: var(--pa-space-3);
+
+        > li {
+            padding: var(--pa-space-4);
+            border: 1px solid var(--pa-color-border);
+            border-radius: var(--pa-radius-md, .625rem);
+        }
+
+        dt { font-size: var(--pa-font-size-sm); font-weight: 600; color: var(--pa-color-muted); }
+        dd { margin: 0 0 var(--pa-space-2); }
+        dd:last-child { margin-bottom: 0; }
+    }
 }

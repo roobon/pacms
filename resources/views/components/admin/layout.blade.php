@@ -30,8 +30,13 @@
                     @endif
                     <ul class="list-unstyled mb-3">
                         @foreach ($section['items'] as $item)
-                            @php($url = route($item['route'], $item['params'] ?? []))
-                            @php($isActive = isset($item['params']) ? url()->current() === $url : request()->routeIs($item['active']))
+                            @php($url = $item['url'] ?? route($item['route'], $item['params'] ?? []))
+                            @php($isActive = match (true) {
+                                // Content types: their list and everything below it.
+                                isset($item['url']) => url()->current() === $url || str_starts_with(url()->current(), $url.'/'),
+                                isset($item['params']) => url()->current() === $url,
+                                default => request()->routeIs($item['active']),
+                            })
                             <li>
                                 <a href="{{ $url }}" @class(['pa-sidebar__link', 'is-active' => $isActive]) @if ($isActive) aria-current="page" @endif>
                                     <i class="bi {{ $item['icon'] }}" aria-hidden="true"></i>

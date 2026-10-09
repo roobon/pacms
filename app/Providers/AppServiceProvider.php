@@ -9,6 +9,8 @@ use App\Cms\Design\DesignTokenService;
 use App\Cms\Sources\SourceRegistry;
 use App\Models\BlockTemplate;
 use App\Models\BlockType;
+use App\Models\CustomContentType;
+use App\Models\CustomItem;
 use App\Models\Event as EventItem;
 use App\Models\Gallery;
 use App\Models\GlobalBlock;
@@ -69,6 +71,8 @@ class AppServiceProvider extends ServiceProvider
             'gallery' => Gallery::class,
             'media_coverage' => MediaCoverage::class,
             'testimonial' => Testimonial::class,
+            'content_type' => CustomContentType::class,
+            'custom_item' => CustomItem::class,
             'global_block' => GlobalBlock::class,
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,
@@ -90,7 +94,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Site search: pages and every module item are re-indexed when they change.
         Page::observe(SearchObserver::class);
-        foreach ($this->app->make(ContentTypeRegistry::class)->models() as $model) {
+        // Admin-made types share one model: observe it once, also before any type exists
+        // (a type can be created later in the same process).
+        foreach (array_unique([...array_values($this->app->make(ContentTypeRegistry::class)->models()), CustomItem::class]) as $model) {
             $model::observe(SearchObserver::class);
         }
 

@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/scss/admin.scss',
                 'resources/js/admin/app.js',
                 'resources/js/admin/islands/content-fields.jsx',
+                'resources/js/admin/islands/content-type-fields.jsx',
                 'resources/js/admin/islands/media-picker.jsx',
                 'resources/js/admin/islands/page-builder.jsx',
                 'resources/js/admin/islands/summary-editor.jsx',

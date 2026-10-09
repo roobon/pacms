@@ -4,6 +4,7 @@ import GalleryGrid from '../../blocks/display/GalleryGrid.jsx';
 import ItemsDisplay from '../../blocks/display/ItemsDisplay.jsx';
 import LogoWall from '../../blocks/display/LogoWall.jsx';
 import BlockStyles from '../../blocks/BlockStyles.jsx';
+import { VideoBlock } from '../../blocks/components/basic.jsx';
 import Breadcrumbs from '../components/common/Breadcrumbs.jsx';
 import Image from '../components/common/Image.jsx';
 import SeoHead from '../components/common/SeoHead.jsx';
@@ -30,6 +31,9 @@ export default function ContentView({ item }) {
                 // Article text: rich text cleaned on the server (same allowlist as Text blocks).
                 <div className="pa-rich-text pa-article-body" dangerouslySetInnerHTML={{ __html: item.body }} />
             )}
+            {(item.sections ?? []).map((section) => (
+                <FieldSection key={section.key} section={section} />
+            ))}
             {item.gallery?.length > 0 && <GalleryGrid items={item.gallery} columns={sidebar ? 3 : 4} showCaptions label={item.title} />}
             {(item.lists ?? []).map((list) => (
                 <ContentList key={list.key} list={list} />
@@ -113,6 +117,48 @@ function Facts({ facts, actions }) {
                         </a>
                     ))}
                 </div>
+            )}
+        </section>
+    );
+}
+
+/**
+ * A field of an admin-made content type shown as its own section: rich text, text, an
+ * image, a file to download, a video (click to load) or a list of rows.
+ */
+function FieldSection({ section }) {
+    const headingId = `section-${section.key}`;
+
+    return (
+        <section className="pa-field-section" aria-labelledby={headingId}>
+            <h2 id={headingId} className="h4">
+                {section.title}
+            </h2>
+            {section.kind === 'html' && <div className="pa-rich-text" dangerouslySetInnerHTML={{ __html: section.html }} />}
+            {section.kind === 'text' && <p className="pa-pre-line">{section.text}</p>}
+            {section.kind === 'image' && <Image image={section.image} className="pa-field-section__image" />}
+            {section.kind === 'file' && (
+                <a className="btn btn-outline-primary" href={section.file.url} download>
+                    <i className="bi bi-download me-1" aria-hidden="true" />
+                    {section.file.name} <span className="small opacity-75">({section.file.extension}, {section.file.size})</span>
+                </a>
+            )}
+            {section.kind === 'video' && <VideoBlock node={{ uuid: `field-${section.key}`, content: { url: section.video, title: section.title } }} preview={false} />}
+            {section.kind === 'rows' && (
+                <ul className="pa-field-section__rows list-unstyled">
+                    {section.rows.map((row, index) => (
+                        <li key={index}>
+                            <dl className="mb-0">
+                                {Object.entries(row).map(([key, value]) => (
+                                    <div key={key}>
+                                        <dt>{section.labels[key] ?? key}</dt>
+                                        <dd className="pa-pre-line">{String(value)}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        </li>
+                    ))}
+                </ul>
             )}
         </section>
     );

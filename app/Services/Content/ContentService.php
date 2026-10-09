@@ -52,9 +52,7 @@ class ContentService
         $blocks = array_key_exists('blocks', $data) ? $this->blockValidator->validate((array) $data['blocks'], $user) : null;
 
         return DB::transaction(function () use ($type, $user, $data, $blocks) {
-            $model = $type->modelClass();
-            /** @var ContentItem $item */
-            $item = new $model;
+            $item = $type->newItem();
             $item->forceFill($this->attributes($type, $data));
             $item->slug = $this->uniqueSlug($type, (string) ($data['slug'] ?? '') ?: (string) $data['title']);
             $item->author_id = $user->id;
@@ -240,9 +238,8 @@ class ContentService
     public function publishDue(ContentType $type): int
     {
         $count = 0;
-        $model = $type->modelClass();
 
-        $model::query()
+        $type->query()
             ->where('status', ContentStatus::Approved)
             ->whereNotNull('publish_at')
             ->where('publish_at', '<=', now())
@@ -339,14 +336,14 @@ class ContentService
      */
     private function saveRelation(ContentItem $item, string $name, array $field, array $ids): void
     {
-        $model = $this->types->get((string) $field['target'])->modelClass();
+        $target = $this->types->get((string) $field['target']);
         $ids = array_values(array_filter(array_map('intval', $ids)));
         if (empty($field['multiple'])) {
             $ids = array_slice($ids, 0, 1);
         }
         // Only items that exist (deleted ones are dropped); order as chosen.
-        $existing = $model::query()->whereKey($ids)->pluck('id')->map(fn ($id) => (int) $id)->all();
-        $item->syncRelated($name, (new $model)->getMorphClass(), array_values(array_filter($ids, fn (int $id) => in_array($id, $existing, true))));
+        $existing = $target->query()->whereKey($ids)->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $item->syncRelated($name, $target->newItem()->getMorphClass(), array_values(array_filter($ids, fn (int $id) => in_array($id, $existing, true))));
     }
 
     /**
@@ -450,9 +447,9 @@ class ContentService
         $base = Str::limit(Str::slug($wanted) ?: $type->routePrefix().'-item', 180, '');
         $candidate = $base;
         $n = 2;
-        $model = $type->modelClass();
 
-        while ($model::withTrashed()->where('slug', $candidate)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
+        // Slugs are unique per type (deleted items keep theirs, so restored links still work).
+        while ($type->query()->withTrashed()->where('slug', $candidate)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
             $candidate = "{$base}-{$n}";
             $n++;
         }

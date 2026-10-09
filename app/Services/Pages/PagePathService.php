@@ -2,6 +2,7 @@
 
 namespace App\Services\Pages;
 
+use App\Cms\Content\ContentTypeRegistry;
 use App\Models\Page;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -32,6 +33,11 @@ class PagePathService
 
         if ($parent === null && in_array($slug, config('pacms.pages.reserved_slugs'), true)) {
             throw ValidationException::withMessages(['slug' => __('":slug" is reserved by the system. Choose another URL.', ['slug' => $slug])]);
+        }
+
+        // Content types made in the admin own their URL prefix too.
+        if ($parent === null && ($type = app(ContentTypeRegistry::class)->forRoutePrefix($slug)) !== null) {
+            throw ValidationException::withMessages(['slug' => __('/:slug is the address of :label. Choose another URL.', ['slug' => $slug, 'label' => $type->label()])]);
         }
 
         if ($parent !== null && $page->exists) {

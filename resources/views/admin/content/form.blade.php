@@ -10,7 +10,7 @@
 @endphp
 <x-admin.layout :title="$heading">
     <x-admin.page-header :title="$heading" :subtitle="$editing ? $item->url() : ucfirst($type->singular()).' starts as a draft. Nothing is public until it is published.'">
-        <x-slot:actions><a href="{{ route("admin.{$key}.index") }}" class="btn btn-link">All {{ strtolower($type->label()) }}</a></x-slot:actions>
+        <x-slot:actions><a href="{{ $type->adminUrl('index') }}" class="btn btn-link">All {{ strtolower($type->label()) }}</a></x-slot:actions>
     </x-admin.page-header>
 
     @if ($readonly)
@@ -28,7 +28,7 @@
 
     <div class="row g-4">
         <div class="col-xl-8">
-            <form id="content-form" method="POST" action="{{ $editing ? route("admin.{$key}.update", $item) : route("admin.{$key}.store") }}" novalidate>
+            <form id="content-form" method="POST" action="{{ $editing ? $type->adminUrl('update', $item) : $type->adminUrl('store') }}" novalidate>
                 @csrf
                 @if ($editing) @method('PUT') <input type="hidden" name="lock_version" value="{{ $item->lock_version }}"> @endif
                 @error('lock_version')<div class="alert alert-danger pa-alert" role="alert">{{ $message }}</div>@enderror
@@ -85,6 +85,24 @@
                                                 @if (! empty($field['help']))<div id="field-{{ $name }}-help" class="form-text">{{ $field['help'] }}</div>@endif
                                                 @error($name)<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
+                                        @elseif ($field['type'] === 'rich-text')
+                                            <x-admin.field :name="$name" :label="$field['label']" type="textarea" rows="8" :value="$value" :help="$field['help'] ?? null"
+                                                :required="in_array('required', $field['rules'], true)" data-rich-editor />
+                                        @elseif ($field['type'] === 'checklist')
+                                            @php $chosen = array_map('strval', (array) old($name, $value ?? [])); @endphp
+                                            <fieldset class="mb-3" @if (! empty($field['help'])) aria-describedby="field-{{ $name }}-help" @endif>
+                                                <legend class="form-label fs-6">{{ $field['label'] }}</legend>
+                                                <div class="pa-checklist">
+                                                    @foreach ($field['options'] as $optionValue => $optionLabel)
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="{{ $name }}[]" value="{{ $optionValue }}" id="field-{{ $name }}-{{ $optionValue }}" @checked(in_array((string) $optionValue, $chosen, true))>
+                                                            <label class="form-check-label" for="field-{{ $name }}-{{ $optionValue }}">{{ $optionLabel }}</label>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                @if (! empty($field['help']))<div id="field-{{ $name }}-help" class="form-text">{{ $field['help'] }}</div>@endif
+                                                @error($name)<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                                            </fieldset>
                                         @elseif ($field['type'] === 'media')
                                             <x-admin.media-picker :name="$name" :label="$field['label']" :media="$mediaFields[$name] ?? null" :kind="$field['media_kind'] ?? 'image'"
                                                 :visibility="$field['visibility'] ?? null" :help="$field['help'] ?? null" :disabled="$readonly" />
@@ -109,7 +127,7 @@
                                                 <fieldset class="mb-3">
                                                     <legend class="form-label fs-6">{{ $field['label'] }}</legend>
                                                     @if ($options === [])
-                                                        <p class="small text-body-secondary mb-0">No {{ strtolower($targetType->label()) }} yet.@can($targetType->ability('create')) <a href="{{ route('admin.'.$targetType->key().'.create') }}">Add one</a>.@endcan</p>
+                                                        <p class="small text-body-secondary mb-0">No {{ strtolower($targetType->label()) }} yet.@can($targetType->ability('create')) <a href="{{ $targetType->adminUrl('create') }}">Add one</a>.@endcan</p>
                                                     @else
                                                         <div class="pa-checklist">
                                                             @foreach ($options as $optionId => $optionLabel)
@@ -338,7 +356,7 @@
                                 <button type="submit" form="content-form" class="btn btn-primary">{{ ! $editing ? 'Create draft' : ($item->isPublished() ? 'Save and update live' : 'Save') }}</button>
                             @endif
                             @if ($editing)
-                                <a href="{{ route("admin.{$key}.preview", $item) }}" class="btn btn-outline-secondary" target="_blank" rel="noopener">
+                                <a href="{{ $type->adminUrl('preview', $item) }}" class="btn btn-outline-secondary" target="_blank" rel="noopener">
                                     <i class="bi bi-eye" aria-hidden="true"></i> Preview<span class="visually-hidden"> (opens in new tab)</span>
                                 </a>
                             @endif
@@ -350,7 +368,7 @@
                             <div class="d-grid gap-2">
                                 @foreach ($actions as $action)
                                     @continue(in_array($action, [WorkflowAction::Schedule, WorkflowAction::RequestChanges], true))
-                                    <form method="POST" action="{{ route("admin.{$key}.workflow", $item) }}"
+                                    <form method="POST" action="{{ $type->adminUrl('workflow', $item) }}"
                                           @if (in_array($action, [WorkflowAction::Unpublish, WorkflowAction::Archive], true)) data-confirm="{{ $action->label() }} “{{ $item->title }}”? It will no longer be visible on the website." @endif>
                                         @csrf
                                         <input type="hidden" name="action" value="{{ $action->value }}">
@@ -364,7 +382,7 @@
                                 @endforeach
 
                                 @if (in_array(WorkflowAction::RequestChanges, $actions, true))
-                                    <form method="POST" action="{{ route("admin.{$key}.workflow", $item) }}" class="border rounded p-2">
+                                    <form method="POST" action="{{ $type->adminUrl('workflow', $item) }}" class="border rounded p-2">
                                         @csrf
                                         <input type="hidden" name="action" value="request_changes">
                                         <label for="rc-note" class="form-label small mb-1">Note for the author</label>
@@ -374,7 +392,7 @@
                                 @endif
 
                                 @if (in_array(WorkflowAction::Schedule, $actions, true))
-                                    <form method="POST" action="{{ route("admin.{$key}.workflow", $item) }}" class="border rounded p-2">
+                                    <form method="POST" action="{{ $type->adminUrl('workflow', $item) }}" class="border rounded p-2">
                                         @csrf
                                         <input type="hidden" name="action" value="schedule">
                                         <label for="schedule-at" class="form-label small mb-1">Publish automatically at ({{ $siteTimezone }})</label>
@@ -397,7 +415,7 @@
                     <section class="card pa-card mb-4" aria-labelledby="revisions-heading">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h2 id="revisions-heading" class="h6 mb-0">Revisions</h2>
-                            <a href="{{ route("admin.{$key}.revisions", $item) }}" class="small">All &amp; compare</a>
+                            <a href="{{ $type->adminUrl('revisions', $item) }}" class="small">All &amp; compare</a>
                         </div>
                         <ul class="list-group list-group-flush small">
                             @foreach ($revisions as $revision)
@@ -413,7 +431,7 @@
                     </section>
 
                     @can('delete', $item)
-                        <form method="POST" action="{{ route("admin.{$key}.destroy", $item) }}" data-confirm="Delete “{{ $item->title }}”? @if ($item->isPublished()) It will be removed from the website. @endif">
+                        <form method="POST" action="{{ $type->adminUrl('destroy', $item) }}" data-confirm="Delete “{{ $item->title }}”? @if ($item->isPublished()) It will be removed from the website. @endif">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-link text-danger p-0"><i class="bi bi-trash" aria-hidden="true"></i> Delete {{ $type->singular() }}</button>
                         </form>

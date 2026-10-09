@@ -274,15 +274,15 @@ final class PortableTranslator
 
         $ref = (array) ($value['ref']['$ref'] ?? []);
         $entity = (string) ($ref['entity'] ?? '');
-        $model = app(ContentTypeRegistry::class)->models()[$entity] ?? null;
+        $type = app(ContentTypeRegistry::class)->find($entity);
         $target = match (true) {
             $entity === 'pages' => self::findPage($ref),
-            $model !== null => is_string($ref['slug'] ?? null) ? $model::query()->where('slug', $ref['slug'])->first() : null,
+            $type !== null => is_string($ref['slug'] ?? null) ? $type->query()->where('slug', $ref['slug'])->first() : null,
             default => null,
         };
 
         if ($target === null) {
-            $this->report->warning('references', ($entity === 'pages' || $model !== null)
+            $this->report->warning('references', ($entity === 'pages' || $type !== null)
                 ? __('Link target :ref was not found; the link was removed.', ['ref' => (string) json_encode($ref, JSON_UNESCAPED_SLASHES)])
                 : __('Links to ":entity" are not available yet; the link was removed.', ['entity' => $entity]), $pointer, $key);
 

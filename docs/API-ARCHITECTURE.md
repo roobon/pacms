@@ -17,7 +17,7 @@
 | **Auth endpoints** | `/auth/*` | SPA login/registration | Fortify (JSON responses) + CSRF | Fortify routes |
 | **Preview API** | `/api/v1/preview/*` | SPA preview route | signed URL **and** session with view permission | `routes/api.php` |
 | **Admin API** | `/admin/api/*` | Admin React islands only | `web` session + CSRF + `admin.access` + per-action policy | `routes/admin.php` |
-| **Feeds / SEO files** | `/rss.xml`, `/rss/*`, `/sitemap*.xml`, `/robots.txt` | aggregators, crawlers | none | `routes/web.php` |
+| **Feeds / SEO files** | `/feed.json`, `/feed/*.json`, `/sitemap*.xml`, `/robots.txt` | aggregators, crawlers | none | `routes/web.php` |
 
 Admin CRUD itself is **not** an API: Blade forms post to `/admin/*` web routes.
 
@@ -221,12 +221,12 @@ Server-side, payloads are cached with **cache-version keys** (CMS-ARCHITECTURE.m
 
 ---
 
-## 7. Feeds and SEO endpoints (non-JSON)
+## 7. Feeds and SEO endpoints (outside `/api/v1`)
 
 | Path | Output |
 |---|---|
-| `/rss.xml` | RSS 2.0, combined latest items |
-| `/rss/news.xml`, `/rss/events.xml`, `/rss/projects.xml`, `/rss/programs.xml`, `/rss/publications.xml` | Per-type RSS. Optional `?category={slug}` (whitelisted to that type's taxonomy; unknown slug → 404) |
+| `/feed.json` | JSON Feed 1.1, combined latest items (D-15; no RSS output) |
+| `/feed/{type}.json` (e.g. `/feed/news.json`) | Per-type JSON Feed. Optional `?category={slug}` (whitelisted to that type's taxonomy; unknown slug → 404). See CMS-ARCHITECTURE §16.1 |
 | `/sitemap.xml` | sitemap index → `/sitemaps/{type}.xml` |
 | `/robots.txt` | from settings, and always includes the `Sitemap:` line |
 | `/events/{slug}.ics` | iCalendar for one event |

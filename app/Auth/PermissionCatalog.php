@@ -2,6 +2,9 @@
 
 namespace App\Auth;
 
+use App\Models\CustomContentType;
+use Illuminate\Database\QueryException;
+
 /**
  * Single source of truth for PACMS permissions and the default role matrix
  * (SECURITY-ARCHITECTURE.md §3). Used by the seeder, admin role screens and tests.
@@ -50,7 +53,7 @@ final class PermissionCatalog
             'Media' => ['media.view', 'media.upload', 'media.update', 'media.delete', 'media.force_delete', 'media.upload_svg'],
             'Blocks & Design' => [
                 'blocks.custom_css', 'blocks.custom_attributes', 'blocks.custom_html', 'block_types.manage', 'templates.manage',
-                'global_blocks.manage', 'global_blocks.detach', 'menus.manage', 'design_tokens.manage',
+                'global_blocks.manage', 'global_blocks.detach', 'menus.manage', 'design_tokens.manage', 'content_types.manage',
             ],
             'Integrations' => ['external_sources.manage', 'external_sources.sync', 'facebook.connect'],
             'SEO' => ['seo.manage', 'redirects.manage'],
@@ -58,7 +61,39 @@ final class PermissionCatalog
             'Import / Export' => ['import.run', 'export.run'],
             'Users' => ['users.view', 'users.manage', 'users.manage_roles'],
             'System' => ['settings.manage', 'activity_log.view', 'backups.manage', 'revisions.restore'],
-        ];
+        ] + self::adminMadeGroups();
+    }
+
+    /**
+     * Permissions of a content type made in the admin (Phase 8D): the editorial set, or one
+     * "manage" permission for types that are simply active or inactive.
+     *
+     * @return list<string>
+     */
+    public static function forAdminMadeType(string $key, string $workflow): array
+    {
+        return $workflow === 'managed' ? ["{$key}.manage"] : self::expand([$key], self::EDITORIAL_ACTIONS);
+    }
+
+    /**
+     * Groups for the content types made in the admin (disabled ones too: their permissions stay).
+     *
+     * @return array<string, list<string>>
+     */
+    private static function adminMadeGroups(): array
+    {
+        try {
+            $types = CustomContentType::query()->orderBy('label')->get(['key', 'label', 'workflow']);
+        } catch (QueryException) {
+            return []; // before the 8D migration
+        }
+
+        $groups = [];
+        foreach ($types as $type) {
+            $groups[$type->label.' (content type)'] = self::forAdminMadeType($type->key, $type->workflow);
+        }
+
+        return $groups;
     }
 
     /** @return list<string> */

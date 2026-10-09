@@ -5,6 +5,7 @@ use App\Enums\WorkflowAction;
 use App\Models\ContentItem;
 use App\Models\SearchDocument;
 use App\Services\Content\ContentService;
+use App\Services\Content\ContentTypeService;
 use App\Services\Publishing\PublishingService;
 use App\Services\Search\SearchService;
 
@@ -95,4 +96,20 @@ it('rebuilds the whole index from what is published', function () {
 
     $this->artisan('pacms:search:rebuild')->expectsOutputToContain('Indexed 2')->assertSuccessful();
     $this->getJson('/api/v1/search?q=eco-schools')->assertJsonPath('data.0.title', 'Eco-Schools');
+});
+
+it('finds items of content types made in the admin, by their own fields too', function () {
+    app(ContentTypeService::class)->create(userWithRole('super-admin'), [
+        'label' => 'Success stories', 'workflow' => 'editorial',
+        'fields' => [['key' => 'school', 'type' => 'text', 'label' => 'School'], ['key' => 'note', 'type' => 'textarea', 'label' => 'Note']],
+        'display' => ['note' => 'hidden'],
+    ]);
+    searchItem('success_stories', ['title' => 'Green Flag day', 'school' => 'Sundarbans Academy', 'note' => 'Confidential budget']);
+
+    $this->getJson('/api/v1/search?q=sundarbans')
+        ->assertJsonPath('data.0.title', 'Green Flag day')
+        ->assertJsonPath('data.0.type_label', 'Success stories')
+        ->assertJsonPath('data.0.url', '/success-stories/green-flag-day');
+    // Hidden fields are not searchable.
+    $this->getJson('/api/v1/search?q=confidential')->assertJsonPath('meta.total', 0);
 });

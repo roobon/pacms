@@ -266,8 +266,8 @@ class BlockPayloadResolver
      */
     private function collectLinks(array $nodes): array
     {
-        $models = app(ContentTypeRegistry::class)->models();
-        $ids = array_fill_keys(['pages', ...array_keys($models)], []);
+        $types = app(ContentTypeRegistry::class)->all();
+        $ids = array_fill_keys(['pages', ...array_keys($types)], []);
 
         $walk = function (mixed $value) use (&$walk, &$ids) {
             if (! is_array($value)) {
@@ -290,9 +290,9 @@ class BlockPayloadResolver
             }
         }
 
-        foreach ($models as $key => $model) {
+        foreach ($types as $key => $type) {
             if ($ids[$key] !== []) {
-                foreach ($model::query()->whereKey(array_unique($ids[$key]))->get() as $item) {
+                foreach ($type->query()->whereKey(array_unique($ids[$key]))->get() as $item) {
                     $links[$key][$item->id] = $item->isPublished() ? $item->url() : null;
                 }
             }

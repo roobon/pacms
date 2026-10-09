@@ -183,6 +183,7 @@ The block engine and builder are the most complex parts and are isolated in `app
 | **D-12** | Third-party libraries | PHP: Fortify, Sanctum, Spatie Permission, symfony/html-sanitizer 7.4, sabberworm/php-css-parser, intervention/image, opis/json-schema, simplepie (confirmed in Phase 10), spatie/laravel-backup, enshrined/svg-sanitize (only if D-10 enables SVG), Pest 4, Pint, Larastan. JS: React 19, React Router, TanStack Query, axios, Bootstrap 5.3 + Icons, **Zustand** (builder state), **dnd-kit** (drag and drop), **TipTap** (rich-text editor, MIT core), Vitest + Testing Library. | Each library can be challenged individually |
 | **D-13** | SEO approach | Server-assisted SPA shell (status codes, meta, OG, JSON-LD, initial data) | Full SSR (adds a Node server) or a pure SPA (broken social previews) |
 | **D-14** | Documentation location | `docs/` in the repository, with decisions continued in `docs/DECISIONS.md` | Project root |
+| **D-15** | Feed format for sharing content | **JSON Feed 1.1** out (`/feed.json`, `/feed/{type}.json`); read JSON Feed first, RSS/Atom as fallback. Decided by the team lead, 2026-10-09 | RSS 2.0 out (the original plan) |
 
 ---
 
