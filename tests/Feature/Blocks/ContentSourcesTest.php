@@ -131,6 +131,11 @@ it('serves external items through a registered provider, never a raw URL', funct
         {
             return ['external'];
         }
+
+        public function externalProviders(): array
+        {
+            return ['demo'];
+        }
     };
     app(BlockRegistry::class)->register($type);
     app(BlockRegistry::class)->sync();

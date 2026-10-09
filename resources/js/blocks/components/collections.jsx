@@ -104,3 +104,10 @@ export function TestimonialsBlock({ node, preview }) {
         </div>
     );
 }
+
+/** Items of an external feed; external links open in a new tab (ItemCard). */
+export function FeedBlock({ node, preview }) {
+    const showSource = node.content.show_source !== false;
+    const items = showSource ? node.items : (node.items ?? []).map((item) => ({ ...item, meta: { ...item.meta, source: undefined } }));
+    return <CollectionBlock node={{ ...node, items }} preview={preview} />;
+}

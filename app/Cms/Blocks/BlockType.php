@@ -44,6 +44,17 @@ abstract class BlockType
         return ['static'];
     }
 
+    /**
+     * External providers whose sources this block can show (e.g. ["feed"]), when it supports
+     * external mode.
+     *
+     * @return list<string>
+     */
+    public function externalProviders(): array
+    {
+        return [];
+    }
+
     /** Dynamic entity for this block (e.g. "news"), when it supports dynamic mode. */
     public function dynamicEntity(): ?string
     {
@@ -192,6 +203,7 @@ abstract class BlockType
             'capabilities' => [
                 'source_modes' => $this->sourceModes(),
                 'dynamic_entity' => $this->dynamicEntity(),
+                'external_providers' => $this->externalProviders(),
                 'display_modes' => $this->displayModes(),
                 'allowed_children' => $this->allowedChildren(),
                 'excluded_children' => $this->excludedChildren(),

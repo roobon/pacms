@@ -29,6 +29,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="{{ $site['theme']['stylesheet'] }}">
+    <link rel="alternate" type="application/feed+json" title="{{ $site['name'] }}" href="{{ url('/feed.json') }}">
     @viteReactRefresh
     @vite(['resources/scss/public.scss', 'resources/js/public/main.jsx'])
 

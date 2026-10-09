@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CustomBlockTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
 use App\Http\Controllers\Admin\ExportController;
+use App\Http\Controllers\Admin\ExternalSourceController;
 use App\Http\Controllers\Admin\GlobalBlockController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
@@ -144,6 +145,12 @@ Route::post('media-coverage/{item}/check-source', [MediaCoverageController::clas
     ->whereNumber('item')->middleware('throttle:20,1')->name('media_coverage.check-source');
 
 // Reusable blocks (Phase 5): global blocks, templates, custom block types
+// Phase 10: external sources (permissions checked in the controller: manage or sync).
+Route::post('external-sources/test', [ExternalSourceController::class, 'test'])->name('external-sources.test');
+Route::resource('external-sources', ExternalSourceController::class)->except('show');
+Route::post('external-sources/{external_source}/sync', [ExternalSourceController::class, 'syncNow'])->name('external-sources.sync');
+Route::post('external-sources/{external_source}/clear', [ExternalSourceController::class, 'clear'])->name('external-sources.clear');
+
 // Phase 9: menus and their builder.
 Route::middleware('can:menus.manage')->group(function () {
     Route::resource('menus', MenuController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);

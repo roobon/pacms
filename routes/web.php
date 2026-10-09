@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Public\CoverageArchiveController;
+use App\Http\Controllers\Public\JsonFeedController;
 use App\Http\Controllers\Public\PreviewController;
 use App\Http\Controllers\Public\SeoFilesController;
 use App\Http\Controllers\Public\SpaController;
@@ -17,6 +18,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('robots.txt', [SeoFilesController::class, 'robots'])->name('robots');
+// JSON Feed 1.1 (D-15): sharing content with other sites.
+Route::middleware('cache.headers:public;max_age=600;etag')->group(function () {
+    Route::get('feed.json', [JsonFeedController::class, 'combined'])->name('feed');
+    Route::get('feed/{module}.json', [JsonFeedController::class, 'module'])->where('module', '[a-z0-9-]+')->name('feed.module');
+});
 Route::get('sitemap.xml', [SeoFilesController::class, 'index'])->name('sitemap');
 Route::get('sitemaps/pages.xml', [SeoFilesController::class, 'pages'])->name('sitemap.pages');
 Route::get('sitemaps/{module}.xml', [SeoFilesController::class, 'module'])->where('module', '[a-z0-9-]+')->name('sitemap.module');

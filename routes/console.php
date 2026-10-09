@@ -2,6 +2,7 @@
 
 use App\Jobs\QueueHeartbeat;
 use App\Models\ActivityLog;
+use App\Models\ExternalSyncLog;
 use App\Services\System\HealthCheck;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
@@ -27,7 +28,7 @@ if (! config('pacms.queue.managed_worker')) {
         ->runInBackground();
 }
 
-Schedule::command('model:prune', ['--model' => [ActivityLog::class]])->daily();
+Schedule::command('model:prune', ['--model' => [ActivityLog::class, ExternalSyncLog::class]])->daily();
 
 // Scheduled publishing and revision retention.
 Schedule::command('pacms:publish-scheduled')->everyMinute()->withoutOverlapping();
@@ -38,3 +39,6 @@ Schedule::command('pacms:coverage:check')->everyFifteenMinutes()->withoutOverlap
 
 // Testimonials: remove submitters' IP addresses after the retention period.
 Schedule::command('pacms:testimonials:purge-ips')->daily();
+
+// External sources (feeds): queue the ones that are due; visitors never trigger a sync.
+Schedule::command('pacms:external:sync')->everyMinute()->withoutOverlapping();

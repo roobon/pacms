@@ -31,7 +31,7 @@ class SitePayload
     public function build(): array
     {
         // Headers and footers show menus, which link to pages and module items.
-        $key = 'pacms:site:'.$this->versions->fingerprint('settings', 'globals', 'menus', 'media', 'pages', ...array_keys($this->types->all()));
+        $key = 'pacms:site:'.$this->versions->fingerprint('settings', 'globals', 'menus', 'media', 'pages', 'external', ...array_keys($this->types->all()));
 
         return Cache::remember($key, now()->addDay(), fn () => $this->fresh());
     }

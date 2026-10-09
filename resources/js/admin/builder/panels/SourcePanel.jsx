@@ -12,6 +12,8 @@ const MODE_LABELS = { static: 'Enter items by hand', dynamic: 'Automatic (from t
 export default function SourcePanel({ type, source, onChange, errors, disabled = false }) {
     const id = useId();
     const sources = useBuilder((state) => state.definitions?.sources ?? {});
+    const externalSources = useBuilder((state) => state.definitions?.external_sources ?? []);
+    const providers = type.capabilities.external_providers ?? [];
     const modes = type.capabilities.source_modes;
     const mode = source?.mode ?? modes[0];
     const dynamic = sources[type.capabilities.dynamic_entity];
@@ -32,12 +34,24 @@ export default function SourcePanel({ type, source, onChange, errors, disabled =
                         aria-checked={mode === option}
                         className={`btn ${mode === option ? 'btn-primary' : 'btn-outline-primary'}`}
                         disabled={disabled}
-                        onClick={() => onChange(option === 'dynamic' ? { mode: 'dynamic', provider: 'cms', entity: type.capabilities.dynamic_entity, order: Object.keys(dynamic?.orders ?? { latest: '' })[0], limit: 6 } : { mode: option })}
+                        onClick={() =>
+                            onChange(
+                                option === 'dynamic'
+                                    ? { mode: 'dynamic', provider: 'cms', entity: type.capabilities.dynamic_entity, order: Object.keys(dynamic?.orders ?? { latest: '' })[0], limit: 6 }
+                                    : option === 'external'
+                                      ? { mode: 'external', provider: providers[0], source: '', limit: 6 }
+                                      : { mode: option },
+                            )
+                        }
                     >
                         {MODE_LABELS[option]}
                     </button>
                 ))}
             </div>
+
+            {mode === 'external' && (
+                <ExternalSourceFields id={id} source={source} sources={externalSources.filter((s) => providers.includes(s.provider))} set={set} errors={errors} disabled={disabled} />
+            )}
 
             {mode === 'dynamic' && dynamic && (
                 <>
@@ -90,5 +104,44 @@ export default function SourcePanel({ type, source, onChange, errors, disabled =
                 </>
             )}
         </fieldset>
+    );
+}
+
+/** Which external source (Design → External sources) and how many of its items. */
+function ExternalSourceFields({ id, source, sources, set, errors, disabled }) {
+    const error = errors?.['source.source']?.[0];
+    if (sources.length === 0) {
+        return <p className="small text-body-secondary mb-0">No sources yet. Add a feed under Design → External sources, then choose it here.</p>;
+    }
+    return (
+        <div className="row g-2">
+            <div className="col-8">
+                <label className="form-label small" htmlFor={`${id}-ext`}>
+                    Source
+                </label>
+                <select
+                    id={`${id}-ext`}
+                    className={`form-select form-select-sm${error ? ' is-invalid' : ''}`}
+                    value={source?.source ?? ''}
+                    disabled={disabled}
+                    onChange={(e) => set({ provider: sources.find((s) => s.slug === e.target.value)?.provider ?? source?.provider, source: e.target.value })}
+                >
+                    <option value="">Choose a source…</option>
+                    {sources.map((s) => (
+                        <option key={s.slug} value={s.slug}>
+                            {s.name}
+                            {s.status !== 'enabled' ? ' (disabled)' : s.last_status === 'never' ? ' (not synced yet)' : s.last_status === 'error' ? ' (last sync failed)' : ''}
+                        </option>
+                    ))}
+                </select>
+                {error && <div className="invalid-feedback">{error}</div>}
+            </div>
+            <div className="col-4">
+                <label className="form-label small" htmlFor={`${id}-ext-limit`}>
+                    How many
+                </label>
+                <input id={`${id}-ext-limit`} type="number" min={1} max={50} className="form-control form-control-sm" value={source?.limit ?? 6} disabled={disabled} onChange={(e) => set({ limit: Number(e.target.value) })} />
+            </div>
+        </div>
     );
 }

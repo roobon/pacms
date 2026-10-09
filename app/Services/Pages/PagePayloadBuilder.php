@@ -36,7 +36,7 @@ class PagePayloadBuilder
     {
         // The path is hashed too: nested page paths can be long.
         $key = 'pacms:page-payload:'.$page->published_revision_id.':'.sha1((string) $page->published_path).':'
-            .$this->versions->fingerprint('pages', 'media', 'settings', 'globals', 'block_types', 'testimonials', ...array_keys(app(ContentTypeRegistry::class)->all()));
+            .$this->versions->fingerprint('pages', 'media', 'settings', 'globals', 'block_types', 'testimonials', 'external', ...array_keys(app(ContentTypeRegistry::class)->all()));
 
         return Cache::remember($key, now()->addDay(), function () use ($page) {
             /** @var Revision $revision */
