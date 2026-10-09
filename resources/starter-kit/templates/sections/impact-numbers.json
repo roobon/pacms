@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Impact numbers"
+  },
+  "template": {
+    "name": "Impact numbers",
+    "slug": "kit-impact-numbers",
+    "scope": "section",
+    "category": "Content",
+    "description": "Four numbers with icons on a light band."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "statistics",
+          "content": {
+            "heading": "Our impact",
+            "items": [
+              {
+                "value": 25,
+                "label": "Years of work",
+                "icon": "bi-calendar-check"
+              },
+              {
+                "value": 120,
+                "label": "Partner schools",
+                "icon": "bi-building"
+              },
+              {
+                "value": 5000,
+                "suffix": "+",
+                "label": "People reached",
+                "icon": "bi-people"
+              },
+              {
+                "value": 12,
+                "label": "Districts",
+                "icon": "bi-geo-alt"
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Our impact"
+      }
+    }
+  ]
+}

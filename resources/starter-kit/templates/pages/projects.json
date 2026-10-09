@@ -1,0 +1,167 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Projects landing page"
+  },
+  "template": {
+    "name": "Projects landing page",
+    "slug": "kit-page-projects",
+    "scope": "page",
+    "category": "Pages",
+    "description": "Ongoing projects first, then all projects."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Our projects",
+            "level": "1",
+            "eyebrow": "Projects"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Where we work and what we are achieving together.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "projects",
+          "content": {
+            "heading": "Ongoing projects"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "projects",
+            "order": "latest",
+            "limit": 3,
+            "filters": {
+              "project_status": "ongoing"
+            }
+          },
+          "display": {
+            "mode": "featured"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Ongoing projects"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "projects",
+          "content": {
+            "heading": "All projects"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "projects",
+            "order": "latest",
+            "limit": 9
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "All projects"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

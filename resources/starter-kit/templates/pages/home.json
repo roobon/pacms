@@ -1,0 +1,536 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home page"
+  },
+  "template": {
+    "name": "Home page",
+    "slug": "kit-page-home",
+    "scope": "page",
+    "category": "Pages",
+    "description": "Hero, impact, introduction, news, programmes and events, testimonials, partners and a call to action."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "boxed",
+        "min_height": {
+          "value": 60,
+          "unit": "vh"
+        },
+        "text_align": "center",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.white"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Your mission in one clear sentence",
+            "level": "1",
+            "eyebrow": "Your organisation"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Say who you work with, where, and the change you want to see. Keep it to two lines.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Get involved",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                },
+                "variant": "accent"
+              }
+            },
+            {
+              "type": "button",
+              "content": {
+                "label": "About us",
+                "link": {
+                  "type": "url",
+                  "url": "/about"
+                },
+                "variant": "outline"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "statistics",
+          "content": {
+            "heading": "Our impact",
+            "items": [
+              {
+                "value": 25,
+                "label": "Years of work",
+                "icon": "bi-calendar-check"
+              },
+              {
+                "value": 120,
+                "label": "Partner schools",
+                "icon": "bi-building"
+              },
+              {
+                "value": 5000,
+                "suffix": "+",
+                "label": "People reached",
+                "icon": "bi-people"
+              },
+              {
+                "value": 12,
+                "label": "Districts",
+                "icon": "bi-geo-alt"
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Our impact"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                7,
+                5
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "What we do",
+                    "level": "2",
+                    "eyebrow": "Who we are"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Describe your organisation in two or three sentences: who you are, where you work and who benefits.</p><p>Add what makes your approach different, and a result you are proud of.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Read our story",
+                        "link": {
+                          "type": "url",
+                          "url": "/about"
+                        },
+                        "variant": "outline"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 320,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.9"
+                      },
+                      "bottom": {
+                        "$token": "space.9"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-people",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Who we are"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "Latest news"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 3
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest news"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                7,
+                5
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "programs",
+                  "content": {
+                    "heading": "Programmes",
+                    "show_date": false
+                  },
+                  "source": {
+                    "mode": "dynamic",
+                    "entity": "programs",
+                    "order": "latest",
+                    "limit": 3
+                  },
+                  "display": {
+                    "mode": "list"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "events",
+                  "content": {
+                    "heading": "Upcoming events",
+                    "show_excerpt": false,
+                    "empty_text": "No upcoming events right now."
+                  },
+                  "source": {
+                    "mode": "dynamic",
+                    "entity": "events",
+                    "order": "soonest",
+                    "limit": 3,
+                    "filters": {
+                      "when": "upcoming"
+                    }
+                  },
+                  "display": {
+                    "mode": "list",
+                    "show_image": false
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Programmes and events"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "testimonials",
+          "content": {
+            "heading": "What people say",
+            "show_photo": true,
+            "show_rating": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "testimonials",
+            "order": "position",
+            "limit": 6
+          },
+          "display": {
+            "mode": "quote-slider"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Testimonials"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "partners",
+          "content": {
+            "heading": "Our partners",
+            "style": "logos",
+            "grayscale": true,
+            "logo_size": "md"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "partners",
+            "order": "position",
+            "limit": 12
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our partners"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

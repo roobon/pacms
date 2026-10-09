@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Events landing page"
+  },
+  "template": {
+    "name": "Events landing page",
+    "slug": "kit-page-events",
+    "scope": "page",
+    "category": "Pages",
+    "description": "Upcoming events, past events and a call to action."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Events",
+            "level": "1",
+            "eyebrow": "Events"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Workshops, campaigns and gatherings you can join.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "events",
+          "content": {
+            "heading": "Upcoming",
+            "empty_text": "No upcoming events right now."
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "events",
+            "order": "soonest",
+            "limit": 6,
+            "filters": {
+              "when": "upcoming"
+            }
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Upcoming events"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "events",
+          "content": {
+            "heading": "Past events",
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "events",
+            "order": "latest",
+            "limit": 6,
+            "filters": {
+              "when": "past"
+            }
+          },
+          "display": {
+            "mode": "list",
+            "show_image": false
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Past events"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

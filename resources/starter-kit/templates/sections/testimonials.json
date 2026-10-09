@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Testimonials"
+  },
+  "template": {
+    "name": "Testimonials",
+    "slug": "kit-testimonials",
+    "scope": "section",
+    "category": "Collections",
+    "description": "Published testimonials as a quote slider."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "testimonials",
+          "content": {
+            "heading": "What people say",
+            "show_photo": true,
+            "show_rating": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "testimonials",
+            "order": "position",
+            "limit": 6
+          },
+          "display": {
+            "mode": "quote-slider"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Testimonials"
+      }
+    }
+  ]
+}

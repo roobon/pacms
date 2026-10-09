@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'version' => '0.2.0',
+    'version' => '0.8.0',
 
     'admin' => [
         'path' => 'admin',

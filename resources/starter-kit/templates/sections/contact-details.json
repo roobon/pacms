@@ -1,0 +1,146 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact details"
+  },
+  "template": {
+    "name": "Contact details",
+    "slug": "kit-contact-details",
+    "scope": "section",
+    "category": "Content",
+    "description": "E-mail, phone, address and office hours."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                6,
+                6
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Get in touch",
+                    "level": "2"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Tell visitors when and how to reach you, and how quickly you reply.</p>"
+                  }
+                },
+                {
+                  "type": "list",
+                  "content": {
+                    "style": "icon",
+                    "dividers": true,
+                    "item_padding": "sm",
+                    "items": [
+                      {
+                        "icon": "bi-envelope",
+                        "text": "info@example.org",
+                        "link": {
+                          "type": "url",
+                          "url": "mailto:info@example.org"
+                        }
+                      },
+                      {
+                        "icon": "bi-telephone",
+                        "text": "+880 1700 000000",
+                        "link": {
+                          "type": "url",
+                          "url": "tel:+8801700000000"
+                        }
+                      },
+                      {
+                        "icon": "bi-geo-alt",
+                        "text": "House 1, Road 1, Dhaka 1200, Bangladesh"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Office hours",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Sunday to Thursday, 9:00 to 17:00.</p><p>Visits by appointment.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Send us an e-mail",
+                        "link": {
+                          "type": "url",
+                          "url": "mailto:info@example.org"
+                        },
+                        "variant": "primary"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Contact details"
+      }
+    }
+  ]
+}

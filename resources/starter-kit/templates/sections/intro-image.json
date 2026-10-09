@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Introduction with image"
+  },
+  "template": {
+    "name": "Introduction with image",
+    "slug": "kit-intro-image",
+    "scope": "section",
+    "category": "Content",
+    "description": "Who you are, beside a photo."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                7,
+                5
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "What we do",
+                    "level": "2",
+                    "eyebrow": "Who we are"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Describe your organisation in two or three sentences: who you are, where you work and who benefits.</p><p>Add what makes your approach different, and a result you are proud of.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Read our story",
+                        "link": {
+                          "type": "url",
+                          "url": "/about"
+                        },
+                        "variant": "outline"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 320,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.9"
+                      },
+                      "bottom": {
+                        "$token": "space.9"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-people",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Who we are"
+      }
+    }
+  ]
+}

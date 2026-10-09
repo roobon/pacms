@@ -20,6 +20,7 @@ use App\Services\Media\MediaService;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
 use App\Services\Settings\SettingsService;
+use App\Services\Starter\StarterKitService;
 use App\Services\Testimonials\TestimonialModerationService;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
@@ -91,6 +92,8 @@ class DemoSeeder extends Seeder
         $this->step('Content types made in the admin', fn () => $this->adminMadeTypes());
         $this->step('Global blocks and sidebars', fn () => $this->globalBlocks());
         $this->step('Pages and home page', fn () => $this->sitePages());
+        // Templates and global blocks of the starter kit (no pages: the demo has its own).
+        $this->step('Starter kit templates', fn () => app(StarterKitService::class)->install($this->admin));
     }
 
     private function step(string $label, callable $callback): void

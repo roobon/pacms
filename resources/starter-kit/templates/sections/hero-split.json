@@ -1,0 +1,151 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Hero: text and image"
+  },
+  "template": {
+    "name": "Hero: text and image",
+    "slug": "kit-hero-split",
+    "scope": "section",
+    "category": "Hero",
+    "description": "Headline and buttons beside a photo."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                6,
+                6
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "A headline about the change you make",
+                    "level": "1",
+                    "eyebrow": "Welcome"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>A short paragraph that tells visitors what you do and why it matters. Replace this text with your own.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Our work",
+                        "link": {
+                          "type": "url",
+                          "url": "/programs"
+                        },
+                        "variant": "primary"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Contact us",
+                        "link": {
+                          "type": "url",
+                          "url": "/contact"
+                        },
+                        "variant": "outline"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 320,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.9"
+                      },
+                      "bottom": {
+                        "$token": "space.9"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-camera",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    }
+  ]
+}

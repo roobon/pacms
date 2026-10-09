@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) approved and merged; Part 8C.1 (Team, Partners, Galleries) approved and merged; 8C.2 (Testimonials, Media Coverage, search) approved and merged; 8D.1 (admin-made content types: engine and types) approved and merged; 8D.2 (blocks, categories, documents, address redirects, menu, coverage tags) approved and merged; the starter kit is next, then v0.8.0.** See [docs/phase-reports/PHASE-8D2-REPORT.md](docs/phase-reports/PHASE-8D2-REPORT.md).
+- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) approved and merged; Part 8C.1 (Team, Partners, Galleries) approved and merged; 8C.2 (Testimonials, Media Coverage, search) approved and merged; 8D.1 (admin-made content types: engine and types) approved and merged; 8D.2 (blocks, categories, documents, address redirects, menu, coverage tags) approved and merged; the starter kit is ready for review (then v0.8.0).** See [docs/phase-reports/PHASE-8-STARTER-KIT-REPORT.md](docs/phase-reports/PHASE-8-STARTER-KIT-REPORT.md).
 
 ## Requirements
 
@@ -20,8 +20,13 @@ php artisan migrate --seed    # roles/permissions, token stylesheet, and local d
 php artisan storage:link
 npm run build                 # or: npm run dev
 php artisan pacms:create-admin
+php artisan pacms:starter --pages   # optional: starter templates, global blocks and draft pages
 php artisan pacms:doctor
 ```
+
+### Starter kit
+
+`php artisan pacms:starter` installs designed page templates (Home, About us, Contact, Get involved, and landing pages for News, Events, Projects, Programmes and Publications), 14 section templates (heroes, impact numbers, feature cards, collections, FAQ, contact details, call to action) and global blocks (a call to action, contact details and three sidebars). They are in the builder's Templates tab, and **New page → Start from** copies a page template. Running it again only adds what is missing; `--pages` also creates draft Home, About us, Contact and Get involved pages (never over existing ones); `--restore=<slug>` or `--restore=all` puts shipped templates back to their original design. The kit's files are in `resources/starter-kit/`, in the JSON import format.
 
 In the `local` environment, `DevelopmentSeeder` creates one account per role (`<role>@pacms.test`, password in `database/seeders/DevelopmentSeeder.php`). Set `PACMS_ENFORCE_2FA=false` locally to skip the two-factor requirement for privileged roles.
 

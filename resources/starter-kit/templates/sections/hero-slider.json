@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Hero: slider"
+  },
+  "template": {
+    "name": "Hero: slider",
+    "slug": "kit-hero-slider",
+    "scope": "section",
+    "category": "Hero",
+    "description": "Three full-width slides; choose a photo for each."
+  },
+  "blocks": [
+    {
+      "type": "slider",
+      "content": {
+        "aria_label": "Highlights",
+        "height": "medium",
+        "autoplay": true,
+        "interval": 7,
+        "show_arrows": true,
+        "show_dots": true
+      },
+      "children": [
+        {
+          "type": "slide",
+          "content": {
+            "shade": "dark",
+            "align": "start"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "Your mission in one clear sentence",
+                "level": "2",
+                "eyebrow": "Our mission"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Choose a photo for each slide, then replace the text.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "About us",
+                    "link": {
+                      "type": "url",
+                      "url": "/about"
+                    },
+                    "variant": "accent"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "slide",
+          "content": {
+            "shade": "dark",
+            "align": "start"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "Your main programme, in a few words",
+                "level": "2",
+                "eyebrow": "Programmes"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>One sentence about what it achieves.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "See the programme",
+                    "link": {
+                      "type": "url",
+                      "url": "/programs"
+                    },
+                    "variant": "accent"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "slide",
+          "content": {
+            "shade": "dark",
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "An invitation to act",
+                "level": "2",
+                "eyebrow": "Join us"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Volunteer, partner with us, or support our work.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "accent"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Questions and answers"
+  },
+  "template": {
+    "name": "Questions and answers",
+    "slug": "kit-faq",
+    "scope": "section",
+    "category": "Content",
+    "description": "Four questions; shown as an accordion with FAQ data for search engines."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "faq",
+          "content": {
+            "heading": "Frequently asked questions",
+            "items": [
+              {
+                "question": "Who can take part?",
+                "answer": "<p>Explain who your programmes are for and how to join.</p>"
+              },
+              {
+                "question": "Does it cost anything?",
+                "answer": "<p>Say what is free and what is not.</p>"
+              },
+              {
+                "question": "How can my school or organisation partner with you?",
+                "answer": "<p>Describe the first step, and who to contact.</p>"
+              },
+              {
+                "question": "How do you use donations?",
+                "answer": "<p>Explain how support is spent and how you report on it.</p>"
+              }
+            ]
+          },
+          "display": {
+            "mode": "accordion"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Questions"
+      }
+    }
+  ]
+}

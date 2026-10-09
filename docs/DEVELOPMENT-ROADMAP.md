@@ -89,18 +89,18 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
   - **8B**: Projects, Programs, Publications, documents, module sitemaps; Document and HTML blocks, "Save page as template". *Merged.*
   - **8C**: Team, Partners, Testimonials (submission + moderation), Media Coverage, Galleries, search indexing; links from projects/programs to partners, team and galleries. *Merged (8C.1, 8C.2); media coverage tags deferred to 8D.*
   - **8D — admin-made content types** ("custom post types", added at the team lead's request; not in the master prompt): a *Design → Content types* screen (permission "Manage content types") to create types without code. You set the names, icon, URL prefix, categories, documents and listing page, and build the fields with the Custom Blocks field builder, each shown in the details box, as its own section, or hidden. Every such type gets everything the built-in modules have (workflow, revisions, SEO, preview, sidebar, archive, detail page, sitemap, builder block, permissions). All admin-made types share one table with JSON fields, so no deployment is needed. Built-in modules stay in code. The admin content menu is reorganised here to handle any number of types. *Merged (8D.1: engine, types, admin screens, public pages; 8D.2: builder blocks, categories and documents, address redirects, menu, coverage tags).*
-  - **Starter kit**: designed page templates (Home, About, Contact, module landing pages), section templates and global blocks (footer, CTA band, sidebars), installed with one command and editable afterwards.
+  - **Starter kit**: designed page templates (Home, About, Contact, module landing pages), section templates and global blocks (CTA band, contact details, sidebars), installed with one command (`pacms:starter`) and editable afterwards. Decisions (2026-10-09): pages only with `--pages`, as drafts; no images shipped; the footer comes with Phase 9; the contact page uses contact details and an e-mail button until a contact form is built (Phase 11).
 - Tag **v0.8.0** after the starter kit.
 
 ### Phase 9 — Navigation (M)
-- Menus + Menu Builder island, item types, visibility, mega-menu block trees, header/footer global blocks, site-wide default header/footer, mobile offcanvas/accordion, accessible disclosure navigation.
+- Menus + Menu Builder island, item types, visibility, mega-menu block trees, header/footer global blocks, site-wide default header/footer, mobile offcanvas/accordion, accessible disclosure navigation. Starter-kit header and footer global blocks (deferred from the Phase 8 starter kit).
 
 ### Phase 10 — External Providers (L)
 - Re-verify Meta requirements. SafeHttpClient + SafeXml (if not already built for Phase 6 asset downloads), provider framework, feed provider (JSON Feed first, RSS/Atom fallback), feed block, outbound JSON Feeds (D-15), Facebook provider (connect, token storage, image caching), gallery providers (Flickr/YouTube, if confirmed in scope), sync scheduling, admin status screens.
 - Tests: the SSRF suite, the XML attack suite, provider sync with faked HTTP, stale-while-error behaviour, JSON Feed 1.1 validity and leak tests.
 
 ### Phase 11 — Public React SPA (L)
-- Homepage from blocks, generic page route, archives and details for all types, search UI, account area (testimonial submission), SEO head sync, JSON-LD, sitemap, galleries + lightbox, external content blocks, loading/error/empty states, accessibility pass, prefetching, code-splitting review, OpenAPI for the public API.
+- Homepage from blocks, generic page route, archives and details for all types, search UI, account area (testimonial submission), SEO head sync, JSON-LD, sitemap, galleries + lightbox, external content blocks, loading/error/empty states, accessibility pass, prefetching, code-splitting review, OpenAPI for the public API. A contact form block (spam-protected, e-mail delivery), then used by the starter kit's Contact page.
 
 ### Phase 12 — Security / Testing audit (M)
 - Audit against SECURITY-ARCHITECTURE.md: authentication, authorization matrix, uploads, JSON import, SSRF, XML, XSS (payload corpus through every input), API leaks, providers, headers/CSP (nonce/hash styles), dependency audit. Playwright E2E for the critical paths.

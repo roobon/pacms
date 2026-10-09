@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\TestimonialStatus;
+use App\Models\BlockTemplate;
 use App\Models\MediaCoverage;
 use App\Models\News;
 use App\Models\Page;
@@ -42,6 +43,9 @@ it('fills every area with linked demo content through the real services', functi
     // Coverage carries tags besides its category.
     $this->getJson('/api/v1/resolve?path=/media-coverage/'.MediaCoverage::query()->where('source_name', 'The Daily Star')->value('slug'))
         ->assertJsonPath('data.taxonomies.0.terms.1.name', 'Youth');
+
+    // The starter kit's templates and global blocks are installed too.
+    expect(BlockTemplate::query()->where('is_system', true)->count())->toBe(23);
 
     // Running it again on a site with content is refused (use --fresh).
     $this->artisan('pacms:demo')->assertFailed();
