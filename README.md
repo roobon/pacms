@@ -29,6 +29,17 @@ In the `local` environment, `DevelopmentSeeder` creates one account per role (`<
 - Public site: `/`
 - Public API: `/api/v1/*`
 
+## Demo content
+
+```bash
+php artisan pacms:demo --fresh   # wipes the database and uploaded media, then fills every area
+```
+
+Creates linked demo content through the real services: team, partners, galleries, programs, projects, events, news, publications, media coverage and testimonials in several workflow and moderation states, plus categories, media (images, PDFs, a private archive file), a sidebar and a call-to-action global block, and pages with blocks (Home is set as the home page). Run it again any time for a clean start. Local environment only; never in production.
+
+- Staff: `<role>@pacms.test` / `Aurora-dev-2026` (e.g. `editor@pacms.test`, `moderator@pacms.test`)
+- Registered users: `rahim@`, `nadia@`, `tanvir@`, `farzana@demo.pacms.test` / `Aurora-demo-2026`; `unverified@demo.pacms.test` has no verified e-mail
+
 ## Quality checks
 
 ```bash
