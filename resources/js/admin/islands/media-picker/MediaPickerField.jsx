@@ -12,14 +12,14 @@ import { MediaPickerDialog } from './MediaPickerDialog.jsx';
 /**
  * @param {{
  *   name: string, label: string, endpoint: string, uploadEndpoint: string,
- *   canUpload: boolean, disabled: boolean, initial: PickedMedia|null, kind?: 'image'|'document'
+ *   canUpload: boolean, disabled: boolean, initial: PickedMedia|null, kind?: 'image'|'document'|'video', visibility?: 'any'
  * }} props
  */
-export function MediaPickerField({ name, label, endpoint, uploadEndpoint, canUpload, disabled, initial, kind = 'image' }) {
+export function MediaPickerField({ name, label, endpoint, uploadEndpoint, canUpload, disabled, initial, kind = 'image', visibility }) {
     const [value, setValue] = useState(/** @type {PickedMedia|null} */ (initial));
     const [open, setOpen] = useState(false);
     const isImage = kind === 'image';
-    const noun = isImage ? 'image' : 'document';
+    const noun = kind;
 
     return (
         <>
@@ -27,7 +27,7 @@ export function MediaPickerField({ name, label, endpoint, uploadEndpoint, canUpl
             {value && isImage && <img src={value.thumbnail ?? ''} alt={value.alt} className="pa-media-field__preview" />}
             {value && !isImage && (
                 <p className="mb-0">
-                    <i className="bi bi-file-earmark-text me-1" aria-hidden="true" />
+                    <i className={`bi ${kind === 'video' ? 'bi-film' : 'bi-file-earmark-text'} me-1`} aria-hidden="true" />
                     {value.name}
                 </p>
             )}
@@ -49,6 +49,7 @@ export function MediaPickerField({ name, label, endpoint, uploadEndpoint, canUpl
                 <MediaPickerDialog
                     title={`Choose ${label.toLowerCase()}`}
                     kind={kind}
+                    visibility={visibility}
                     endpoint={endpoint}
                     uploadEndpoint={uploadEndpoint}
                     canUpload={canUpload}

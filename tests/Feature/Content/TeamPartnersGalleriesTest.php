@@ -7,7 +7,7 @@ use App\Enums\WorkflowAction;
 use App\Models\ContentItem;
 use App\Models\Gallery;
 use App\Models\Media;
-use App\Models\Partner;
+use App\Models\Project;
 use App\Models\TeamMember;
 use App\Models\Term;
 use App\Services\Content\ContentService;
@@ -155,7 +155,7 @@ it('links a project to its manager, partners and gallery', function () {
         'title' => 'Mangroves', 'project_status' => 'ongoing', 'manager_name' => 'Old text',
         'manager' => [$manager->id], 'partners' => [$later->id, $inactive->id, $earlier->id], 'gallery' => [$gallery->id],
     ])->assertSessionHasNoErrors();
-    $project = \App\Models\Project::query()->firstOrFail();
+    $project = Project::query()->firstOrFail();
     $this->actingAs(userWithRole('editor'))->post(route('admin.projects.workflow', $project), ['action' => 'publish']);
 
     $response = $this->getJson('/api/v1/resolve?path=/projects/mangroves')->assertOk();

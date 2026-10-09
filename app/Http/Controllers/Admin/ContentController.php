@@ -352,6 +352,13 @@ class ContentController extends Controller
         $data = $request->validate($rules, [], $attributes);
         $data['sidebar_mode'] ??= 'default';
 
+        // Fields reserved for a module permission keep their value for everyone else.
+        foreach ($type->fields() as $name => $field) {
+            if (isset($field['ability']) && ! $request->user()->can($type->ability((string) $field['ability']))) {
+                unset($data[$name]);
+            }
+        }
+
         if ($type->taxonomy() !== null) {
             $data['terms'] ??= [];
         }

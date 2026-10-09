@@ -61,7 +61,12 @@
                             <div class="card-header"><h2 id="section-{{ Str::slug($section) }}" class="h6 mb-0">{{ $section }}</h2></div>
                             <div class="card-body">
                                 @foreach ($fields as $name => $field)
-                                    @php $value = $type->formValue($item, $name); @endphp
+                                    @php
+                                        $value = $type->formValue($item, $name);
+                                        // Fields only some people may change (e.g. confirming archive rights).
+                                        $locked = isset($field['ability']) && ! auth()->user()->can($type->ability($field['ability']));
+                                    @endphp
+                                    @if ($locked)<fieldset disabled aria-describedby="field-{{ $name }}-locked">@endif
                                     @if ($field['type'] === 'checkbox')
                                             <div class="form-check mb-3">
                                                 <input type="hidden" name="{{ $name }}" value="0">
@@ -82,7 +87,7 @@
                                             </div>
                                         @elseif ($field['type'] === 'media')
                                             <x-admin.media-picker :name="$name" :label="$field['label']" :media="$mediaFields[$name] ?? null" :kind="$field['media_kind'] ?? 'image'"
-                                                :help="$field['help'] ?? null" :disabled="$readonly" />
+                                                :visibility="$field['visibility'] ?? null" :help="$field['help'] ?? null" :disabled="$readonly" />
                                         @elseif ($field['type'] === 'relation')
                                             @php
                                                 $chosen = array_map('intval', (array) old($name, $relationValues[$name] ?? []));
@@ -160,6 +165,10 @@
                                         @else
                                             <x-admin.field :name="$name" :label="$field['label']" :type="$field['type'] === 'datetime' ? 'datetime-local' : $field['type']"
                                                 :value="$value" :help="$field['help'] ?? null" :required="in_array('required', $field['rules'], true)" :placeholder="$field['placeholder'] ?? null" />
+                                    @endif
+                                    @if ($locked)
+                                        <p id="field-{{ $name }}-locked" class="small text-body-secondary"><i class="bi bi-lock" aria-hidden="true"></i> Only people who may publish {{ strtolower($type->label()) }} can change this.</p>
+                                        </fieldset>
                                     @endif
                                 @endforeach
                                 @if ($section === 'When' && isset($type->fields()['timezone']))
@@ -379,6 +388,10 @@
                         @error('action')<div class="alert alert-danger pa-alert mt-3 mb-0" role="alert">{{ $message }}</div>@enderror
                     </div>
                 </section>
+
+                @if ($editing && ($panel = $type->adminPanel()))
+                    @include($panel)
+                @endif
 
                 @if ($editing)
                     <section class="card pa-card mb-4" aria-labelledby="revisions-heading">

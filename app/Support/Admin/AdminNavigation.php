@@ -4,6 +4,8 @@ namespace App\Support\Admin;
 
 use App\Cms\Content\ContentType;
 use App\Cms\Content\ContentTypeRegistry;
+use App\Enums\TestimonialStatus;
+use App\Models\Testimonial;
 use App\Models\User;
 
 /**
@@ -25,6 +27,8 @@ final class AdminNavigation
             ['label' => 'Content', 'items' => [
                 ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
                 ...self::contentModules(),
+                ['label' => 'Testimonials', 'route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'active' => 'admin.testimonials.*', 'can' => 'testimonials.view',
+                    'badge' => $user->can('testimonials.view') ? self::moderationQueue() : null, 'badge_label' => 'waiting for moderation'],
                 ['label' => 'Import JSON', 'route' => 'admin.import.index', 'icon' => 'bi-filetype-json', 'active' => 'admin.import.*', 'can' => 'import.run'],
                 ...self::contentCategories(),
             ]],
@@ -59,6 +63,16 @@ final class AdminNavigation
         }
 
         return $visible;
+    }
+
+    /**
+     * Testimonials waiting for a moderator (the badge on the menu entry).
+     */
+    private static function moderationQueue(): ?int
+    {
+        $count = Testimonial::query()->whereIn('status', TestimonialStatus::awaitingModeration())->count();
+
+        return $count > 0 ? $count : null;
     }
 
     /**

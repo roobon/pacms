@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
 use App\Support\Http\SafeHttpClient;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -31,6 +32,22 @@ pest()->extend(TestCase::class)
     ->in('Feature');
 
 pest()->extend(TestCase::class)->in('Unit');
+
+/*
+| Search tests commit their data: InnoDB FULLTEXT indexes only see committed rows, so the
+| transaction used by the Feature tests would hide everything. Tables are emptied after
+| each test, so the Feature tests that may run next in the same process start clean.
+*/
+pest()->extend(TestCase::class)
+    ->use(DatabaseTruncation::class)
+    ->beforeEach(function () {
+        app(RolePermissionSynchronizer::class)->sync();
+        app(BlockRegistry::class)->sync();
+    })
+    ->afterEach(function () {
+        $this->truncateTablesForAllConnections();
+    })
+    ->in('Search');
 
 /**
  * A verified, active user with the given role. Staff get confirmed 2FA by default

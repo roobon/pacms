@@ -408,6 +408,18 @@
                         "quote",
                         "cta",
                         "news",
+                        "events",
+                        "projects",
+                        "programs",
+                        "publications",
+                        "team",
+                        "partners",
+                        "galleries",
+                        "gallery",
+                        "testimonials",
+                        "media-coverage",
+                        "document",
+                        "html",
                         "global-ref"
                     ]
                 },
@@ -845,6 +857,198 @@
                     "if": {
                         "properties": {
                             "type": {
+                                "const": "events"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__events"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "projects"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__projects"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "programs"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__programs"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "publications"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__publications"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "team"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__team"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "partners"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__partners"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "galleries"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__galleries"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "gallery"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__gallery"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "testimonials"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__testimonials"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "media-coverage"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__media_coverage"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "document"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__document"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "html"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "content": {
+                                "$ref": "#/$defs/content__html"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
                                 "const": "global-ref"
                             }
                         }
@@ -942,6 +1146,7 @@
                 "style": {
                     "description": "Style",
                     "enum": [
+                        "none",
                         "bullet",
                         "number",
                         "check",
@@ -1425,6 +1630,322 @@
                         },
                         "additionalProperties": false
                     }
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__events": {
+            "type": "object",
+            "description": "Events",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__projects": {
+            "type": "object",
+            "description": "Projects",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__programs": {
+            "type": "object",
+            "description": "Programs",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__publications": {
+            "type": "object",
+            "description": "Publications",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__team": {
+            "type": "object",
+            "description": "Team",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__partners": {
+            "type": "object",
+            "description": "Partners",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "style": {
+                    "description": "Show as",
+                    "enum": [
+                        "logos",
+                        "cards"
+                    ]
+                },
+                "logo_size": {
+                    "description": "Logo size (logo wall)",
+                    "enum": [
+                        "sm",
+                        "md",
+                        "lg"
+                    ]
+                },
+                "grayscale": {
+                    "description": "Grey logos, in colour on hover (logo wall)",
+                    "type": "boolean"
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__galleries": {
+            "type": "object",
+            "description": "Galleries",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__gallery": {
+            "type": "object",
+            "description": "Gallery",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "columns": {
+                    "description": "Columns (desktop)",
+                    "enum": [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                "show_captions": {
+                    "description": "Show captions under the photos",
+                    "type": "boolean"
+                },
+                "show_link": {
+                    "description": "Link to the gallery page",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__testimonials": {
+            "type": "object",
+            "description": "Testimonials",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_photo": {
+                    "description": "Show photos",
+                    "type": "boolean"
+                },
+                "show_rating": {
+                    "description": "Show ratings",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__media_coverage": {
+            "type": "object",
+            "description": "Media Coverage",
+            "properties": {
+                "heading": {
+                    "description": "Heading (optional)",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "empty_text": {
+                    "description": "Text when there is nothing to show",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "show_excerpt": {
+                    "description": "Show summary",
+                    "type": "boolean"
+                },
+                "show_date": {
+                    "description": "Show date",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "content__document": {
+            "type": "object",
+            "description": "Document",
+            "properties": {
+                "file": {
+                    "description": "Document",
+                    "$ref": "#/$defs/image"
+                },
+                "title": {
+                    "description": "Title (optional)",
+                    "type": "string",
+                    "maxLength": 191
+                },
+                "description": {
+                    "description": "Description (optional)",
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "display": {
+                    "description": "Show as",
+                    "enum": [
+                        "viewer",
+                        "card"
+                    ]
+                },
+                "height": {
+                    "description": "Viewer height",
+                    "enum": [
+                        "sm",
+                        "md",
+                        "lg"
+                    ]
+                }
+            },
+            "required": [
+                "file"
+            ],
+            "additionalProperties": false
+        },
+        "content__html": {
+            "type": "object",
+            "description": "HTML",
+            "properties": {
+                "html": {
+                    "description": "HTML",
+                    "type": "string",
+                    "maxLength": 100000
                 }
             },
             "additionalProperties": false

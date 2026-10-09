@@ -30,7 +30,7 @@ export default function ItemsDisplay({ items, display = {}, showExcerpt = true, 
     }
 
     if (mode === 'carousel') {
-        return <Carousel items={items} vars={vars} cardProps={cardProps} />;
+        return <Carousel items={items} vars={vars} renderItem={(item) => <ItemCard item={item} {...cardProps} />} />;
     }
 
     if (mode === 'featured' && items.length > 1) {
@@ -63,8 +63,10 @@ export default function ItemsDisplay({ items, display = {}, showExcerpt = true, 
 /**
  * Scroll-snap carousel: works with touch, keyboard and screen readers; buttons scroll by
  * one card. No autoplay (WCAG 2.2.2), no third-party library.
+ *
+ * @param {{items: Array<Object>, vars: Object, renderItem: (item: Object) => import('react').ReactNode}} props
  */
-function Carousel({ items, vars, cardProps }) {
+export function Carousel({ items, vars, renderItem }) {
     const id = useId();
     const track = useRef(null);
 
@@ -83,7 +85,7 @@ function Carousel({ items, vars, cardProps }) {
             <ul ref={track} className="pa-carousel__track list-unstyled" style={vars} tabIndex={0}>
                 {items.map((item, index) => (
                     <li key={item.key} aria-roledescription="slide" aria-label={`${index + 1} of ${items.length}`}>
-                        <ItemCard item={item} {...cardProps} />
+                        {renderItem(item)}
                     </li>
                 ))}
             </ul>

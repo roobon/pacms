@@ -71,6 +71,29 @@ abstract class ContentType
         return true;
     }
 
+    /** Whether published items are in the site search (CMS-ARCHITECTURE.md §21). */
+    public function searchable(): bool
+    {
+        return $this->hasDetailPages();
+    }
+
+    /**
+     * Module text for the search index besides title, summary, article text and blocks
+     * (e.g. a team member's designation).
+     */
+    public function searchText(ContentItem $item): string
+    {
+        return '';
+    }
+
+    /**
+     * Blade view of an extra box beside the form (e.g. a coverage item's source check), or null.
+     */
+    public function adminPanel(): ?string
+    {
+        return null;
+    }
+
     /** Whether items are ordered by a "Display order" number (team, partners). */
     public function positioned(): bool
     {
@@ -95,9 +118,11 @@ abstract class ContentType
     }
 
     /**
-     * Module-specific form fields: name => [type, label, rules, help?, options?, placeholder?, section?].
+     * Module-specific form fields: name => [type, label, rules, help?, options?, placeholder?, section?,
+     * ability? (only users with this module permission may change it, e.g. 'publish')].
      * Types: text, textarea, url, email, date, datetime, checkbox, select, timezone,
-     * media (a document from the library: 'media_kind' => 'document'), and repeater
+     * media (from the library: 'media_kind' => image|document|video; 'visibility' => 'any'
+     * also offers private files, otherwise documents must be public), and repeater
      * (an ordered list of rows: 'fields' => [sub => [type: text|textarea, label, rules]],
      * 'max' => rows, 'add_label' => button text).
      *
@@ -117,7 +142,8 @@ abstract class ContentType
     public function prepare(array $data): array
     {
         foreach ($this->fields() as $name => $field) {
-            if (! array_key_exists($name, $data) && $field['type'] !== 'checkbox') {
+            // Absent fields keep their value (e.g. fields only some users may change).
+            if (! array_key_exists($name, $data)) {
                 continue;
             }
             $data[$name] = match ($field['type']) {

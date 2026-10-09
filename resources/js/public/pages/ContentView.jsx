@@ -25,6 +25,7 @@ export default function ContentView({ item }) {
             {item.featured_image && <Image image={item.featured_image} priority className="pa-page-featured" sizes={sidebar ? '(min-width: 992px) 66vw, 100vw' : '(min-width: 1320px) 1280px, 100vw'} />}
             {item.event && <EventDetails event={item.event} />}
             {(item.facts?.length > 0 || item.actions?.length > 0) && <Facts facts={item.facts ?? []} actions={item.actions ?? []} />}
+            {item.coverage && <CoverageArchive coverage={item.coverage} title={item.title} />}
             {item.body && (
                 // Article text: rich text cleaned on the server (same allowlist as Text blocks).
                 <div className="pa-rich-text pa-article-body" dangerouslySetInnerHTML={{ __html: item.body }} />
@@ -111,6 +112,45 @@ function Facts({ facts, actions }) {
                             {action.external && <span className="visually-hidden"> (opens in new tab)</span>}
                         </a>
                     ))}
+                </div>
+            )}
+        </section>
+    );
+}
+
+/**
+ * Media coverage: a notice when the original is gone, and the archived copy (PDF viewer or
+ * video player) when the rights to show it are confirmed. Decided on the server.
+ */
+function CoverageArchive({ coverage, title }) {
+    const { notice, archive = {} } = coverage;
+    if (!notice && !archive.pdf && !archive.video) return null;
+
+    return (
+        <section className="pa-coverage-archive" aria-label="Archived copy">
+            {notice && (
+                <p className="pa-coverage-archive__notice">
+                    <i className="bi bi-info-circle" aria-hidden="true" /> {notice}
+                </p>
+            )}
+            {archive.video && (
+                <figure className="mb-3">
+                    <video controls preload="metadata" className="pa-coverage-archive__video" aria-label={`Archived recording: ${title}`}>
+                        <source src={archive.video.url} type={archive.video.mime} />
+                    </video>
+                    <figcaption className="small text-body-secondary">Archived recording</figcaption>
+                </figure>
+            )}
+            {archive.pdf && (
+                <div className="mb-3">
+                    <object data={archive.pdf.url} type="application/pdf" className="pa-coverage-archive__pdf" aria-label={`Archived copy: ${title}`}>
+                        <p>Your browser cannot show the PDF here.</p>
+                    </object>
+                    <a className="btn btn-outline-primary btn-sm mt-2" href={archive.pdf.url} target="_blank" rel="noopener noreferrer">
+                        <i className="bi bi-file-earmark-pdf me-1" aria-hidden="true" />
+                        Open the archived copy (PDF{archive.pdf.size ? `, ${archive.pdf.size}` : ''})
+                        <span className="visually-hidden"> (opens in new tab)</span>
+                    </a>
                 </div>
             )}
         </section>

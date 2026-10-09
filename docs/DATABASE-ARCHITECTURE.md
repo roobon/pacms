@@ -352,8 +352,12 @@ All publishable modules share these **publishable columns**:
 
 Indexes: `INDEX(status, published_at)`, `INDEX(user_id)`.
 
+**Phase 8C.2 (built):** as above, plus `lock_version`, `created_by` and `updated_by`; `INDEX(status, featured, position)`. Not on the content engine (no title, slug or pages; its own moderation steps). `submitted_ip` holds the packed address (4 or 16 bytes) and is cleared after 90 days (`pacms:testimonials:purge-ips`, daily). Staff edits and the original submission are kept in `revisions`. A photo is recorded in `content_references` (context `testimonial_photo`); submitted photos stay on the private disk until the testimonial is published. Morph alias `testimonial`.
+
 ### testimonial_moderation_logs
 `id, testimonial_id FK CASCADE, from_status, to_status, actor_id FK users SET NULL, note text null, created_at`.
+
+**Phase 8C.2 (built):** `from_status` is null for the first entry (submitted or created); an edit is logged with `from_status = to_status` and the note "Edited". For rejections the note is the reason.
 
 ### media_coverage
 | Column | Type | Notes |
@@ -379,6 +383,9 @@ Indexes: `INDEX(status, published_at)`, `INDEX(user_id)`.
 | + publishable columns (with `featured`) | | |
 
 Category and tags via terms. `INDEX(next_check_at)`, `INDEX(coverage_type, status, publication_date)`.
+
+**Phase 8C.2 (built):** on the content engine with the common content columns (`title` = headline, `excerpt` = summary, `body` = description, `featured_media_id` = image, `sidebar_*`) and publishable columns with `lock_version`. Related program and project are relation fields in `content_relations` (no `program_id`/`project_id` columns). `source_name` is required in the form. Archive files may be public or private library files; they are shown only when `archive_rights_confirmed` is true, private ones through `/media-coverage/{slug}/archive/{pdf|video}`. Only users with `media_coverage.publish` can change the rights fields, and every change is logged (`media_coverage.archive_rights_confirmed` / `_withdrawn`). Category taxonomy `media_coverage_category`; **tags are not built yet** (the engine supports one taxonomy per module; see 8D). Morph alias `media_coverage`.
+
 
 ### galleries
 `id, title, slug UNIQUE, description, cover_media_id, gallery_type (photo/video/mixed), source_mode (cms/external), external_source_id FK external_sources null SET NULL, gallery_date date null, location, credit, event_id/project_id/program_id FK null SET NULL` + publishable (with `featured`). Tags via terms.
@@ -505,6 +512,8 @@ Index: `INDEX(external_source_id, published_at)`.
 
 ### search_documents
 `id, searchable_type, searchable_id (UNIQUE pair), title varchar(512), body mediumtext, url varchar(1024), published_at, boost tinyint default 1, timestamps` · `FULLTEXT(title, body)`, `INDEX(searchable_type, published_at)`.
+
+**Phase 8C.2 (built):** plus `type varchar(32)`, the registry key used by the `type[]` filter (`pages`, `news`, `events`…); the index is `INDEX(type, published_at)`. `searchable_type` is the morph alias. Rows exist only for live pages and published items of searchable modules (those with pages; not partners or testimonials); pages get `boost` 2. Kept current by `SearchObserver` after each commit; `pacms:search:rebuild` rebuilds it.
 
 ### activity_logs
 `id, user_id FK users null SET NULL, action varchar(64), subject_type varchar(32) null, subject_id bigint null, subject_label varchar(255) null, ip varchar(45) null, user_agent_hash char(64) null, properties json null, created_at` · `INDEX(subject_type, subject_id)`, `INDEX(user_id, created_at)`, `INDEX(action, created_at)`.

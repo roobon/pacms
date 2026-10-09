@@ -22,6 +22,7 @@ use App\Cms\Blocks\Types\HtmlBlock;
 use App\Cms\Blocks\Types\IconBlock;
 use App\Cms\Blocks\Types\ImageBlock;
 use App\Cms\Blocks\Types\ListBlock;
+use App\Cms\Blocks\Types\MediaCoverageBlock;
 use App\Cms\Blocks\Types\NewsBlock;
 use App\Cms\Blocks\Types\PartnersBlock;
 use App\Cms\Blocks\Types\ProgramsBlock;
@@ -34,10 +35,12 @@ use App\Cms\Blocks\Types\SectionBlock;
 use App\Cms\Blocks\Types\SpacerBlock;
 use App\Cms\Blocks\Types\StatisticsBlock;
 use App\Cms\Blocks\Types\TeamBlock;
+use App\Cms\Blocks\Types\TestimonialsBlock;
 use App\Cms\Blocks\Types\VideoBlock;
 use App\Cms\Blocks\Types\WhenBlock;
 use App\Cms\Content\Types\EventType;
 use App\Cms\Content\Types\GalleryType;
+use App\Cms\Content\Types\MediaCoverageType;
 use App\Cms\Content\Types\NewsType;
 use App\Cms\Content\Types\PartnerType;
 use App\Cms\Content\Types\ProgramType;
@@ -198,12 +201,32 @@ return [
             PartnersBlock::class,
             GalleriesBlock::class,
             GalleryBlock::class,
+            TestimonialsBlock::class,
+            MediaCoverageBlock::class,
             DocumentBlock::class,
             HtmlBlock::class,
             GlobalRefBlock::class,
             RepeatBlock::class,
             WhenBlock::class,
         ],
+    ],
+
+    // Testimonials submitted by registered users (CMS-ARCHITECTURE.md §18).
+    'testimonials' => [
+        // Stored with every submission; change the version whenever the consent text changes.
+        'consent_version' => '1.0',
+        'consent_text' => 'I agree that this testimonial, my name, organisation, designation and photo may be published on this website and edited for length or clarity.',
+        // Users see why their testimonial was rejected (off by default: the reason is an internal note).
+        'show_rejection_reason' => (bool) env('PACMS_TESTIMONIAL_SHOW_REJECTION_REASON', false),
+        'body_max' => 1500,
+        'photo_max_kb' => 2048,
+        // Submitters' IP addresses are kept for abuse handling only, then removed.
+        'ip_retention_days' => 90,
+    ],
+
+    'search' => [
+        'per_page' => 10,
+        'max_per_page' => 50,
     ],
 
     // Content modules with direct publishing (CMS-ARCHITECTURE.md §3.3). Each entry is a
@@ -218,6 +241,7 @@ return [
         TeamType::class,
         PartnerType::class,
         GalleryType::class,
+        MediaCoverageType::class,
     ],
 
     // Registered taxonomies. Content types add theirs as they are built.
@@ -227,6 +251,7 @@ return [
         'department' => ['label' => 'Departments', 'singular' => 'Department', 'hierarchical' => true],
         'partner_category' => ['label' => 'Partner categories', 'singular' => 'Partner category', 'hierarchical' => true],
         'publication_category' => ['label' => 'Publication categories', 'singular' => 'Publication category', 'hierarchical' => true],
+        'media_coverage_category' => ['label' => 'Coverage categories', 'singular' => 'Coverage category', 'hierarchical' => true],
         'media_category' => ['label' => 'Media categories', 'singular' => 'Media category', 'hierarchical' => true],
         'tag' => ['label' => 'Tags', 'singular' => 'Tag', 'hierarchical' => false],
     ],

@@ -3,6 +3,7 @@ import SmartLink from '../common/SmartLink.jsx';
 import GalleryGrid from '../display/GalleryGrid.jsx';
 import ItemsDisplay from '../display/ItemsDisplay.jsx';
 import LogoWall from '../display/LogoWall.jsx';
+import TestimonialsDisplay from '../display/TestimonialsDisplay.jsx';
 
 /**
  * News collection. Items come from the server already normalised — dynamic (latest
@@ -82,6 +83,23 @@ export function GalleryBlock({ node, preview }) {
                         View the gallery “{gallery.title}” <i className="bi bi-arrow-right" aria-hidden="true" />
                     </SmartLink>
                 </p>
+            )}
+        </div>
+    );
+}
+
+/** Published testimonials as quote cards, a slider or one large quote. */
+export function TestimonialsBlock({ node, preview }) {
+    const items = node.items ?? [];
+    const { heading, empty_text: emptyText, show_photo: showPhoto = true, show_rating: showRating = true } = node.content;
+
+    return (
+        <div {...frameProps(node, preview, 'pa-collection pa-collection--testimonials')}>
+            {heading && <h2 className="pa-block-heading">{heading}</h2>}
+            {items.length === 0 ? (
+                <p className="text-body-secondary">{emptyText || 'No testimonials yet.'}</p>
+            ) : (
+                <TestimonialsDisplay items={items} display={node.display} showPhoto={showPhoto} showRating={showRating} />
             )}
         </div>
     );

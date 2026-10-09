@@ -31,15 +31,18 @@ class MediaController extends Controller
         $request->validate([
             'file' => ['required', 'file'],
             'alt' => ['nullable', 'string', 'max:255'],
+            'private' => ['nullable', 'boolean'],
         ]);
+        $private = $request->boolean('private');
 
-        // The same file already in the library is reused instead of stored twice.
+        // The same file already in the library (with the same visibility) is reused instead of stored twice.
         $existing = $media->findDuplicate($request->file('file'));
-        if ($existing !== null) {
+        if ($existing !== null && $existing->isPublic() !== $private) {
             return (new MediaResource($existing))->additional(['meta' => ['duplicate' => true]])->response()->setStatusCode(200);
         }
 
-        $item = $media->store($request->file('file'), $request->user(), ['alt' => $request->input('alt')]);
+        // Private uploads (e.g. archived press coverage) stay off /storage until someone decides otherwise.
+        $item = $media->store($request->file('file'), $request->user(), ['alt' => $request->input('alt')], $private);
 
         return (new MediaResource($item))->response()->setStatusCode(201);
     }

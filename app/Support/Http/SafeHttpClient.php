@@ -9,7 +9,7 @@ use Throwable;
 
 /**
  * Outbound HTTP for user-supplied URLs (SECURITY-ARCHITECTURE.md, SSRF): JSON-import asset
- * downloads now, external providers later (Phase 10).
+ * downloads, media-coverage source checks, and external providers later (Phase 10).
  *
  * - only http/https, default ports, no credentials in the URL
  * - the host is resolved first and every address must be public (no loopback, private,
@@ -104,6 +104,60 @@ class SafeHttpClient
     }
 
     /**
+     * HTTP status of a URL after following redirects, without downloading the body (source
+     * checks). HEAD first; servers that refuse HEAD are asked again with a streamed GET.
+     *
+     * @throws UnsafeUrlException when the URL or a redirect target is not allowed
+     *                            (UnresolvableHostException when the host does not exist)
+     * @throws DownloadFailedException on network errors and timeouts
+     */
+    public function probe(string $url, int $timeoutSeconds = 10): int
+    {
+        $status = $this->probeWith('HEAD', $url, $timeoutSeconds);
+        if (in_array($status, [403, 405, 501], true) || $status >= 500) {
+            $status = $this->probeWith('GET', $url, $timeoutSeconds);
+        }
+
+        return $status;
+    }
+
+    private function probeWith(string $method, string $url, int $timeoutSeconds): int
+    {
+        for ($hop = 0; $hop <= self::MAX_REDIRECTS; $hop++) {
+            [$host, $port, $ip] = $this->check($url);
+            $pin = str_contains($ip, ':') ? "[{$ip}]" : $ip;
+
+            try {
+                $response = Http::withOptions([
+                    'allow_redirects' => false,
+                    'connect_timeout' => 5,
+                    'timeout' => $timeoutSeconds,
+                    // The body is never read: only the status line and headers matter.
+                    'stream' => true,
+                    'curl' => [CURLOPT_RESOLVE => ["{$host}:{$port}:{$pin}"]],
+                ])->withHeaders(['User-Agent' => 'PACMS/1.0 (+link check)', 'Accept' => 'text/html,application/pdf;q=0.9,*/*;q=0.5'])
+                    ->send($method, $url);
+            } catch (Throwable $e) {
+                throw new DownloadFailedException(__('The address could not be reached.'), previous: $e);
+            }
+
+            if ($response->redirect()) {
+                $location = (string) $response->header('Location');
+                if ($location === '') {
+                    return $response->status();
+                }
+                $url = $this->absolute($location, $url);
+
+                continue;
+            }
+
+            return $response->status();
+        }
+
+        throw new DownloadFailedException(__('Too many redirects.'));
+    }
+
+    /**
      * Validate a URL and resolve its host to one checked public address.
      *
      * @return array{0: string, 1: int, 2: string} host, port, IP
@@ -130,7 +184,7 @@ class SafeHttpClient
 
         $ips = filter_var($host, FILTER_VALIDATE_IP) ? [$host] : ($this->resolver)($host);
         if ($ips === []) {
-            throw new UnsafeUrlException(__('The address :host could not be found.', ['host' => $host]));
+            throw new UnresolvableHostException(__('The address :host could not be found.', ['host' => $host]));
         }
 
         foreach ($ips as $ip) {

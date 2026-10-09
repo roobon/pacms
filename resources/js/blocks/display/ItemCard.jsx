@@ -40,6 +40,7 @@ export default function ItemCard({ item, layout = 'card', showExcerpt = true, sh
                     )}
                 </Heading>
                 {item.meta?.role && <p className="pa-item__role">{item.meta.role}</p>}
+                {item.meta?.source && <p className="pa-item__source">{item.meta.source}</p>}
                 {item.meta?.place && (
                     <p className="pa-item__place">
                         <i className="bi bi-geo-alt" aria-hidden="true" /> {item.meta.place}

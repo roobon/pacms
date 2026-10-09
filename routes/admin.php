@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\GlobalBlockController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MediaCoverageController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PagePreviewController;
 use App\Http\Controllers\Admin\PageRevisionController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\RedirectController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TermController;
+use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -97,6 +99,22 @@ foreach (app(ContentTypeRegistry::class)->all() as $contentType) {
             Route::get('{item}/preview', 'preview')->name('preview')->defaults('type', $key);
         });
 }
+
+// Testimonials: moderation queue and editor (permissions checked in the controller and service).
+Route::prefix('testimonials')->name('testimonials.')->controller(TestimonialController::class)->whereNumber('testimonial')->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('create', 'create')->name('create');
+    Route::post('/', 'store')->name('store');
+    Route::get('{testimonial}/edit', 'edit')->name('edit');
+    Route::put('{testimonial}', 'update')->name('update');
+    Route::delete('{testimonial}', 'destroy')->name('destroy');
+    Route::post('{testimonial}/moderate', 'transition')->name('moderate');
+    Route::get('{testimonial}/photo', 'photo')->name('photo');
+});
+
+// Media coverage: check the original link now (CMS-ARCHITECTURE.md §19.1).
+Route::post('media-coverage/{item}/check-source', [MediaCoverageController::class, 'checkSource'])
+    ->whereNumber('item')->middleware('throttle:20,1')->name('media_coverage.check-source');
 
 // Reusable blocks (Phase 5): global blocks, templates, custom block types
 Route::middleware('can:global_blocks.manage')->group(function () {

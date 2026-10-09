@@ -642,6 +642,14 @@ img.pa-ratio {
         color: var(--pa-color-body);
     }
 
+    // Media coverage cards: "The Daily Star · Newspaper".
+    &__source {
+        margin: 0;
+        font-size: var(--pa-font-size-sm);
+        font-weight: 600;
+        color: var(--pa-color-muted);
+    }
+
     &--list {
         flex-direction: row;
 
@@ -1293,4 +1301,148 @@ img.pa-ratio {
     &--grayscale &__image img { filter: grayscale(1); opacity: .75; }
     &--grayscale &__link:hover &__image img,
     &--grayscale &__link:focus-visible &__image img { filter: none; opacity: 1; }
+}
+
+// Testimonials ----------------------------------------------------------------------
+.pa-testimonial {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pa-space-4);
+    height: 100%;
+    margin: 0;
+    padding: var(--pa-space-5);
+    background: #fff;
+    border-radius: var(--pa-radius-lg);
+
+    &.pa-item--elevated { box-shadow: var(--pa-shadow-sm); }
+    &.pa-item--outline { border: 1px solid var(--pa-color-border); }
+    &.pa-item--flat { background: transparent; padding-inline: 0; }
+
+    &__rating {
+        margin: 0;
+        color: #B7791F; // amber, 3.6:1 on white: decorative stars, the rating is in aria-label
+        letter-spacing: .1em;
+    }
+
+    &__rating-empty { color: var(--pa-color-border); }
+
+    &__quote {
+        flex: 1;
+        margin: 0;
+
+        p {
+            margin: 0;
+            white-space: pre-line;
+            font-size: var(--pa-font-size-lg, 1.125rem);
+            line-height: 1.6;
+        }
+
+        p::before { content: "\201C"; }
+        p::after { content: "\201D"; }
+    }
+
+    &__by {
+        display: flex;
+        align-items: center;
+        gap: var(--pa-space-3);
+    }
+
+    &__photo {
+        flex: 0 0 3.5rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__name {
+        display: block;
+        font-weight: 700;
+        color: var(--pa-color-heading);
+    }
+
+    &__role,
+    &__cite {
+        display: block;
+        font-size: var(--pa-font-size-sm);
+        font-style: normal;
+        color: var(--pa-color-muted);
+    }
+
+    &--large {
+        text-align: center;
+        align-items: center;
+        padding: var(--pa-space-6, 2rem);
+
+        .pa-testimonial__quote p {
+            font-size: var(--pa-font-size-2xl, 1.5rem);
+            font-family: var(--pa-font-heading);
+        }
+
+        .pa-testimonial__by { text-align: start; }
+    }
+}
+
+.pa-quote-slider {
+    max-width: 48rem;
+    margin-inline: auto;
+}
+
+// Masonry: CSS columns, no library (CMS-ARCHITECTURE.md §7).
+.pa-masonry {
+    columns: var(--pa-cols-d, 3);
+    column-gap: var(--pa-space-5);
+    margin: 0;
+    padding: 0;
+
+    > li {
+        break-inside: avoid;
+        margin-bottom: var(--pa-space-5);
+    }
+
+    @include media-breakpoint-down(lg) { columns: var(--pa-cols-t, 2); }
+    @include media-breakpoint-down(md) { columns: var(--pa-cols-m, 1); }
+}
+
+// Media coverage: the notice and the archived copy -------------------------------------
+.pa-coverage-archive {
+    margin: var(--pa-space-5) 0;
+
+    &__notice {
+        padding: var(--pa-space-3) var(--pa-space-4);
+        background: var(--pa-color-surface, #F6F8FA);
+        border-left: 4px solid var(--pa-color-primary);
+        border-radius: var(--pa-radius-sm, .25rem);
+    }
+
+    &__pdf {
+        display: block;
+        width: 100%;
+        height: min(80vh, 60rem);
+        border: 1px solid var(--pa-color-border);
+        border-radius: var(--pa-radius-lg);
+    }
+
+    &__video {
+        display: block;
+        width: 100%;
+        max-height: 70vh;
+        background: #000;
+        border-radius: var(--pa-radius-lg);
+    }
+}
+
+// Form honeypot: out of sight and out of the tab order, but still a real field for bots.
+.pa-honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
 }

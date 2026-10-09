@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Public\CoverageArchiveController;
 use App\Http\Controllers\Public\PreviewController;
 use App\Http\Controllers\Public\SeoFilesController;
 use App\Http\Controllers\Public\SpaController;
@@ -19,6 +20,12 @@ Route::get('robots.txt', [SeoFilesController::class, 'robots'])->name('robots');
 Route::get('sitemap.xml', [SeoFilesController::class, 'index'])->name('sitemap');
 Route::get('sitemaps/pages.xml', [SeoFilesController::class, 'pages'])->name('sitemap.pages');
 Route::get('sitemaps/{module}.xml', [SeoFilesController::class, 'module'])->where('module', '[a-z0-9-]+')->name('sitemap.module');
+
+// Archived copies of press coverage kept as private files (shown only with confirmed rights).
+Route::get('media-coverage/{slug}/archive/{kind}', CoverageArchiveController::class)
+    ->where(['slug' => '[a-z0-9-]+', 'kind' => 'pdf|video'])
+    ->middleware('throttle:60,1')
+    ->name('media-coverage.archive');
 
 // Secure preview: valid signature AND a signed-in user who may view the page.
 Route::get('preview/pages/{page}', [PreviewController::class, 'page'])

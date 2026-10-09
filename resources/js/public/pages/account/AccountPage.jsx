@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { authHttp, ensureCsrfCookie } from '../../api/client.js';
 import { useMe } from '../../hooks/useMe.js';
 import PageSkeleton from '../../components/common/PageSkeleton.jsx';
+import TestimonialSection from './TestimonialSection.jsx';
 
 export default function AccountPage() {
     const { data: me, isPending } = useMe();
@@ -70,6 +71,8 @@ export default function AccountPage() {
                     Sign out
                 </button>
             </div>
+
+            <TestimonialSection me={me} />
         </div>
     );
 }
