@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-09 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-09 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-09. |
 
 ```
 PHASE:   8D.1 — content types made in the admin ("custom post types"): the engine change,
          Design → Content types with the field builder, permissions, admin screens and pages
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-09) and merged into main.
          Decisions applied (team lead, 2026-10-09: "use your defaults"):
          - a type with items cannot be deleted; it can be disabled (hidden, items kept)
          - new types get permissions like News (editors everything; authors and contributors write and submit)
@@ -93,4 +93,4 @@ The demo seeder now also creates two admin-made types: **Success stories** (edit
 
 ## Next
 
-**8D.2:** builder blocks per type, categories and documents, address redirects, the menu for many types, coverage tags. Then the starter kit and **v0.8.0**.
+**8D.2:** builder blocks per type (first, as asked at approval: admin-made types such as Researches under DYNAMIC in "Add block"), categories and documents, address redirects, the menu for many types, coverage tags. Then the starter kit and **v0.8.0**.
