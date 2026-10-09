@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-09 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-09, tagged `v0.8.0` |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-09. |
 
 ```
 PHASE:   8 (last part) — starter kit: designed page and section templates and global blocks,
          installed with one command; "New page → Start from" a page template
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-09), merged into main and tagged v0.8.0.
          Decisions applied (team lead, 2026-10-09: "use your defaults"):
          - S-1 pages only with --pages, created as drafts, never over existing pages
          - S-2 no images shipped: photo spots are soft panels with an icon

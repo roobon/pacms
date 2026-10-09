@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 8 — Content Modules, in parts.** Parts 8A (content engine, News, Events, sidebars — [report](phase-reports/PHASE-8A-REPORT.md)) and 8B (Projects, Programs, Publications — [report](phase-reports/PHASE-8B-REPORT.md)) approved and merged, and so are 8C.1 (Team, Partners, Galleries — [report](phase-reports/PHASE-8C1-REPORT.md)) and 8C.2 (Testimonials, Media Coverage, search — [report](phase-reports/PHASE-8C2-REPORT.md)), and 8D.1 (admin-made content types: engine and types — [report](phase-reports/PHASE-8D1-REPORT.md)); 8D.2 (blocks, categories, documents, address redirects, menu — [report](phase-reports/PHASE-8D2-REPORT.md)) approved and merged; the starter kit ([report](phase-reports/PHASE-8-STARTER-KIT-REPORT.md)) is ready for review. Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
+Current phase: **Phase 9 — Navigation, next.** Phase 8 (Content Modules) approved and merged (v0.8.0): 8A ([report](phase-reports/PHASE-8A-REPORT.md)), 8B ([report](phase-reports/PHASE-8B-REPORT.md)), 8C.1 ([report](phase-reports/PHASE-8C1-REPORT.md)), 8C.2 ([report](phase-reports/PHASE-8C2-REPORT.md)), 8D.1 ([report](phase-reports/PHASE-8D1-REPORT.md)), 8D.2 ([report](phase-reports/PHASE-8D2-REPORT.md)) and the starter kit ([report](phase-reports/PHASE-8-STARTER-KIT-REPORT.md)). Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
 
 | Document | Purpose |
 |---|---|
