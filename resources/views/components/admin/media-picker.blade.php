@@ -1,4 +1,4 @@
-@props(['name', 'label', 'media' => null, 'help' => null, 'disabled' => false, 'kind' => 'image'])
+@props(['name', 'label', 'media' => null, 'help' => null, 'disabled' => false, 'kind' => 'image', 'visibility' => null])
 @php($id = 'picker-'.str_replace(['[', ']', '.'], '-', $name))
 @php($errorKey = str_replace(['[', ']'], ['.', ''], $name))
 {{-- Progressive enhancement: the React media picker island (resources/js/admin/islands/media-picker.jsx)
@@ -9,6 +9,7 @@
          data-name="{{ $name }}"
          data-label="{{ $label }}"
          data-kind="{{ $kind }}"
+         data-visibility="{{ $visibility }}"
          data-value="{{ old($errorKey, $media?->id) }}"
          data-preview="{{ $media?->thumbnailUrl(640) }}"
          data-alt="{{ $media?->alt }}"
@@ -19,12 +20,12 @@
          data-disabled="{{ $disabled ? '1' : '0' }}"
          aria-labelledby="{{ $id }}-label">
         <input type="hidden" name="{{ $name }}" value="{{ old($errorKey, $media?->id) }}">
-        @if ($media && $kind === 'document')
-            <p class="mb-0"><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>{{ $media->original_name }}</p>
+        @if ($media && $kind !== 'image')
+            <p class="mb-0"><i class="bi {{ $kind === 'video' ? 'bi-film' : 'bi-file-earmark-text' }} me-1" aria-hidden="true"></i>{{ $media->original_name }}@unless ($media->isPublic()) <span class="pa-badge">Private</span>@endunless</p>
         @elseif ($media)
             <img src="{{ $media->thumbnailUrl(640) }}" alt="{{ $media->alt }}" class="pa-media-field__preview">
         @else
-            <p class="text-body-secondary small mb-0">No {{ $kind === 'document' ? 'document' : 'image' }} selected.</p>
+            <p class="text-body-secondary small mb-0">No {{ $kind }} selected.</p>
         @endif
     </div>
     @if ($help)

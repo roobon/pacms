@@ -22,6 +22,9 @@ final class DisplayModeRegistry
             'carousel' => ['label' => 'Carousel', 'options' => ['columns', 'gap', 'card_style', 'image_ratio', 'autoplay', 'interval', 'arrows', 'dots']],
             'featured' => ['label' => 'Featured + grid', 'options' => ['columns', 'gap', 'card_style', 'image_ratio']],
             'accordion' => ['label' => 'Accordion', 'options' => ['first_open', 'allow_multiple_open']],
+            'masonry' => ['label' => 'Masonry', 'options' => ['columns', 'gap', 'card_style']],
+            'quote-slider' => ['label' => 'Quote slider (one at a time)', 'options' => []],
+            'single' => ['label' => 'Single (first item only)', 'options' => ['card_style']],
         ];
     }
 

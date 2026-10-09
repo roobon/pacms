@@ -32,3 +32,9 @@ Schedule::command('model:prune', ['--model' => [ActivityLog::class]])->daily();
 // Scheduled publishing and revision retention.
 Schedule::command('pacms:publish-scheduled')->everyMinute()->withoutOverlapping();
 Schedule::command('pacms:revisions:prune')->weekly();
+
+// Media coverage: check original links that are due (each about once a day, spread out).
+Schedule::command('pacms:coverage:check')->everyFifteenMinutes()->withoutOverlapping();
+
+// Testimonials: remove submitters' IP addresses after the retention period.
+Schedule::command('pacms:testimonials:purge-ips')->daily();

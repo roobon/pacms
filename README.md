@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) approved and merged; Part 8C.1 (Team, Partners, Galleries) approved and merged; 8C.2 (Testimonials, Media Coverage, search) in progress.** See [docs/phase-reports/PHASE-8C1-REPORT.md](docs/phase-reports/PHASE-8C1-REPORT.md).
+- Current status: **Phase 7 (Media, advanced) approved and merged (v0.7.0). Phase 8 (Content Modules) in progress: Part 8A (content engine, News, Events, sidebars) approved and merged; Part 8B (Projects, Programs, Publications) approved and merged; Part 8C.1 (Team, Partners, Galleries) approved and merged; 8C.2 (Testimonials, Media Coverage, search) ready for review.** See [docs/phase-reports/PHASE-8C2-REPORT.md](docs/phase-reports/PHASE-8C2-REPORT.md).
 
 ## Requirements
 
@@ -32,7 +32,7 @@ In the `local` environment, `DevelopmentSeeder` creates one account per role (`<
 ## Quality checks
 
 ```bash
-composer test        # Pest (uses MySQL database pacms_testing)
+composer test        # Pest (uses MySQL database pacms_testing; tests/Search commits data, see tests/Pest.php)
 composer analyse     # Larastan level 6
 composer lint        # Pint (PSR-12 / Laravel style)
 npm test             # Vitest

@@ -14,6 +14,7 @@ use App\Models\Gallery;
 use App\Models\GlobalBlock;
 use App\Models\ImportJob;
 use App\Models\Media;
+use App\Models\MediaCoverage;
 use App\Models\News;
 use App\Models\Page;
 use App\Models\Partner;
@@ -22,7 +23,9 @@ use App\Models\Project;
 use App\Models\Publication;
 use App\Models\TeamMember;
 use App\Models\Term;
+use App\Models\Testimonial;
 use App\Models\User;
+use App\Observers\SearchObserver;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Settings\SettingsService;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -64,6 +67,8 @@ class AppServiceProvider extends ServiceProvider
             'team_member' => TeamMember::class,
             'partner' => Partner::class,
             'gallery' => Gallery::class,
+            'media_coverage' => MediaCoverage::class,
+            'testimonial' => Testimonial::class,
             'global_block' => GlobalBlock::class,
             'block_template' => BlockTemplate::class,
             'block_type' => BlockType::class,
@@ -83,6 +88,12 @@ class AppServiceProvider extends ServiceProvider
             return $this->app->isProduction() ? $rule->uncompromised() : $rule;
         });
 
+        // Site search: pages and every module item are re-indexed when they change.
+        Page::observe(SearchObserver::class);
+        foreach ($this->app->make(ContentTypeRegistry::class)->models() as $model) {
+            $model::observe(SearchObserver::class);
+        }
+
         $this->configureRateLimiting();
 
         Paginator::useBootstrapFive();
@@ -95,5 +106,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)->by($request->user()?->id ?: $request->ip()));
 
         RateLimiter::for('admin', fn (Request $request) => Limit::perMinute(300)->by($request->user()?->id ?: $request->ip()));
+
+        RateLimiter::for('search', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
     }
 }

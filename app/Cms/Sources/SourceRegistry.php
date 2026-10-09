@@ -25,6 +25,8 @@ class SourceRegistry
         foreach ($content->all() as $type) {
             $this->registerDynamic(new ContentSource($type));
         }
+        // Testimonials have no pages, so they are not a content module, but blocks list them too.
+        $this->registerDynamic(new TestimonialSource);
     }
 
     public function registerDynamic(DynamicSource $source): void

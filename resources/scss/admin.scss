@@ -151,6 +151,19 @@ $sidebar-bg: #0F172A;
         }
     }
 
+    // Items waiting for attention (e.g. testimonials to moderate).
+    &__count {
+        margin-left: auto;
+        min-width: 1.5rem;
+        padding: .0625rem .4375rem;
+        border-radius: 999px;
+        background: #F2A93B;
+        color: #1E293B; // 8.9:1 on the amber badge
+        font-size: .75rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
     &__footer {
         padding: 1rem 1.25rem;
         font-size: .75rem;
@@ -1306,4 +1319,31 @@ legend.form-label {
     }
 
     &__actions { display: flex; justify-content: space-between; }
+}
+
+// Testimonials (moderation screen)
+.pa-testimonial-photo {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.pa-testimonial-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: cover;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.pa-testimonial-preview blockquote,
+.pa-testimonial-original {
+    white-space: pre-line;
+    font-style: italic;
+}
+
+.pa-testimonial-original {
+    padding-left: 1rem;
+    border-left: 3px solid #CBD5E1;
 }

@@ -3,20 +3,24 @@ import { createPortal } from 'react-dom';
 import { adminHttp, errorMessage } from '../../http.js';
 
 /**
- * Modal media browser (images, or documents such as PDFs). Uses the native <dialog> element: focus is trapped, Esc closes
+ * Modal media browser (images, documents such as PDFs, or videos). Uses the native <dialog> element: focus is trapped, Esc closes
  * and focus returns to the trigger automatically.
  *
  * @param {{
  *   title: string, endpoint: string, uploadEndpoint: string, canUpload: boolean,
- *   selectedId: number|null, onClose: () => void, onSelect: (media: any) => void, kind?: 'image'|'document',
- *   multiple?: boolean, onSelectMany?: (media: any[]) => void
+ *   selectedId: number|null, onClose: () => void, onSelect: (media: any) => void, kind?: 'image'|'document'|'video',
+ *   multiple?: boolean, onSelectMany?: (media: any[]) => void, visibility?: 'any'
  * }} props
+ *
+ * Documents, videos and gallery photos are public files only, unless visibility is "any"
+ * (archives shown only under conditions): then private files are offered and uploads are private.
  */
-export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, selectedId, onClose, onSelect, kind = 'image', multiple = false, onSelectMany }) {
+export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, selectedId, onClose, onSelect, kind = 'image', multiple = false, onSelectMany, visibility }) {
     // Multiple mode (gallery editor): tiles toggle; uploads are added straight away.
     const [many, setMany] = useState(/** @type {any[]} */ ([]));
     const isImage = kind === 'image';
-    const noun = isImage ? 'image' : 'document';
+    const noun = kind;
+    const anyVisibility = visibility === 'any';
     const dialogRef = useRef(/** @type {HTMLDialogElement|null} */ (null));
     const headingId = useId();
     const [query, setQuery] = useState('');
@@ -39,7 +43,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             setLoading(true);
             setError('');
             try {
-                const { data } = await adminHttp.get(endpoint, { params: { kind, q: search || undefined, page: pageNumber, visibility: isImage && !multiple ? undefined : 'public' } });
+                const { data } = await adminHttp.get(endpoint, { params: { kind, q: search || undefined, page: pageNumber, visibility: anyVisibility || (isImage && !multiple) ? undefined : 'public' } });
                 setItems((previous) => (pageNumber === 1 ? data.data : [...previous, ...data.data]));
                 setHasMore(data.meta.current_page < data.meta.last_page);
                 setPage(pageNumber);
@@ -49,7 +53,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                 setLoading(false);
             }
         },
-        [endpoint, kind, isImage, multiple],
+        [endpoint, kind, isImage, multiple, anyVisibility],
     );
 
     // Debounced search (and initial load).
@@ -67,6 +71,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
             const form = new FormData();
             form.append('file', upload.file);
             if (isImage) form.append('alt', upload.alt);
+            if (anyVisibility) form.append('private', '1');
             const { data } = await adminHttp.post(uploadEndpoint, form);
             if (multiple) onSelectMany?.([data.data]);
             else onSelect(data.data);
@@ -103,7 +108,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                             <input
                                 id={`${headingId}-file`}
                                 type="file"
-                                accept={isImage ? '.jpg,.jpeg,.png,.webp,.gif,.avif' : '.pdf,.docx,.xlsx,.pptx,.odt,.ods,.odp,.txt,.csv'}
+                                accept={isImage ? '.jpg,.jpeg,.png,.webp,.gif,.avif' : kind === 'video' ? '.mp4,.webm' : '.pdf,.docx,.xlsx,.pptx,.odt,.ods,.odp,.txt,.csv'}
                                 className="form-control form-control-sm"
                                 onChange={(e) => setUpload((u) => ({ ...u, file: e.target.files?.[0] ?? null }))}
                             />
@@ -158,10 +163,11 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
                                         onDoubleClick={() => !multiple && onSelect(item)}
                                     >
                                         <span className="pa-media-tile__thumb">
-                                            {item.thumbnail ? <img src={item.thumbnail} alt="" loading="lazy" /> : <i className={`bi ${isImage ? 'bi-image' : 'bi-file-earmark-text'}`} aria-hidden="true" />}
+                                            {item.thumbnail ? <img src={item.thumbnail} alt="" loading="lazy" /> : <i className={`bi ${isImage ? 'bi-image' : kind === 'video' ? 'bi-film' : 'bi-file-earmark-text'}`} aria-hidden="true" />}
                                         </span>
                                         <span className="pa-media-tile__name">
                                             {item.name}
+                                            {anyVisibility && item.url === null && <span className="pa-badge d-block mt-1">Private</span>}
                                             {isImage && !item.alt && !item.is_decorative && <span className="pa-badge pa-badge--warning d-block mt-1">Needs alt text</span>}
                                         </span>
                                     </button>
@@ -180,7 +186,7 @@ export function MediaPickerDialog({ title, endpoint, uploadEndpoint, canUpload, 
 
             <div className="pa-dialog__footer">
                 <span className="small text-body-secondary" aria-live="polite">
-                    {multiple ? `${many.length} selected` : chosen ? `Selected: ${chosen.name}` : `Select ${isImage ? 'an image' : 'a document'}, then confirm.`}
+                    {multiple ? `${many.length} selected` : chosen ? `Selected: ${chosen.name}` : `Select ${isImage ? 'an image' : `a ${noun}`}, then confirm.`}
                 </span>
                 <div className="d-flex gap-2">
                     <button type="button" className="btn btn-link" onClick={onClose}>

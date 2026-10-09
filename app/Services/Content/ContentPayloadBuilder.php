@@ -49,7 +49,7 @@ class ContentPayloadBuilder
     {
         $type = $this->types->forModel($item);
         $key = 'pacms:content:'.$type->key().':'.$item->getKey().':'.$item->updated_at?->timestamp.':'
-            .$this->versions->fingerprint($type->key(), 'media', 'settings', 'globals', 'block_types', ...$this->otherTypes($type));
+            .$this->versions->fingerprint($type->key(), 'media', 'settings', 'globals', 'block_types', 'testimonials', ...$this->otherTypes($type));
 
         return Cache::remember($key, now()->addDay(), fn () => $this->build($type, $item));
     }

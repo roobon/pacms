@@ -18,7 +18,7 @@ Block types available on this site (fields: key:type, * = required; children: al
 - column (Column): no fields; children: any block except section, hero, columns, column; only inside columns
 - heading (Heading): eyebrow:text, text:text*, level:select(1|2|3|4|5|6)
 - rich-text (Text): html:rich-text*
-- list (List): style:select(bullet|number|check|icon), icon:icon, columns:select(1|2|3), item_padding:select(none|sm|md|lg), dividers:checkbox, items:list of {text:text*, icon:icon, link:link}
+- list (List): style:select(none|bullet|number|check|icon), icon:icon, columns:select(1|2|3), item_padding:select(none|sm|md|lg), dividers:checkbox, items:list of {text:text*, icon:icon, link:link}
 - image (Image): image:image*, alt:text, caption:textarea, link:link, ratio:select(auto|1:1|4:3|16:9|21:9)
 - button (Button): label:text*, link:link*, variant:select(primary|secondary|accent|outline|link), icon:icon
 - button-group (Buttons): no fields; children: button
@@ -35,6 +35,18 @@ Block types available on this site (fields: key:type, * = required; children: al
 - quote (Quote): text:textarea*, author:text, role:text, image:image
 - cta (Call to action): no fields; children: heading, rich-text, button, button-group, icon
 - news (News): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox, items:list of {title:text*, excerpt:textarea, image:image, date:date, link:link}
+- events (Events): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- projects (Projects): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- programs (Programs): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- publications (Publications): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- team (Team): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- partners (Partners): heading:text, style:select(logos|cards), logo_size:select(sm|md|lg), grayscale:checkbox, empty_text:text
+- galleries (Galleries): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- gallery (Gallery): heading:text, columns:select(2|3|4|5), show_captions:checkbox, show_link:checkbox
+- testimonials (Testimonials): heading:text, empty_text:text, show_photo:checkbox, show_rating:checkbox
+- media-coverage (Media Coverage): heading:text, empty_text:text, show_excerpt:checkbox, show_date:checkbox
+- document (Document): file:media*, title:text, description:textarea, display:select(viewer|card), height:select(sm|md|lg)
+- html (HTML): html:html
 
 Example:
 {
