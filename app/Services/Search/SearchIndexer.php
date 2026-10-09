@@ -78,7 +78,7 @@ class SearchIndexer
             if (! $type->searchable()) {
                 continue;
             }
-            $type->modelClass()::query()->published()->each(function (ContentItem $item) use (&$count) {
+            $type->query()->published()->each(function (ContentItem $item) use (&$count) {
                 $this->sync($item);
                 $count++;
             });

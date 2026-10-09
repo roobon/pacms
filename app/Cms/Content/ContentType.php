@@ -31,6 +31,43 @@ abstract class ContentType
      */
     abstract public function modelClass(): string;
 
+    /**
+     * Items of this type. Built-in modules have a table each; admin-made types share one
+     * (custom_items) and scope the query to their type.
+     *
+     * @return Builder<ContentItem>
+     */
+    public function query(): Builder
+    {
+        return $this->modelClass()::query();
+    }
+
+    /**
+     * A new, unsaved item of this type.
+     */
+    public function newItem(): ContentItem
+    {
+        $class = $this->modelClass();
+
+        return new $class;
+    }
+
+    /** Created in the admin (Design → Content types) rather than in code. */
+    public function isAdminMade(): bool
+    {
+        return false;
+    }
+
+    /**
+     * URL of one of this type's admin screens (index, create, edit, update, workflow…).
+     *
+     * @param  array<string, mixed>  $parameters
+     */
+    public function adminUrl(string $action = 'index', ?ContentItem $item = null, array $parameters = []): string
+    {
+        return route('admin.'.$this->key().'.'.$action, ($item !== null ? ['item' => $item->getKey()] : []) + $parameters);
+    }
+
     /** Public URL prefix: /news/{slug}. Must be a reserved page slug. */
     public function routePrefix(): string
     {

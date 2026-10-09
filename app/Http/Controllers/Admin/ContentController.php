@@ -46,17 +46,16 @@ class ContentController extends Controller
     public function index(Request $request): View
     {
         $type = $this->type($request);
-        Gate::authorize('viewAny', $type->modelClass());
+        $this->authorizeType($request, $type, 'view');
 
         $filters = $request->validate([
             'q' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', Rule::enum(ContentStatus::class)],
         ]);
-        $model = $type->modelClass();
 
         return view('admin.content.index', [
             'type' => $type,
-            'items' => $model::query()
+            'items' => $type->query()
                 ->with('author:id,name')
                 ->when($filters['q'] ?? null, fn ($query, $q) => $query->where('title', 'like', "%{$q}%"))
                 ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
@@ -70,9 +69,8 @@ class ContentController extends Controller
     public function create(Request $request): View
     {
         $type = $this->type($request);
-        Gate::authorize('create', $type->modelClass());
-        $model = $type->modelClass();
-        $item = new $model;
+        $this->authorizeType($request, $type, 'create');
+        $item = $type->newItem();
         if (isset($type->fields()['timezone'])) {
             $item->setAttribute('timezone', $this->siteTimezone());
         }
@@ -83,11 +81,11 @@ class ContentController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $type = $this->type($request);
-        Gate::authorize('create', $type->modelClass());
+        $this->authorizeType($request, $type, 'create');
 
         $item = $this->content->create($type, $request->user(), $this->validated($type, $request));
 
-        return redirect()->route("admin.{$type->key()}.edit", $item)
+        return redirect()->to($type->adminUrl('edit', $item))
             ->with('success', __(':Item created as a draft.', ['item' => $type->singular()]));
     }
 
@@ -109,7 +107,7 @@ class ContentController extends Controller
         $lockVersion = (int) $request->validate(['lock_version' => ['required', 'integer']])['lock_version'];
         $this->content->update($type, $request->user(), $item, $this->validated($type, $request), $lockVersion);
 
-        return redirect()->route("admin.{$type->key()}.edit", $item)->with('success', __('Changes saved.'));
+        return redirect()->to($type->adminUrl('edit', $item))->with('success', __('Changes saved.'));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -120,7 +118,7 @@ class ContentController extends Controller
 
         $this->content->delete($type, $request->user(), $item);
 
-        return redirect()->route("admin.{$type->key()}.index")
+        return redirect()->to($type->adminUrl())
             ->with('success', __(':Item ":title" deleted.', ['item' => $type->singular(), 'title' => $item->title]));
     }
 
@@ -150,7 +148,7 @@ class ContentController extends Controller
             default => __(':action: done.', ['action' => $action->label()]),
         };
 
-        return redirect()->route("admin.{$type->key()}.edit", $item)->with('success', $message);
+        return redirect()->to($type->adminUrl('edit', $item))->with('success', $message);
     }
 
     public function revisions(Request $request, RevisionService $revisions): View
@@ -189,7 +187,7 @@ class ContentController extends Controller
         $revision = $this->revision($item, (int) $request->route('revision'));
         $this->content->restore($type, $request->user(), $item, $revision);
 
-        return redirect()->route("admin.{$type->key()}.edit", $item)
+        return redirect()->to($type->adminUrl('edit', $item))
             ->with('success', __('Revision #:number restored.', ['number' => $revision->number]));
     }
 
@@ -234,9 +232,7 @@ class ContentController extends Controller
                     ->values()->all()
                 : [],
             'relationOptions' => collect($type->relationFields())->map(function (array $field) {
-                $model = $this->types->get((string) $field['target'])->modelClass();
-
-                return $model::query()->orderBy('title')->get(['id', 'title', 'status'])
+                return $this->types->get((string) $field['target'])->query()->orderBy('title')->get(['id', 'title', 'status'])
                     ->mapWithKeys(fn (ContentItem $option) => [$option->id => $option->title.($option->isPublished() ? '' : ' ('.strtolower($option->status->label()).')')])
                     ->all();
             })->all(),
@@ -380,6 +376,15 @@ class ContentController extends Controller
         return $data;
     }
 
+    /**
+     * Type-level checks (list, create) go through the type's permission: admin-made types
+     * share one model class, so a class-based policy could not tell them apart.
+     */
+    private function authorizeType(Request $request, ContentType $type, string $action): void
+    {
+        abort_unless($request->user()->can($type->ability($action)), 403);
+    }
+
     private function type(Request $request): ContentType
     {
         return $this->types->get((string) $request->route('type'));
@@ -387,9 +392,7 @@ class ContentController extends Controller
 
     private function item(ContentType $type, Request $request): ContentItem
     {
-        $model = $type->modelClass();
-
-        return $model::query()->findOrFail((int) $request->route('item'));
+        return $type->query()->findOrFail((int) $request->route('item'));
     }
 
     private function revision(ContentItem $item, int $number): Revision

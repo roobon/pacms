@@ -84,9 +84,8 @@ final class AdminNavigation
     {
         return array_values(array_map(fn (ContentType $type) => [
             'label' => $type->label(),
-            'route' => 'admin.'.$type->key().'.index',
+            'url' => $type->adminUrl(),
             'icon' => $type->icon(),
-            'active' => 'admin.'.$type->key().'.*',
             'can' => $type->ability('view'),
         ], app(ContentTypeRegistry::class)->all()));
     }

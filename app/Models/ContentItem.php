@@ -54,9 +54,18 @@ abstract class ContentItem extends Model implements Revisionable
     /** Registry key, e.g. "news". */
     abstract public static function typeKey(): string;
 
+    /**
+     * Registry key of this item's type. The model's own key for built-in modules; items of
+     * admin-made types share one model and take it from their type.
+     */
+    public function contentTypeKey(): string
+    {
+        return static::typeKey();
+    }
+
     public function type(): ContentType
     {
-        return app(ContentTypeRegistry::class)->get(static::typeKey());
+        return app(ContentTypeRegistry::class)->get($this->contentTypeKey());
     }
 
     public function contentType(): string
@@ -134,8 +143,7 @@ abstract class ContentItem extends Model implements Revisionable
 
         $ids = $this->relatedIds($field);
         $target = app(ContentTypeRegistry::class)->get((string) $definition['target']);
-        $model = $target->modelClass();
-        $items = $model::query()->whereKey($ids)->with('featuredMedia')
+        $items = $target->query()->whereKey($ids)->with('featuredMedia')
             ->when($publishedOnly, fn ($query) => $query->published())
             ->get()->keyBy('id');
         $ordered = array_values(array_filter(array_map(fn (int $id) => $items[$id] ?? null, $ids)));
@@ -206,7 +214,7 @@ abstract class ContentItem extends Model implements Revisionable
 
         return [
             'schema_version' => '1.0',
-            'type' => static::typeKey(),
+            'type' => $this->contentTypeKey(),
             'fields' => $fields,
             'terms' => $this->exists ? $this->terms()->pluck('terms.id')->all() : [],
             'seo' => $this->seoSnapshot(),

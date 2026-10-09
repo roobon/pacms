@@ -43,8 +43,7 @@ class SeoFilesController extends Controller
 
             // One sitemap per content module that has published items.
             foreach ($this->types->all() as $type) {
-                $model = $type->modelClass();
-                $lastmod = $model::query()->published()->max('updated_at');
+                $lastmod = $type->query()->published()->max('updated_at');
                 if ($lastmod !== null) {
                     $this->sitemapEntry($writer, '/sitemaps/'.$type->routePrefix().'.xml', $lastmod);
                 }
@@ -106,9 +105,8 @@ class SeoFilesController extends Controller
             $writer->endElement();
 
             // Modules without pages of their own (partners) only list their archive page.
-            $model = $type->modelClass();
             if ($type->hasDetailPages()) {
-                $model::query()->published()->with('seo')->orderByDesc('published_at')->each(function (ContentItem $item) use ($writer) {
+                $type->query()->published()->with('seo')->orderByDesc('published_at')->each(function (ContentItem $item) use ($writer) {
                     if ($item->seo !== null && $item->seo->robots_index === false) {
                         return;
                     }

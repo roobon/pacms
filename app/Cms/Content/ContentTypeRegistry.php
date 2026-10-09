@@ -52,7 +52,7 @@ class ContentTypeRegistry
 
     public function forModel(ContentItem $item): ContentType
     {
-        return $this->get($item::typeKey());
+        return $this->get($item->contentTypeKey());
     }
 
     /**

@@ -2,7 +2,7 @@
 <x-admin.layout :title="'Revisions: '.$item->title">
     <x-admin.page-header :title="'Revisions: '.$item->title" subtitle="Every save and publish is kept. Restoring copies an old version back as a new revision — history is never lost.">
         <x-slot:actions>
-            <a href="{{ route("admin.{$key}.edit", $item) }}" class="btn btn-outline-secondary">Back to {{ $type->singular() }}</a>
+            <a href="{{ $type->adminUrl('edit', $item) }}" class="btn btn-outline-secondary">Back to {{ $type->singular() }}</a>
         </x-slot:actions>
     </x-admin.page-header>
 
@@ -80,7 +80,7 @@
 
     @if ($canRestore)
         @foreach ($revisions as $revision)
-            <form id="restore-{{ $revision->id }}" method="POST" action="{{ route("admin.{$key}.revisions.restore", [$item, $revision->number]) }}" class="d-none"
+            <form id="restore-{{ $revision->id }}" method="POST" action="{{ $type->adminUrl('revisions.restore', $item, ['revision' => $revision->number]) }}" class="d-none"
                   data-confirm="Restore revision #{{ $revision->number }}?{{ $item->isPublished() ? ' The website changes straight away.' : '' }}">
                 @csrf
             </form>

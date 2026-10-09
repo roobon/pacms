@@ -110,8 +110,7 @@ class BlockBuilderController extends Controller
 
         $targets = array_values($pages);
         foreach (app(ContentTypeRegistry::class)->all() as $key => $type) {
-            $model = $type->modelClass();
-            $items = $model::query()
+            $items = $type->query()
                 ->when($q !== '', fn ($query) => $query->where('title', 'like', "%{$q}%"))
                 ->latest('id')->limit(10)->get(['id', 'title', 'slug']);
             foreach ($items as $item) {

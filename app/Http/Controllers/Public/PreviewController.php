@@ -47,8 +47,7 @@ class PreviewController extends Controller
     public function content(Request $request, string $type, int $id, ContentTypeRegistry $types, SitePayload $sitePayload, ContentPayloadBuilder $builder): Response
     {
         $definition = $types->forRoutePrefix($type) ?? abort(404);
-        $model = $definition->modelClass();
-        $item = $model::query()->findOrFail($id);
+        $item = $definition->query()->findOrFail($id);
         Gate::authorize('view', $item);
 
         $site = $sitePayload->build();
