@@ -203,7 +203,7 @@ it('validates the page header choice and the header & footer settings', function
     $this->actingAs($admin)->put(route('admin.settings.navigation.update'), ['footer_global_block_id' => $sidebar->id])->assertSessionHasErrors('footer_global_block_id');
 
     $this->actingAs($admin)->get(route('admin.pages.create'))->assertOk()->assertSee('Header')->assertSee('Site default');
-    $this->actingAs($admin)->get(route('admin.settings.navigation'))->assertOk()->assertSee('Social profiles');
+    $this->actingAs($admin)->get(route('admin.settings.navigation'))->assertOk()->assertSee('Social profiles')->assertDontSee('&amp;amp;', false);
     $this->actingAs($admin)->get(route('admin.dashboard'))->assertSee('Menus')->assertSee('Header &amp; footer', false);
 });
 
