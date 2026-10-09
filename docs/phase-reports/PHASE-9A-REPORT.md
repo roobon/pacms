@@ -43,6 +43,7 @@ I planned two cached versions of each menu on the server (visitors / members). W
 - **Menus did not refresh when the home page changed** (cache key). Fixed and tested.
 - **Phones scrolled sideways** on pages with a list of cards (e.g. Programmes on the home page): the list grew with long titles. Fixed for every list.
 - **Saving a header with the new blocks failed on an existing site** (found by the team lead: "Undefined array key menu"). New built-in block types were only registered by `pacms:blocks:sync`, which deployments run but a local `migrate` does not. Missing built-in types are now registered on first use. Test added.
+- **Saving a logo failed** (found by the team lead): the check looked for a "deleted" column that the media table does not have. Fixed; a test now saves a logo and shows it in a Site logo block.
 - In the Menu Builder, saving copied each page's current title into the item's label (renaming the page later would not have changed the menu). Fixed and tested.
 
 ## Files
@@ -61,7 +62,7 @@ I planned two cached versions of each menu on the server (visitors / members). W
 
 | Check | Result |
 |---|---|
-| Pest (full suite) | **338 passed** (1,946 assertions) |
+| Pest (full suite) | **339 passed** (1,951 assertions) |
 | Vitest | **85 passed** (16 files) |
 | Larastan (level 6) | No errors |
 | Pint, ESLint | Clean |

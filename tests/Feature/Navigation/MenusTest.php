@@ -1,7 +1,9 @@
 <?php
 
+use App\Cms\Blocks\BlockPayloadResolver;
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Blocks\BlockTreeRepository;
+use App\Cms\Blocks\BlockTreeValidator;
 use App\Enums\ContentStatus;
 use App\Enums\WorkflowAction;
 use App\Models\BlockType;
@@ -11,10 +13,12 @@ use App\Models\MenuItem;
 use App\Models\News;
 use App\Models\Term;
 use App\Services\Blocks\GlobalBlockService;
+use App\Services\Media\MediaService;
 use App\Services\Navigation\MenuService;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
 use App\Services\Settings\SettingsService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 function publishedNews(string $title): News
@@ -212,4 +216,21 @@ it('registers new block types on first use when the block sync was not run', fun
     $page = makePage($admin, ['title' => 'With a menu', 'blocks' => [['type' => 'menu', 'content' => ['style' => 'vertical']]]]);
 
     expect(app(BlockTreeRepository::class)->load($page)[0]['type'])->toBe('menu');
+});
+
+it('saves a logo and shows it in Site logo blocks', function () {
+    Storage::fake((string) config('pacms.media.disk'));
+    $admin = userWithRole('administrator');
+    $logo = app(MediaService::class)->store(fakeJpeg('logo.jpg', 480, 120), $admin, ['alt' => 'Logo']);
+
+    $this->actingAs($admin)->put(route('admin.settings.navigation.update'), ['logo_media_id' => $logo->id, 'logo_dark_media_id' => $logo->id])->assertSessionHasNoErrors();
+    expect(app(SettingsService::class)->get('navigation', 'logo_media_id'))->toBe($logo->id);
+
+    $block = app(BlockPayloadResolver::class)->resolve(
+        app(BlockTreeValidator::class)->validate([['type' => 'site-logo', 'content' => ['variant' => 'dark', 'show_name' => false]]], $admin)
+    )[0];
+    expect($block['data']['logo']['src'])->toContain('/storage/');
+
+    // Only images of the public library.
+    $this->actingAs($admin)->put(route('admin.settings.navigation.update'), ['logo_media_id' => 999999])->assertSessionHasErrors('logo_media_id');
 });

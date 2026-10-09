@@ -38,7 +38,7 @@ class NavigationSettingsController extends Controller
 
     public function update(Request $request, ActivityLogger $logger): RedirectResponse
     {
-        $image = Rule::exists('media', 'id')->where('kind', MediaKind::Image->value)->where('disk', config('pacms.media.disk'))->whereNull('deleted_at');
+        $image = Rule::exists('media', 'id')->where('kind', MediaKind::Image->value)->where('disk', config('pacms.media.disk'));
         $global = fn (string $kind) => Rule::exists('global_blocks', 'id')->where('kind', $kind)->whereNull('deleted_at');
         $rules = [
             'header_global_block_id' => ['nullable', 'integer', $global('header')],
