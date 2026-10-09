@@ -13,6 +13,7 @@ use App\Cms\Fields\Bindings;
 use App\Cms\Fields\FieldDefinitionValidator;
 use App\Cms\Sources\SourceRegistry;
 use App\Http\Controllers\Controller;
+use App\Models\ExternalSource;
 use App\Models\Page;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,6 +40,9 @@ class BlockBuilderController extends Controller
             'types' => array_values(array_map(fn ($type) => $type->toArray(), $registry->all())),
             'display_modes' => DisplayModeRegistry::definitions(),
             'sources' => $sources->describeDynamic(),
+            // External sources blocks can show (Design → External sources).
+            'external_sources' => ExternalSource::query()->orderBy('name')->get(['provider', 'slug', 'name', 'status', 'last_status'])
+                ->map(fn (ExternalSource $source) => $source->only(['provider', 'slug', 'name', 'status', 'last_status']))->all(),
             'tokens' => [
                 'color' => $group('color'),
                 'space' => $group('space'),

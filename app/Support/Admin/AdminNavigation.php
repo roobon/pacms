@@ -54,6 +54,7 @@ final class AdminNavigation
                 ['label' => 'Custom blocks', 'route' => 'admin.block-types.index', 'icon' => 'bi-puzzle', 'active' => 'admin.block-types.*', 'can' => 'block_types.manage'],
                 ['label' => 'Content types', 'route' => 'admin.content-types.index', 'icon' => 'bi-collection', 'active' => 'admin.content-types.*', 'can' => 'content_types.manage'],
                 ['label' => 'Menus', 'route' => 'admin.menus.index', 'icon' => 'bi-list-nested', 'active' => 'admin.menus.*', 'can' => 'menus.manage'],
+                ['label' => 'External sources', 'route' => 'admin.external-sources.index', 'icon' => 'bi-rss', 'active' => 'admin.external-sources.*', 'can' => 'external_sources.sync'],
                 ['label' => 'Header & footer', 'route' => 'admin.settings.navigation', 'icon' => 'bi-window', 'active' => 'admin.settings.navigation', 'can' => 'settings.manage'],
                 ['label' => 'Design Tokens', 'route' => 'admin.design.tokens', 'icon' => 'bi-palette', 'active' => 'admin.design.*', 'can' => 'design_tokens.manage'],
             ]],

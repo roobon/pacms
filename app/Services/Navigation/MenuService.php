@@ -228,7 +228,7 @@ class MenuService
      */
     public function resolve(string $slug): array
     {
-        $key = 'pacms:menu:'.sha1($slug).':'.$this->versions->fingerprint('menus', 'pages', 'settings', 'media', 'globals', 'block_types', 'testimonials', ...array_keys($this->types->all()));
+        $key = 'pacms:menu:'.sha1($slug).':'.$this->versions->fingerprint('menus', 'pages', 'settings', 'media', 'globals', 'block_types', 'testimonials', 'external', ...array_keys($this->types->all()));
 
         return Cache::remember($key, now()->addDay(), function () use ($slug) {
             $menu = Menu::query()->where('slug', $slug)->first();

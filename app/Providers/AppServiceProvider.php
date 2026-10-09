@@ -6,12 +6,14 @@ use App\Auth\AuthActivitySubscriber;
 use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Content\ContentTypeRegistry;
 use App\Cms\Design\DesignTokenService;
+use App\Cms\External\ProviderRegistry;
 use App\Cms\Sources\SourceRegistry;
 use App\Models\BlockTemplate;
 use App\Models\BlockType;
 use App\Models\CustomContentType;
 use App\Models\CustomItem;
 use App\Models\Event as EventItem;
+use App\Models\ExternalSource;
 use App\Models\Gallery;
 use App\Models\GlobalBlock;
 use App\Models\ImportJob;
@@ -53,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(BlockRegistry::class);
         $this->app->singleton(ContentTypeRegistry::class);
         $this->app->singleton(SourceRegistry::class);
+        $this->app->singleton(ProviderRegistry::class);
     }
 
     public function boot(): void
@@ -81,6 +84,7 @@ class AppServiceProvider extends ServiceProvider
             'import_job' => ImportJob::class,
             'menu' => Menu::class,
             'menu_item' => MenuItem::class,
+            'external_source' => ExternalSource::class,
         ]);
 
         // Catch N+1 queries and silently dropped attributes during development and tests.

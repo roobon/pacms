@@ -53,6 +53,31 @@ class SafeHttpClient
      */
     public function download(string $url, int $maxBytes = 20 * 1024 * 1024, int $timeoutSeconds = 20): array
     {
+        $response = $this->fetch($url, $maxBytes, $timeoutSeconds);
+
+        $path = (string) tempnam(sys_get_temp_dir(), 'pacms-dl-');
+        file_put_contents($path, $response['body']);
+
+        $name = basename((string) parse_url($response['url'], PHP_URL_PATH)) ?: 'download';
+
+        return [
+            'path' => $path,
+            'mime' => $response['mime'],
+            'name' => mb_substr(rawurldecode($name), 0, 200),
+            'size' => strlen($response['body']),
+        ];
+    }
+
+    /**
+     * Fetch a URL into memory (feeds, API responses), with the same checks as download().
+     *
+     * @return array{body: string, mime: string|null, url: string} url = the final address after redirects
+     *
+     * @throws UnsafeUrlException when the URL or a redirect target is not allowed
+     * @throws DownloadFailedException on network errors, HTTP errors or limits
+     */
+    public function fetch(string $url, int $maxBytes = 5 * 1024 * 1024, int $timeoutSeconds = 15): array
+    {
         for ($hop = 0; $hop <= self::MAX_REDIRECTS; $hop++) {
             [$host, $port, $ip] = $this->check($url);
 
@@ -87,16 +112,10 @@ class SafeHttpClient
                 throw new DownloadFailedException(__('The file is larger than :mb MB.', ['mb' => round($maxBytes / 1048576)]));
             }
 
-            $path = (string) tempnam(sys_get_temp_dir(), 'pacms-dl-');
-            file_put_contents($path, $body);
-
-            $name = basename((string) parse_url($url, PHP_URL_PATH)) ?: 'download';
-
             return [
-                'path' => $path,
+                'body' => $body,
                 'mime' => strtok((string) $response->header('Content-Type'), ';') ?: null,
-                'name' => mb_substr(rawurldecode($name), 0, 200),
-                'size' => strlen($body),
+                'url' => $url,
             ];
         }
 

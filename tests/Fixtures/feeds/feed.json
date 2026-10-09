@@ -1,0 +1,9 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Partner site",
+  "home_page_url": "https://partner.example.org/",
+  "items": [
+    {"id": "news:7", "url": "https://partner.example.org/news/seven", "title": "Seven", "summary": "A summary.", "content_html": "<p>Body <a href=\"javascript:x\">bad</a></p>", "image": "https://partner.example.org/7.jpg", "date_published": "2026-10-07T09:00:00Z", "tags": ["Schools"], "authors": [{"name": "Nadia"}]},
+    {"id": "news:8", "url": "https://partner.example.org/news/eight", "title": "Eight", "date_published": "2099-01-01T00:00:00Z"}
+  ]
+}

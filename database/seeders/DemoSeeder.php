@@ -7,6 +7,8 @@ use App\Cms\Content\ContentTypeRegistry;
 use App\Enums\TestimonialAction;
 use App\Enums\WorkflowAction;
 use App\Models\ContentItem;
+use App\Models\ExternalItem;
+use App\Models\ExternalSource;
 use App\Models\Media;
 use App\Models\MediaCoverage;
 use App\Models\MenuItem;
@@ -93,6 +95,7 @@ class DemoSeeder extends Seeder
         $this->step('Testimonials', fn () => $this->testimonialSet());
         $this->step('Content types made in the admin', fn () => $this->adminMadeTypes());
         $this->step('Global blocks and sidebars', fn () => $this->globalBlocks());
+        $this->step('External sources', fn () => $this->externalSources());
         $this->step('Pages and home page', fn () => $this->sitePages());
         $this->step('Menus, header and footer', fn () => $this->navigation());
         // Templates and global blocks of the starter kit (no pages: the demo has its own).
@@ -807,6 +810,12 @@ class DemoSeeder extends Seeder
             $section([$dynamic('projects', 'projects', ['order' => 'latest', 'limit' => 6, 'filters' => ['project_status' => 'ongoing']], ['heading' => 'Ongoing projects'], ['mode' => 'featured'])]),
             $section([$dynamic('publications', 'publications', ['order' => 'latest', 'limit' => 3], ['heading' => 'Publications'])]),
             $section([$dynamic('galleries', 'galleries', ['order' => 'latest', 'limit' => 3], ['heading' => 'Galleries'])]),
+            // Phase 10: items of another site's feed (stored locally).
+            $section([[
+                'type' => 'feed', 'content' => ['heading' => 'From our partners', 'show_excerpt' => true, 'show_date' => true, 'show_source' => true, 'empty_text' => 'Nothing to show yet.'],
+                'source' => ['mode' => 'external', 'provider' => 'feed', 'source' => 'partner-news-demo', 'limit' => 3],
+                'display' => ['mode' => 'list'],
+            ]]),
         ]);
 
         $this->page('Get involved', 'get-involved', 'Volunteer, bring a programme to your school, or partner with us.', [
@@ -836,6 +845,30 @@ class DemoSeeder extends Seeder
             'address' => 'House 12, Road 5, Dhanmondi, Dhaka 1205',
             'homepage_page_id' => $home->id,
         ], $this->admin);
+    }
+
+    /**
+     * Phase 10: a feed source with stored items. Its address is not real, so it is set not
+     * to sync for a year (the demo works offline); "Sync now" shows a failed sync while the
+     * stored items keep showing.
+     */
+    private function externalSources(): void
+    {
+        $source = new ExternalSource(['name' => 'Partner news (demo)', 'description' => 'Demo items; the address is not real.', 'config' => ['feed_url' => 'https://partner.example.org/feed.json'], 'sync_interval_minutes' => 1440, 'max_items' => 20]);
+        $source->provider = 'feed';
+        $source->slug = 'partner-news-demo';
+        $source->forceFill(['format' => 'json', 'source_website' => 'https://partner.example.org/', 'last_status' => 'ok', 'last_synced_at' => now(), 'last_success_at' => now(), 'next_sync_at' => now()->addYear()])->save();
+
+        foreach ([
+            ['UN report: schools lead on climate education', 'A new report highlights schools that teach climate action through practice.', 4],
+            ['Regional workshop on mangrove protection', 'Teachers from five districts met to share what works on the coast.', 9],
+            ['Youth reporters win regional award', 'Student journalists were recognised for a series on river pollution.', 16],
+        ] as $i => [$title, $summary, $days]) {
+            ExternalItem::query()->create([
+                'external_source_id' => $source->id, 'external_id' => 'demo:'.($i + 1), 'title' => $title, 'excerpt' => $summary,
+                'link' => 'https://partner.example.org/news/'.Str::slug($title), 'category' => 'Partners', 'published_at' => now()->subDays($days),
+            ]);
+        }
     }
 
     /**

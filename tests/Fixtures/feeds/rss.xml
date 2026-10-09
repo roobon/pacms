@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>UN Environment News</title>
+    <link>https://news.example.org/</link>
+    <description>Stories</description>
+    <item>
+      <title>Mangroves &amp; climate</title>
+      <link>/stories/mangroves</link>
+      <guid isPermaLink="false">story-1</guid>
+      <description><![CDATA[<p>Coastal forests <strong>protect</strong> villages.</p><script>alert(1)</script><img src="x" onerror="alert(2)">]]></description>
+      <category>Climate</category>
+      <pubDate>Tue, 06 Oct 2026 08:00:00 GMT</pubDate>
+      <enclosure url="https://news.example.org/img/mangroves.jpg" type="image/jpeg" length="1000"/>
+    </item>
+    <item>
+      <title>Second story</title>
+      <link>javascript:alert(1)</link>
+      <guid>https://news.example.org/stories/2</guid>
+      <description>Plain text summary.</description>
+      <pubDate>Mon, 05 Oct 2026 08:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

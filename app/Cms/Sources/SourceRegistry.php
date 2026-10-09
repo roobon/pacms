@@ -5,6 +5,7 @@ namespace App\Cms\Sources;
 use App\Cms\Blocks\BlockType;
 use App\Cms\Blocks\Types\ContentTypeBlock;
 use App\Cms\Content\ContentTypeRegistry;
+use App\Cms\External\ProviderRegistry;
 use App\Cms\Validation\ValueValidator;
 
 /**
@@ -28,6 +29,10 @@ class SourceRegistry
         }
         // Testimonials have no pages, so they are not a content module, but blocks list them too.
         $this->registerDynamic(new TestimonialSource);
+        // External sources (Phase 10): read from local storage, per provider.
+        foreach (array_keys(app(ProviderRegistry::class)->all()) as $provider) {
+            $this->registerExternal(new ExternalItemsSource($provider));
+        }
     }
 
     public function registerDynamic(DynamicSource $source): void
@@ -85,6 +90,9 @@ class SourceRegistry
         }
 
         $provider = $this->external[(string) ($source['provider'] ?? '')] ?? null;
+        if ($provider !== null && ! in_array($provider->key(), $type->externalProviders(), true)) {
+            $provider = null; // this block shows other kinds of sources
+        }
         if ($provider === null || ! is_string($source['source'] ?? null) || ! $provider->hasSource($source['source'])) {
             $values->errors()->add("{$path}.source", __('Choose a connected external source.'));
 

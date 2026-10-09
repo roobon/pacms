@@ -51,6 +51,11 @@ it('fills every area with linked demo content through the real services', functi
         ->and($chrome['footer'])->not->toBeNull()
         ->and(collect($menu['data']['items'])->firstWhere('label', 'Programmes')['panel'][0]['type'])->toBe('columns');
 
+    // An external feed source with stored items, shown by a Feed block (Phase 10).
+    $blocks = $this->getJson('/api/v1/resolve?path=/our-programmes')->json('data.blocks');
+    $feed = collect($blocks)->flatMap(fn ($node) => $node['children'] ?? [])->firstWhere('type', 'feed');
+    expect($feed['items'])->toHaveCount(3)->and($feed['items'][0]['meta']['source'])->toBe('Partner news (demo)');
+
     // The starter kit's templates and global blocks are installed too.
     expect(BlockTemplate::query()->where('is_system', true)->count())->toBe(23);
 

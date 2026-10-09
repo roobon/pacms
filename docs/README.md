@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 10 — External Providers, next.** Phase 9 (Navigation) approved and merged (v0.9.0): 9A ([report](phase-reports/PHASE-9A-REPORT.md)) and 9B ([report](phase-reports/PHASE-9B-REPORT.md)). Phase 8 (Content Modules, v0.8.0): 8A ([report](phase-reports/PHASE-8A-REPORT.md)), 8B ([report](phase-reports/PHASE-8B-REPORT.md)), 8C.1 ([report](phase-reports/PHASE-8C1-REPORT.md)), 8C.2 ([report](phase-reports/PHASE-8C2-REPORT.md)), 8D.1 ([report](phase-reports/PHASE-8D1-REPORT.md)), 8D.2 ([report](phase-reports/PHASE-8D2-REPORT.md)), starter kit ([report](phase-reports/PHASE-8-STARTER-KIT-REPORT.md)).
+Current phase: **Phase 10 — External Providers, in parts.** 10A (feeds — [report](phase-reports/PHASE-10A-REPORT.md)) merged; next the richer text editor, then 10B (Facebook). Phase 9 (Navigation) approved and merged (v0.9.0): 9A ([report](phase-reports/PHASE-9A-REPORT.md)) and 9B ([report](phase-reports/PHASE-9B-REPORT.md)). Phase 8 (Content Modules, v0.8.0): 8A ([report](phase-reports/PHASE-8A-REPORT.md)), 8B ([report](phase-reports/PHASE-8B-REPORT.md)), 8C.1 ([report](phase-reports/PHASE-8C1-REPORT.md)), 8C.2 ([report](phase-reports/PHASE-8C2-REPORT.md)), 8D.1 ([report](phase-reports/PHASE-8D1-REPORT.md)), 8D.2 ([report](phase-reports/PHASE-8D2-REPORT.md)), starter kit ([report](phase-reports/PHASE-8-STARTER-KIT-REPORT.md)).
 
 | Document | Purpose |
 |---|---|

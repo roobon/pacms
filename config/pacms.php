@@ -16,6 +16,7 @@ use App\Cms\Blocks\Types\DividerBlock;
 use App\Cms\Blocks\Types\DocumentBlock;
 use App\Cms\Blocks\Types\EventsBlock;
 use App\Cms\Blocks\Types\FaqBlock;
+use App\Cms\Blocks\Types\FeedBlock;
 use App\Cms\Blocks\Types\GalleriesBlock;
 use App\Cms\Blocks\Types\GalleryBlock;
 use App\Cms\Blocks\Types\GlobalRefBlock;
@@ -116,7 +117,7 @@ return [
         // therefore not be used by a top-level page.
         'reserved_slugs' => [
             'admin', 'api', 'auth', 'build', 'storage', 'sanctum', 'account', 'preview', 'up',
-            'sitemap', 'sitemaps', 'sitemap.xml', 'robots.txt', 'rss', 'rss.xml', 'search',
+            'sitemap', 'sitemaps', 'sitemap.xml', 'robots.txt', 'rss', 'rss.xml', 'feed', 'feed.json', 'search',
             'news', 'events', 'projects', 'programs', 'publications', 'media-coverage',
             'galleries', 'team', 'partners', 'testimonials', '__builder-preview',
         ],
@@ -213,6 +214,7 @@ return [
             GalleryBlock::class,
             TestimonialsBlock::class,
             MediaCoverageBlock::class,
+            FeedBlock::class,
             DocumentBlock::class,
             HtmlBlock::class,
             SiteLogoBlock::class,
