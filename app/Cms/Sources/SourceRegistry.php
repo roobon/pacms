@@ -41,6 +41,11 @@ class SourceRegistry
 
     public function dynamic(string $entity): ?DynamicSource
     {
+        // Content types made in the admin after this registry was built.
+        if (! isset($this->dynamic[$entity]) && ($type = app(ContentTypeRegistry::class)->find($entity)) !== null) {
+            $this->registerDynamic(new ContentSource($type));
+        }
+
         return $this->dynamic[$entity] ?? null;
     }
 

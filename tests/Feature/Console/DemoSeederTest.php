@@ -34,6 +34,9 @@ it('fills every area with linked demo content through the real services', functi
         ->and(collect($project['related'])->pluck('key')->all())->toContain('partners', 'gallery')
         ->and($project['documents'][0]['label'])->toBe('Project plan (PDF)');
 
+    // Content types made in the admin, with items.
+    $this->getJson('/api/v1/resolve?path=/success-stories')->assertJsonPath('kind', 'archive')->assertJsonCount(3, 'data.items');
+
     // Running it again on a site with content is refused (use --fresh).
     $this->artisan('pacms:demo')->assertFailed();
 });

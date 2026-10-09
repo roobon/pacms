@@ -7,7 +7,6 @@ use App\Cms\Design\TokenCatalog;
 use App\Enums\MediaKind;
 use App\Models\Media;
 use App\Models\Page;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Validates the typed values used inside blocks: design-token references, lengths,
@@ -19,13 +18,16 @@ final class ValueValidator
     public const LENGTH_UNITS = ['px', 'rem', 'em', '%', 'vh', 'vw'];
 
     /**
-     * Link targets accepted by entity links: pages and every content module.
-     *
-     * @return array<string, class-string<Model>>
+     * Whether an entity link target exists: a page or an item of any content module.
      */
-    public static function linkEntities(): array
+    public static function linkTargetExists(mixed $entity, mixed $id): bool
     {
-        return ['pages' => Page::class] + app(ContentTypeRegistry::class)->models();
+        if (! is_string($entity) || ! is_numeric($id)) {
+            return false;
+        }
+        $query = $entity === 'pages' ? Page::query() : app(ContentTypeRegistry::class)->find($entity)?->query();
+
+        return $query !== null && $query->whereKey((int) $id)->exists();
     }
 
     /** @var array<int, Media|null> */
@@ -213,8 +215,7 @@ final class ValueValidator
             case 'entity':
                 $entity = $value['entity'] ?? null;
                 $id = $value['id'] ?? null;
-                $class = self::linkEntities()[$entity] ?? null;
-                if ($class === null || ! is_numeric($id) || ! $class::query()->whereKey((int) $id)->exists()) {
+                if (! self::linkTargetExists($entity, $id)) {
                     $this->errors->add($path, __('The linked page no longer exists.'));
 
                     return null;

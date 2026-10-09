@@ -85,6 +85,24 @@
                                                 @if (! empty($field['help']))<div id="field-{{ $name }}-help" class="form-text">{{ $field['help'] }}</div>@endif
                                                 @error($name)<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
+                                        @elseif ($field['type'] === 'rich-text')
+                                            <x-admin.field :name="$name" :label="$field['label']" type="textarea" rows="8" :value="$value" :help="$field['help'] ?? null"
+                                                :required="in_array('required', $field['rules'], true)" data-rich-editor />
+                                        @elseif ($field['type'] === 'checklist')
+                                            @php $chosen = array_map('strval', (array) old($name, $value ?? [])); @endphp
+                                            <fieldset class="mb-3" @if (! empty($field['help'])) aria-describedby="field-{{ $name }}-help" @endif>
+                                                <legend class="form-label fs-6">{{ $field['label'] }}</legend>
+                                                <div class="pa-checklist">
+                                                    @foreach ($field['options'] as $optionValue => $optionLabel)
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="{{ $name }}[]" value="{{ $optionValue }}" id="field-{{ $name }}-{{ $optionValue }}" @checked(in_array((string) $optionValue, $chosen, true))>
+                                                            <label class="form-check-label" for="field-{{ $name }}-{{ $optionValue }}">{{ $optionLabel }}</label>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                @if (! empty($field['help']))<div id="field-{{ $name }}-help" class="form-text">{{ $field['help'] }}</div>@endif
+                                                @error($name)<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                                            </fieldset>
                                         @elseif ($field['type'] === 'media')
                                             <x-admin.media-picker :name="$name" :label="$field['label']" :media="$mediaFields[$name] ?? null" :kind="$field['media_kind'] ?? 'image'"
                                                 :visibility="$field['visibility'] ?? null" :help="$field['help'] ?? null" :disabled="$readonly" />

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Api\MediaController as MediaApiController;
 use App\Http\Controllers\Admin\Api\ReusableBlockController;
 use App\Http\Controllers\Admin\BlockTemplateController;
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\ContentTypeController;
 use App\Http\Controllers\Admin\CustomBlockTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
@@ -99,6 +100,29 @@ foreach (app(ContentTypeRegistry::class)->all() as $contentType) {
             Route::get('{item}/preview', 'preview')->name('preview')->defaults('type', $key);
         });
 }
+
+// Content types made in the admin (Phase 8D): one set of routes with the type key as a
+// parameter, so a new type works at once (cached routes cannot know it).
+Route::prefix('types/{type}')
+    ->name('types.')
+    ->controller(ContentController::class)
+    ->where(['type' => '[a-z][a-z0-9_]*'])
+    ->whereNumber(['item', 'revision'])
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('{item}/edit', 'edit')->name('edit');
+        Route::put('{item}', 'update')->name('update');
+        Route::delete('{item}', 'destroy')->name('destroy');
+        Route::post('{item}/workflow', 'workflow')->name('workflow');
+        Route::get('{item}/revisions', 'revisions')->name('revisions');
+        Route::post('{item}/revisions/{revision}/restore', 'restore')->name('revisions.restore');
+        Route::get('{item}/preview', 'preview')->name('preview');
+    });
+
+// Design → Content types (permission content_types.manage, checked in the controller).
+Route::resource('content-types', ContentTypeController::class)->except('show')->parameters(['content-types' => 'contentType']);
 
 // Testimonials: moderation queue and editor (permissions checked in the controller and service).
 Route::prefix('testimonials')->name('testimonials.')->controller(TestimonialController::class)->whereNumber('testimonial')->group(function () {

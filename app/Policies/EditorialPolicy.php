@@ -24,7 +24,7 @@ abstract class EditorialPolicy
 
     public function view(User $user, Model $item): bool
     {
-        return $user->can($this->type().'.view');
+        return $user->can($this->prefix($item).'.view');
     }
 
     public function create(User $user): bool
@@ -38,19 +38,19 @@ abstract class EditorialPolicy
             return false;
         }
 
-        if ($user->can($this->type().'.update_any')) {
+        if ($user->can($this->prefix($item).'.update_any')) {
             return true;
         }
 
-        return $user->can($this->type().'.update_own')
+        return $user->can($this->prefix($item).'.update_own')
             && $this->owns($user, $item)
             && in_array($item->getAttribute('status'), [ContentStatus::Draft, ContentStatus::Published], true);
     }
 
     public function delete(User $user, Model $item): bool
     {
-        return $user->can($this->type().'.delete')
-            && ($user->can($this->type().'.update_any') || $this->owns($user, $item));
+        return $user->can($this->prefix($item).'.delete')
+            && ($user->can($this->prefix($item).'.update_any') || $this->owns($user, $item));
     }
 
     public function viewRevisions(User $user, Model $item): bool
@@ -61,6 +61,12 @@ abstract class EditorialPolicy
     public function restoreRevision(User $user, Model $item): bool
     {
         return $user->can('revisions.restore') && $this->update($user, $item);
+    }
+
+    /** Permission prefix for an item (admin-made types: the item's own type). */
+    protected function prefix(Model $item): string
+    {
+        return $this->type();
     }
 
     protected function owns(User $user, Model $item): bool

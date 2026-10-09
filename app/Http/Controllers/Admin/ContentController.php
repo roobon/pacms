@@ -329,6 +329,10 @@ class ContentController extends Controller
             }
             $rules[$name] = $field['rules'];
             $attributes[$name] = strtolower((string) $field['label']);
+            if (isset($field['item_rules'])) {
+                // Each value of a list field (multiple choice).
+                $rules["{$name}.*"] = $field['item_rules'];
+            }
             foreach ($field['type'] === 'repeater' ? $field['fields'] : [] as $sub => $subField) {
                 $rules["{$name}.*"] = ['array'];
                 $rules["{$name}.*.{$sub}"] = $subField['rules'];
@@ -360,7 +364,7 @@ class ContentController extends Controller
         }
         // Lists the editor emptied are not sent by the browser at all.
         foreach ($type->fields() as $name => $field) {
-            if (in_array($field['type'], ['repeater', 'relation', 'gallery'], true)) {
+            if (in_array($field['type'], ['repeater', 'relation', 'gallery', 'checklist'], true)) {
                 $data[$name] ??= [];
             }
         }
@@ -387,7 +391,12 @@ class ContentController extends Controller
 
     private function type(Request $request): ContentType
     {
-        return $this->types->get((string) $request->route('type'));
+        $type = $this->types->find((string) $request->route('type'));
+        // /admin/types/{type} is for admin-made types only; built-in modules have their own routes.
+        $adminMadeRoute = str_starts_with((string) $request->route()?->getName(), 'admin.types.');
+        abort_if($type === null || $type->isAdminMade() !== $adminMadeRoute, 404);
+
+        return $type;
     }
 
     private function item(ContentType $type, Request $request): ContentItem

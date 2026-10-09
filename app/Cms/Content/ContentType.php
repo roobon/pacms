@@ -102,6 +102,12 @@ abstract class ContentType
         return $this->managePermission() ?? $this->permissionKey().'.'.$action;
     }
 
+    /** Whether the type has a public listing page at /{prefix}. */
+    public function hasArchive(): bool
+    {
+        return true;
+    }
+
     /** Whether items have their own public page (/{prefix}/{slug}); partners link out instead. */
     public function hasDetailPages(): bool
     {

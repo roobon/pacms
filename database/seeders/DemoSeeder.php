@@ -15,6 +15,7 @@ use App\Models\Testimonial;
 use App\Models\User;
 use App\Services\Blocks\GlobalBlockService;
 use App\Services\Content\ContentService;
+use App\Services\Content\ContentTypeService;
 use App\Services\Media\MediaService;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
@@ -69,6 +70,8 @@ class DemoSeeder extends Seeder
     {
         // Image variants are generated at once instead of waiting for the queue worker.
         config(['queue.default' => 'sync']);
+        // The database may just have been wiped in this process (pacms:demo --fresh).
+        $this->types->reload();
 
         $this->admin = User::query()->where('email', 'super-admin@pacms.test')->first()
             ?? User::query()->role('super-admin')->firstOrFail();
@@ -85,6 +88,7 @@ class DemoSeeder extends Seeder
         $this->step('Publications', fn () => $this->publications());
         $this->step('Media coverage', fn () => $this->coverage());
         $this->step('Testimonials', fn () => $this->testimonialSet());
+        $this->step('Content types made in the admin', fn () => $this->adminMadeTypes());
         $this->step('Global blocks and sidebars', fn () => $this->globalBlocks());
         $this->step('Pages and home page', fn () => $this->sitePages());
     }
@@ -639,6 +643,48 @@ class DemoSeeder extends Seeder
         ]);
         $this->testimonials->transition($staff, TestimonialAction::Approve, $this->admin);
         $this->testimonials->transition($staff, TestimonialAction::Publish, $this->admin);
+    }
+
+    // --- Content types made in the admin (Phase 8D) --------------------------------------
+
+    private function adminMadeTypes(): void
+    {
+        app(ContentTypeService::class)->create($this->admin, [
+            'label' => 'Success stories', 'singular' => 'success story', 'icon' => 'bi-trophy', 'workflow' => 'editorial',
+            'fields' => [
+                ['key' => 'school', 'type' => 'text', 'label' => 'School', 'required' => true],
+                ['key' => 'district', 'type' => 'select', 'label' => 'District', 'options' => ['dhaka' => 'Dhaka', 'khulna' => 'Khulna', 'satkhira' => 'Satkhira', 'sylhet' => 'Sylhet']],
+                ['key' => 'year', 'type' => 'number', 'label' => 'Year'],
+                ['key' => 'themes', 'type' => 'multi-select', 'label' => 'Themes', 'options' => ['waste' => 'Waste', 'water' => 'Water', 'trees' => 'Trees', 'energy' => 'Energy']],
+                ['key' => 'story', 'type' => 'rich-text', 'label' => 'The story'],
+                ['key' => 'milestones', 'type' => 'repeater', 'label' => 'Milestones', 'fields' => [['key' => 'when', 'type' => 'text', 'label' => 'When'], ['key' => 'what', 'type' => 'textarea', 'label' => 'What']]],
+                ['key' => 'contact_note', 'type' => 'textarea', 'label' => 'Internal note'],
+            ],
+            'display' => ['contact_note' => 'hidden'],
+        ]);
+        $stories = [
+            ['Green Flag for Dhaka Model School', 'Dhaka Model School', 'dhaka', 2025, ['waste', 'water'], 'classroom'],
+            ['A mangrove nursery run by students', 'Shyamnagar High School', 'satkhira', 2024, ['trees'], 'mangroves'],
+            ['Solar lamps for evening study', 'Sreemangal Girls School', 'sylhet', 2026, ['energy'], 'workshop'],
+        ];
+        foreach ($stories as [$title, $school, $district, $year, $themes, $image]) {
+            $this->item('success_stories', Str::slug($title), [
+                'title' => $title, 'featured_media_id' => $this->mediaId($image), 'excerpt' => "How {$school} did it.",
+                'school' => $school, 'district' => $district, 'year' => $year, 'themes' => $themes,
+                'story' => "<p>The Eco-Committee of {$school} set a goal, involved families and kept going for two years.</p>",
+                'milestones' => [['when' => (string) ($year - 2), 'what' => 'Eco-Committee formed'], ['when' => (string) $year, 'what' => 'Goal reached']],
+                'contact_note' => 'Photos approved by the head teacher.',
+            ]);
+        }
+
+        // A simple active / inactive type without a listing page (items shown in blocks only).
+        app(ContentTypeService::class)->create($this->admin, [
+            'label' => 'Board members', 'singular' => 'board member', 'icon' => 'bi-person-badge', 'workflow' => 'managed', 'has_archive' => false,
+            'fields' => [['key' => 'role', 'type' => 'text', 'label' => 'Role on the board'], ['key' => 'term', 'type' => 'text', 'label' => 'Term']],
+        ]);
+        foreach ([['Prof. Nazma Begum', 'Chair', 1], ['Mr. Rashed Karim', 'Treasurer', 2]] as [$name, $role, $position]) {
+            $this->item('board_members', Str::slug($name), ['title' => $name, 'role' => $role, 'term' => '2025–2028', 'position' => $position]);
+        }
     }
 
     // --- Global blocks, pages and settings ---------------------------------------------

@@ -100,9 +100,11 @@ class SeoFilesController extends Controller
             $writer->startElement('urlset');
             $writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
-            $writer->startElement('url');
-            $writer->writeElement('loc', url('/'.$type->routePrefix()));
-            $writer->endElement();
+            if ($type->hasArchive()) {
+                $writer->startElement('url');
+                $writer->writeElement('loc', url('/'.$type->routePrefix()));
+                $writer->endElement();
+            }
 
             // Modules without pages of their own (partners) only list their archive page.
             if ($type->hasDetailPages()) {

@@ -1628,3 +1628,30 @@ h1[tabindex="-1"]:focus {
         .pa-button-group { justify-content: center; }
     }
 }
+
+// Sections of admin-made content types (one per field shown as a section).
+.pa-field-section {
+    margin: var(--pa-space-6, 2rem) 0;
+
+    &__image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--pa-radius-lg);
+    }
+
+    &__rows {
+        display: grid;
+        gap: var(--pa-space-3);
+
+        > li {
+            padding: var(--pa-space-4);
+            border: 1px solid var(--pa-color-border);
+            border-radius: var(--pa-radius-md, .625rem);
+        }
+
+        dt { font-size: var(--pa-font-size-sm); font-weight: 600; color: var(--pa-color-muted); }
+        dd { margin: 0 0 var(--pa-space-2); }
+        dd:last-child { margin-bottom: 0; }
+    }
+}

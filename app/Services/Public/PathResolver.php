@@ -44,11 +44,13 @@ class PathResolver
 
         // Content modules: /{prefix} is the archive, /{prefix}/{slug} a published item.
         if (preg_match('#^([a-z0-9-]+)(?:/([a-z0-9-]+))?$#', $path, $match) && ($type = $this->types->forRoutePrefix($match[1])) !== null) {
-            if (! isset($match[2])) {
+            $slug = $match[2] ?? null;
+            // Types without a listing page (an admin choice) have no archive URL.
+            if ($slug === null && $type->hasArchive()) {
                 return ['kind' => 'archive', 'type' => $type];
             }
             // Modules without pages of their own (partners) only have the listing.
-            $item = $type->hasDetailPages() ? $type->query()->published()->where('slug', $match[2])->first() : null;
+            $item = $slug !== null && $type->hasDetailPages() ? $type->query()->published()->where('slug', $slug)->first() : null;
             if ($item !== null) {
                 return ['kind' => 'content', 'type' => $type, 'item' => $item];
             }

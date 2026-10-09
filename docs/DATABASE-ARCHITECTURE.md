@@ -398,6 +398,14 @@ Category and tags via terms. `INDEX(next_check_at)`, `INDEX(coverage_type, statu
 ### content_relations (Phase 8C)
 `id, owner_type, owner_id, field varchar(64), related_type, related_id, position, timestamps` · INDEX(owner_type, owner_id, field, position) · INDEX(related_type, related_id). Links chosen in relation fields of content types (project → manager, partners, gallery; program → partners, gallery; gallery → event, project, program). Replaces the planned `partnerables` table and the `manager_team_member_id`/`gallery_id`/`event_id`/`project_id`/`program_id` columns with one generic table, which admin-made content types (8D) will use too. Rows of a deleted item are removed; links to deleted or unpublished items are not shown.
 
+### content_types (Phase 8D)
+`id, key varchar(64) UNIQUE, label, singular, icon, route_prefix varchar(64) UNIQUE, workflow varchar(16) (editorial | managed), fields json, display json, has_archive, searchable, has_categories, has_documents, is_active bool, position, created_by, updated_by, timestamps`.
+
+Content types made in the admin (Design → Content types). `key` is the registry key and permission prefix, made from the name and never changed. `fields` holds field-builder definitions (the custom block field format, limited to the types listed in `AdminContentType::FIELD_TYPES`); `display` maps a field key to `details`, `section` or `hidden`. Permissions (`{key}.view` … `{key}.publish`, or `{key}.manage` for managed types) are created with the type and removed when it is deleted. A type with items cannot be deleted; `is_active = false` hides it everywhere and keeps its items. `has_categories` and `has_documents` are used from 8D.2. Morph alias `content_type`.
+
+### custom_items (Phase 8D)
+The common content columns and publishable columns (as `news`), plus `content_type_id FK content_types RESTRICT`, `fields json` (the type's own values: field key => value) and `position` (display order of managed types). `UNIQUE(content_type_id, slug)`; indexes lead with `content_type_id`. One table for the items of every admin-made type, so a new type needs no migration. The model (`CustomItem`) reads and writes the JSON values like columns, so revisions, snapshots and forms work unchanged. Filters and orders use the common columns only (title, dates, featured, position), not the JSON values. Morph alias `custom_item`.
+
 ---
 
 ## 8. Media
