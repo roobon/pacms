@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Cms\Blocks\BlockRegistry;
 use App\Cms\Content\ContentTypeRegistry;
 use App\Enums\TestimonialAction;
 use App\Enums\WorkflowAction;
@@ -185,7 +186,8 @@ class DemoSeeder extends Seeder
     }
 
     /**
-     * A generated placeholder photo: coloured background, soft shapes and a label.
+     * A generated placeholder: a photo-like picture (gradient, soft shapes, caption) or, with
+     * initials, a logo or portrait mark.
      *
      * @param  array{0: int, 1: int, 2: int}  $rgb
      */
@@ -193,34 +195,82 @@ class DemoSeeder extends Seeder
     {
         $image = imagecreatetruecolor($width, $height);
         [$r, $g, $b] = $rgb;
-        for ($y = 0; $y < $height; $y++) {
-            // Vertical gradient: lighter at the top.
-            $f = $y / $height;
-            $line = imagecolorallocate($image, (int) min(255, $r + 60 * (1 - $f)), (int) min(255, $g + 60 * (1 - $f)), (int) min(255, $b + 60 * (1 - $f)));
-            imageline($image, 0, $y, $width, $y, $line);
-        }
-        $light = imagecolorallocatealpha($image, 255, 255, 255, 100);
-        mt_srand(crc32($name));
-        for ($i = 0; $i < 7; $i++) {
-            $size = mt_rand((int) ($height / 6), (int) ($height / 2));
-            imagefilledellipse($image, mt_rand(0, $width), mt_rand(0, $height), $size, $size, $light);
+        $logo = $png && $initials !== null;
+
+        if ($logo) {
+            // Logo: a coloured circle with the initials on white.
+            imagefill($image, 0, 0, imagecolorallocate($image, 255, 255, 255));
+            $mark = imagecolorallocate($image, ...$this->logoColour($name));
+            imagefilledellipse($image, (int) ($width / 2), (int) ($height / 2), (int) ($width * .8), (int) ($height * .8), $mark);
+        } else {
+            for ($y = 0; $y < $height; $y++) {
+                // Vertical gradient: lighter at the top.
+                $f = $y / $height;
+                imageline($image, 0, $y, $width, $y, imagecolorallocate($image, (int) min(255, $r + 70 * (1 - $f)), (int) min(255, $g + 70 * (1 - $f)), (int) min(255, $b + 70 * (1 - $f))));
+            }
+            $light = imagecolorallocatealpha($image, 255, 255, 255, 105);
+            mt_srand(crc32($name));
+            for ($i = 0; $i < 6; $i++) {
+                $size = mt_rand((int) ($height / 5), (int) ($height / 1.6));
+                imagefilledellipse($image, mt_rand(0, $width), mt_rand(0, $height), $size, $size, $light);
+            }
         }
 
-        // Label: drawn small with the built-in font, then scaled up.
-        $text = $initials ?? Str::limit($alt, 40, '…');
-        $small = imagecreatetruecolor(max(1, imagefontwidth(5) * strlen($text)), imagefontheight(5));
-        imagefill($small, 0, 0, imagecolorallocatealpha($small, 0, 0, 0, 127));
-        imagesavealpha($small, true);
-        imagestring($small, 5, 0, 0, $text, imagecolorallocate($small, 255, 255, 255));
-        $scale = $initials !== null ? (int) floor($width / 2 / imagesx($small)) : (int) max(1, floor($width * 0.7 / imagesx($small)));
-        $tw = imagesx($small) * max(1, $scale);
-        $th = imagesy($small) * max(1, $scale);
-        imagecopyresized($image, $small, (int) (($width - $tw) / 2), (int) (($height - $th) / 2), 0, 0, $tw, $th, imagesx($small), imagesy($small));
+        $text = $initials ?? $alt;
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $font = $this->font();
+        if ($font !== null) {
+            $size = $initials !== null ? $width / (strlen($initials) > 2 ? 5.5 : 4) : $width / 34;
+            $lines = $initials !== null ? [$initials] : explode("\n", wordwrap($text, 22, "\n"));
+            $lineHeight = $size * 1.5;
+            $y = ($height - $lineHeight * count($lines)) / 2 + $size;
+            foreach ($lines as $line) {
+                $box = imagettfbbox($size, 0, $font, $line);
+                $x = ($width - ($box[2] - $box[0])) / 2;
+                if ($initials === null) {
+                    // A soft shadow keeps the caption readable on light shapes.
+                    imagettftext($image, $size, 0, (int) $x + 2, (int) $y + 2, imagecolorallocatealpha($image, 0, 0, 0, 80), $font, $line);
+                }
+                imagettftext($image, $size, 0, (int) $x, (int) $y, $white, $font, $line);
+                $y += $lineHeight;
+            }
+        } else {
+            // No TrueType font on this machine: the built-in bitmap font, scaled up.
+            $small = imagecreatetruecolor(max(1, imagefontwidth(5) * strlen($text)), imagefontheight(5));
+            imagefill($small, 0, 0, imagecolorallocatealpha($small, 0, 0, 0, 127));
+            imagesavealpha($small, true);
+            imagestring($small, 5, 0, 0, $text, imagecolorallocate($small, 255, 255, 255));
+            $scale = (int) max(1, floor(($initials !== null ? $width * .4 : $width * .7) / imagesx($small)));
+            $tw = imagesx($small) * $scale;
+            $th = imagesy($small) * $scale;
+            imagecopyresized($image, $small, (int) (($width - $tw) / 2), (int) (($height - $th) / 2), 0, 0, $tw, $th, imagesx($small), imagesy($small));
+        }
 
         $path = tempnam(sys_get_temp_dir(), 'pacms-demo').($png ? '.png' : '.jpg');
         $png ? imagepng($image, $path) : imagejpeg($image, $path, 85);
 
-        return $this->mediaService->store(new UploadedFile($path, $name, $png ? 'image/png' : 'image/jpeg', null, true), $this->admin, ['alt' => $alt, 'is_decorative' => $alt === '' && $initials === null]);
+        return $this->mediaService->store(new UploadedFile($path, $name, $png ? 'image/png' : 'image/jpeg', null, true), $this->admin, ['alt' => $alt]);
+    }
+
+    /**
+     * @return array{0: int, 1: int, 2: int}
+     */
+    private function logoColour(string $name): array
+    {
+        $palette = [[10, 107, 102], [30, 64, 175], [180, 83, 9], [126, 34, 206], [190, 18, 60], [21, 128, 61]];
+
+        return $palette[crc32($name) % count($palette)];
+    }
+
+    private function font(): ?string
+    {
+        foreach (['/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', '/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf', '/Library/Fonts/Arial Bold.ttf', 'C:\\Windows\\Fonts\\arialbd.ttf'] as $path) {
+            if (is_readable($path)) {
+                return $path;
+            }
+        }
+
+        return null;
     }
 
     private function pdf(string $name, string $title, bool $private = false): Media
@@ -603,6 +653,8 @@ class DemoSeeder extends Seeder
             'name' => 'Call to action: volunteer', 'kind' => 'generic',
             'blocks' => [[
                 'type' => 'cta',
+                'layout' => ['padding' => ['top' => ['$token' => 'space.7'], 'bottom' => ['$token' => 'space.7']], 'text_align' => 'center'],
+                'style' => ['background' => ['type' => 'color', 'color' => ['$token' => 'color.primary']], 'radius' => ['$token' => 'radius.lg']],
                 'children' => [
                     ['type' => 'heading', 'content' => ['text' => 'Plant the future with us', 'level' => '2']],
                     ['type' => 'rich-text', 'content' => ['html' => '<p>Volunteer at a planting day, bring Eco-Schools to your school, or support a project.</p>']],
@@ -625,12 +677,17 @@ class DemoSeeder extends Seeder
     private function sitePages(): void
     {
         $section = fn (array $children, array $extra = []) => ['type' => 'section', 'children' => $children] + $extra;
-        $dynamic = fn (string $type, string $entity, array $source = [], array $content = [], array $display = []) => array_filter([
-            'type' => $type,
-            'content' => $content ?: null,
-            'source' => ['mode' => 'dynamic', 'entity' => $entity] + $source,
-            'display' => $display ?: null,
-        ]);
+        // Collection blocks start from the block's own defaults, as when inserted in the builder.
+        $dynamic = function (string $type, string $entity, array $source = [], array $content = [], array $display = []) {
+            $defaults = app(BlockRegistry::class)->get($type)->defaults();
+
+            return [
+                'type' => $type,
+                'content' => $content + (array) ($defaults['content'] ?? []),
+                'source' => ['mode' => 'dynamic', 'entity' => $entity] + $source + (array) ($defaults['source'] ?? []),
+                'display' => $display + (array) ($defaults['display'] ?? []),
+            ];
+        };
 
         $home = $this->page('Home', 'home', 'Environmental education for every school in Bangladesh.', [
             [
@@ -654,7 +711,7 @@ class DemoSeeder extends Seeder
             ]]]]),
             $section([$dynamic('news', 'news', ['order' => 'latest', 'limit' => 3], ['heading' => 'Latest news'])]),
             $section([['type' => 'columns', 'layout' => ['columns' => ['desktop' => [7, 5], 'mobile' => [12, 12]]], 'children' => [
-                ['type' => 'column', 'children' => [$dynamic('programs', 'programs', ['order' => 'latest', 'limit' => 3], ['heading' => 'Programmes'], ['mode' => 'list'])]],
+                ['type' => 'column', 'children' => [$dynamic('programs', 'programs', ['order' => 'latest', 'limit' => 3], ['heading' => 'Programmes', 'show_date' => false], ['mode' => 'list'])]],
                 ['type' => 'column', 'children' => [$dynamic('events', 'events', ['order' => 'soonest', 'limit' => 3, 'filters' => ['when' => 'upcoming']], ['heading' => 'Upcoming events', 'show_excerpt' => false], ['mode' => 'list', 'show_image' => false])]],
             ]]]),
             $section([$dynamic('testimonials', 'testimonials', ['order' => 'position', 'limit' => 6], ['heading' => 'What people say'], ['mode' => 'quote-slider'])]),
@@ -677,7 +734,7 @@ class DemoSeeder extends Seeder
         ], parent: $about);
 
         $this->page('Our programmes', 'our-programmes', 'Long-term programmes and the projects that bring them to life.', [
-            $section([$dynamic('programs', 'programs', ['order' => 'latest', 'limit' => 6], ['heading' => 'Programmes'])]),
+            $section([$dynamic('programs', 'programs', ['order' => 'latest', 'limit' => 6], ['heading' => 'Programmes', 'show_date' => false])]),
             $section([$dynamic('projects', 'projects', ['order' => 'latest', 'limit' => 6, 'filters' => ['project_status' => 'ongoing']], ['heading' => 'Ongoing projects'], ['mode' => 'featured'])]),
             $section([$dynamic('publications', 'publications', ['order' => 'latest', 'limit' => 3], ['heading' => 'Publications'])]),
             $section([$dynamic('galleries', 'galleries', ['order' => 'latest', 'limit' => 3], ['heading' => 'Galleries'])]),
@@ -701,7 +758,15 @@ class DemoSeeder extends Seeder
         // A draft page, not public.
         $this->pages->create($this->admin, ['title' => 'Careers (draft)', 'template' => 'default', 'excerpt' => 'Open positions.']);
 
-        $this->settings->set('site', ['homepage_page_id' => $home->id], $this->admin);
+        $this->settings->set('site', [
+            'name' => 'Probha Aurora',
+            'tagline' => 'Environmental education for every school',
+            'description' => 'Probha Aurora brings environmental education to schools and communities across Bangladesh.',
+            'contact_email' => 'hello@example.org',
+            'contact_phone' => '+880 2 0000 0000',
+            'address' => 'House 12, Road 5, Dhanmondi, Dhaka 1205',
+            'homepage_page_id' => $home->id,
+        ], $this->admin);
     }
 
     /**

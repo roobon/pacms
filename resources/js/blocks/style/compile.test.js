@@ -19,6 +19,20 @@ describe('compileTree', () => {
         expect(css).toContain('border-radius: var(--pa-radius-lg);');
     });
 
+    it('gives filled backgrounds their readable text colour, unless a text colour is chosen', () => {
+        const dark = compileTree([node({ style: { background: { type: 'color', color: { $token: 'color.bg-dark' } } } })]);
+        expect(dark).toContain('color: var(--pa-color-on-bg-dark);');
+        expect(dark).toContain('--bs-heading-color: var(--pa-color-on-bg-dark);');
+        expect(dark).toContain('--pa-btn-outline: var(--pa-color-on-bg-dark);');
+
+        const chosen = compileTree([node({ style: { background: { type: 'color', color: { $token: 'color.bg-dark' } }, typography: { color: '#FFCC00' } } })]);
+        expect(chosen).toContain('color: #FFCC00;');
+        expect(chosen).not.toContain('on-bg-dark');
+
+        // A light surface or a hex colour has no automatic text colour.
+        expect(compileTree([node({ style: { background: { type: 'color', color: '#F6F8FA' } } })])).not.toContain('--pa-color-on-');
+    });
+
     it('compiles responsive overrides and visibility into media queries', () => {
         const css = compileTree([
             node({

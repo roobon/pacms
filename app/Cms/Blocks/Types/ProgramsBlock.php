@@ -26,4 +26,13 @@ class ProgramsBlock extends ContentCollectionBlock
     {
         return 'bi-diagram-3';
     }
+
+    public function defaults(): array
+    {
+        $defaults = parent::defaults();
+        // Programmes are ongoing: the date they were put on the website means nothing to visitors.
+        $defaults['content']['show_date'] = false;
+
+        return $defaults;
+    }
 }

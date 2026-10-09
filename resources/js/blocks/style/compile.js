@@ -97,6 +97,9 @@ function layoutDeclarations(layout, type) {
     return out;
 }
 
+/** Filled-colour tokens that have a readable text colour (DesignTokenService::FILLS). */
+const FILLS = ['primary', 'primary-strong', 'secondary', 'accent', 'success', 'warning', 'danger', 'bg-dark'];
+
 function styleDeclarations(style) {
     if (!style) return [];
     const out = [];
@@ -119,6 +122,18 @@ function styleDeclarations(style) {
 
     const typography = style.typography ?? {};
     add(out, 'color', color(typography.color));
+    // A filled colour background gets its readable text colour (design tokens: --pa-color-on-*),
+    // headings and muted text included, unless the editor chose a text colour.
+    const fill = background?.type === 'color' && typeof background.color?.$token === 'string' ? background.color.$token.replace(/^color\./, '') : null;
+    if (!typography.color && FILLS.includes(fill)) {
+        const on = `var(--pa-color-on-${fill})`;
+        add(out, 'color', on);
+        for (const variable of ['--pa-color-heading', '--pa-color-body', '--bs-heading-color', '--bs-body-color', '--bs-emphasis-color']) add(out, variable, on);
+        for (const variable of ['--pa-color-muted', '--bs-secondary-color']) add(out, variable, `color-mix(in srgb, ${on} 80%, transparent)`);
+        add(out, '--pa-color-eyebrow', on);
+        add(out, '--pa-btn-outline', on);
+        add(out, '--pa-btn-outline-hover', `var(--pa-color-${fill})`);
+    }
     add(out, 'font-family', token(typography.font));
     add(out, 'font-size', token(typography.size));
     if ([300, 400, 500, 600, 700, 800, 900].includes(typography.weight)) add(out, 'font-weight', String(typography.weight));
