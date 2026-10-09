@@ -31,7 +31,7 @@ final class StyleValidator
         foreach ($layout as $key => $value) {
             $p = "{$path}.{$key}";
             $clean[$key] = match ($key) {
-                'container' => $this->values->enum($value, ['boxed', 'narrow', 'fluid', 'full'], $p),
+                'container' => $this->values->enum($value, ['boxed', 'narrow', 'wide', 'fluid', 'full'], $p),
                 'max_width' => is_array($value) && isset($value['$token'])
                     ? $this->values->token($value, ['container'], $p)
                     : $this->values->length($value, $p, ['px', 'rem', '%', 'vw'], 0, 3000),

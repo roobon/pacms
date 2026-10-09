@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\GlobalBlockController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MediaCoverageController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\NavigationSettingsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PagePreviewController;
 use App\Http\Controllers\Admin\PageRevisionController;
@@ -141,6 +143,11 @@ Route::post('media-coverage/{item}/check-source', [MediaCoverageController::clas
     ->whereNumber('item')->middleware('throttle:20,1')->name('media_coverage.check-source');
 
 // Reusable blocks (Phase 5): global blocks, templates, custom block types
+// Phase 9: menus and their builder.
+Route::middleware('can:menus.manage')->group(function () {
+    Route::resource('menus', MenuController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+});
+
 Route::middleware('can:global_blocks.manage')->group(function () {
     Route::resource('global-blocks', GlobalBlockController::class)->except('show');
     Route::post('global-blocks/{global_block}/publish', [GlobalBlockController::class, 'publish'])->name('global-blocks.publish');
@@ -179,6 +186,10 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::post('templates', [ReusableBlockController::class, 'storeTemplate'])->name('templates.store');
     Route::post('autosave', [ReusableBlockController::class, 'autosave'])->middleware('throttle:30,1')->name('autosave');
     Route::get('link-targets', [BlockBuilderController::class, 'linkTargets'])->name('link-targets');
+    Route::middleware('can:menus.manage')->group(function () {
+        Route::get('menus/{menu}/tree', [MenuController::class, 'tree'])->name('menus.tree');
+        Route::put('menus/{menu}/tree', [MenuController::class, 'saveTree'])->name('menus.tree.update');
+    });
     Route::get('media', [MediaApiController::class, 'index'])->name('media.index');
     Route::post('media', [MediaApiController::class, 'store'])->name('media.store');
 });
@@ -194,6 +205,8 @@ Route::get('activity', ActivityLogController::class)->middleware('can:activity_l
 Route::middleware('can:settings.manage')->group(function () {
     Route::get('settings/general', [SettingsController::class, 'edit'])->name('settings.general');
     Route::put('settings/general', [SettingsController::class, 'update'])->name('settings.general.update');
+    Route::get('settings/header-footer', [NavigationSettingsController::class, 'edit'])->name('settings.navigation');
+    Route::put('settings/header-footer', [NavigationSettingsController::class, 'update'])->name('settings.navigation.update');
 });
 
 Route::middleware('can:design_tokens.manage')->group(function () {

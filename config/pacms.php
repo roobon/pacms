@@ -2,12 +2,15 @@
 
 use App\Cms\Blocks\Types\AccordionBlock;
 use App\Cms\Blocks\Types\AccordionItemBlock;
+use App\Cms\Blocks\Types\AccountLinkBlock;
 use App\Cms\Blocks\Types\ButtonBlock;
 use App\Cms\Blocks\Types\ButtonGroupBlock;
 use App\Cms\Blocks\Types\CardsBlock;
 use App\Cms\Blocks\Types\ColumnBlock;
 use App\Cms\Blocks\Types\ColumnsBlock;
+use App\Cms\Blocks\Types\ContactInfoBlock;
 use App\Cms\Blocks\Types\ContainerBlock;
+use App\Cms\Blocks\Types\CopyrightBlock;
 use App\Cms\Blocks\Types\CtaBlock;
 use App\Cms\Blocks\Types\DividerBlock;
 use App\Cms\Blocks\Types\DocumentBlock;
@@ -23,6 +26,7 @@ use App\Cms\Blocks\Types\IconBlock;
 use App\Cms\Blocks\Types\ImageBlock;
 use App\Cms\Blocks\Types\ListBlock;
 use App\Cms\Blocks\Types\MediaCoverageBlock;
+use App\Cms\Blocks\Types\MenuBlock;
 use App\Cms\Blocks\Types\NewsBlock;
 use App\Cms\Blocks\Types\PartnersBlock;
 use App\Cms\Blocks\Types\ProgramsBlock;
@@ -32,8 +36,10 @@ use App\Cms\Blocks\Types\QuoteBlock;
 use App\Cms\Blocks\Types\RepeatBlock;
 use App\Cms\Blocks\Types\RichTextBlock;
 use App\Cms\Blocks\Types\SectionBlock;
+use App\Cms\Blocks\Types\SiteLogoBlock;
 use App\Cms\Blocks\Types\SlideBlock;
 use App\Cms\Blocks\Types\SliderBlock;
+use App\Cms\Blocks\Types\SocialLinksBlock;
 use App\Cms\Blocks\Types\SpacerBlock;
 use App\Cms\Blocks\Types\StatisticsBlock;
 use App\Cms\Blocks\Types\TeamBlock;
@@ -209,6 +215,12 @@ return [
             MediaCoverageBlock::class,
             DocumentBlock::class,
             HtmlBlock::class,
+            SiteLogoBlock::class,
+            MenuBlock::class,
+            SocialLinksBlock::class,
+            ContactInfoBlock::class,
+            CopyrightBlock::class,
+            AccountLinkBlock::class,
             GlobalRefBlock::class,
             RepeatBlock::class,
             WhenBlock::class,

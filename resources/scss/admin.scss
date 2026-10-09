@@ -1383,3 +1383,67 @@ legend.form-label {
     padding-left: 1rem;
     border-left: 3px solid #CBD5E1;
 }
+
+// Menu Builder (Design → Menus, Phase 9): an indented list of items.
+.pa-menu-builder {
+    &__row {
+        margin-bottom: .375rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background: #fff;
+
+        &.is-dragging {
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 .5rem 1rem rgba(15, 23, 42, .15);
+        }
+
+        &.has-error {
+            border-color: $danger;
+        }
+    }
+
+    &__bar {
+        display: flex;
+        align-items: center;
+        gap: .25rem;
+        padding: .25rem .5rem;
+    }
+
+    &__handle {
+        cursor: grab;
+        touch-action: none;
+    }
+
+    &__title {
+        flex: 1;
+        min-width: 0;
+        padding: .375rem .25rem;
+        border: 0;
+        background: none;
+        text-align: start;
+        overflow-wrap: anywhere;
+
+        &:focus-visible {
+            outline: 2px solid $primary;
+            outline-offset: 2px;
+            border-radius: $border-radius-sm;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-shrink: 0;
+    }
+
+    &__panel {
+        padding: .75rem 1rem 1rem;
+        border-top: 1px solid $border-color;
+        background: $gray-100;
+    }
+
+    &__results {
+        max-height: 16rem;
+        overflow-y: auto;
+    }
+}

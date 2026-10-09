@@ -123,6 +123,29 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @foreach (['header' => [$headers, 'Header'], 'footer' => [$footers, 'Footer']] as $role => [$choices, $roleLabel])
+                                <fieldset class="mb-3">
+                                    <legend class="form-label fs-6 mb-1">{{ $roleLabel }}</legend>
+                                    @php($mode = old("{$role}_mode", $page->{"{$role}_mode"} ?? 'default'))
+                                    <div class="d-flex flex-wrap gap-2 align-items-start">
+                                        <select name="{{ $role }}_mode" class="form-select w-auto" aria-label="{{ $roleLabel }}" data-chrome-mode="{{ $role }}">
+                                            @foreach (\App\Models\Page::CHROME_MODES as $value => $label)
+                                                <option value="{{ $value }}" @selected($mode === $value)>{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select name="{{ $role }}_global_block_id" class="form-select w-auto @error("{$role}_global_block_id") is-invalid @enderror" aria-label="{{ $roleLabel }} to show" data-chrome-choice="{{ $role }}" @if ($mode !== 'custom') hidden @endif>
+                                            <option value="">—</option>
+                                            @foreach ($choices as $choice)
+                                                <option value="{{ $choice->id }}" @selected((int) old("{$role}_global_block_id", $page->{"{$role}_global_block_id"}) === $choice->id)>{{ $choice->name }}{{ $choice->published_revision_id ? '' : ' (not published)' }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error("{$role}_global_block_id")<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                                    </div>
+                                    @if ($choices->isEmpty())
+                                        <div class="form-text">Make {{ strtolower($roleLabel) }}s under Design → Global blocks (kind “{{ $roleLabel }}”).</div>
+                                    @endif
+                                </fieldset>
+                            @endforeach
                             <div class="form-check mb-0">
                                 <input type="hidden" name="show_title" value="0">
                                 <input type="checkbox" id="field-show-title" name="show_title" value="1" class="form-check-input" aria-describedby="field-show-title-help"

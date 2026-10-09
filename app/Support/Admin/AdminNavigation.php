@@ -53,12 +53,14 @@ final class AdminNavigation
                 ['label' => 'Templates', 'route' => 'admin.block-templates.index', 'icon' => 'bi-layout-wtf', 'active' => 'admin.block-templates.*', 'can' => 'templates.manage'],
                 ['label' => 'Custom blocks', 'route' => 'admin.block-types.index', 'icon' => 'bi-puzzle', 'active' => 'admin.block-types.*', 'can' => 'block_types.manage'],
                 ['label' => 'Content types', 'route' => 'admin.content-types.index', 'icon' => 'bi-collection', 'active' => 'admin.content-types.*', 'can' => 'content_types.manage'],
+                ['label' => 'Menus', 'route' => 'admin.menus.index', 'icon' => 'bi-list-nested', 'active' => 'admin.menus.*', 'can' => 'menus.manage'],
+                ['label' => 'Header & footer', 'route' => 'admin.settings.navigation', 'icon' => 'bi-window', 'active' => 'admin.settings.navigation', 'can' => 'settings.manage'],
                 ['label' => 'Design Tokens', 'route' => 'admin.design.tokens', 'icon' => 'bi-palette', 'active' => 'admin.design.*', 'can' => 'design_tokens.manage'],
             ]],
             ['label' => 'System', 'items' => [
                 ['label' => 'Users', 'route' => 'admin.users.index', 'icon' => 'bi-people', 'active' => 'admin.users.*', 'can' => 'users.view'],
                 ['label' => 'Roles & Permissions', 'route' => 'admin.roles.index', 'icon' => 'bi-shield-lock', 'active' => 'admin.roles.*', 'can' => 'users.manage_roles'],
-                ['label' => 'Settings', 'route' => 'admin.settings.general', 'icon' => 'bi-gear', 'active' => 'admin.settings.*', 'can' => 'settings.manage'],
+                ['label' => 'Settings', 'route' => 'admin.settings.general', 'icon' => 'bi-gear', 'active' => 'admin.settings.general', 'can' => 'settings.manage'],
                 ['label' => 'Activity Log', 'route' => 'admin.activity.index', 'icon' => 'bi-journal-text', 'active' => 'admin.activity.*', 'can' => 'activity_log.view'],
             ]],
         ];

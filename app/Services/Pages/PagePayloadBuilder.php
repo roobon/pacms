@@ -8,6 +8,7 @@ use App\Models\Media;
 use App\Models\Page;
 use App\Models\Revision;
 use App\Services\Cache\CacheVersions;
+use App\Services\Public\SitePayload;
 use App\Services\Seo\SeoResolver;
 use App\Services\Settings\SettingsService;
 use App\Support\Html\HtmlSanitizer;
@@ -94,7 +95,28 @@ class PagePayloadBuilder
                 'image' => $featured,
             ], $snapshot['seo'] ?? null, $breadcrumbs),
             'blocks' => $this->blocks->resolve((array) ($snapshot['blocks'] ?? []), includeHidden: false),
+            // Phase 9: only when the page differs from the site's header and footer.
+            'chrome' => array_filter([
+                'header' => $this->chrome($fields, 'header'),
+                'footer' => $this->chrome($fields, 'footer'),
+            ], fn ($value) => $value !== 'default'),
         ];
+    }
+
+    /**
+     * "default" (the site's), "none", or the chosen global block as a block payload
+     * (a chosen block that is not published falls back to the site's).
+     *
+     * @param  array<string, mixed>  $fields
+     * @return string|list<array<string, mixed>>
+     */
+    private function chrome(array $fields, string $role): string|array
+    {
+        return match ($fields["{$role}_mode"] ?? 'default') {
+            'none' => 'none',
+            'custom' => app(SitePayload::class)->globalBlock($fields["{$role}_global_block_id"] ?? null, $role) ?? 'default',
+            default => 'default',
+        };
     }
 
     /**

@@ -29,7 +29,7 @@ final class TokenCatalog
     public static function definitions(): array
     {
         $color = fn (string $label, string $default) => ['type' => 'color', 'group' => 'Colours', 'label' => $label, 'default' => $default];
-        $raw = fn (string $group, string $default) => ['type' => 'raw', 'group' => $group, 'label' => '', 'default' => $default];
+        $raw = fn (string $group, string $default, string $label = '') => ['type' => 'raw', 'group' => $group, 'label' => $label, 'default' => $default];
         $length = fn (string $group, string $label, string $default) => ['type' => 'length', 'group' => $group, 'label' => $label, 'default' => $default];
 
         return [
@@ -76,9 +76,10 @@ final class TokenCatalog
             'space.10' => $raw('Spacing', '8rem'),
             'space.section' => $raw('Spacing', 'clamp(3rem, 6vw, 6rem)'),
 
-            'container.narrow' => $raw('Layout', '760px'),
-            'container.xxl' => $raw('Layout', '1280px'),
-            'container.wide' => $raw('Layout', '1440px'),
+            // Same names as a section's "Content width".
+            'container.narrow' => $raw('Layout', '760px', 'Narrow'),
+            'container.xxl' => $raw('Layout', '1280px', 'Site width'),
+            'container.wide' => $raw('Layout', '1440px', 'Wide'),
 
             'radius.sm' => $length('Shape', 'Small radius', '0.375rem'),
             'radius.md' => $length('Shape', 'Medium radius', '0.625rem'),

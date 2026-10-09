@@ -35,6 +35,15 @@ document.querySelectorAll('details[data-nav-group]').forEach((group) => {
     });
 });
 
+// Page header/footer: the global block list appears with "Choose one".
+document.querySelectorAll('select[data-chrome-mode]').forEach((mode) => {
+    const choice = document.querySelector(`select[data-chrome-choice="${mode.dataset.chromeMode}"]`);
+    if (!choice) return;
+    mode.addEventListener('change', () => {
+        choice.hidden = mode.value !== 'custom';
+    });
+});
+
 // Confirm destructive actions: <form data-confirm="Delete X?">
 document.addEventListener('submit', (event) => {
     const form = event.target;

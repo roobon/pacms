@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import TokenSelect from '../fields/TokenSelect.jsx';
+import { useBuilder } from '../store.js';
 import { getIn, setIn } from '../tree.js';
 
 const COLUMN_PRESETS = {
@@ -24,16 +25,20 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
     const set = (path, value) => onChange(setIn(layout, path, value));
     const desktop = device === 'desktop';
     const hasContainer = desktop && ['section', 'hero'].includes(type.slug);
+    // The same names (and real sizes) as a container's "Maximum width".
+    const widths = Object.fromEntries(useBuilder((state) => state.definitions?.tokens?.container ?? []).map((token) => [token.token, token.value]));
+    const px = (token) => (widths[token] ? ` (${widths[token]})` : '');
 
     return (
         <div>
             {hasContainer && (
                 <Row id={`${id}-container`} label="Content width">
                     <select id={`${id}-container`} className="form-select form-select-sm" value={layout.container ?? 'boxed'} disabled={disabled} onChange={(e) => set('container', e.target.value)}>
-                        <option value="boxed">Site width</option>
-                        <option value="narrow">Narrow (reading width)</option>
-                        <option value="fluid">Full width with margins</option>
-                        <option value="full">Edge to edge</option>
+                        <option value="narrow">Narrow{px('container.narrow')}</option>
+                        <option value="boxed">Site width{px('container.xxl')}</option>
+                        <option value="wide">Wide{px('container.wide')}</option>
+                        <option value="fluid">Full width, with side margins</option>
+                        <option value="full">Edge to edge (backgrounds and sliders)</option>
                     </select>
                 </Row>
             )}
@@ -132,7 +137,7 @@ export default function LayoutPanel({ node, type, onChange, errors, disabled = f
 
             {desktop && type.slug === 'container' && (
                 <Row id={`${id}-maxw`} label="Maximum width">
-                    <TokenSelect id={`${id}-maxw`} group="container" value={layout.max_width?.$token ? layout.max_width : null} onChange={(v) => set('max_width', v)} emptyLabel="Full" disabled={disabled} />
+                    <TokenSelect id={`${id}-maxw`} group="container" value={layout.max_width?.$token ? layout.max_width : null} onChange={(v) => set('max_width', v)} emptyLabel="Full width" disabled={disabled} />
                 </Row>
             )}
         </div>

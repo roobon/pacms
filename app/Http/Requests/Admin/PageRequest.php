@@ -59,6 +59,10 @@ class PageRequest extends FormRequest
             'featured_media_id' => ['nullable', 'integer', $image],
             'template' => ['required', Rule::in(array_keys(config('pacms.pages.templates')))],
             'show_title' => ['boolean'],
+            'header_mode' => ['nullable', Rule::in(array_keys(Page::CHROME_MODES))],
+            'header_global_block_id' => ['nullable', 'required_if:header_mode,custom', 'integer', Rule::exists('global_blocks', 'id')->where('kind', 'header')->whereNull('deleted_at')],
+            'footer_mode' => ['nullable', Rule::in(array_keys(Page::CHROME_MODES))],
+            'footer_global_block_id' => ['nullable', 'required_if:footer_mode,custom', 'integer', Rule::exists('global_blocks', 'id')->where('kind', 'footer')->whereNull('deleted_at')],
             'lock_version' => [$this->route('page') ? 'required' : 'nullable', 'integer'],
             // Block tree from the builder island, as JSON (validated in depth by BlockTreeValidator).
             'blocks' => ['nullable', 'string', 'max:'.((int) config('pacms.blocks.max_payload_kb') * 1024), 'json'],
@@ -86,6 +90,15 @@ class PageRequest extends FormRequest
     public function pageData(): array
     {
         $data = $this->safe()->except(['lock_version', 'blocks', 'start_template_id']);
+        // A chosen header or footer only counts with "Choose one".
+        foreach (['header', 'footer'] as $role) {
+            if (array_key_exists("{$role}_mode", $data)) {
+                $data["{$role}_mode"] ??= 'default';
+                if ($data["{$role}_mode"] !== 'custom') {
+                    $data["{$role}_global_block_id"] = null;
+                }
+            }
+        }
 
         if ($this->filled('blocks')) {
             $data['blocks'] = json_decode((string) $this->input('blocks'), true, 64) ?? [];
@@ -107,6 +120,8 @@ class PageRequest extends FormRequest
             'featured_media_id' => 'featured image',
             'parent_id' => 'parent page',
             'start_template_id' => 'page template',
+            'header_global_block_id' => 'header',
+            'footer_global_block_id' => 'footer',
         ];
     }
 }

@@ -16,6 +16,12 @@ function renderBlocks(nodes, preview = false) {
 }
 
 describe('BlockRenderer', () => {
+    it('gives sections the narrow, site and wide widths', () => {
+        const { container } = renderBlocks(['narrow', 'boxed', 'wide'].map((width, i) => ({ uuid: `01k00000000000000000000se${i}`, type: 'section', content: {}, layout: { container: width }, children: [] })));
+        const inner = [...container.querySelectorAll('section > div, .pa-section > div')].map((el) => el.className);
+        expect(inner).toEqual(['container pa-container-narrow', 'container', 'container pa-container-wide']);
+    });
+
     it('renders nested blocks recursively with scoped classes', () => {
         renderBlocks([
             {

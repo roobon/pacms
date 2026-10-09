@@ -4,6 +4,7 @@ import { hasHeadingOne } from '../../blocks/utils.js';
 import Breadcrumbs from '../components/common/Breadcrumbs.jsx';
 import Image from '../components/common/Image.jsx';
 import SeoHead from '../components/common/SeoHead.jsx';
+import { usePageChrome } from '../contexts/ChromeContext.jsx';
 import Summary from '../components/common/Summary.jsx';
 
 /**
@@ -19,6 +20,7 @@ export default function PageView({ page }) {
     const blocks = page.blocks ?? [];
     const needsHeading = !hasHeadingOne(blocks);
     const showHeader = needsHeading && page.show_title !== false;
+    usePageChrome(page.chrome, ['hero', 'slider'].includes(blocks[0]?.type));
 
     return (
         <article>

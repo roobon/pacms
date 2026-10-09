@@ -607,6 +607,8 @@ A single `CustomBlock` React component receives the compiled structure (delivere
 
 ## 13. Header, Footer and Menu Builder
 
+*Phase 9A built this section except mega menus (9B). Blocks: `site-logo`, `menu`, `social-links`, `contact-info`, `copyright`, and `account-link` (sign in / my account); `newsletter` is deferred (no newsletter service). Menus serve one cached version for everyone and the website applies item visibility (N-3). Settings live in Design → Header & footer; menus in Design → Menus.*
+
 ### 13.1 Header and footer are global blocks of kind `header`/`footer`
 
 ```

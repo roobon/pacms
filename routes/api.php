@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\MeController;
+use App\Http\Controllers\Api\V1\MenuController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\ResolveController;
 use App\Http\Controllers\Api\V1\SearchController;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('site', SiteController::class)->name('site');
+    Route::get('menus/{slug}', MenuController::class)->where('slug', '[a-z0-9\-]+')->middleware('cache.headers:public;max_age=300;etag')->name('menus.show');
 
     Route::middleware('cache.headers:public;max_age=60;etag')->group(function () {
         Route::get('resolve', ResolveController::class)->name('resolve');

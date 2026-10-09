@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 9 — Navigation, next.** Phase 8 (Content Modules) approved and merged (v0.8.0): 8A ([report](phase-reports/PHASE-8A-REPORT.md)), 8B ([report](phase-reports/PHASE-8B-REPORT.md)), 8C.1 ([report](phase-reports/PHASE-8C1-REPORT.md)), 8C.2 ([report](phase-reports/PHASE-8C2-REPORT.md)), 8D.1 ([report](phase-reports/PHASE-8D1-REPORT.md)), 8D.2 ([report](phase-reports/PHASE-8D2-REPORT.md)) and the starter kit ([report](phase-reports/PHASE-8-STARTER-KIT-REPORT.md)). Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
+Current phase: **Phase 9 — Navigation, in parts.** 9A (menus, Menu Builder, header and footer — [report](phase-reports/PHASE-9A-REPORT.md)) is ready for review. Phase 8 (Content Modules) approved and merged (v0.8.0): 8A ([report](phase-reports/PHASE-8A-REPORT.md)), 8B ([report](phase-reports/PHASE-8B-REPORT.md)), 8C.1 ([report](phase-reports/PHASE-8C1-REPORT.md)), 8C.2 ([report](phase-reports/PHASE-8C2-REPORT.md)), 8D.1 ([report](phase-reports/PHASE-8D1-REPORT.md)), 8D.2 ([report](phase-reports/PHASE-8D2-REPORT.md)) and the starter kit ([report](phase-reports/PHASE-8-STARTER-KIT-REPORT.md)). Phase 7: [report](phase-reports/PHASE-7-REPORT.md) (v0.7.0).
 
 | Document | Purpose |
 |---|---|

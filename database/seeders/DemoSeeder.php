@@ -17,6 +17,7 @@ use App\Services\Blocks\GlobalBlockService;
 use App\Services\Content\ContentService;
 use App\Services\Content\ContentTypeService;
 use App\Services\Media\MediaService;
+use App\Services\Navigation\MenuService;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
 use App\Services\Settings\SettingsService;
@@ -92,6 +93,7 @@ class DemoSeeder extends Seeder
         $this->step('Content types made in the admin', fn () => $this->adminMadeTypes());
         $this->step('Global blocks and sidebars', fn () => $this->globalBlocks());
         $this->step('Pages and home page', fn () => $this->sitePages());
+        $this->step('Menus, header and footer', fn () => $this->navigation());
         // Templates and global blocks of the starter kit (no pages: the demo has its own).
         $this->step('Starter kit templates', fn () => app(StarterKitService::class)->install($this->admin));
     }
@@ -832,6 +834,74 @@ class DemoSeeder extends Seeder
             'contact_phone' => '+880 2 0000 0000',
             'address' => 'House 12, Road 5, Dhanmondi, Dhaka 1205',
             'homepage_page_id' => $home->id,
+        ], $this->admin);
+    }
+
+    /**
+     * Phase 9: a main menu with sub-menus, a footer menu, and the header and footer that show
+     * them (with the site logo, social links, contact details and copyright).
+     */
+    private function navigation(): void
+    {
+        $menus = app(MenuService::class);
+        $page = fn (string $slug) => ['type' => 'page', 'target' => ['id' => Page::query()->where('slug', $slug)->value('id')]];
+        $item = fn (string $key) => ['type' => 'content', 'target' => ['entity' => explode(':', $key)[0], 'id' => $this->id($key)]];
+        $url = fn (string $label, string $url, array $extra = []) => ['type' => 'custom_url', 'label' => $label, 'url' => $url] + $extra;
+
+        $main = $menus->create($this->admin, ['name' => 'Main', 'slug' => 'main']);
+        $menus->saveTree($this->admin, $main, [
+            $page('home'),
+            $page('about') + ['children' => [$page('history'), $url('Our team', '/team'), $url('Partners', '/partners')]],
+            $page('our-programmes') + ['label' => 'Programmes', 'children' => [
+                $item('programs:eco-schools'), $item('programs:yre'), $item('programs:leaf'),
+                ['type' => 'group', 'label' => 'Projects', 'children' => [$item('projects:mangroves'), $item('projects:plastic-free'), $url('All projects', '/projects')]],
+            ]],
+            ['type' => 'group', 'label' => 'News & media', 'children' => [
+                $url('News', '/news'), $url('Events', '/events'), $url('Publications', '/publications'), $url('In the media', '/media-coverage'), $url('Galleries', '/galleries'),
+            ]],
+            $page('get-involved'),
+            $url('My account', '/account', ['visibility' => 'members', 'icon' => 'bi-person-circle']),
+        ], 0);
+
+        $footerMenu = $menus->create($this->admin, ['name' => 'Footer', 'slug' => 'footer']);
+        $menus->saveTree($this->admin, $footerMenu, [
+            $page('about'), $url('News', '/news'), $url('Events', '/events'), $url('Publications', '/publications'), $page('get-involved'),
+            ['type' => 'external_url', 'label' => 'Eco-Schools international', 'url' => 'https://www.ecoschools.global', 'new_tab' => true],
+        ], 0);
+
+        $section = fn (array $children, array $extra = []) => ['type' => 'section', 'layout' => ['container' => 'boxed']] + $extra + ['children' => $children];
+        $header = $this->globals->create($this->admin, ['name' => 'Main header', 'kind' => 'header', 'blocks' => [
+            $section([['type' => 'columns', 'layout' => ['columns' => ['desktop' => [3, 9], 'mobile' => [6, 6]]], 'children' => [
+                ['type' => 'column', 'children' => [['type' => 'site-logo', 'content' => ['variant' => 'default', 'size' => 'md', 'show_name' => true]]]],
+                ['type' => 'column', 'children' => [
+                    ['type' => 'menu', 'content' => ['menu' => 'main', 'style' => 'horizontal', 'aria_label' => 'Main']],
+                    ['type' => 'account-link', 'content' => ['sign_in_label' => 'Sign in', 'account_label' => 'My account']],
+                ]],
+            ]]]),
+        ]]);
+        $this->globals->publish($this->admin, $header);
+
+        $footer = $this->globals->create($this->admin, ['name' => 'Main footer', 'kind' => 'footer', 'blocks' => [
+            $section([['type' => 'columns', 'layout' => ['columns' => ['desktop' => [5, 3, 4], 'tablet' => [12, 6, 6], 'mobile' => [12, 12, 12]]], 'children' => [
+                ['type' => 'column', 'children' => [
+                    ['type' => 'site-logo', 'content' => ['variant' => 'dark', 'size' => 'md', 'show_name' => true]],
+                    ['type' => 'rich-text', 'content' => ['html' => '<p>Environmental education for every school in Bangladesh, from the mangrove coast to the tea gardens.</p>']],
+                    ['type' => 'social-links', 'content' => ['style' => 'icons']],
+                ]],
+                ['type' => 'column', 'children' => [['type' => 'menu', 'content' => ['menu' => 'footer', 'style' => 'vertical', 'aria_label' => 'Footer', 'heading' => 'Explore']]]],
+                ['type' => 'column', 'children' => [['type' => 'contact-info', 'content' => ['heading' => 'Contact', 'show_email' => true, 'show_phone' => true, 'show_address' => true, 'layout' => 'stacked']]]],
+            ]]], ['style' => ['background' => ['type' => 'color', 'color' => ['$token' => 'color.bg-dark']]]]),
+            $section([['type' => 'copyright', 'content' => ['text' => '© {{year}} {{site_name}}. Demo content for testing.']]], ['style' => ['background' => ['type' => 'color', 'color' => ['$token' => 'color.bg-dark']], 'border' => ['width' => ['value' => 1, 'unit' => 'px'], 'style' => 'solid', 'color' => '#1E293B', 'sides' => ['top']]]]),
+        ]]);
+        $this->globals->publish($this->admin, $footer);
+
+        $this->settings->set('navigation', [
+            'header_global_block_id' => $header->id,
+            'footer_global_block_id' => $footer->id,
+            'sticky_header' => true,
+            'transparent_header' => false,
+            'social' => ['facebook' => 'https://www.facebook.com/example', 'youtube' => 'https://www.youtube.com/@example', 'linkedin' => 'https://www.linkedin.com/company/example'],
+            'copyright' => '© {{year}} {{site_name}}',
         ], $this->admin);
     }
 

@@ -45,6 +45,7 @@ export function frameProps(node, preview, extraClass = '') {
 const CONTAINER_CLASSES = {
     boxed: 'container',
     narrow: 'container pa-container-narrow',
+    wide: 'container pa-container-wide',
     fluid: 'container-fluid px-3 px-lg-4',
     full: '',
 };

@@ -28,14 +28,17 @@ class Page extends Model implements Revisionable
 {
     use HasRevisions, HasSeo, SoftDeletes;
 
-    public const SNAPSHOT_FIELDS = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template', 'show_title'];
+    public const SNAPSHOT_FIELDS = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template', 'show_title', 'header_mode', 'header_global_block_id', 'footer_mode', 'footer_global_block_id'];
+
+    /** A page's header or footer: the site's, none (e.g. a landing page) or a chosen global block. */
+    public const CHROME_MODES = ['default' => 'Site default', 'none' => 'None', 'custom' => 'Choose one'];
 
     /**
      * Editable working-copy fields. Workflow, path and publishing columns are set by services.
      *
      * @var list<string>
      */
-    protected $fillable = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template', 'show_title'];
+    protected $fillable = ['title', 'slug', 'parent_id', 'excerpt', 'featured_media_id', 'template', 'show_title', 'header_mode', 'header_global_block_id', 'footer_mode', 'footer_global_block_id'];
 
     /**
      * @var array<string, mixed>
@@ -44,6 +47,8 @@ class Page extends Model implements Revisionable
         'status' => 'draft',
         'template' => 'default',
         'show_title' => true,
+        'header_mode' => 'default',
+        'footer_mode' => 'default',
         'has_unpublished_changes' => true,
         'lock_version' => 0,
     ];
@@ -154,6 +159,9 @@ class Page extends Model implements Revisionable
     {
         // Snapshots taken before a field existed fall back to its default.
         $fields = array_intersect_key((array) ($snapshot['fields'] ?? []), array_flip(self::SNAPSHOT_FIELDS)) + ['show_title' => true];
+        foreach (['header_mode', 'footer_mode'] as $mode) {
+            $fields[$mode] = in_array($fields[$mode] ?? null, array_keys(self::CHROME_MODES), true) ? $fields[$mode] : 'default';
+        }
 
         // Never re-attach to a parent or image that no longer exists.
         if (isset($fields['parent_id']) && ! Page::query()->whereKey($fields['parent_id'])->exists()) {

@@ -442,7 +442,7 @@ Modes: `grid, cards, list, masonry, justified, carousel, slider, featured, quote
 
 | Key | Values |
 |---|---|
-| `container` | `boxed` (site container), `narrow`, `fluid` (padded full width), `full` (edge to edge) |
+| `container` | `narrow` (760px), `boxed` (site width, 1280px), `wide` (1440px, since 9A), `fluid` (full width with side margins), `full` (edge to edge) |
 | `width`, `max_width`, `min_height`, `height` | token or `{value, unit}`; units `px, rem, em, %, vh, vw` |
 | `columns` | per breakpoint: array of Bootstrap 12-grid spans summing to 12 per row, or `"auto"` |
 | `align` | `start, center, end, stretch, baseline` (cross axis) |
