@@ -3,15 +3,15 @@
 | | |
 |---|---|
 | Date | 2026-10-09 |
-| Branch | `phase/9-navigation` (not merged) |
+| Branch | `phase/9-navigation` → merged into `main` 2026-10-09 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-09. |
 
 ```
 PHASE:   9A — menus and the Menu Builder, header and footer as global blocks (with site
          logo, menu, social links, contact info, copyright and account blocks),
          Design → Header & footer, a page's own header/footer, mobile drawer, menus API
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-09) and merged into main.
          Decisions applied (team lead, 2026-10-09: "use your defaults"):
          - N-1 two parts: 9A (this), 9B (mega panels, starter-kit header/footer, pre-filled menus)
          - N-2 no newsletter block (no newsletter service); a button to a page instead
