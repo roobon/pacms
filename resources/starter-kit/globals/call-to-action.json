@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Call to action"
+  },
+  "blocks": [
+    {
+      "type": "cta",
+      "layout": {
+        "text_align": "center",
+        "padding": {
+          "top": {
+            "$token": "space.7"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.white"
+          }
+        },
+        "radius": {
+          "$token": "radius.lg"
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Ready to make a difference?",
+            "level": "2"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Volunteer, partner with us or support a project.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Get involved",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                },
+                "variant": "accent"
+              }
+            },
+            {
+              "type": "button",
+              "content": {
+                "label": "Contact us",
+                "link": {
+                  "type": "url",
+                  "url": "/contact"
+                },
+                "variant": "outline"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ]
+    }
+  ]
+}

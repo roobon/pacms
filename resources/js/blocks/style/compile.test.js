@@ -29,6 +29,14 @@ describe('compileTree', () => {
         expect(chosen).toContain('color: #FFCC00;');
         expect(chosen).not.toContain('on-bg-dark');
 
+        // A chosen text colour reaches headings, eyebrows and outline buttons too.
+        expect(chosen).toContain('--pa-color-heading: #FFCC00;');
+        expect(chosen).toContain('--pa-btn-outline: #FFCC00;');
+
+        // A gradient uses its first colour.
+        const gradient = compileTree([node({ style: { background: { type: 'gradient', gradient: { angle: 135, stops: [{ color: { $token: 'color.primary' }, at: 0 }, { color: { $token: 'color.secondary' }, at: 100 }] } } } })]);
+        expect(gradient).toContain('--pa-color-heading: var(--pa-color-on-primary);');
+
         // A light surface or a hex colour has no automatic text colour.
         expect(compileTree([node({ style: { background: { type: 'color', color: '#F6F8FA' } } })])).not.toContain('--pa-color-on-');
     });

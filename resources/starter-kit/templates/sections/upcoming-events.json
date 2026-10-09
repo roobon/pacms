@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Upcoming events"
+  },
+  "template": {
+    "name": "Upcoming events",
+    "slug": "kit-upcoming-events",
+    "scope": "section",
+    "category": "Collections",
+    "description": "The next three events."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "events",
+          "content": {
+            "heading": "Upcoming events",
+            "empty_text": "No upcoming events right now."
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "events",
+            "order": "soonest",
+            "limit": 3,
+            "filters": {
+              "when": "upcoming"
+            }
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Upcoming events"
+      }
+    }
+  ]
+}

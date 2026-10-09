@@ -80,6 +80,7 @@ scripts/release  → probha-aurora-cms-<version>.zip  (+ SHA-256 checksum)
 7.  php artisan db:seed --class=ProductionSeeder --force  (roles/permissions, core block types, neutral settings)
 8.  php artisan storage:link
 9.  php artisan pacms:create-admin                       (interactive: name, email, password → Super Admin)
+9a. php artisan pacms:starter --pages                     (starter kit: templates, global blocks, draft Home/About/Contact/Get involved)
 10. php artisan optimize                                   (config, routes, views, events caches)
 11. Permissions: storage/ and bootstrap/cache/ writable by the PHP user; everything else read-only
 12. Cron:  * * * * * cd /home/<site>/pacms && php artisan schedule:run >> /dev/null 2>&1
@@ -146,6 +147,7 @@ server {
 4.  php artisan migrate --force
 5.  php artisan db:seed --class=ProductionSeeder --force   (idempotent: new permissions/block types)
 6.  php artisan pacms:blocks:sync
+6a. php artisan pacms:starter                              (adds new starter-kit templates; never changes edited ones)
 7.  php artisan optimize:clear && php artisan optimize
 8.  php artisan queue:restart
 9.  php artisan pacms:doctor

@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Sidebar: general"
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "content": {
+        "text": "Get involved",
+        "level": "3"
+      }
+    },
+    {
+      "type": "rich-text",
+      "content": {
+        "html": "<p>Volunteer, partner with us or support a project.</p>"
+      }
+    },
+    {
+      "type": "button",
+      "content": {
+        "label": "Ways to help",
+        "link": {
+          "type": "url",
+          "url": "/get-involved"
+        },
+        "variant": "primary"
+      }
+    },
+    {
+      "type": "divider",
+      "content": {
+        "line": "solid"
+      }
+    },
+    {
+      "type": "heading",
+      "content": {
+        "text": "Contact us",
+        "level": "3"
+      }
+    },
+    {
+      "type": "rich-text",
+      "content": {
+        "html": "<p>info@example.org</p><p>+880 1700 000000</p>"
+      }
+    }
+  ]
+}

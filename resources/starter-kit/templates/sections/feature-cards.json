@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Three feature cards"
+  },
+  "template": {
+    "name": "Three feature cards",
+    "slug": "kit-feature-cards",
+    "scope": "section",
+    "category": "Content",
+    "description": "Three areas of work with icons and links."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "cards",
+          "content": {
+            "heading": "How we work",
+            "items": [
+              {
+                "icon": "bi-mortarboard",
+                "title": "Education",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "icon": "bi-people",
+                "title": "Community",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/projects"
+                }
+              },
+              {
+                "icon": "bi-tree",
+                "title": "Action",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                }
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 3,
+              "mobile": 1
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "How we work"
+      }
+    }
+  ]
+}

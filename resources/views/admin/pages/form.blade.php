@@ -102,6 +102,19 @@
                                 </select>
                                 @error('parent_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
+                            @if ($pageTemplates->isNotEmpty())
+                                <div class="mb-3">
+                                    <label for="field-start" class="form-label">Start from</label>
+                                    <select id="field-start" name="start_template_id" class="form-select @error('start_template_id') is-invalid @enderror" aria-describedby="field-start-help">
+                                        <option value="">An empty page</option>
+                                        @foreach ($pageTemplates as $pageTemplate)
+                                            <option value="{{ $pageTemplate->id }}" @selected((int) old('start_template_id') === $pageTemplate->id)>{{ $pageTemplate->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="field-start-help" class="form-text">A page template's sections are copied into the new page; change anything afterwards. Ignored if you already added blocks below.</div>
+                                    @error('start_template_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                            @endif
                             <div class="mb-3">
                                 <label for="field-template" class="form-label">Layout</label>
                                 <select id="field-template" name="template" class="form-select">

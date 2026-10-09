@@ -121,18 +121,20 @@ function styleDeclarations(style) {
     if (background?.overlay) add(out, 'position', 'relative');
 
     const typography = style.typography ?? {};
-    add(out, 'color', color(typography.color));
-    // A filled colour background gets its readable text colour (design tokens: --pa-color-on-*),
-    // headings and muted text included, unless the editor chose a text colour.
-    const fill = background?.type === 'color' && typeof background.color?.$token === 'string' ? background.color.$token.replace(/^color\./, '') : null;
-    if (!typography.color && FILLS.includes(fill)) {
-        const on = `var(--pa-color-on-${fill})`;
+    // A filled background gets its readable text colour (design tokens: --pa-color-on-*), and a
+    // text colour the editor chose applies the same way: to headings, muted text, eyebrows and
+    // outline buttons too. Gradients use their first colour.
+    const fillToken = background?.type === 'color' ? background.color?.$token : background?.type === 'gradient' ? background.gradient?.stops?.[0]?.color?.$token : null;
+    const fill = typeof fillToken === 'string' ? fillToken.replace(/^color\./, '') : null;
+    const chosen = color(typography.color);
+    const on = chosen ?? (FILLS.includes(fill) ? `var(--pa-color-on-${fill})` : null);
+    if (on) {
         add(out, 'color', on);
         for (const variable of ['--pa-color-heading', '--pa-color-body', '--bs-heading-color', '--bs-body-color', '--bs-emphasis-color']) add(out, variable, on);
         for (const variable of ['--pa-color-muted', '--bs-secondary-color']) add(out, variable, `color-mix(in srgb, ${on} 80%, transparent)`);
         add(out, '--pa-color-eyebrow', on);
         add(out, '--pa-btn-outline', on);
-        add(out, '--pa-btn-outline-hover', `var(--pa-color-${fill})`);
+        if (FILLS.includes(fill)) add(out, '--pa-btn-outline-hover', `var(--pa-color-${fill})`);
     }
     add(out, 'font-family', token(typography.font));
     add(out, 'font-size', token(typography.size));
@@ -141,7 +143,6 @@ function styleDeclarations(style) {
     if (lineHeight >= 0.8 && lineHeight <= 3) add(out, 'line-height', String(lineHeight));
     add(out, 'text-align', enumValue('textAlign', typography.align));
     add(out, 'text-transform', enumValue('transform', typography.transform));
-    if (typography.color) add(out, '--bs-heading-color', 'inherit');
 
     const border = style.border;
     if (border?.width) {

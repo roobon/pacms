@@ -1,0 +1,242 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Get involved"
+  },
+  "template": {
+    "name": "Get involved",
+    "slug": "kit-page-get-involved",
+    "scope": "page",
+    "category": "Pages",
+    "description": "Ways to help, upcoming events, questions and a call to action."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Join us in making a difference",
+            "level": "1",
+            "eyebrow": "Get involved"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>There are many ways to help: give your time, bring a programme to your school, or partner with us.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "cards",
+          "content": {
+            "heading": "Ways to help",
+            "items": [
+              {
+                "icon": "bi-person-raised-hand",
+                "title": "Volunteer",
+                "text": "Join a planting day, a clean-up or a workshop.",
+                "link": {
+                  "type": "url",
+                  "url": "/events"
+                }
+              },
+              {
+                "icon": "bi-building",
+                "title": "Bring a programme to your school",
+                "text": "Teachers and school leaders can start with one class.",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "icon": "bi-briefcase",
+                "title": "Partner with us",
+                "text": "Organisations and companies can support a project.",
+                "link": {
+                  "type": "url",
+                  "url": "/contact"
+                }
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 3,
+              "mobile": 1
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Ways to help"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "events",
+          "content": {
+            "heading": "Upcoming events",
+            "empty_text": "No upcoming events right now."
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "events",
+            "order": "soonest",
+            "limit": 3,
+            "filters": {
+              "when": "upcoming"
+            }
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Upcoming events"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "faq",
+          "content": {
+            "heading": "Frequently asked questions",
+            "items": [
+              {
+                "question": "Who can take part?",
+                "answer": "<p>Explain who your programmes are for and how to join.</p>"
+              },
+              {
+                "question": "Does it cost anything?",
+                "answer": "<p>Say what is free and what is not.</p>"
+              },
+              {
+                "question": "How can my school or organisation partner with you?",
+                "answer": "<p>Describe the first step, and who to contact.</p>"
+              },
+              {
+                "question": "How do you use donations?",
+                "answer": "<p>Explain how support is spent and how you report on it.</p>"
+              }
+            ]
+          },
+          "display": {
+            "mode": "accordion"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Questions"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

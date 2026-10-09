@@ -6,11 +6,13 @@ use App\Cms\Blocks\BlockTreeRepository;
 use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PageRequest;
+use App\Models\BlockTemplate;
 use App\Models\Page;
 use App\Services\Pages\PageService;
 use App\Services\Publishing\PublishingService;
 use App\Services\Revisions\RevisionService;
 use App\Services\Settings\SettingsService;
+use App\Services\Starter\StarterKitService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -60,7 +62,12 @@ class PageController extends Controller
     {
         Gate::authorize('create', Page::class);
 
-        $page = $this->pages->create($request->user(), $request->pageData());
+        $data = $request->pageData();
+        // "Start from" a page template, unless blocks were already added in the builder.
+        if ($request->filled('start_template_id') && empty($data['blocks'])) {
+            $data['blocks'] = app(StarterKitService::class)->copyOf(BlockTemplate::query()->findOrFail($request->integer('start_template_id')));
+        }
+        $page = $this->pages->create($request->user(), $data);
 
         return redirect()->route('admin.pages.edit', $page)->with('success', __('Page created as a draft.'));
     }
@@ -107,6 +114,7 @@ class PageController extends Controller
             'page' => $page,
             'parents' => $parents,
             'templates' => config('pacms.pages.templates'),
+            'pageTemplates' => $page->exists ? collect() : BlockTemplate::query()->where('scope', 'page')->where('status', 'published')->orderByDesc('is_system')->orderBy('name')->get(['id', 'name', 'description']),
             'canEdit' => $page->exists ? Gate::allows('update', $page) : true,
             'actions' => $page->exists ? app(PublishingService::class)->availableActions($page, $request->user()) : [],
             'revisions' => $page->exists ? $page->revisions()->with('author:id,name')->limit(10)->get() : collect(),

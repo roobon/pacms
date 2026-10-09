@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact details"
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "content": {
+        "text": "Contact us",
+        "level": "3"
+      }
+    },
+    {
+      "type": "list",
+      "content": {
+        "style": "icon",
+        "item_padding": "sm",
+        "items": [
+          {
+            "icon": "bi-envelope",
+            "text": "info@example.org",
+            "link": {
+              "type": "url",
+              "url": "mailto:info@example.org"
+            }
+          },
+          {
+            "icon": "bi-telephone",
+            "text": "+880 1700 000000",
+            "link": {
+              "type": "url",
+              "url": "tel:+8801700000000"
+            }
+          },
+          {
+            "icon": "bi-geo-alt",
+            "text": "House 1, Road 1, Dhaka 1200"
+          }
+        ]
+      }
+    }
+  ]
+}

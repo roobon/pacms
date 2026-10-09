@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Sidebar: events"
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "content": {
+        "text": "Join an event",
+        "level": "3"
+      }
+    },
+    {
+      "type": "rich-text",
+      "content": {
+        "html": "<p>Tell visitors how to register, and who to ask.</p>"
+      }
+    },
+    {
+      "type": "button",
+      "content": {
+        "label": "Contact us",
+        "link": {
+          "type": "url",
+          "url": "/contact"
+        },
+        "variant": "outline"
+      }
+    },
+    {
+      "type": "news",
+      "content": {
+        "heading": "Latest news",
+        "show_excerpt": false
+      },
+      "source": {
+        "mode": "dynamic",
+        "entity": "news",
+        "order": "latest",
+        "limit": 3
+      },
+      "display": {
+        "mode": "list",
+        "show_image": false
+      }
+    }
+  ]
+}

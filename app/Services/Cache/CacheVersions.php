@@ -26,11 +26,13 @@ class CacheVersions
     }
 
     /**
-     * Compact key fragment for several groups, e.g. "pages3.media7".
+     * Compact key fragment for several groups: a hash of their versions ("pages3.media7…").
+     * Hashed so keys stay short however many content types exist (the database cache
+     * store's key column holds 255 characters).
      */
     public function fingerprint(string ...$groups): string
     {
-        return implode('.', array_map(fn ($group) => $group.$this->get($group), $groups));
+        return sha1(implode('.', array_map(fn ($group) => $group.$this->get($group), $groups)));
     }
 
     private function key(string $group): string

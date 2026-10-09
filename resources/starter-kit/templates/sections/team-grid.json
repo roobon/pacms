@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Team grid"
+  },
+  "template": {
+    "name": "Team grid",
+    "slug": "kit-team-grid",
+    "scope": "section",
+    "category": "Collections",
+    "description": "Team members with square photos."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "team",
+          "content": {
+            "heading": "Our team",
+            "show_date": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "team",
+            "order": "position",
+            "limit": 8
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "1:1"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our team"
+      }
+    }
+  ]
+}

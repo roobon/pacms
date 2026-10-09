@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Partner logos"
+  },
+  "template": {
+    "name": "Partner logos",
+    "slug": "kit-partner-logos",
+    "scope": "section",
+    "category": "Collections",
+    "description": "Partner logos in grey, coloured on hover."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "partners",
+          "content": {
+            "heading": "Our partners",
+            "style": "logos",
+            "grayscale": true,
+            "logo_size": "md"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "partners",
+            "order": "position",
+            "limit": 12
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our partners"
+      }
+    }
+  ]
+}

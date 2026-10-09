@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Latest news"
+  },
+  "template": {
+    "name": "Latest news",
+    "slug": "kit-latest-news",
+    "scope": "section",
+    "category": "Collections",
+    "description": "The three newest news items."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "Latest news"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 3
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest news"
+      }
+    }
+  ]
+}

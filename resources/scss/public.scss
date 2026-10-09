@@ -389,10 +389,11 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
     &__inner {
         width: 100%;
     }
+}
 
-    .pa-button-group {
-        justify-content: inherit;
-    }
+// Low specificity, so a button group's own Layout → Justify still wins inside a hero.
+:where(.pa-hero) .pa-button-group {
+    justify-content: inherit;
 }
 
 // Default rhythm: sections, heroes and calls to action get breathing room even when the

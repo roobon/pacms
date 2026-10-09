@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "News landing page"
+  },
+  "template": {
+    "name": "News landing page",
+    "slug": "kit-page-news",
+    "scope": "page",
+    "category": "Pages",
+    "description": "Featured story, the latest news and a call to action."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "News and stories",
+            "level": "1",
+            "eyebrow": "News"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Updates from our programmes, schools and partners.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "Featured"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 1,
+            "filters": {
+              "featured": true
+            }
+          },
+          "display": {
+            "mode": "featured"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Featured"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "Latest news"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 9
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest news"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

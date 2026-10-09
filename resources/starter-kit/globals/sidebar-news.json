@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Sidebar: news"
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "content": {
+        "text": "Stay in touch",
+        "level": "3"
+      }
+    },
+    {
+      "type": "rich-text",
+      "content": {
+        "html": "<p>Get our stories and updates. Tell visitors how to follow you.</p>"
+      }
+    },
+    {
+      "type": "button",
+      "content": {
+        "label": "Get involved",
+        "link": {
+          "type": "url",
+          "url": "/get-involved"
+        },
+        "variant": "primary"
+      }
+    },
+    {
+      "type": "events",
+      "content": {
+        "heading": "Upcoming events",
+        "show_excerpt": false,
+        "empty_text": "No upcoming events right now."
+      },
+      "source": {
+        "mode": "dynamic",
+        "entity": "events",
+        "order": "soonest",
+        "limit": 3,
+        "filters": {
+          "when": "upcoming"
+        }
+      },
+      "display": {
+        "mode": "list",
+        "show_image": false
+      }
+    }
+  ]
+}

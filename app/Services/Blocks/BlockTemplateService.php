@@ -30,7 +30,7 @@ class BlockTemplateService
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data  name, description?, scope, category?, status?, blocks
+     * @param  array<string, mixed>  $data  name, slug?, description?, scope, category?, status?, blocks
      */
     public function create(User $user, array $data): BlockTemplate
     {
@@ -39,7 +39,7 @@ class BlockTemplateService
         return DB::transaction(function () use ($user, $data, $nodes) {
             $template = new BlockTemplate;
             $template->fill($this->attributes($data));
-            $template->slug = $this->uniqueSlug(BlockTemplate::class, (string) $data['name']);
+            $template->slug = $this->uniqueSlug(BlockTemplate::class, (string) ($data['slug'] ?? '') ?: (string) $data['name']);
             $template->created_by = $template->updated_by = $user->id;
             $template->save();
 

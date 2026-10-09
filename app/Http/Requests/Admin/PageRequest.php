@@ -62,6 +62,9 @@ class PageRequest extends FormRequest
             'lock_version' => [$this->route('page') ? 'required' : 'nullable', 'integer'],
             // Block tree from the builder island, as JSON (validated in depth by BlockTreeValidator).
             'blocks' => ['nullable', 'string', 'max:'.((int) config('pacms.blocks.max_payload_kb') * 1024), 'json'],
+            // New pages only: start as a copy of a page template (starter kit or saved).
+            'start_template_id' => [$this->route('page') ? 'prohibited' : 'nullable', 'integer',
+                Rule::exists('block_templates', 'id')->where('scope', 'page')->where('status', 'published')->whereNull('deleted_at')],
 
             'seo' => ['array'],
             'seo.title' => ['nullable', 'string', 'max:255'],
@@ -82,7 +85,7 @@ class PageRequest extends FormRequest
      */
     public function pageData(): array
     {
-        $data = $this->safe()->except(['lock_version', 'blocks']);
+        $data = $this->safe()->except(['lock_version', 'blocks', 'start_template_id']);
 
         if ($this->filled('blocks')) {
             $data['blocks'] = json_decode((string) $this->input('blocks'), true, 64) ?? [];
@@ -103,6 +106,7 @@ class PageRequest extends FormRequest
             'seo.og_image_media_id' => 'social image',
             'featured_media_id' => 'featured image',
             'parent_id' => 'parent page',
+            'start_template_id' => 'page template',
         ];
     }
 }

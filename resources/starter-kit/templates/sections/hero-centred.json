@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Hero: centred"
+  },
+  "template": {
+    "name": "Hero: centred",
+    "slug": "kit-hero-centred",
+    "scope": "section",
+    "category": "Hero",
+    "description": "Big headline on your theme colours, with two buttons."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "boxed",
+        "min_height": {
+          "value": 60,
+          "unit": "vh"
+        },
+        "text_align": "center",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.white"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Your mission in one clear sentence",
+            "level": "1",
+            "eyebrow": "Your organisation"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Say who you work with, where, and the change you want to see. Keep it to two lines.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Get involved",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                },
+                "variant": "accent"
+              }
+            },
+            {
+              "type": "button",
+              "content": {
+                "label": "About us",
+                "link": {
+                  "type": "url",
+                  "url": "/about"
+                },
+                "variant": "outline"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ]
+    }
+  ]
+}
