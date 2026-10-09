@@ -277,3 +277,13 @@ it('gives a top-level item a mega panel built from blocks', function () {
     $this->actingAs($admin)->delete(route('admin.menus.panel.destroy', [$menu, $last]))->assertRedirect(route('admin.menus.edit', $menu));
     expect($last->fresh()->is_mega)->toBeFalse();
 });
+
+it('counts a global block chosen as the site\'s footer as used, and refuses to delete it', function () {
+    $admin = userWithRole('administrator');
+    $footer = app(GlobalBlockService::class)->create($admin, ['name' => 'Footer', 'kind' => 'footer', 'blocks' => [['type' => 'copyright']]]);
+    app(SettingsService::class)->set('navigation', ['footer_global_block_id' => $footer->id]);
+
+    $this->actingAs($admin)->get(route('admin.global-blocks.edit', $footer))->assertOk()->assertSee('Used in 1 place')->assertSee('footer (Design');
+    $this->actingAs($admin)->delete(route('admin.global-blocks.destroy', $footer))->assertSessionHasErrors('global_block');
+    expect($footer->fresh())->not->toBeNull();
+});

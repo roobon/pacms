@@ -55,6 +55,7 @@ class GlobalBlockController extends Controller
             'item' => $globalBlock,
             'blocks' => $blocks->load($globalBlock),
             'usages' => $references->usagesOf($globalBlock),
+            'roles' => $this->globals->roles($globalBlock),
             'autosave' => $revisions->pendingAutosave($globalBlock, $request->user()),
         ]);
     }
