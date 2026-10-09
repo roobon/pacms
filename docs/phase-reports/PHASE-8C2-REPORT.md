@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-09 |
-| Branch | `phase/8-content-modules` (not merged) |
+| Branch | `phase/8-content-modules` → merged into `main` 2026-10-09 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-09. |
 
 ```
 PHASE:   8C.2 — Testimonials (submission + moderation), Media Coverage (source checks,
          archive fallback), search indexing
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-09) and merged into main.
          Decisions applied (team lead, 2026-10-09: "use your defaults"):
          - archive rights may be confirmed by anyone with media_coverage.publish; every change logged
          - submitters do not see the rejection reason (setting PACMS_TESTIMONIAL_SHOW_REJECTION_REASON)
@@ -132,4 +132,4 @@ Search tests live in **`tests/Search`** and commit their data, because InnoDB FU
 
 ## Next
 
-After review and merge: **8D: admin-made content types**, then the starter kit and **v0.8.0**.
+**8D: admin-made content types**, then the starter kit and **v0.8.0**.
