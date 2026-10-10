@@ -15,6 +15,8 @@ PHP 8.3+ (bcmath, ctype, curl, dom, exif, fileinfo, gd, intl, mbstring, openssl,
 composer install
 npm install
 cp .env.example .env          # then set APP_ENV=local, APP_DEBUG=true, APP_URL=http://pacms.test, DB_*
+                              # and SANCTUM_STATEFUL_DOMAINS to your local host (e.g. 127.0.0.1:8000),
+                              # or signing in on the public site does not stick
 php artisan key:generate
 php artisan migrate --seed    # roles/permissions, token stylesheet, and local dev users
 php artisan storage:link
