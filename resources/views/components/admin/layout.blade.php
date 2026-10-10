@@ -9,6 +9,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ? $title.' · ' : '' }}Admin · {{ app(\App\Services\Settings\SettingsService::class)->get('site', 'name') }}</title>
     @vite(['resources/scss/admin.scss', 'resources/js/admin/app.js'])
+    {{-- Endpoints shared by admin islands outside the block builder (e.g. the text editor's image and link pickers). --}}
+    @auth
+        @php($adminEndpoints = ['media' => route('admin.api.media.index'), 'mediaUpload' => route('admin.api.media.store'), 'canUpload' => auth()->user()->can('media.upload'), 'linkTargets' => auth()->user()->can('pages.view') ? route('admin.api.link-targets') : null])
+        <script type="application/json" id="pacms-admin-endpoints">{!! json_encode($adminEndpoints, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES) !!}</script>
+    @endauth
     @stack('islands')
 </head>
 <body class="pa-admin">

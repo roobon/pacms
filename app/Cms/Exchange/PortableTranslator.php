@@ -182,6 +182,17 @@ final class PortableTranslator
     {
         $out = [];
 
+        // AI tools often write a block's link as a plain "url" (or "href") next to "label":
+        // when the block has exactly one link field and it is missing, use that address.
+        $links = array_keys(array_filter($fields, fn (array $field) => ($field['type'] ?? null) === 'link'));
+        foreach (['url', 'href'] as $shorthand) {
+            if (count($links) === 1 && ! isset($fields[$shorthand]) && ! array_key_exists($links[0], $content) && is_string($content[$shorthand] ?? null)) {
+                $content[$links[0]] = ['type' => 'url', 'url' => $content[$shorthand]];
+                unset($content[$shorthand]);
+                $this->report->info('blocks', __('"'.$shorthand.'" was read as the block\'s link.'), "{$pointer}/{$shorthand}", $key);
+            }
+        }
+
         foreach ($content as $name => $value) {
             $field = $fields[$name] ?? null;
             if ($field === null) {

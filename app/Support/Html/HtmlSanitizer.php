@@ -2,6 +2,7 @@
 
 namespace App\Support\Html;
 
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer as SymfonySanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
@@ -22,7 +23,7 @@ final class HtmlSanitizer
     public function __construct()
     {
         $config = (new HtmlSanitizerConfig)
-            ->allowElement('p')
+            ->allowElement('p', ['class'])
             ->allowElement('br')
             ->allowElement('strong')
             ->allowElement('b')
@@ -37,11 +38,11 @@ final class HtmlSanitizer
             ->allowElement('ol')
             ->allowElement('li')
             ->allowElement('blockquote')
-            ->allowElement('h2')
-            ->allowElement('h3')
-            ->allowElement('h4')
-            ->allowElement('h5')
-            ->allowElement('h6')
+            ->allowElement('h2', ['class'])
+            ->allowElement('h3', ['class'])
+            ->allowElement('h4', ['class'])
+            ->allowElement('h5', ['class'])
+            ->allowElement('h6', ['class'])
             ->allowElement('code')
             ->allowElement('pre')
             ->allowElement('hr')
@@ -51,11 +52,16 @@ final class HtmlSanitizer
             ->allowElement('tr')
             ->allowElement('th', ['colspan', 'rowspan', 'scope'])
             ->allowElement('td', ['colspan', 'rowspan'])
-            ->allowElement('figure')
+            ->allowElement('figure', ['class'])
             ->allowElement('figcaption')
-            ->allowElement('span')
+            ->allowElement('img', ['src', 'alt', 'width', 'height', 'data-media'])
+            ->allowElement('span', ['class'])
+            ->allowElement('mark', ['class'])
+            ->allowElement('div', ['class'])
             ->allowLinkSchemes(['http', 'https', 'mailto', 'tel'])
             ->allowRelativeLinks()
+            ->allowMediaSchemes(['http', 'https'])
+            ->allowRelativeMedias()
             ->forceAttribute('a', 'rel', 'noopener noreferrer')
             ->withMaxInputLength(200000);
 
@@ -75,9 +81,56 @@ final class HtmlSanitizer
             ->withMaxInputLength(20000));
     }
 
+    /**
+     * Class names rich text may carry (CMS-BLOCK-SCHEMA.md §8.3): alignment, theme text and
+     * highlight colours, highlight boxes and image placement. Any other class is removed.
+     */
+    public const RICH_TEXT_CLASSES = [
+        'pa-align-center', 'pa-align-end',
+        'pa-text-primary', 'pa-text-secondary', 'pa-text-accent', 'pa-text-muted', 'pa-text-success', 'pa-text-warning', 'pa-text-danger',
+        'pa-mark-primary', 'pa-mark-secondary', 'pa-mark-accent', 'pa-mark-muted', 'pa-mark-success', 'pa-mark-warning', 'pa-mark-danger',
+        'pa-callout', 'pa-callout--info', 'pa-callout--success', 'pa-callout--warning', 'pa-callout--note',
+        'pa-figure', 'pa-figure--full', 'pa-figure--wide', 'pa-figure--left', 'pa-figure--right',
+        // Earlier fixed list (span classes).
+        'text-primary', 'text-accent', 'lead', 'small', 'visually-hidden',
+    ];
+
     public function sanitize(string $html): string
     {
-        return trim($this->sanitizer->sanitize($html));
+        $clean = $this->sanitizer->sanitize($html);
+
+        // Only listed classes survive.
+        $clean = (string) preg_replace_callback('/\sclass="([^"]*)"/i', function (array $match) {
+            $kept = array_values(array_intersect(preg_split('/\s+/', trim(html_entity_decode($match[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'))) ?: [], self::RICH_TEXT_CLASSES));
+
+            return $kept === [] ? '' : ' class="'.e(implode(' ', array_unique($kept))).'"';
+        }, $clean);
+
+        // Images only from this site's Media Library (R-2): others are removed, with an empty
+        // figure they leave behind.
+        $prefix = $this->mediaPrefix();
+        $clean = (string) preg_replace_callback('/<img\b[^>]*>/i', function (array $match) use ($prefix) {
+            if (! preg_match('/\ssrc="([^"]*)"/i', $match[0], $src)) {
+                return '';
+            }
+            $url = html_entity_decode($src[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            return str_starts_with($url, $prefix) || str_starts_with($url, (string) parse_url($prefix, PHP_URL_PATH)) ? $match[0] : '';
+        }, $clean);
+        $clean = (string) preg_replace('#<figure\b[^>]*>\s*(<figcaption>.*?</figcaption>)?\s*</figure>#is', '', $clean);
+
+        return trim($clean);
+    }
+
+    /**
+     * Where public library files are served (e.g. https://site.example/storage/media/).
+     */
+    private function mediaPrefix(): string
+    {
+        $disk = (string) config('pacms.media.disk');
+        $url = rtrim((string) Storage::disk($disk)->url('media'), '/').'/';
+
+        return $url;
     }
 
     /**
