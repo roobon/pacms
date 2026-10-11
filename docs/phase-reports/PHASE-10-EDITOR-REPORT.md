@@ -3,13 +3,13 @@
 | | |
 |---|---|
 | Date | 2026-10-10 |
-| Branch | `phase/10-external` (not merged) |
+| Branch | `phase/10-external` (merged into `main` 2026-10-11) |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved and merged. |
 
 ```
 PART:    richer text editor (asked by the team lead during 10A), and help for AI-made JSON
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED and MERGED into main (2026-10-11).
          Decisions (team lead, 2026-10-09: "use your defaults"): R-1 theme colours only,
          R-2 images from the Media Library only, R-3 no video embeds in text, R-4 after 10A.
 ```
