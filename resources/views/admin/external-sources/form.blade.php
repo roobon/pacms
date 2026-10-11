@@ -19,7 +19,12 @@
                         <div class="card-header"><h2 id="source-heading" class="h6 mb-0">Source</h2></div>
                         <div class="card-body">
                             <x-admin.field name="name" label="Name" :value="$source->name" required help="Shown under items when “Show the source name” is on, e.g. UN Environment." />
-                            <x-admin.field name="config[feed_url]" label="Feed address" type="url" :value="$source->config['feed_url'] ?? ''" required placeholder="https://example.org/feed.json" />
+                            @if ($source->provider === 'feed')
+                                <x-admin.field name="config[feed_url]" label="Feed address" type="url" :value="$source->config['feed_url'] ?? ''" required placeholder="https://example.org/feed.json" />
+                            @else
+                                <p class="small mb-3"><i class="bi bi-facebook me-1" aria-hidden="true"></i> Facebook Page {{ $source->config['page_id'] ?? '' }}@if (! empty($source->config['page_url'])) · <a href="{{ $source->config['page_url'] }}" target="_blank" rel="noopener noreferrer">open on Facebook</a>@endif.
+                                    @can('facebook.connect') <a href="{{ route('admin.facebook.show') }}">Connect again</a> to change the token.@endcan</p>
+                            @endif
                             <x-admin.field name="description" label="Note for editors (optional)" :value="$source->description" />
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -112,7 +117,9 @@
                     @endif
                     @if ($canManage)
                         <button type="submit" form="source-form" class="btn btn-primary w-100 mb-2">{{ $editing ? 'Save changes' : 'Add source' }}</button>
-                        <button type="submit" form="source-form" formaction="{{ route('admin.external-sources.test') }}" class="btn btn-outline-secondary w-100">Test the address</button>
+                        @if ($source->provider === 'feed')
+                            <button type="submit" form="source-form" formaction="{{ route('admin.external-sources.test') }}" class="btn btn-outline-secondary w-100">Test the address</button>
+                        @endif
                     @endif
                     @if ($editing)
                         <form method="POST" action="{{ route('admin.external-sources.sync', $source) }}" class="mt-2">

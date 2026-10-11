@@ -15,6 +15,7 @@ use App\Cms\Blocks\Types\CtaBlock;
 use App\Cms\Blocks\Types\DividerBlock;
 use App\Cms\Blocks\Types\DocumentBlock;
 use App\Cms\Blocks\Types\EventsBlock;
+use App\Cms\Blocks\Types\FacebookFeedBlock;
 use App\Cms\Blocks\Types\FaqBlock;
 use App\Cms\Blocks\Types\FeedBlock;
 use App\Cms\Blocks\Types\GalleriesBlock;
@@ -215,6 +216,7 @@ return [
             TestimonialsBlock::class,
             MediaCoverageBlock::class,
             FeedBlock::class,
+            FacebookFeedBlock::class,
             DocumentBlock::class,
             HtmlBlock::class,
             SiteLogoBlock::class,

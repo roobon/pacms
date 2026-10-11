@@ -30,7 +30,7 @@ class ExternalItemsSource implements ExternalProvider
             return []; // a disabled source shows nothing
         }
 
-        return ExternalItem::query()->where('external_source_id', $model->id)
+        return ExternalItem::query()->where('external_source_id', $model->id)->with('imageMedia')
             ->orderByRaw('published_at is null')->orderByDesc('published_at')->orderByDesc('id')
             ->limit(max(1, min(50, $limit)))->get()
             ->map(fn (ExternalItem $item) => [
@@ -40,7 +40,8 @@ class ExternalItemsSource implements ExternalProvider
                 'url' => $item->link,
                 'external' => true,
                 'excerpt' => $item->excerpt,
-                'image' => $item->image_url ? ['src' => $item->image_url, 'alt' => ''] : null,
+                // A copy in the library (Facebook) is responsive and never expires.
+                'image' => $item->imageMedia?->toImageArray('(min-width: 992px) 33vw, 100vw') ?? ($item->image_url ? ['src' => $item->image_url, 'alt' => ''] : null),
                 'date' => $item->published_at?->toIso8601String(),
                 'meta' => array_filter(['source' => $model->name, 'category' => $item->category]),
             ])->all();

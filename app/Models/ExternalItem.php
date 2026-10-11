@@ -31,6 +31,14 @@ class ExternalItem extends Model
     }
 
     /**
+     * @return BelongsTo<Media, $this>
+     */
+    public function imageMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'image_media_id');
+    }
+
+    /**
      * @return BelongsTo<ExternalSource, $this>
      */
     public function source(): BelongsTo

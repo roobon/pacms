@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 9 (Navigation) merged (v0.9.0). Phase 10 (External Providers) in progress: 10A (feeds: reading JSON Feed/RSS/Atom, Feed block, JSON Feed out) merged; the richer text editor merged; next 10B (Facebook).** See [docs/phase-reports/PHASE-10A-REPORT.md](docs/phase-reports/PHASE-10A-REPORT.md) and [docs/phase-reports/PHASE-10-EDITOR-REPORT.md](docs/phase-reports/PHASE-10-EDITOR-REPORT.md).
+- Current status: **Phase 10 (External Providers) in progress: 10A (feeds) and the richer text editor merged; 10B (Facebook Page) ready for review.** See [docs/phase-reports/PHASE-10B-REPORT.md](docs/phase-reports/PHASE-10B-REPORT.md).
 
 ## Requirements
 
