@@ -93,6 +93,11 @@ class SourceRegistry
         if ($provider !== null && ! in_array($provider->key(), $type->externalProviders(), true)) {
             $provider = null; // this block shows other kinds of sources
         }
+        // No source chosen yet (e.g. the Facebook Page is not connected): allowed; the block
+        // shows its empty state (a follow link, or nothing) until one is chosen.
+        if ($provider !== null && ($source['source'] ?? '') === '') {
+            return ['mode' => 'external', 'provider' => $provider->key(), 'source' => '', 'limit' => max(1, min(50, (int) ($source['limit'] ?? 6)))];
+        }
         if ($provider === null || ! is_string($source['source'] ?? null) || ! $provider->hasSource($source['source'])) {
             $values->errors()->add("{$path}.source", __('Choose a connected external source.'));
 

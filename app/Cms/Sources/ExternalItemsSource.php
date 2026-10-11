@@ -25,6 +25,9 @@ class ExternalItemsSource implements ExternalProvider
 
     public function items(string $source, int $limit): array
     {
+        if ($source === '') {
+            return [];
+        }
         $model = ExternalSource::query()->enabled()->where('provider', $this->provider)->where('slug', $source)->first();
         if ($model === null) {
             return []; // a disabled source shows nothing

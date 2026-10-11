@@ -50,7 +50,7 @@ export default function SourcePanel({ type, source, onChange, errors, disabled =
             </div>
 
             {mode === 'external' && (
-                <ExternalSourceFields id={id} source={source} sources={externalSources.filter((s) => providers.includes(s.provider))} set={set} errors={errors} disabled={disabled} />
+                <ExternalSourceFields id={id} source={source} sources={externalSources.filter((s) => providers.includes(s.provider))} facebook={providers.includes('facebook')} set={set} errors={errors} disabled={disabled} />
             )}
 
             {mode === 'dynamic' && dynamic && (
@@ -108,10 +108,16 @@ export default function SourcePanel({ type, source, onChange, errors, disabled =
 }
 
 /** Which external source (Design → External sources) and how many of its items. */
-function ExternalSourceFields({ id, source, sources, set, errors, disabled }) {
+function ExternalSourceFields({ id, source, sources, facebook, set, errors, disabled }) {
     const error = errors?.['source.source']?.[0];
     if (sources.length === 0) {
-        return <p className="small text-body-secondary mb-0">No sources yet. Add a feed under Design → External sources, then choose it here.</p>;
+        return (
+            <p className="small text-body-secondary mb-0">
+                {facebook
+                    ? 'No Facebook Page is connected yet. Connect it under Design → External sources → Connect a Facebook Page, then choose it here. Until then the block shows its “when there are no posts” setting.'
+                    : 'No sources yet. Add a feed under Design → External sources, then choose it here.'}
+            </p>
+        );
     }
     return (
         <div className="row g-2">

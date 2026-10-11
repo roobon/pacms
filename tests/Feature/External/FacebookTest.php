@@ -155,3 +155,13 @@ it('warns a week before a token expires', function () {
 
     $this->actingAs($admin)->get(route('admin.external-sources.index'))->assertSee('expires')->assertSee('Connect the Page again');
 });
+
+it('lets a Facebook block be placed before the Page is connected', function () {
+    $admin = userWithRole('super-admin');
+    app(SettingsService::class)->set('navigation', ['social' => ['facebook' => 'https://www.facebook.com/probhaaurora']]);
+
+    $clean = app(BlockTreeValidator::class)->validate([['type' => 'facebook-feed', 'content' => ['when_empty' => 'follow'], 'source' => ['mode' => 'external', 'provider' => 'facebook', 'source' => '']]], $admin);
+    $block = app(BlockPayloadResolver::class)->resolve($clean)[0];
+
+    expect($block['items'])->toBe([])->and($block['data']['follow_url'])->toBe('https://www.facebook.com/probhaaurora');
+});
