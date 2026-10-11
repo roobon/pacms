@@ -3,7 +3,7 @@
 Organisational content management system: Laravel 12 backend and admin, public React SPA.
 
 - Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 9 (Navigation) merged (v0.9.0). Phase 10 (External Providers) in progress: 10A (feeds: reading JSON Feed/RSS/Atom, Feed block, JSON Feed out) merged; next the richer text editor, then 10B (Facebook).** See [docs/phase-reports/PHASE-10A-REPORT.md](docs/phase-reports/PHASE-10A-REPORT.md).
+- Current status: **Phase 9 (Navigation) merged (v0.9.0). Phase 10 (External Providers) in progress: 10A (feeds: reading JSON Feed/RSS/Atom, Feed block, JSON Feed out) merged; the richer text editor ready for review, then 10B (Facebook).** See [docs/phase-reports/PHASE-10A-REPORT.md](docs/phase-reports/PHASE-10A-REPORT.md).
 
 ## Requirements
 
@@ -15,6 +15,8 @@ PHP 8.3+ (bcmath, ctype, curl, dom, exif, fileinfo, gd, intl, mbstring, openssl,
 composer install
 npm install
 cp .env.example .env          # then set APP_ENV=local, APP_DEBUG=true, APP_URL=http://pacms.test, DB_*
+                              # and SANCTUM_STATEFUL_DOMAINS to your local host (e.g. 127.0.0.1:8000),
+                              # or signing in on the public site does not stick
 php artisan key:generate
 php artisan migrate --seed    # roles/permissions, token stylesheet, and local dev users
 php artisan storage:link

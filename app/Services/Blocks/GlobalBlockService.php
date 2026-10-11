@@ -4,14 +4,17 @@ namespace App\Services\Blocks;
 
 use App\Cms\Blocks\BlockTreeRepository;
 use App\Cms\Blocks\BlockTreeValidator;
+use App\Cms\Content\ContentTypeRegistry;
 use App\Enums\RevisionKind;
 use App\Models\GlobalBlock;
+use App\Models\Page;
 use App\Models\Revision;
 use App\Models\User;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Cache\CacheVersions;
 use App\Services\Content\ContentReferenceService;
 use App\Services\Revisions\RevisionService;
+use App\Services\Settings\SettingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -115,8 +118,41 @@ class GlobalBlockService
     /**
      * @throws ValidationException when the block is still placed somewhere
      */
+    /**
+     * Where the block is chosen in settings rather than placed in content: the site's header
+     * or footer, a module's sidebar, a page's own header or footer. Labels for admins.
+     *
+     * @return list<string>
+     */
+    public function roles(GlobalBlock $global): array
+    {
+        $settings = app(SettingsService::class);
+        $roles = [];
+        foreach (['header' => 'The site\'s header (Design → Header & footer)', 'footer' => 'The site\'s footer (Design → Header & footer)'] as $role => $label) {
+            if ((int) $settings->get('navigation', "{$role}_global_block_id") === $global->id) {
+                $roles[] = __($label);
+            }
+        }
+        foreach ((array) $settings->get('content', 'sidebars', []) as $type => $sidebar) {
+            if ((int) ($sidebar['global_block_id'] ?? 0) === $global->id) {
+                $roles[] = __('The sidebar of :type (Settings)', ['type' => app(ContentTypeRegistry::class)->find((string) $type)?->label() ?? $type]);
+            }
+        }
+        foreach (['header', 'footer'] as $role) {
+            foreach (Page::query()->where("{$role}_mode", 'custom')->where("{$role}_global_block_id", $global->id)->pluck('title') as $title) {
+                $roles[] = __('The :role of the page ":title"', ['role' => $role, 'title' => $title]);
+            }
+        }
+
+        return $roles;
+    }
+
     public function delete(User $user, GlobalBlock $global): void
     {
+        if (($roles = $this->roles($global)) !== []) {
+            throw ValidationException::withMessages(['global_block' => __('This global block is chosen as: :roles. Choose another one there first.', ['roles' => implode('; ', $roles)])]);
+        }
+
         $count = $this->references->usagesOf($global)->count();
         if ($count > 0) {
             throw ValidationException::withMessages([

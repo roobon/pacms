@@ -55,7 +55,7 @@
                     @if ($editing)
                         <form method="POST" action="{{ route('admin.global-blocks.destroy', $item) }}" data-confirm="Delete “{{ $item->name }}”?">
                             @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-link text-danger p-0" @disabled($usages->isNotEmpty())><i class="bi bi-trash" aria-hidden="true"></i> Delete</button>
+                            <button type="submit" class="btn btn-link text-danger p-0" @disabled($usages->isNotEmpty() || $roles !== [])><i class="bi bi-trash" aria-hidden="true"></i> Delete</button>
                         </form>
                     @endif
                 </div>
@@ -63,8 +63,15 @@
 
             @if ($editing)
                 <section class="card pa-card" aria-labelledby="global-usage-heading">
-                    <div class="card-header"><h2 id="global-usage-heading" class="h6 mb-0">Used in {{ trans_choice(':count place|:count places', $usages->count(), ['count' => $usages->count()]) }}</h2></div>
-                    @if ($usages->isEmpty())
+                    <div class="card-header"><h2 id="global-usage-heading" class="h6 mb-0">Used in {{ trans_choice(':count place|:count places', $usages->count() + count($roles), ['count' => $usages->count() + count($roles)]) }}</h2></div>
+                    @if ($roles !== [])
+                        <ul class="list-group list-group-flush">
+                            @foreach ($roles as $role)
+                                <li class="list-group-item small"><i class="bi bi-check2-circle text-success me-1" aria-hidden="true"></i>{{ $role }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    @if ($usages->isEmpty() && $roles === [])
                         <div class="card-body small text-body-secondary">Not placed anywhere yet. It can be deleted.</div>
                     @else
                         <ul class="list-group list-group-flush">

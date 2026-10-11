@@ -319,7 +319,7 @@ Only in `copyright` and mega/footer text fields: `{{year}}`, `{{site_name}}`. No
 
 ### 8.3 Rich text allowlist
 Elements: `p, br, strong, em, u, s, sub, sup, a, ul, ol, li, blockquote, h2, h3, h4, h5, h6, code, pre, hr, table, thead, tbody, tr, th, td, figure, figcaption, img, span`.
-Attributes: `a[href, title, target, rel]`, `img[src, alt, width, height]` (src must be a same-site media URL or an asset ref resolved on import), `th/td[colspan, rowspan, scope]`, `span[class]` with classes from a fixed list (`text-primary`, `text-accent`, `lead`, `small`, `visually-hidden`).
+Attributes: `a[href, title, target, rel]`, `img[src, alt, width, height, data-media]` (src must be this site's media library; other images are removed), `th/td[colspan, rowspan, scope]`, and `class` on `p, h2–h6, span, mark, div, figure` with classes from a fixed list only (`HtmlSanitizer::RICH_TEXT_CLASSES`): alignment `pa-align-center|end`, theme colours `pa-text-*` and highlights `pa-mark-*` (primary, secondary, accent, muted, success, warning, danger), boxes `pa-callout pa-callout--info|success|warning|note`, images `pa-figure pa-figure--full|wide|left|right`, and the earlier `text-primary`, `text-accent`, `lead`, `small`, `visually-hidden`. Elements: the list above plus `mark` and `div`.
 Links: `http`, `https`, `mailto`, `tel`, relative, `#anchor`. `target="_blank"` gets `rel="noopener noreferrer"` automatically.
 Everything else (scripts, styles, iframes, forms, event handlers, `style` attributes, data URIs) is removed and **reported**.
 

@@ -38,6 +38,7 @@ $enable-shadows: false;
 // Self-hosted variable fonts (latin subsets; no third-party font CDN).
 @import "@fontsource-variable/inter/index";
 @import "@fontsource-variable/plus-jakarta-sans/index";
+@import "rich-content";
 
 // Zero-specificity fallbacks: the runtime token stylesheet (:root) always wins.
 :where(:root) {

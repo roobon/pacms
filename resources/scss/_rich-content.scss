@@ -1,0 +1,133 @@
+// Rich text content (article text, Text blocks, rich-text fields): theme colours,
+// highlights, alignment, highlight boxes, images and tables. Used by the website and by
+// the editor in the admin, so writers see what visitors will see. Colours come from the
+// design tokens, with fallbacks for the admin (which does not load the token sheet).
+
+$pa-rich-colours: (
+    primary: var(--pa-color-primary, #0A6B66),
+    secondary: var(--pa-color-secondary, #23305E),
+    accent: var(--pa-color-accent, #B86E00),
+    muted: var(--pa-color-muted, #64748B),
+    success: var(--pa-color-success, #15803D),
+    warning: var(--pa-color-warning, #B45309),
+    danger: var(--pa-color-danger, #B91C1C),
+);
+
+.pa-rich-text {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .pa-align-center { text-align: center; }
+    .pa-align-end { text-align: end; }
+
+    @each $name, $colour in $pa-rich-colours {
+        .pa-text-#{$name} { color: $colour; }
+
+        mark.pa-mark-#{$name} {
+            padding: 0 .15em;
+            border-radius: .2em;
+            color: inherit;
+            background: color-mix(in srgb, #{$colour} 18%, transparent);
+        }
+    }
+
+    // Highlight boxes.
+    .pa-callout {
+        margin: 1.5rem 0;
+        padding: 1rem 1.25rem;
+        border-left: 4px solid var(--pa-callout, var(--pa-color-primary, #0A6B66));
+        border-radius: .5rem;
+        background: color-mix(in srgb, var(--pa-callout, #0A6B66) 8%, transparent);
+
+        > :last-child { margin-bottom: 0; }
+
+        &--info { --pa-callout: var(--pa-color-primary, #0A6B66); }
+        &--success { --pa-callout: var(--pa-color-success, #15803D); }
+        &--warning { --pa-callout: var(--pa-color-warning, #B45309); }
+        &--note { --pa-callout: var(--pa-color-muted, #64748B); }
+    }
+
+    // Images from the library.
+    .pa-figure {
+        margin: 1.5rem 0;
+
+        img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: .5rem;
+        }
+
+        figcaption {
+            margin-top: .5rem;
+            font-size: .875rem;
+            color: var(--pa-color-muted, #64748B);
+        }
+
+        &--wide {
+            @media (min-width: 992px) {
+                margin-inline: -3rem;
+            }
+        }
+
+        &--left,
+        &--right {
+            @media (min-width: 576px) {
+                width: min(45%, 22rem);
+                margin-top: .25rem;
+            }
+        }
+
+        &--left {
+            @media (min-width: 576px) {
+                float: left;
+                margin-right: 1.5rem;
+            }
+        }
+
+        &--right {
+            @media (min-width: 576px) {
+                float: right;
+                margin-left: 1.5rem;
+            }
+        }
+    }
+
+    // Tables: readable, striped, scrolling sideways on small screens.
+    table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        border-collapse: collapse;
+        font-size: .9375rem;
+    }
+
+    th,
+    td {
+        min-width: 6rem;
+        padding: .625rem .875rem;
+        border: 1px solid var(--pa-color-border, #E2E8F0);
+        text-align: start;
+        vertical-align: top;
+
+        > p { margin: 0; }
+    }
+
+    th {
+        font-weight: 700;
+        background: var(--pa-color-bg-light, #F1F5F9);
+    }
+
+    tbody tr:nth-child(even) td {
+        background: color-mix(in srgb, var(--pa-color-bg-light, #F1F5F9) 50%, transparent);
+    }
+
+    hr {
+        margin: 2rem 0;
+        opacity: .2;
+    }
+}

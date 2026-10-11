@@ -27,6 +27,8 @@ class MediaResource extends JsonResource
             'alt' => $this->alt,
             'is_decorative' => $this->is_decorative,
             'thumbnail' => $this->isImage() ? $this->thumbnailUrl(320) : null,
+            // For images placed in rich text (a size fit for an article column).
+            'large' => $this->isImage() ? $this->thumbnailUrl(1280) : null,
             'url' => $this->url(),
             'edit_url' => route('admin.media.edit', $this->resource),
         ];
