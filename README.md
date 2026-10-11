@@ -2,7 +2,7 @@
 
 A content management system for organisations: a **Laravel 12** backend and admin, and a public **React** website built from blocks.
 
-**Status:** Phase 10 (External Providers): feeds and the richer text editor are merged; the Facebook Page integration is ready for review. Latest release: **v0.9.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
+**Status:** Phase 10 (External Providers) complete: feeds, the richer text editor and Facebook Page posts. Latest release: **v0.10.0**. Next: Phase 11, the public React website. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
 
 ---
 

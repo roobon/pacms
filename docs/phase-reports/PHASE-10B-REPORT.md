@@ -3,15 +3,16 @@
 | | |
 |---|---|
 | Date | 2026-10-12 |
-| Branch | `phase/10-external` (not merged) |
+| Branch | `phase/10-external` → merged into `main` 2026-10-12, tagged `v0.10.0` |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-12; real-Page test pending (team lead). |
 
 ```
 PHASE:   10B — posts of the organisation's own Facebook Page: connect (OAuth or pasted Page
          token), encrypted token, published posts through the Graph API, images copied into
          the Media Library, "Facebook posts" block. Completes Phase 10.
-STATUS:  READY FOR REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-12), merged into main and tagged v0.10.0.
+         Testing with the real Facebook Page follows later; fixes as follow-ups.
          E-2 (team lead, 2026-10-09): built and tested against simulated Facebook responses.
          A real connection needs your Meta app or a Page token (Q-05, see below).
 ```
