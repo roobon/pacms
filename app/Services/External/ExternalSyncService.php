@@ -2,7 +2,9 @@
 
 namespace App\Services\External;
 
+use App\Cms\External\CachesImages;
 use App\Cms\External\ExternalContentProvider;
+use App\Cms\External\Facebook\FacebookImageCache;
 use App\Cms\External\ProviderRegistry;
 use App\Models\ExternalItem;
 use App\Models\ExternalSource;
@@ -45,8 +47,12 @@ class ExternalSyncService
 
         $started = microtime(true);
         try {
-            $result = $this->provider($source)->fetch($source);
+            $provider = $this->provider($source);
+            $result = $provider->fetch($source);
             [$created, $updated] = $this->store($source, $result['items']);
+            if ($provider instanceof CachesImages) {
+                $provider->cacheImages($source);
+            }
 
             $source->forceFill([
                 'format' => $result['format'] ?? $source->format,
@@ -108,7 +114,11 @@ class ExternalSyncService
      */
     public function clear(ExternalSource $source): void
     {
+        $cached = ExternalItem::query()->where('external_source_id', $source->id)->whereNotNull('image_media_id')->pluck('image_media_id')->all();
         ExternalItem::query()->where('external_source_id', $source->id)->delete();
+        if ($cached !== []) {
+            app(FacebookImageCache::class)->forget($source, array_map('intval', $cached));
+        }
         $source->forceFill(['next_sync_at' => now()])->save();
         $this->versions->bump('external');
     }
@@ -131,7 +141,12 @@ class ExternalSyncService
             $keep = ExternalItem::query()->where('external_source_id', $source->id)
                 ->orderByRaw('published_at is null')->orderByDesc('published_at')->orderByDesc('id')
                 ->limit($source->max_items)->pluck('id');
-            ExternalItem::query()->where('external_source_id', $source->id)->whereNotIn('id', $keep)->delete();
+            $removed = ExternalItem::query()->where('external_source_id', $source->id)->whereNotIn('id', $keep);
+            $cached = (clone $removed)->whereNotNull('image_media_id')->pluck('image_media_id')->all();
+            $removed->delete();
+            if ($cached !== []) {
+                app(FacebookImageCache::class)->forget($source, array_map('intval', $cached));
+            }
         });
 
         return [$created, $updated];

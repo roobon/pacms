@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    // Facebook Page posts (Phase 10B, CMS-ARCHITECTURE.md §17). Only the organisation's own
+    // Page through the official Graph API; no scraping. Re-check the version before go-live.
+    'meta' => [
+        'app_id' => env('META_APP_ID'),
+        'app_secret' => env('META_APP_SECRET'),
+        'graph_version' => env('META_GRAPH_VERSION', 'v26.0'),
+    ],
+
 ];

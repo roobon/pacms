@@ -33,7 +33,7 @@ class ExternalSourceController extends Controller
         abort_unless($request->user()->can('external_sources.manage') || $request->user()->can('external_sources.sync'), 403);
 
         return view('admin.external-sources.index', [
-            'sources' => ExternalSource::query()->withCount('items')->orderBy('name')->get(),
+            'sources' => ExternalSource::query()->with('account')->withCount('items')->orderBy('name')->get(),
             'providers' => $this->providers->all(),
         ]);
     }
@@ -92,8 +92,13 @@ class ExternalSourceController extends Controller
     public function destroy(Request $request, ExternalSource $externalSource): RedirectResponse
     {
         $this->authorizeManage($request);
-        $externalSource->items()->delete();
+        $this->sync->clear($externalSource); // items and their cached images
         $externalSource->delete();
+        // A connected account (Facebook token) is not kept once its source is gone.
+        if ($externalSource->account_id !== null && ! ExternalSource::query()->where('account_id', $externalSource->account_id)->exists()) {
+            $externalSource->account()->first()?->forceFill(['credentials' => null, 'status' => 'removed'])->save();
+            $externalSource->account()->first()?->delete();
+        }
         app(CacheVersions::class)->bump('external');
         $this->logger->log('external_source.deleted', $externalSource, [], $request->user(), $externalSource->name);
 
@@ -174,8 +179,11 @@ class ExternalSourceController extends Controller
             'sync_interval_minutes' => (int) $data['sync_interval_minutes'],
             'max_items' => (int) $data['max_items'],
             'status' => $data['status'],
-            'config' => $provider->config((array) ($data['config'] ?? [])),
         ]);
+        // Providers configured elsewhere (Facebook: chosen when connecting) keep their settings.
+        if ($provider->configRules() !== []) {
+            $source->config = $provider->config((array) ($data['config'] ?? []));
+        }
     }
 
     private function uniqueSlug(string $wanted): string

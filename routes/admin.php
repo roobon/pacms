@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignTokenController;
 use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\ExternalSourceController;
+use App\Http\Controllers\Admin\FacebookController;
 use App\Http\Controllers\Admin\GlobalBlockController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MediaController;
@@ -145,6 +146,15 @@ Route::post('media-coverage/{item}/check-source', [MediaCoverageController::clas
     ->whereNumber('item')->middleware('throttle:20,1')->name('media_coverage.check-source');
 
 // Reusable blocks (Phase 5): global blocks, templates, custom block types
+// Phase 10B: connecting the organisation's Facebook Page.
+Route::middleware('can:facebook.connect')->prefix('external-sources/facebook')->name('facebook.')->group(function () {
+    Route::get('/', [FacebookController::class, 'show'])->name('show');
+    Route::get('start', [FacebookController::class, 'start'])->name('start');
+    Route::get('callback', [FacebookController::class, 'callback'])->name('callback');
+    Route::post('choose', [FacebookController::class, 'choose'])->name('choose');
+    Route::post('manual', [FacebookController::class, 'manual'])->middleware('throttle:10,1')->name('manual');
+});
+
 // Phase 10: external sources (permissions checked in the controller: manage or sync).
 Route::post('external-sources/test', [ExternalSourceController::class, 'test'])->name('external-sources.test');
 Route::resource('external-sources', ExternalSourceController::class)->except('show');

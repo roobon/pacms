@@ -111,3 +111,33 @@ export function FeedBlock({ node, preview }) {
     const items = showSource ? node.items : (node.items ?? []).map((item) => ({ ...item, meta: { ...item.meta, source: undefined } }));
     return <CollectionBlock node={{ ...node, items }} preview={preview} />;
 }
+
+/** Posts of the connected Facebook Page; without posts, a follow link or nothing. */
+export function FacebookFeedBlock({ node, preview }) {
+    const items = node.items ?? [];
+    const { heading, when_empty: whenEmpty = 'follow', follow_label: followLabel = 'Follow us on Facebook', show_excerpt: showExcerpt = true, show_date: showDate = true } = node.content;
+    const followUrl = node.data?.follow_url;
+
+    if (items.length === 0) {
+        if (whenEmpty === 'follow' && followUrl) {
+            return (
+                <div {...frameProps(node, preview, 'pa-collection pa-collection--facebook')}>
+                    {heading && <h2 className="pa-block-heading">{heading}</h2>}
+                    <a href={followUrl} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                        <i className="bi bi-facebook me-2" aria-hidden="true" />
+                        {followLabel}
+                        <span className="visually-hidden"> (opens in new tab)</span>
+                    </a>
+                </div>
+            );
+        }
+        return preview ? <p {...frameProps(node, preview, 'pa-placeholder')}>No Facebook posts yet (connect the Page under Design → External sources).</p> : null;
+    }
+
+    return (
+        <div {...frameProps(node, preview, 'pa-collection pa-collection--facebook')}>
+            {heading && <h2 className="pa-block-heading">{heading}</h2>}
+            <ItemsDisplay items={items} display={node.display} showExcerpt={showExcerpt} showDate={showDate} headingLevel={heading ? 3 : 2} />
+        </div>
+    );
+}

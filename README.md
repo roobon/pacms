@@ -1,67 +1,199 @@
 # Probha Aurora CMS (PACMS)
 
-Organisational content management system: Laravel 12 backend and admin, public React SPA.
+A content management system for organisations: a **Laravel 12** backend and admin, and a public **React** website built from blocks.
 
-- Architecture and specifications: [docs/](docs/README.md)
-- Current status: **Phase 9 (Navigation) merged (v0.9.0). Phase 10 (External Providers) in progress: 10A (feeds: reading JSON Feed/RSS/Atom, Feed block, JSON Feed out) merged; the richer text editor merged; next 10B (Facebook).** See [docs/phase-reports/PHASE-10A-REPORT.md](docs/phase-reports/PHASE-10A-REPORT.md) and [docs/phase-reports/PHASE-10-EDITOR-REPORT.md](docs/phase-reports/PHASE-10-EDITOR-REPORT.md).
+**Status:** Phase 10 (External Providers): feeds and the richer text editor are merged; the Facebook Page integration is ready for review. Latest release: **v0.9.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
+
+---
+
+## What PACMS does
+
+| Area | Highlights |
+|---|---|
+| **Pages** | Visual block builder (sections, columns, heroes, sliders, cards, collections…), drafts, review and publishing workflow, scheduling, revisions with compare and restore, preview, SEO, page templates |
+| **Content modules** | News, Events, Projects, Programmes, Publications, Team, Partners, Galleries, Testimonials (with moderation), Media Coverage, plus **your own content types** made in the admin (Design → Content types) |
+| **Media** | Library with responsive images, alt text, categories, private files, usage tracking |
+| **Navigation** | Menus with a drag-and-drop builder, mega panels, header and footer built from blocks, mobile drawer |
+| **Design** | Design tokens (colours, fonts, spacing), global blocks, custom block types, a starter kit of designed templates |
+| **Text editor** | Headings, theme colours and highlights, alignment, highlight boxes, images with captions, tables, links, full screen |
+| **Sharing** | JSON Feed of your content (`/feed.json`), reading other sites' feeds (JSON Feed, RSS, Atom, YouTube) and your Facebook Page's posts |
+| **AI-friendly JSON** | Import and export pages, sections and templates as JSON that tools like ChatGPT can write ([format](docs/CMS-BLOCK-SCHEMA.md)) |
+| **Search & SEO** | Site search, sitemaps, redirects, structured data |
+| **Security** | Roles and permissions, two-factor sign-in for staff, HTML cleaning, safe outgoing requests, activity log |
+
+---
 
 ## Requirements
 
-PHP 8.3+ (bcmath, ctype, curl, dom, exif, fileinfo, gd, intl, mbstring, openssl, pdo_mysql, sodium, xml, xmlreader, zip) · MySQL 8 · Composer 2 · **Node.js ≥ 22.12 or ≥ 20.19** (build only; not needed on the server).
+- **PHP 8.3 or newer** with: bcmath, ctype, curl, dom, exif, fileinfo, gd, intl, mbstring, openssl, pdo_mysql, sodium, xml, xmlreader, zip
+- **MySQL 8**
+- **Composer 2**
+- **Node.js 22.12+ or 20.19+**, only to build the front-end assets (not needed on the server)
 
-## Local setup (Laragon)
+---
+
+## Getting started (local)
 
 ```bash
+git clone https://github.com/roobon/pacms.git
+cd pacms
 composer install
 npm install
-cp .env.example .env          # then set APP_ENV=local, APP_DEBUG=true, APP_URL=http://pacms.test, DB_*
-                              # and SANCTUM_STATEFUL_DOMAINS to your local host (e.g. 127.0.0.1:8000),
-                              # or signing in on the public site does not stick
+cp .env.example .env
 php artisan key:generate
-php artisan migrate --seed    # roles/permissions, token stylesheet, and local dev users
-php artisan storage:link
-npm run build                 # or: npm run dev
-php artisan pacms:create-admin
-php artisan pacms:starter --pages   # optional: starter templates, global blocks and draft pages
-php artisan pacms:doctor
 ```
 
-### Starter kit
+Edit `.env` (see [Configuration](#configuration)), create the database, then:
 
-`php artisan pacms:starter` installs designed page templates (Home, About us, Contact, Get involved, and landing pages for News, Events, Projects, Programmes and Publications), 14 section templates (heroes, impact numbers, feature cards, collections, FAQ, contact details, call to action) and global blocks (a main header and footer, a call to action, contact details and three sidebars). It also creates the menus "main" and "footer" (filled with your published top-level pages when empty) and, if no header or footer is chosen yet, makes the kit's the site's. They are in the builder's Templates tab, and **New page → Start from** copies a page template. Running it again only adds what is missing; `--pages` also creates draft Home, About us, Contact and Get involved pages (never over existing ones); `--restore=<slug>` or `--restore=all` puts shipped templates back to their original design. The kit's files are in `resources/starter-kit/`, in the JSON import format.
+```bash
+php artisan migrate --seed          # tables, roles and permissions, and the local staff accounts
+php artisan storage:link
+npm run build                       # or keep "npm run dev" running while you work
+php artisan pacms:starter --pages   # optional: templates, header, footer, menus and draft pages
+php artisan pacms:doctor            # checks the installation
+```
 
-In the `local` environment, `DevelopmentSeeder` creates one account per role (`<role>@pacms.test`, password in `database/seeders/DevelopmentSeeder.php`). Set `PACMS_ENFORCE_2FA=false` locally to skip the two-factor requirement for privileged roles.
+**Run it:**
 
-- Admin: `/admin` (sign in at `/auth/login`)
-- Public site: `/`
-- Public API: `/api/v1/*`
+```bash
+composer dev                        # web server, queue worker, log viewer and Vite together
+# or separately:
+php artisan serve                   # http://127.0.0.1:8000
+npm run dev
+php artisan schedule:work           # scheduled publishing, feed syncs and other timed jobs
+```
+
+| Where | Address |
+|---|---|
+| Website | `http://127.0.0.1:8000/` |
+| Admin | `http://127.0.0.1:8000/admin` |
+| Public API | `http://127.0.0.1:8000/api/v1/…` |
+
+On Laragon (Windows), use the site address Laragon gives you (e.g. `http://pacms.test`) instead of `php artisan serve`.
+
+### Sign-in accounts (local only)
+
+In the `local` environment the seeder creates one staff account per role: **`<role>@pacms.test`**, password **`Aurora-dev-2026`**. For example `super-admin@`, `administrator@`, `editor@`, `author@`, `contributor@`, `moderator@pacms.test`.
+
+For a real installation, create your own first account with `php artisan pacms:create-admin`.
+
+### Working on more than one computer
+
+```bash
+git fetch origin
+git checkout main && git pull
+git checkout <your-branch> && git pull
+composer install && npm install     # when dependencies changed
+php artisan migrate                 # when there are new migrations
+php artisan pacms:blocks:sync       # when there are new block types
+```
+
+---
+
+## Configuration
+
+The important `.env` settings:
+
+| Setting | Local | Production |
+|---|---|---|
+| `APP_ENV`, `APP_DEBUG` | `local`, `true` | `production`, `false` |
+| `APP_URL` | `http://127.0.0.1:8000` | `https://www.your-site.org` |
+| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | your MySQL | your MySQL |
+| `SANCTUM_STATEFUL_DOMAINS` | `127.0.0.1:8000,localhost:8000` | `www.your-site.org` |
+| `SESSION_SECURE_COOKIE` | `false` if your browser drops sign-ins over http | `true` (https) |
+| `PACMS_ENFORCE_2FA` | `false` to skip two-factor setup for staff | `true` |
+| `PACMS_MANAGED_QUEUE_WORKER` | `false` | `true` only if a Supervisor/systemd worker runs |
+| `MAIL_*` | `log` is fine | your SMTP server |
+| `META_APP_ID`, `META_APP_SECRET` | optional | only for "Connect with Facebook" |
+
+`SANCTUM_STATEFUL_DOMAINS` must name the address you open the site at. Otherwise signing in on the public website does not stick.
+
+---
 
 ## Demo content
 
 ```bash
-php artisan pacms:demo --fresh   # wipes the database and uploaded media, then fills every area
+php artisan pacms:demo --fresh
 ```
 
-Creates linked demo content through the real services: team, partners, galleries, programs, projects, events, news, publications, media coverage and testimonials in several workflow and moderation states, plus categories, media (images, PDFs, a private archive file), a sidebar and a call-to-action global block, and pages with blocks (Home is set as the home page). Run it again any time for a clean start. Local environment only; never in production.
+This **wipes the database and uploaded files**, then fills every area with linked sample content. It includes:
+- news, events, projects, programmes, publications, team, partners, galleries;
+- testimonials, media coverage and a feed source;
+- menus, header and footer, and pages built from blocks.
 
-- Staff: `<role>@pacms.test` / `Aurora-dev-2026` (e.g. `editor@pacms.test`, `moderator@pacms.test`)
-- Registered users: `rahim@`, `nadia@`, `tanvir@`, `farzana@demo.pacms.test` / `Aurora-demo-2026`; `unverified@demo.pacms.test` has no verified e-mail
+It's for local testing only and never runs in production. Besides the staff accounts above, it creates registered users `rahim@`, `nadia@`, `tanvir@` and `farzana@demo.pacms.test` (password `Aurora-demo-2026`).
+
+## Starter kit
+
+```bash
+php artisan pacms:starter            # add what is missing (never changes your edits)
+php artisan pacms:starter --pages    # also create draft Home, About us, Contact and Get involved pages
+php artisan pacms:starter --restore=all   # put the shipped templates back to their original design
+```
+
+The kit includes:
+- **9 page templates** (Home, About us, Contact, Get involved, and landing pages for News, Events, Projects, Programmes and Publications);
+- **14 section templates**;
+- **global blocks**: a main header and footer, a call to action, contact details and sidebars;
+- the **main** and **footer** menus.
+
+Templates are in the builder's **Templates** tab, and **New page → Start from** copies a page template. The files are in `resources/starter-kit/`, in the JSON import format.
+
+---
+
+## Useful commands
+
+| Command | What it does |
+|---|---|
+| `php artisan pacms:create-admin` | Create a Super Admin account |
+| `php artisan pacms:doctor` | Check the installation (permissions, scheduler, queue, storage…) |
+| `php artisan pacms:starter` | Install the starter kit (see above) |
+| `php artisan pacms:demo --fresh` | Reset the site with demo content (local only) |
+| `php artisan pacms:blocks:sync` | Register the built-in block types (every deploy) |
+| `php artisan pacms:search:rebuild` | Rebuild the site search index |
+| `php artisan pacms:media:regenerate` | Regenerate responsive image sizes |
+| `php artisan pacms:external:sync --source=<key>` | Sync one external source now |
+| `php artisan pacms:schema` | Generate the JSON Schema and AI prompt helper files |
+
+These run on a schedule (via `schedule:run` or `schedule:work`): publishing scheduled items, syncing feeds, checking media coverage links, pruning old revisions and removing old testimonial IP addresses.
+
+---
 
 ## Quality checks
 
 ```bash
-composer test        # Pest (uses MySQL database pacms_testing; tests/Search commits data, see tests/Pest.php)
-composer analyse     # Larastan level 6
-composer lint        # Pint (PSR-12 / Laravel style)
-npm test             # Vitest
-npm run lint         # ESLint
-npm run build        # production assets
+composer test       # Pest (uses the MySQL database pacms_testing)
+composer analyse    # Larastan, level 6
+composer lint       # Pint
+npm test            # Vitest
+npm run lint        # ESLint
+npm run build       # production assets
 ```
+
+---
 
 ## Deployment
 
-A standard Laravel project released as a ZIP. There is no web installer. See [docs/DEPLOYMENT-ARCHITECTURE.md](docs/DEPLOYMENT-ARCHITECTURE.md).
+PACMS is a standard Laravel application, released as a ZIP; there is no web installer. A server needs:
+- PHP, MySQL and HTTPS;
+- one cron entry for the scheduler.
+
+The full steps, for shared hosting and VPS, are in [docs/DEPLOYMENT-ARCHITECTURE.md](docs/DEPLOYMENT-ARCHITECTURE.md).
+
+## Documentation
+
+| Document | About |
+|---|---|
+| [docs/README.md](docs/README.md) | Index of all documentation |
+| [CMS-ARCHITECTURE](docs/CMS-ARCHITECTURE.md) | How the CMS works: blocks, content types, menus, providers |
+| [CMS-BLOCK-SCHEMA](docs/CMS-BLOCK-SCHEMA.md) | The JSON format for import, export and AI tools |
+| [DATABASE-ARCHITECTURE](docs/DATABASE-ARCHITECTURE.md) | Tables and relations |
+| [API-ARCHITECTURE](docs/API-ARCHITECTURE.md) | Public and admin APIs |
+| [SECURITY-ARCHITECTURE](docs/SECURITY-ARCHITECTURE.md) | Security model |
+| [DEVELOPMENT-ROADMAP](docs/DEVELOPMENT-ROADMAP.md) | Phases and progress |
+| [Phase reports](docs/phase-reports/) | What each phase delivered, with tests and decisions |
 
 ## Team
 
-Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir. Development is AI-assisted (ChatGPT, Claude Code). All code is reviewed and approved by the team.
+Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir.
+Development is AI-assisted (ChatGPT, Claude Code); all code is reviewed and approved by the team.

@@ -1,7 +1,7 @@
 import { ButtonBlock, ButtonGroupBlock, DividerBlock, DocumentBlock, HeadingBlock, HtmlBlock, IconBlock, ImageBlock, ListBlock, RichTextBlock, SpacerBlock, VideoBlock } from './components/basic.jsx';
 import { ColumnBlock, ColumnsBlock, ContainerBlock, SectionBlock } from './components/layout.jsx';
 import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, QuoteBlock, StatisticsBlock } from './components/content.jsx';
-import { CollectionBlock, FeedBlock, GalleryBlock, NewsBlock, PartnersBlock, TestimonialsBlock } from './components/collections.jsx';
+import { CollectionBlock, FacebookFeedBlock, FeedBlock, GalleryBlock, NewsBlock, PartnersBlock, TestimonialsBlock } from './components/collections.jsx';
 import { CustomBlock, GlobalRefBlock } from './components/reusable.jsx';
 import { SlideBlock, SliderBlock } from './components/slider.jsx';
 import { AccountLinkBlock, ContactInfoBlock, CopyrightBlock, MenuBlock, SiteLogoBlock, SocialLinksBlock } from './components/site.jsx';
@@ -48,6 +48,7 @@ export const components = {
     testimonials: TestimonialsBlock,
     'media-coverage': CollectionBlock,
     feed: FeedBlock,
+    'facebook-feed': FacebookFeedBlock,
     'site-logo': SiteLogoBlock,
     menu: MenuBlock,
     'social-links': SocialLinksBlock,

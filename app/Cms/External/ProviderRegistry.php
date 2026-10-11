@@ -2,6 +2,7 @@
 
 namespace App\Cms\External;
 
+use App\Cms\External\Providers\FacebookProvider;
 use App\Cms\External\Providers\FeedProvider;
 
 /**
@@ -14,7 +15,7 @@ class ProviderRegistry
 
     public function __construct()
     {
-        foreach ([FeedProvider::class] as $class) {
+        foreach ([FeedProvider::class, FacebookProvider::class] as $class) {
             $this->register(app($class));
         }
     }

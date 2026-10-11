@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
@@ -52,6 +53,14 @@ class ExternalSource extends Model
             'max_items' => 'integer',
             'consecutive_failures' => 'integer',
         ];
+    }
+
+    /**
+     * @return BelongsTo<ExternalProviderAccount, $this>
+     */
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(ExternalProviderAccount::class, 'account_id');
     }
 
     /**

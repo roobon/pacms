@@ -755,6 +755,8 @@ Whether App Review or Business Verification is needed depends on whether the app
 
 ### 17.2 Design
 
+*Built in Phase 10B: OAuth connect or a pasted Page token (`external_provider_accounts`, encrypted), `/{page}/published_posts`, images copied to the Media Library ("Facebook cache"), the "Facebook posts" block (`facebook-feed`) with a follow-link fallback. The Page Plugin embed is not built (Q-08).*
+
 - **No scraping, ever.** Only the official Graph API through `FacebookProvider`.
 - **Credentials**: the Meta App ID and App Secret are in `.env`. The Page access token is stored encrypted in `external_provider_accounts`. We recommend a **Business Manager system-user token** (non-expiring). Otherwise use a long-lived Page token, and warn admins 7 days before expiry.
 - **Admin screens**: Connect (OAuth through the Graph API), choose Page, Test, Sync Now, status, last success, last error, next sync, token expiry.

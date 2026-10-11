@@ -1,11 +1,22 @@
 <x-admin.layout title="External sources">
     <x-admin.page-header title="External sources" subtitle="Feeds of other websites (JSON Feed, RSS or Atom, also YouTube channels and playlists). PACMS reads them on a schedule and stores their items; Feed blocks show them. Visitors never wait for another site.">
-        @can('external_sources.manage')
-            <x-slot:actions>
-                <a href="{{ route('admin.external-sources.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a source</a>
-            </x-slot:actions>
-        @endcan
+        <x-slot:actions>
+            @can('facebook.connect')
+                <a href="{{ route('admin.facebook.show') }}" class="btn btn-outline-primary"><i class="bi bi-facebook" aria-hidden="true"></i> Connect a Facebook Page</a>
+            @endcan
+            @can('external_sources.manage')
+                <a href="{{ route('admin.external-sources.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a feed</a>
+            @endcan
+        </x-slot:actions>
     </x-admin.page-header>
+
+    @foreach ($sources->filter(fn ($source) => $source->account?->expiresSoon()) as $expiring)
+        <div class="alert alert-warning pa-alert" role="alert">
+            <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>
+            The Facebook access token of “{{ $expiring->name }}” expires {{ $expiring->account->token_expires_at->diffForHumans() }}.
+            @can('facebook.connect')<a href="{{ route('admin.facebook.show') }}">Connect the Page again</a> to renew it.@endcan
+        </div>
+    @endforeach
 
     <div class="card pa-card">
         @if ($sources->isEmpty())
