@@ -3,15 +3,15 @@
 | | |
 |---|---|
 | Date | 2026-10-12 |
-| Branch | `phase/11-public-spa` (from `main` at v0.10.0) |
+| Branch | `phase/11-public-spa` (from `main` at v0.10.0) → merged into `main` 2026-10-12 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review by the team lead. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-12. |
 
 ```
 PHASE:   11A — the parts of the public website visitors use: site search (page, header
          block, 404 box), a spam-protected contact form block with an admin inbox, and an
          account area where registered visitors manage their details or delete their account.
-STATUS:  READY FOR REVIEW. 11B (loading/error/empty states, accessibility pass, performance,
+STATUS:  APPROVED by the team lead (2026-10-12) and merged into main. 11B (loading/error/empty states, accessibility pass, performance,
          OpenAPI) follows; v0.11.0 is tagged after 11B.
          Decisions (team lead, 2026-10-12, "use your defaults"): P-1 messages e-mailed and kept
          90 days, inbox for administrators and editors; P-2 honeypot + minimum time + rate

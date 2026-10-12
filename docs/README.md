@@ -4,7 +4,7 @@
 
 Team: Syed Ziaul Habib (Team Lead / Lead Developer) · Hasibul Hasan · Khandoker Humayoun Kobir
 
-Current phase: **Phase 11 — Public React SPA.** 11A (search, contact form, account area) ready for review ([report](phase-reports/PHASE-11A-REPORT.md)); 11B next. Phase 10 (External Providers) approved and merged (v0.10.0): 10A ([report](phase-reports/PHASE-10A-REPORT.md)), the richer text editor ([report](phase-reports/PHASE-10-EDITOR-REPORT.md)) and 10B ([report](phase-reports/PHASE-10B-REPORT.md)). Phase 9 (Navigation, v0.9.0): 9A ([report](phase-reports/PHASE-9A-REPORT.md)), 9B ([report](phase-reports/PHASE-9B-REPORT.md)). Phase 8 (Content Modules, v0.8.0): [reports](phase-reports/).
+Current phase: **Phase 11 — Public React SPA.** 11A (search, contact form, account area) approved and merged ([report](phase-reports/PHASE-11A-REPORT.md)); 11B next. Phase 10 (External Providers) approved and merged (v0.10.0): 10A ([report](phase-reports/PHASE-10A-REPORT.md)), the richer text editor ([report](phase-reports/PHASE-10-EDITOR-REPORT.md)) and 10B ([report](phase-reports/PHASE-10B-REPORT.md)). Phase 9 (Navigation, v0.9.0): 9A ([report](phase-reports/PHASE-9A-REPORT.md)), 9B ([report](phase-reports/PHASE-9B-REPORT.md)). Phase 8 (Content Modules, v0.8.0): [reports](phase-reports/).
 
 | Document | Purpose |
 |---|---|
