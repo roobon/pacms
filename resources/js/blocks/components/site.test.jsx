@@ -93,6 +93,19 @@ describe('MenuBlock', () => {
         expect(document.activeElement).toBe(toggle);
     });
 
+    it('shows only the menu button in the drawer style, and keeps the drawer open on wide screens', () => {
+        // A desktop-width screen: the normal menu would close its drawer here.
+        const listeners = [];
+        window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: (_, fn) => listeners.push(fn), removeEventListener: vi.fn() });
+        show([menu('drawer')]);
+
+        expect(document.querySelector('.pa-menu__bar')).toBeNull();
+        expect(document.querySelector('.pa-menu--drawer')).not.toBeNull();
+        fireEvent.click(screen.getByRole('button', { name: 'Menu' }));
+        listeners.forEach((fn) => fn());
+        expect(screen.getByRole('dialog', { name: 'Main navigation' })).toBeInTheDocument();
+    });
+
     it('lists every level in a vertical menu', () => {
         show([menu('vertical')]);
         const nav = screen.getByRole('navigation', { name: 'Main' });

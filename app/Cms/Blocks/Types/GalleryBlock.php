@@ -47,7 +47,7 @@ class GalleryBlock extends ContentCollectionBlock
 
     public function displayModes(): array
     {
-        return ['grid'];
+        return ['grid', 'masonry'];
     }
 
     public function fields(): array

@@ -338,14 +338,38 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             }
         }
 
-        .pa-column:last-child {
+        .btn {
+            white-space: nowrap;
+        }
+
+        // :where() keeps this default weak, so a column's own alignment (Layout → Justify) wins.
+        :where(.pa-column:last-child) {
             justify-content: flex-end;
         }
     }
 }
 
-.pa-site-footer--blocks {
+.pa-site-footer.pa-site-footer--blocks {
     padding: 0;
+    // The footer is dark unless a section brings its own background (Phase 11S: light footer
+    // designs). Like a filled block, it sets the readable colours as variables, so a section
+    // with its own colours overrides them.
+    --pa-color-heading: var(--pa-color-on-bg-dark);
+    --pa-color-body: color-mix(in srgb, var(--pa-color-on-bg-dark) 80%, transparent);
+    --pa-color-muted: color-mix(in srgb, var(--pa-color-on-bg-dark) 70%, transparent);
+    --pa-color-eyebrow: var(--pa-color-on-bg-dark);
+    --pa-btn-outline: var(--pa-color-on-bg-dark);
+    --bs-heading-color: var(--pa-color-on-bg-dark);
+    --bs-link-color-rgb: var(--pa-color-on-bg-dark-rgb);
+    --bs-link-hover-color-rgb: var(--pa-color-on-bg-dark-rgb);
+
+    .pa-section {
+        color: var(--pa-color-body);
+    }
+
+    a {
+        color: rgb(var(--bs-link-color-rgb));
+    }
 
     .pa-section {
         padding-block: var(--pa-space-7);
@@ -364,7 +388,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     }
 
     .pa-menu__heading {
-        color: var(--pa-color-on-bg-dark);
+        color: var(--pa-color-heading);
     }
 }
 
@@ -398,6 +422,18 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 // Menus: disclosure navigation (buttons open sub-menus; never hover only).
+// White pop-ups (menu panels, the search box) inside a dark header or footer section: back to
+// the theme's own text colours, which a filled section has replaced (Phase 11S).
+@mixin pa-theme-text {
+    --pa-color-heading: rgb(var(--pa-color-heading-rgb));
+    --pa-color-body: rgb(var(--pa-color-body-rgb));
+    --pa-color-muted: rgb(var(--pa-color-muted-rgb));
+    --bs-heading-color: rgb(var(--pa-color-heading-rgb));
+    --bs-body-color: rgb(var(--pa-color-body-rgb));
+    --pa-btn-outline: rgb(var(--pa-color-primary-rgb));
+    color: var(--pa-color-body);
+}
+
 .pa-menu {
     position: relative;
 
@@ -506,6 +542,11 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         &__toggle {
             display: none;
         }
+
+        // "Menu button only": the drawer on every screen width.
+        &--drawer &__toggle {
+            display: inline-flex;
+        }
     }
 
     &__has-sub {
@@ -528,6 +569,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         border-radius: var(--pa-radius-md);
         background: #fff;
         box-shadow: var(--pa-shadow-md);
+        @include pa-theme-text;
 
         .pa-menu__sublink {
             min-height: 40px;
@@ -664,6 +706,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     &__list {
         display: flex;
         flex-wrap: wrap;
+        justify-content: var(--pa-row-justify, flex-start);
         gap: var(--pa-space-3);
         list-style: none;
         margin: 0;
@@ -703,6 +746,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     &--inline &__list {
         display: flex;
         flex-wrap: wrap;
+        justify-content: var(--pa-row-justify, flex-start);
         gap: var(--pa-space-2) var(--pa-space-5);
 
         li {
@@ -1362,10 +1406,10 @@ img.pa-ratio {
     &__icon {
         flex: none;
         margin-top: .15em;
-        color: var(--pa-color-primary);
+        color: var(--pa-color-eyebrow, var(--pa-color-primary));
     }
 
-    &__text a { color: var(--pa-color-primary); }
+    &__text a { color: rgb(var(--bs-link-color-rgb)); }
 
     &--pad-sm &__item { padding: var(--pa-space-1) var(--pa-space-2); }
     &--pad-md &__item { padding: var(--pa-space-2) var(--pa-space-3); }
@@ -1664,6 +1708,7 @@ img.pa-ratio {
         border-radius: var(--pa-radius-md);
         background: #fff;
         box-shadow: var(--pa-shadow-md);
+        @include pa-theme-text;
     }
 
     &--box form {
@@ -1702,6 +1747,27 @@ img.pa-ratio {
     &--cols-5 { --pa-gallery-cols: 5; }
 
     @include media-breakpoint-down(md) { --pa-gallery-cols: 2 !important; }
+
+    // Masonry (Phase 11S): photos keep their own shape, in columns.
+    &--masonry {
+        display: block;
+        columns: var(--pa-gallery-cols, 4);
+        column-gap: var(--pa-space-2);
+
+        .pa-gallery__item {
+            break-inside: avoid;
+            margin-bottom: var(--pa-space-2);
+        }
+
+        .pa-gallery__button {
+            aspect-ratio: auto;
+        }
+
+        .pa-gallery__image,
+        .pa-gallery__image img {
+            height: auto;
+        }
+    }
 
     &__button {
         display: block;

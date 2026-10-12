@@ -1,0 +1,447 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home: Bold"
+  },
+  "template": {
+    "name": "Home: Bold",
+    "slug": "kit-page-home-bold",
+    "scope": "page",
+    "category": "Home pages",
+    "description": "Full-width photo slider, numbers on a dark band, featured news, a testimonial on colour and a call to action."
+  },
+  "blocks": [
+    {
+      "type": "slider",
+      "content": {
+        "aria_label": "Highlights",
+        "height": "large",
+        "autoplay": true,
+        "interval": 7,
+        "show_arrows": true,
+        "show_dots": true
+      },
+      "children": [
+        {
+          "type": "slide",
+          "content": {
+            "shade": "dark",
+            "align": "start"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "Your mission in one clear sentence",
+                "level": "1",
+                "eyebrow": "Our mission"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Choose a photo for each slide, then replace the text.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "accent"
+                  }
+                },
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "About us",
+                    "link": {
+                      "type": "url",
+                      "url": "/about"
+                    },
+                    "variant": "outline"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "slide",
+          "content": {
+            "shade": "dark",
+            "align": "start"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "Your main programme, in a few words",
+                "level": "2",
+                "eyebrow": "Programmes"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>One sentence about what it achieves.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "See the programme",
+                    "link": {
+                      "type": "url",
+                      "url": "/programs"
+                    },
+                    "variant": "accent"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "slide",
+          "content": {
+            "shade": "dark",
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "An invitation to act",
+                "level": "2",
+                "eyebrow": "Join us"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Volunteer, partner with us, or support our work.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "accent"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "statistics",
+          "content": {
+            "heading": "",
+            "items": [
+              {
+                "value": 25,
+                "label": "Years of work",
+                "icon": "bi-calendar-check"
+              },
+              {
+                "value": 120,
+                "label": "Partner schools",
+                "icon": "bi-building"
+              },
+              {
+                "value": 5000,
+                "suffix": "+",
+                "label": "People reached",
+                "icon": "bi-people"
+              },
+              {
+                "value": 12,
+                "label": "Districts",
+                "icon": "bi-geo-alt"
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our impact"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-dark"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "cards",
+          "content": {
+            "heading": "What we do",
+            "items": [
+              {
+                "icon": "bi-mortarboard",
+                "title": "Education",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "icon": "bi-people",
+                "title": "Community",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/projects"
+                }
+              },
+              {
+                "icon": "bi-tree",
+                "title": "Environment",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "icon": "bi-heart-pulse",
+                "title": "Health",
+                "text": "One or two sentences about this area of your work.",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "What we do"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "Stories"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 4
+          },
+          "display": {
+            "mode": "featured",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Stories"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "testimonials",
+          "content": {
+            "heading": "",
+            "show_photo": true,
+            "show_rating": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "testimonials",
+            "order": "position",
+            "limit": 4
+          },
+          "display": {
+            "mode": "single"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Testimonial"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.secondary"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "projects",
+          "content": {
+            "heading": "Projects"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "projects",
+            "order": "latest",
+            "limit": 6
+          },
+          "display": {
+            "mode": "carousel",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Projects"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

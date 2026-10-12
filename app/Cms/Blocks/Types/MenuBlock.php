@@ -30,7 +30,7 @@ class MenuBlock extends SiteBlock
     {
         return [
             Field::select('menu', app(MenuService::class)->choices())->label('Menu')->help('Menus are made under Design → Menus.'),
-            Field::select('style', ['horizontal' => 'Horizontal (header)', 'vertical' => 'Vertical list (footer, sidebar)'])->label('Style')->default('horizontal'),
+            Field::select('style', ['horizontal' => 'Horizontal (header)', 'drawer' => 'Menu button only (opens a drawer on every screen)', 'vertical' => 'Vertical list (footer, sidebar)'])->label('Style')->default('horizontal'),
             Field::text('aria_label')->label('Name for screen readers')->default('Main')->max(60)->help('e.g. Main, Footer. Read out as "Main navigation".'),
             Field::text('heading')->label('Heading (vertical menus)')->max(120),
         ];

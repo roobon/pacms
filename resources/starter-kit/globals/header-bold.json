@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Header: Bold"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                3,
+                9
+              ],
+              "mobile": [
+                6,
+                6
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "dark",
+                    "size": "md",
+                    "show_name": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "menu",
+                  "content": {
+                    "menu": "main",
+                    "style": "horizontal",
+                    "aria_label": "Main"
+                  }
+                },
+                {
+                  "type": "search",
+                  "content": {
+                    "style": "icon",
+                    "placeholder": "Search…"
+                  }
+                },
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Donate",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "accent",
+                    "icon": "bi-heart-fill"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Site header"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-dark"
+          }
+        }
+      }
+    }
+  ]
+}

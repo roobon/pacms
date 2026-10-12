@@ -1,0 +1,267 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact: Bold"
+  },
+  "template": {
+    "name": "Contact: Bold",
+    "slug": "kit-page-contact-bold",
+    "scope": "page",
+    "category": "Contact pages",
+    "description": "Form and details side by side: a dark details panel next to the contact form."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "boxed",
+        "min_height": {
+          "value": 35,
+          "unit": "vh"
+        },
+        "text_align": "center",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Let’s talk",
+            "level": "1",
+            "eyebrow": "Contact"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Questions, ideas or partnership proposals: we reply within two working days.</p>"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-dark"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                5,
+                7
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.7"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "layout": {
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      },
+                      "left": {
+                        "$token": "space.7"
+                      },
+                      "right": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "heading",
+                      "content": {
+                        "text": "Contact details",
+                        "level": "2"
+                      }
+                    },
+                    {
+                      "type": "list",
+                      "content": {
+                        "style": "icon",
+                        "dividers": false,
+                        "item_padding": "sm",
+                        "items": [
+                          {
+                            "icon": "bi-envelope",
+                            "text": "info@example.org",
+                            "link": {
+                              "type": "url",
+                              "url": "mailto:info@example.org"
+                            }
+                          },
+                          {
+                            "icon": "bi-telephone",
+                            "text": "+880 1700 000000",
+                            "link": {
+                              "type": "url",
+                              "url": "tel:+8801700000000"
+                            }
+                          },
+                          {
+                            "icon": "bi-geo-alt",
+                            "text": "House 1, Road 1, Dhaka 1200, Bangladesh"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "divider",
+                      "content": {
+                        "line": "solid"
+                      }
+                    },
+                    {
+                      "type": "heading",
+                      "content": {
+                        "text": "Office hours",
+                        "level": "3"
+                      }
+                    },
+                    {
+                      "type": "rich-text",
+                      "content": {
+                        "html": "<p>Sunday to Thursday, 9:00 to 17:00.</p>"
+                      }
+                    },
+                    {
+                      "type": "social-links",
+                      "content": {
+                        "style": "icons"
+                      }
+                    }
+                  ],
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.secondary"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "contact-form",
+                  "content": {
+                    "heading": "Send us a message",
+                    "show_subject": true,
+                    "consent_text": "I agree that my message is stored for 90 days and used only to answer me.",
+                    "button_label": "Send message",
+                    "thank_you": "Thank you! We have received your message and will reply soon."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Contact"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "faq",
+          "content": {
+            "heading": "Frequently asked questions",
+            "items": [
+              {
+                "question": "Who can take part?",
+                "answer": "<p>Explain who your programmes are for and how to join.</p>"
+              },
+              {
+                "question": "Does it cost anything?",
+                "answer": "<p>Say what is free and what is not.</p>"
+              },
+              {
+                "question": "How can my school or organisation partner with you?",
+                "answer": "<p>Describe the first step, and who to contact.</p>"
+              },
+              {
+                "question": "How do you use donations?",
+                "answer": "<p>Explain how support is spent and how you report on it.</p>"
+              }
+            ]
+          },
+          "display": {
+            "mode": "accordion"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Questions"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    }
+  ]
+}

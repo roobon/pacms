@@ -1523,3 +1523,152 @@ legend.form-label {
 }
 
 body.pa-rte-open { overflow: hidden; }
+
+// Design cards: choosing a header, footer or page design by its picture (Phase 11S).
+.pa-design-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: .75rem;
+}
+
+.pa-design-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    padding: .5rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    background: #fff;
+    cursor: pointer;
+
+    &:hover { border-color: $primary; }
+
+    &:has(.pa-design-card__input:checked) {
+        border-color: $primary;
+        box-shadow: 0 0 0 2px $primary;
+    }
+
+    &:has(.pa-design-card__input:focus-visible) {
+        outline: 3px solid $primary;
+        outline-offset: 2px;
+    }
+
+    &__input {
+        position: absolute;
+        top: .75rem;
+        left: .75rem;
+        width: 1.125rem;
+        height: 1.125rem;
+        accent-color: $primary;
+    }
+
+    &__picture {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        object-position: top;
+        border-radius: $border-radius;
+        background: #F1F5F9;
+
+        &--empty {
+            display: grid;
+            place-items: center;
+            font-size: 2rem;
+            color: $secondary;
+        }
+    }
+
+    &__name { font-weight: 600; }
+
+    &__text {
+        font-size: .8125rem;
+        color: $text-muted;
+    }
+}
+
+// Headers and footers: long strips, one per row, shown whole.
+.pa-design-cards--wide {
+    grid-template-columns: 1fr;
+
+    .pa-design-card {
+        padding-left: 2.25rem;
+    }
+
+    .pa-design-card__input {
+        top: 1rem;
+    }
+
+    .pa-design-card__picture {
+        aspect-ratio: auto;
+        height: auto;
+        max-height: 14rem;
+        object-fit: contain;
+        object-position: left top;
+        border: 1px solid $border-color;
+
+        &--empty {
+            height: 3rem;
+            font-size: 1.25rem;
+        }
+    }
+}
+
+// Page designs in a window (New page → See the designs).
+.pa-design-dialog {
+    width: min(64rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    padding: 0;
+    border: 0;
+    border-radius: $border-radius-lg;
+    box-shadow: 0 1.5rem 3rem rgb(15 23 42 / .25);
+
+    &::backdrop { background: rgb(15 23 42 / .5); }
+
+    &__head {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        background: #fff;
+        border-bottom: 1px solid $border-color;
+    }
+
+    &__body { padding: 1rem 1.25rem 1.5rem; }
+
+    .pa-design-card__picture { aspect-ratio: 4 / 5; }
+}
+
+button.pa-design-card[aria-pressed='true'] {
+    border-color: $primary;
+    box-shadow: 0 0 0 2px $primary;
+}
+
+.pa-add-menu__group {
+    margin: .75rem 0 .25rem;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: $text-muted;
+}
+
+.pa-add-menu__row--picture {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: .75rem;
+}
+
+.pa-add-menu__picture {
+    flex: 0 0 6rem;
+    width: 6rem;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+}

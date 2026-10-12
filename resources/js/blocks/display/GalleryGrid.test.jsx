@@ -57,4 +57,9 @@ describe('LogoWall', () => {
         expect(screen.getByRole('img', { name: 'Green Earth Trust' })).toBeInTheDocument();
         expect(screen.getByText('Blue Fund')).toBeInTheDocument();
     });
+
+    it('lays photos out as a masonry wall when asked', () => {
+        render(<GalleryGrid items={items} label="Wall" masonry />);
+        expect(screen.getByRole('list', { name: 'Wall' }).className).toContain('pa-gallery--masonry');
+    });
 });

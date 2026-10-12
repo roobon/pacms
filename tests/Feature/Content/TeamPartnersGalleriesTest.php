@@ -185,3 +185,14 @@ it('restores relations and gallery items from a revision', function () {
     expect($gallery->relatedIds('event'))->toBe([$event->id])
         ->and($gallery->items()->first()?->caption)->toBe('First');
 });
+
+it('lists galleries of one type (Phase 11S: albums by type)', function () {
+    $editor = userWithRole('editor');
+    $this->actingAs($editor)->post(route('admin.galleries.store'), ['title' => 'Field videos', 'gallery_type' => 'video', 'gallery_items' => [['video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ']]])->assertSessionHasNoErrors();
+    $this->actingAs($editor)->post(route('admin.galleries.store'), ['title' => 'Field photos', 'gallery_type' => 'photo', 'gallery_items' => [['media_id' => photo()->id]]])->assertSessionHasNoErrors();
+    Gallery::query()->get()->each(fn ($gallery) => $this->actingAs($editor)->post(route('admin.galleries.workflow', $gallery), ['action' => 'publish']));
+
+    $clean = app(BlockTreeValidator::class)->validate([['type' => 'galleries', 'source' => ['mode' => 'dynamic', 'entity' => 'galleries', 'filters' => ['gallery_type' => 'video']]]], userWithRole('super-admin'));
+    $items = app(BlockPayloadResolver::class)->resolve($clean)[0]['items'];
+    expect(array_column($items, 'title'))->toBe(['Field videos']);
+});

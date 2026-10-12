@@ -1,0 +1,269 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home: Minimal"
+  },
+  "template": {
+    "name": "Home: Minimal",
+    "slug": "kit-page-home-minimal",
+    "scope": "page",
+    "category": "Home pages",
+    "description": "Community: a quiet white page with a short welcome, upcoming events and what people say first, then news."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.10"
+          },
+          "bottom": {
+            "$token": "space.8"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Welcome to your organisation",
+            "level": "1"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>One short sentence about what you do together.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Upcoming events",
+                "link": {
+                  "type": "url",
+                  "url": "/events"
+                },
+                "variant": "primary"
+              }
+            },
+            {
+              "type": "button",
+              "content": {
+                "label": "Get involved",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                },
+                "variant": "outline"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Welcome"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "events",
+          "content": {
+            "heading": "Join us",
+            "empty_text": "No upcoming events right now."
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "events",
+            "order": "soonest",
+            "limit": 3,
+            "filters": {
+              "when": "upcoming"
+            }
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "flat",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Events"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "testimonials",
+          "content": {
+            "heading": "What people say",
+            "show_photo": true,
+            "show_rating": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "testimonials",
+            "order": "position",
+            "limit": 6
+          },
+          "display": {
+            "mode": "masonry",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Testimonials"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "News",
+            "show_excerpt": false,
+            "show_date": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 3
+          },
+          "display": {
+            "mode": "list"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Want to help?",
+            "level": "2"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Tell visitors one simple thing they can do today.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Get involved",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                },
+                "variant": "primary"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -70,7 +70,10 @@ class GalleryType extends ContentType
 
     public function filters(): array
     {
-        return ['gallery' => ['type' => 'item', 'model' => Gallery::class, 'label' => 'One gallery']] + parent::filters();
+        return [
+            'gallery' => ['type' => 'item', 'model' => Gallery::class, 'label' => 'One gallery'],
+            'gallery_type' => ['type' => 'select', 'label' => 'Gallery type', 'options' => self::TYPES],
+        ] + parent::filters();
     }
 
     public function applyFilters(Builder $query, array $filters): void
@@ -78,6 +81,9 @@ class GalleryType extends ContentType
         parent::applyFilters($query, $filters);
         if (! empty($filters['gallery'])) {
             $query->whereKey((int) $filters['gallery']);
+        }
+        if (isset($filters['gallery_type']) && array_key_exists($filters['gallery_type'], self::TYPES)) {
+            $query->where('gallery_type', $filters['gallery_type']);
         }
     }
 

@@ -45,6 +45,32 @@ document.querySelectorAll('select[data-chrome-mode]').forEach((mode) => {
 });
 
 // Confirm destructive actions: <form data-confirm="Delete X?">
+// "See the designs" (New page): a window with each page design's picture; choosing one sets
+// the "Start from" select, and focus goes back to it.
+document.querySelectorAll('[data-design-open]').forEach((opener) => {
+    const dialog = /** @type {HTMLDialogElement|null} */ (document.getElementById(opener.dataset.designOpen));
+    const select = /** @type {HTMLSelectElement|null} */ (opener.parentElement?.querySelector('[data-design-select]'));
+    if (!dialog || !select) return;
+    const mark = () =>
+        dialog.querySelectorAll('[data-design-value]').forEach((card) => {
+            card.setAttribute('aria-pressed', String(card.getAttribute('data-design-value') === select.value));
+        });
+    opener.addEventListener('click', () => {
+        mark();
+        dialog.showModal();
+    });
+    dialog.addEventListener('close', () => select.focus());
+    dialog.querySelector('[data-design-close]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close(); // a click on the backdrop
+        const card = /** @type {HTMLElement} */ (event.target).closest('[data-design-value]');
+        if (!card) return;
+        select.value = card.getAttribute('data-design-value') ?? '';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        dialog.close();
+    });
+});
+
 document.addEventListener('submit', (event) => {
     const form = event.target;
     if (form instanceof HTMLFormElement && form.dataset.confirm && !window.confirm(form.dataset.confirm)) {

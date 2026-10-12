@@ -1,0 +1,310 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "About us: Editorial"
+  },
+  "template": {
+    "name": "About us: Editorial",
+    "slug": "kit-page-about-editorial",
+    "scope": "page",
+    "category": "About pages",
+    "description": "Story and timeline: your history told in words, with milestones, a quote and the team."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Our story",
+            "level": "1",
+            "eyebrow": "About us"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Start with the moment it began: the place, the people and the question you wanted to answer.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "container",
+          "name": "Photo spot: replace with an Image block",
+          "layout": {
+            "min_height": {
+              "value": 420,
+              "unit": "px"
+            },
+            "text_align": "center",
+            "padding": {
+              "top": {
+                "$token": "space.9"
+              },
+              "bottom": {
+                "$token": "space.9"
+              }
+            }
+          },
+          "style": {
+            "background": {
+              "type": "color",
+              "color": {
+                "$token": "color.bg-light"
+              }
+            },
+            "radius": {
+              "$token": "radius.lg"
+            }
+          },
+          "children": [
+            {
+              "type": "icon",
+              "content": {
+                "icon": "bi-image",
+                "label": "Wide photo",
+                "size": "xl",
+                "color": {
+                  "$token": "color.primary"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Photo"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Tell the first chapter: who started the work and why. Keep paragraphs short.</p><p>Then the turning points: the first partner, the first big project, the setbacks and what you learned.</p><p>End with where you are today and where you are going.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "The story"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Milestones",
+            "level": "2"
+          }
+        },
+        {
+          "type": "list",
+          "content": {
+            "style": "icon",
+            "icon": "bi-flag",
+            "dividers": true,
+            "item_padding": "md",
+            "items": [
+              {
+                "text": "2001 — The organisation is founded in one district"
+              },
+              {
+                "text": "2008 — The first programme reaches 50 schools"
+              },
+              {
+                "text": "2015 — A national partnership begins"
+              },
+              {
+                "text": "2024 — 5,000 people reached every year"
+              }
+            ]
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Milestones"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "quote",
+          "content": {
+            "text": "A sentence from your founder or a long-time partner about why this work matters.",
+            "author": "Name Surname",
+            "role": "Founder"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Quote"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "team",
+          "content": {
+            "heading": "The team today",
+            "show_date": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "team",
+            "order": "position",
+            "limit": 4
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "1:1"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Team"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

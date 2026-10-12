@@ -92,6 +92,8 @@ function layoutDeclarations(layout, type) {
     add(out, 'align-items', enumValue('align', layout.align));
     add(out, 'justify-content', enumValue('justify', layout.justify));
     add(out, 'text-align', enumValue('textAlign', layout.text_align));
+    // Rows of icons and details (social links, contact details) follow the text alignment.
+    add(out, '--pa-row-justify', { start: 'flex-start', center: 'center', end: 'flex-end' }[layout.text_align] ?? null);
     if (type === 'hero' && layout.min_height) add(out, 'display', 'flex');
 
     return out;
@@ -126,13 +128,26 @@ function styleDeclarations(style) {
     // outline buttons too. Gradients use their first colour.
     const fillToken = background?.type === 'color' ? background.color?.$token : background?.type === 'gradient' ? background.gradient?.stops?.[0]?.color?.$token : null;
     const fill = typeof fillToken === 'string' ? fillToken.replace(/^color\./, '') : null;
-    const chosen = color(typography.color);
+    // A theme colour is read from its RGB copy: "--pa-color-heading: var(--pa-color-heading)"
+    // would refer to itself, and the browser would drop it.
+    // Only a valid colour token (color() checks the name) is used by name.
+    const chosenToken = color(typography.color)?.startsWith('var(--pa-color-') ? typography.color.$token.replace(/^color\./, '') : null;
+    const chosen = chosenToken ? `rgb(var(--pa-color-${chosenToken}-rgb))` : color(typography.color);
     const on = chosen ?? (FILLS.includes(fill) ? `var(--pa-color-on-${fill})` : null);
     if (on) {
         add(out, 'color', on);
         for (const variable of ['--pa-color-heading', '--pa-color-body', '--bs-heading-color', '--bs-body-color', '--bs-emphasis-color']) add(out, variable, on);
         for (const variable of ['--pa-color-muted', '--bs-secondary-color']) add(out, variable, `color-mix(in srgb, ${on} 80%, transparent)`);
         add(out, '--pa-color-eyebrow', on);
+        // Links take the readable colour too (Bootstrap reads an RGB triplet). A theme colour has
+        // one; a colour typed in by hand keeps the theme's link colour.
+        const rgb = chosen ? (chosenToken ? `var(--pa-color-${chosenToken}-rgb)` : null) : `var(--pa-color-on-${fill}-rgb)`;
+        if (rgb) {
+            add(out, '--bs-link-color-rgb', rgb);
+            add(out, '--bs-link-hover-color-rgb', rgb);
+            add(out, '--bs-link-color', on);
+            add(out, '--bs-link-hover-color', on);
+        }
         add(out, '--pa-btn-outline', on);
         if (FILLS.includes(fill)) add(out, '--pa-btn-outline-hover', `var(--pa-color-${fill})`);
     }

@@ -1,0 +1,465 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home: Editorial"
+  },
+  "template": {
+    "name": "Home: Editorial",
+    "slug": "kit-page-home-editorial",
+    "scope": "page",
+    "category": "Home pages",
+    "description": "Story-led: a large opening statement, a wide photo, the story in words, news as a reading list and a quote."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "A headline that tells your story in one line",
+            "level": "1",
+            "eyebrow": "Your organisation"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Two or three sentences in a calm voice: who you are, who you work with and why it matters.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Read our story",
+                "link": {
+                  "type": "url",
+                  "url": "/about"
+                },
+                "variant": "link",
+                "icon": "bi-arrow-right"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "container",
+          "name": "Photo spot: replace with an Image block",
+          "layout": {
+            "min_height": {
+              "value": 460,
+              "unit": "px"
+            },
+            "text_align": "center",
+            "padding": {
+              "top": {
+                "$token": "space.9"
+              },
+              "bottom": {
+                "$token": "space.9"
+              }
+            }
+          },
+          "style": {
+            "background": {
+              "type": "color",
+              "color": {
+                "$token": "color.bg-light"
+              }
+            },
+            "radius": {
+              "$token": "radius.lg"
+            }
+          },
+          "children": [
+            {
+              "type": "icon",
+              "content": {
+                "icon": "bi-image",
+                "label": "Wide photo",
+                "size": "xl",
+                "color": {
+                  "$token": "color.primary"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Photo"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                8
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Why we exist",
+                    "level": "2",
+                    "eyebrow": "Our story"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Tell how you started, what you saw and what you decided to do about it.</p><p>Then tell what has changed since: a school, a village, a person. Specific stories are remembered.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "About us",
+                        "link": {
+                          "type": "url",
+                          "url": "/about"
+                        },
+                        "variant": "outline"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Our story"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "quote",
+          "content": {
+            "text": "A sentence from someone you work with, in their own words.",
+            "author": "Name Surname",
+            "role": "Teacher, partner school"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Quote"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                8,
+                4
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "news",
+                  "content": {
+                    "heading": "From the field",
+                    "show_excerpt": true,
+                    "show_date": true
+                  },
+                  "source": {
+                    "mode": "dynamic",
+                    "entity": "news",
+                    "order": "latest",
+                    "limit": 4
+                  },
+                  "display": {
+                    "mode": "list"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "events",
+                  "content": {
+                    "heading": "Coming up",
+                    "empty_text": "No upcoming events right now."
+                  },
+                  "source": {
+                    "mode": "dynamic",
+                    "entity": "events",
+                    "order": "soonest",
+                    "limit": 3,
+                    "filters": {
+                      "when": "upcoming"
+                    }
+                  },
+                  "display": {
+                    "mode": "list",
+                    "show_image": false
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "News and events"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "programs",
+          "content": {
+            "heading": "Programmes",
+            "show_date": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "programs",
+            "order": "latest",
+            "limit": 3
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "flat",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Programmes"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "partners",
+          "content": {
+            "heading": "With thanks to",
+            "style": "logos",
+            "grayscale": true,
+            "logo_size": "md"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "partners",
+            "order": "position",
+            "limit": 12
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 6,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Partners"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

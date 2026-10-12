@@ -3,13 +3,13 @@
   "kind": "template",
   "meta": {
     "generator": "PACMS starter kit",
-    "title": "Contact"
+    "title": "Contact: Classic"
   },
   "template": {
-    "name": "Contact",
+    "name": "Contact: Classic",
     "slug": "kit-page-contact",
     "scope": "page",
-    "category": "Pages",
+    "category": "Contact pages",
     "description": "Introduction, contact details, a contact form and common questions."
   },
   "blocks": [

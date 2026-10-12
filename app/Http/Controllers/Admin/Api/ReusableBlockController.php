@@ -13,6 +13,7 @@ use App\Models\Page;
 use App\Services\Blocks\BlockTemplateService;
 use App\Services\Blocks\GlobalBlockService;
 use App\Services\Revisions\RevisionService;
+use App\Services\Starter\StarterKitService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -72,8 +73,10 @@ class ReusableBlockController extends Controller
     {
         abort_unless($request->user()->can('pages.view'), 403);
 
-        $templates = BlockTemplate::query()->where('status', 'published')->orderBy('category')->orderBy('name')
-            ->get(['id', 'name', 'description', 'scope', 'category']);
+        $templates = app(StarterKitService::class)->inKitOrder(BlockTemplate::query()->where('status', 'published')
+            ->get(['id', 'name', 'slug', 'description', 'scope', 'category']))
+            // Shipped designs come with a picture (Phase 11S).
+            ->map(fn (BlockTemplate $template) => $template->only(['id', 'name', 'description', 'scope', 'category']) + ['thumbnail' => StarterKitService::thumbnail($template->slug)]);
 
         return response()->json(['data' => $templates]);
     }

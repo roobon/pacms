@@ -2,7 +2,7 @@
 
 A content management system for organisations: a **Laravel 12** backend and admin, and a public **React** website built from blocks.
 
-**Status:** Phase 11 (public React website) in progress: 11A (search, contact form, account area) merged; 11B (states, accessibility, performance, OpenAPI) next. Latest release: **v0.10.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
+**Status:** Phase 11 (public React website) in progress: 11A (search, contact form, account area) merged; 11S (starter kit: five design styles) ready for review; 11B (states, accessibility, performance, OpenAPI) next. Latest release: **v0.10.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
 
 ---
 
@@ -129,16 +129,33 @@ It's for local testing only and never runs in production. Besides the staff acco
 ```bash
 php artisan pacms:starter            # add what is missing (never changes your edits)
 php artisan pacms:starter --pages    # also create draft Home, About us, Contact and Get involved pages
+php artisan pacms:starter --pages --style=bold   # the pages, header and footer in one style
 php artisan pacms:starter --restore=all   # put the shipped templates back to their original design
 ```
 
-The kit includes:
-- **9 page templates** (Home, About us, Contact, Get involved, and landing pages for News, Events, Projects, Programmes and Publications);
+The kit comes in **five styles**: Classic, Bold, Editorial, Impact and Minimal. Each style has a matching design for every area below, so a site built in one style looks consistent, and mixing styles also works.
+
+| Area | Designs |
+|---|---|
+| Header | 5: classic, dark with a Donate button, centred logo, top bar with contact details, menu button only |
+| Footer | 5: classic columns, big call to action, centred, dark "stay in touch", one compact row |
+| Home page | 5: classic, photo slider, story-led, numbers first, community |
+| About us | 5: mission and values, team, story and milestones, impact report, partners and history |
+| Contact | 5: classic, form beside a details panel, questions first, departments and offices, form only |
+| Photo gallery | 5: albums grid, latest album on dark, masonry wall, carousel and grid, photos and videos |
+
+The kit also includes:
+- Get involved and landing pages for News, Events, Projects, Programmes and Publications;
 - **14 section templates**;
-- **global blocks**: a main header and footer, a call to action, contact details and sidebars;
+- a call to action, contact details and sidebars as global blocks;
 - the **main** and **footer** menus.
 
-Templates are in the builder's **Templates** tab, and **New page → Start from** copies a page template. The files are in `resources/starter-kit/`, in the JSON import format.
+**Choosing a design:** every shipped design has a picture.
+- **New page → Start from → See the designs** shows the page designs.
+- **Design → Header & footer** shows the headers and footers as cards.
+- The builder's **Templates** tab groups templates by area.
+
+The files are in `resources/starter-kit/` (JSON import format), and the pictures are in `public/images/starter-kit/`.
 
 ---
 

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact: Minimal"
+  },
+  "template": {
+    "name": "Contact: Minimal",
+    "slug": "kit-page-contact-minimal",
+    "scope": "page",
+    "category": "Contact pages",
+    "description": "Just the form, centred, with the e-mail address and phone number underneath."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Contact",
+            "level": "1"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Write to us. We reply within two working days.</p>"
+          }
+        },
+        {
+          "type": "contact-form",
+          "content": {
+            "heading": "",
+            "show_subject": false,
+            "consent_text": "I agree that my message is stored for 90 days and used only to answer me.",
+            "button_label": "Send",
+            "thank_you": "Thank you! We have received your message and will reply soon."
+          }
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          }
+        },
+        {
+          "type": "contact-info",
+          "content": {
+            "show_email": true,
+            "show_phone": true,
+            "show_address": false,
+            "layout": "inline"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Contact"
+      }
+    }
+  ]
+}

@@ -76,7 +76,7 @@ export function GalleryBlock({ node, preview }) {
     return (
         <div {...frameProps(node, preview, 'pa-collection pa-collection--gallery')}>
             {heading && <h2 className="pa-block-heading">{heading}</h2>}
-            <GalleryGrid items={gallery.media} columns={columns} showCaptions={showCaptions} label={heading || gallery.title} />
+            <GalleryGrid items={gallery.media} columns={columns} showCaptions={showCaptions} label={heading || gallery.title} masonry={node.display?.mode === 'masonry'} />
             {showLink && gallery.url && (
                 <p className="mt-3 mb-0">
                     <SmartLink link={{ href: gallery.url, external: false, new_tab: false }}>

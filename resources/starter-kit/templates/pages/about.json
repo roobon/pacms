@@ -3,13 +3,13 @@
   "kind": "template",
   "meta": {
     "generator": "PACMS starter kit",
-    "title": "About us"
+    "title": "About us: Classic"
   },
   "template": {
-    "name": "About us",
+    "name": "About us: Classic",
     "slug": "kit-page-about",
     "scope": "page",
-    "category": "Pages",
+    "category": "About pages",
     "description": "Introduction, mission and values, numbers, team, partners and a call to action."
   },
   "blocks": [

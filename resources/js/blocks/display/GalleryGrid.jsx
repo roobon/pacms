@@ -8,16 +8,16 @@ import Image from '../common/Image.jsx';
  * load their player only when opened (no third-party requests before that).
  *
  * @param {{items: Array<{kind: 'image'|'video', image?: Object, video?: {provider: string, id: string, url: string, thumbnail: string|null}, caption?: string|null, credit?: string|null}>,
- *   columns?: number|string, showCaptions?: boolean, label?: string}} props
+ *   columns?: number|string, showCaptions?: boolean, label?: string, masonry?: boolean}} props
  */
-export default function GalleryGrid({ items, columns = 4, showCaptions = false, label = 'Gallery' }) {
+export default function GalleryGrid({ items, columns = 4, showCaptions = false, label = 'Gallery', masonry = false }) {
     const [open, setOpen] = useState(/** @type {number|null} */ (null));
 
     if (!items?.length) return null;
 
     return (
         <>
-            <ul className={`pa-gallery pa-gallery--cols-${columns} list-unstyled`} aria-label={label}>
+            <ul className={`pa-gallery pa-gallery--cols-${columns}${masonry ? ' pa-gallery--masonry' : ''} list-unstyled`} aria-label={label}>
                 {items.map((item, index) => (
                     <li key={index} className="pa-gallery__item">
                         <button type="button" className="pa-gallery__button" onClick={() => setOpen(index)}>

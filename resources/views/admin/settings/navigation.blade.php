@@ -9,20 +9,16 @@
                     <div class="card-header"><h2 id="chrome-heading" class="h6 mb-0">Header and footer</h2></div>
                     <div class="card-body">
                         @foreach (['header_global_block_id' => [$headers, 'Header', 'header'], 'footer_global_block_id' => [$footers, 'Footer', 'footer']] as $name => [$choices, $label, $kind])
-                            <div class="mb-3">
-                                <label for="field-{{ $name }}" class="form-label">{{ $label }}</label>
-                                <select id="field-{{ $name }}" name="{{ $name }}" class="form-select @error($name) is-invalid @enderror" aria-describedby="field-{{ $name }}-help">
-                                    <option value="">None (a plain {{ strtolower($label) }} with the site name)</option>
-                                    @foreach ($choices as $choice)
-                                        <option value="{{ $choice->id }}" @selected((int) old($name, $navigation[$name]) === $choice->id)>{{ $choice->name }}{{ $choice->published_revision_id ? '' : ' (not published yet)' }}</option>
-                                    @endforeach
-                                </select>
-                                @error($name)<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <fieldset class="mb-4">
+                                <legend id="field-{{ $name }}" class="form-label fs-6">{{ $label }}</legend>
+                                <x-admin.design-cards :name="$name" :choices="$choices" :selected="old($name, $navigation[$name])" wide
+                                    :empty-label="'None'" :empty-help="'A plain '.strtolower($label).' with the site name.'" />
+                                @error($name)<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 <div id="field-{{ $name }}-help" class="form-text">
                                     {{ $label }}s are global blocks of kind “{{ $label }}”, built with blocks such as Site logo, Menu, Social links and Copyright.
                                     <a href="{{ route('admin.global-blocks.index') }}">Global blocks</a>
                                 </div>
-                            </div>
+                            </fieldset>
                         @endforeach
                         <div class="form-check mb-2">
                             <input type="hidden" name="sticky_header" value="0">
