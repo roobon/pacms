@@ -1,0 +1,386 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact: Impact"
+  },
+  "template": {
+    "name": "Contact: Impact",
+    "slug": "kit-page-contact-impact",
+    "scope": "page",
+    "category": "Contact pages",
+    "description": "Departments and offices: who to contact for what, your offices on a coloured band, and the form."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Contact the right team",
+            "level": "1",
+            "eyebrow": "Contact"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Choose the team that fits your question. They answer directly.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "cards",
+          "content": {
+            "heading": "",
+            "items": [
+              {
+                "icon": "bi-building",
+                "title": "Partnerships",
+                "text": "partners@example.org",
+                "link": {
+                  "type": "url",
+                  "url": "mailto:partners@example.org"
+                }
+              },
+              {
+                "icon": "bi-person-raised-hand",
+                "title": "Volunteering",
+                "text": "volunteer@example.org",
+                "link": {
+                  "type": "url",
+                  "url": "mailto:volunteer@example.org"
+                }
+              },
+              {
+                "icon": "bi-newspaper",
+                "title": "Press and media",
+                "text": "press@example.org",
+                "link": {
+                  "type": "url",
+                  "url": "mailto:press@example.org"
+                }
+              },
+              {
+                "icon": "bi-gift",
+                "title": "Donations",
+                "text": "donate@example.org",
+                "link": {
+                  "type": "url",
+                  "url": "mailto:donate@example.org"
+                }
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Departments"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Our offices",
+            "level": "2"
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                4,
+                4
+              ],
+              "mobile": [
+                12,
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "layout": {
+                    "padding": {
+                      "top": {
+                        "$token": "space.6"
+                      },
+                      "bottom": {
+                        "$token": "space.6"
+                      },
+                      "left": {
+                        "$token": "space.6"
+                      },
+                      "right": {
+                        "$token": "space.6"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "heading",
+                      "content": {
+                        "text": "Dhaka (head office)",
+                        "level": "3"
+                      }
+                    },
+                    {
+                      "type": "rich-text",
+                      "content": {
+                        "html": "<p>House 1, Road 1, Dhaka 1200</p><p>+880 1700 000000</p>"
+                      }
+                    }
+                  ],
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.primary"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    },
+                    "typography": {
+                      "color": {
+                        "$token": "color.white"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "layout": {
+                    "padding": {
+                      "top": {
+                        "$token": "space.6"
+                      },
+                      "bottom": {
+                        "$token": "space.6"
+                      },
+                      "left": {
+                        "$token": "space.6"
+                      },
+                      "right": {
+                        "$token": "space.6"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "heading",
+                      "content": {
+                        "text": "Chattogram",
+                        "level": "3"
+                      }
+                    },
+                    {
+                      "type": "rich-text",
+                      "content": {
+                        "html": "<p>Address of the regional office</p><p>Phone number</p>"
+                      }
+                    }
+                  ],
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.primary"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    },
+                    "typography": {
+                      "color": {
+                        "$token": "color.white"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "layout": {
+                    "padding": {
+                      "top": {
+                        "$token": "space.6"
+                      },
+                      "bottom": {
+                        "$token": "space.6"
+                      },
+                      "left": {
+                        "$token": "space.6"
+                      },
+                      "right": {
+                        "$token": "space.6"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "heading",
+                      "content": {
+                        "text": "Sylhet",
+                        "level": "3"
+                      }
+                    },
+                    {
+                      "type": "rich-text",
+                      "content": {
+                        "html": "<p>Address of the field office</p><p>Phone number</p>"
+                      }
+                    }
+                  ],
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.primary"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    },
+                    "typography": {
+                      "color": {
+                        "$token": "color.white"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Offices"
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.primary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "contact-form",
+          "content": {
+            "heading": "Send us a message",
+            "show_subject": true,
+            "consent_text": "I agree that my message is stored for 90 days and used only to answer me.",
+            "button_label": "Send message",
+            "thank_you": "Thank you! We have received your message and will reply soon."
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Send us a message"
+      }
+    }
+  ]
+}

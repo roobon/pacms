@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Photo gallery: Classic"
+  },
+  "template": {
+    "name": "Photo gallery: Classic",
+    "slug": "kit-page-gallery",
+    "scope": "page",
+    "category": "Gallery pages",
+    "description": "Albums grid: a short introduction and all photo albums as cards."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.8"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Photo gallery",
+            "level": "1",
+            "eyebrow": "Gallery"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Moments from our programmes, events and communities.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "Albums",
+            "show_date": true,
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 12
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Albums"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

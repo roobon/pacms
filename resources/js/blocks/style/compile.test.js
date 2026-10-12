@@ -37,6 +37,16 @@ describe('compileTree', () => {
         const gradient = compileTree([node({ style: { background: { type: 'gradient', gradient: { angle: 135, stops: [{ color: { $token: 'color.primary' }, at: 0 }, { color: { $token: 'color.secondary' }, at: 100 }] } } } })]);
         expect(gradient).toContain('--pa-color-heading: var(--pa-color-on-primary);');
 
+        // Links follow the readable colour (Bootstrap reads an RGB triplet).
+        expect(dark).toContain('--bs-link-color-rgb: var(--pa-color-on-bg-dark-rgb);');
+
+        // A theme text colour is read from its RGB copy, never as "--pa-color-heading: var(--pa-color-heading)",
+        // which refers to itself and would be dropped by the browser.
+        const themed = compileTree([node({ style: { background: { type: 'color', color: { $token: 'color.white' } }, typography: { color: { $token: 'color.heading' } } } })]);
+        expect(themed).toContain('--pa-color-heading: rgb(var(--pa-color-heading-rgb));');
+        expect(themed).toContain('--bs-link-color-rgb: var(--pa-color-heading-rgb);');
+        expect(themed).not.toContain('--pa-color-heading: var(--pa-color-heading)');
+
         // A light surface or a hex colour has no automatic text colour.
         expect(compileTree([node({ style: { background: { type: 'color', color: '#F6F8FA' } } })])).not.toContain('--pa-color-on-');
     });

@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Footer: Minimal"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.5"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                4,
+                4
+              ],
+              "mobile": [
+                12,
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.4"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "default",
+                    "size": "sm",
+                    "show_name": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "copyright",
+                  "content": {}
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "social-links",
+                  "content": {
+                    "style": "icons"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Footer"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.white"
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.heading"
+          }
+        },
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

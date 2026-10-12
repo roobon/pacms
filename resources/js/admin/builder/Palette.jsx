@@ -96,6 +96,15 @@ function BlockTypes({ parentUuid, query, onDone }) {
     ));
 }
 
+/** @param {Array<{category?: string|null}>} list */
+function groupByCategory(list) {
+    return list.reduce((groups, item) => {
+        const key = item.category || 'Other';
+        (groups[key] ??= []).push(item);
+        return groups;
+    }, /** @type {Record<string, any[]>} */ ({}));
+}
+
 function Templates({ parentUuid, query, onDone }) {
     const endpoints = useBuilder((state) => state.definitions.endpoints);
     const insertNodes = useBuilder((state) => state.insertNodes);
@@ -127,19 +136,28 @@ function Templates({ parentUuid, query, onDone }) {
                     {message}
                 </p>
             )}
-            <ul className="list-unstyled mb-2">
-                {filtered.map((template) => (
-                    <li key={template.id}>
-                        <button type="button" className="pa-add-menu__row" onClick={() => insert(template)}>
-                            <strong>{template.name}</strong>
-                            <span className="small text-body-secondary">
-                                {[template.category, template.scope].filter(Boolean).join(' · ')}
-                                {template.description ? ` — ${template.description}` : ''}
-                            </span>
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            {/* Grouped by category (Home pages, About pages, Hero…); shipped designs show a picture. */}
+            {Object.entries(groupByCategory(filtered)).map(([category, templates]) => (
+                <section key={category} aria-label={category}>
+                    <h3 className="pa-add-menu__group">{category}</h3>
+                    <ul className="list-unstyled mb-2">
+                        {templates.map((template) => (
+                            <li key={template.id}>
+                                <button type="button" className={`pa-add-menu__row${template.thumbnail ? ' pa-add-menu__row--picture' : ''}`} onClick={() => insert(template)}>
+                                    {template.thumbnail && <img src={template.thumbnail} alt="" loading="lazy" className="pa-add-menu__picture" />}
+                                    <span className="d-flex flex-column gap-1">
+                                        <strong>{template.name}</strong>
+                                        <span className="small text-body-secondary">
+                                            {template.scope === 'page' ? 'Whole page' : 'Section'}
+                                            {template.description ? ` — ${template.description}` : ''}
+                                        </span>
+                                    </span>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            ))}
         </>
     );
 }

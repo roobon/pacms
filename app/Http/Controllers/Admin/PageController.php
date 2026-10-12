@@ -117,7 +117,7 @@ class PageController extends Controller
             'templates' => config('pacms.pages.templates'),
             'headers' => GlobalBlock::query()->where('kind', 'header')->orderBy('name')->get(['id', 'name', 'published_revision_id']),
             'footers' => GlobalBlock::query()->where('kind', 'footer')->orderBy('name')->get(['id', 'name', 'published_revision_id']),
-            'pageTemplates' => $page->exists ? collect() : BlockTemplate::query()->where('scope', 'page')->where('status', 'published')->orderByDesc('is_system')->orderBy('name')->get(['id', 'name', 'description']),
+            'pageTemplates' => $page->exists ? collect() : app(StarterKitService::class)->inKitOrder(BlockTemplate::query()->where('scope', 'page')->where('status', 'published')->get(['id', 'name', 'slug', 'description', 'category'])),
             'canEdit' => $page->exists ? Gate::allows('update', $page) : true,
             'actions' => $page->exists ? app(PublishingService::class)->availableActions($page, $request->user()) : [],
             'revisions' => $page->exists ? $page->revisions()->with('author:id,name')->limit(10)->get() : collect(),

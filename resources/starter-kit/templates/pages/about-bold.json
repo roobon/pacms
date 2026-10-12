@@ -1,0 +1,417 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "About us: Bold"
+  },
+  "template": {
+    "name": "About us: Bold",
+    "slug": "kit-page-about-bold",
+    "scope": "page",
+    "category": "About pages",
+    "description": "Team-focused: a dark opening, the people behind the work, what guides you and your partners."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "boxed",
+        "min_height": {
+          "value": 45,
+          "unit": "vh"
+        },
+        "text_align": "center",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "The people behind the work",
+            "level": "1",
+            "eyebrow": "About us"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Introduce your organisation in one or two sentences, then let the team speak.</p>"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-dark"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "team",
+          "content": {
+            "heading": "Our team",
+            "show_date": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "team",
+            "order": "position",
+            "limit": 8
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "1:1"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our team"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                6,
+                6
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 380,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.9"
+                      },
+                      "bottom": {
+                        "$token": "space.9"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-dark"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.lg"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-people",
+                        "label": "Team photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.accent"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "How we work together",
+                    "level": "2",
+                    "eyebrow": "Our culture"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Describe how your team works: with whom, in which places, and what you care about.</p>"
+                  }
+                },
+                {
+                  "type": "list",
+                  "content": {
+                    "style": "check",
+                    "items": [
+                      {
+                        "text": "Local people lead local work"
+                      },
+                      {
+                        "text": "We listen before we act"
+                      },
+                      {
+                        "text": "We report openly on results"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Our culture"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "cards",
+          "content": {
+            "heading": "What guides us",
+            "items": [
+              {
+                "icon": "bi-bullseye",
+                "title": "Mission",
+                "text": "What you do, for whom, and why."
+              },
+              {
+                "icon": "bi-eye",
+                "title": "Vision",
+                "text": "The world you are working towards."
+              },
+              {
+                "icon": "bi-heart",
+                "title": "Values",
+                "text": "Three or four words that describe how you work."
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "What guides us"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "statistics",
+          "content": {
+            "heading": "",
+            "items": [
+              {
+                "value": 25,
+                "label": "Years of work",
+                "icon": "bi-calendar-check"
+              },
+              {
+                "value": 120,
+                "label": "Partner schools",
+                "icon": "bi-building"
+              },
+              {
+                "value": 5000,
+                "suffix": "+",
+                "label": "People reached",
+                "icon": "bi-people"
+              },
+              {
+                "value": 12,
+                "label": "Districts",
+                "icon": "bi-geo-alt"
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our impact"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.secondary"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "partners",
+          "content": {
+            "heading": "Who we work with",
+            "style": "cards",
+            "grayscale": false,
+            "logo_size": "md"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "partners",
+            "order": "position",
+            "limit": 8
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Partners"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

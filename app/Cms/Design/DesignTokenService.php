@@ -143,6 +143,7 @@ class DesignTokenService
         foreach (self::FILLS as $fill) {
             $on = Color::fromHex($values["color.{$fill}"])->readableText($dark, $light);
             $lines[] = "  --pa-color-on-{$fill}: {$on->toHex()};";
+            $lines[] = "  --pa-color-on-{$fill}-rgb: {$on->toRgbTriplet()};";
         }
 
         return "/* Probha Aurora CMS design tokens — generated, do not edit */\n:root {\n".implode("\n", $lines)."\n}\n";

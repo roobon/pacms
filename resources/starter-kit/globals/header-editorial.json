@@ -1,0 +1,139 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Header: Editorial"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.5"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                12
+              ],
+              "mobile": [
+                12
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "default",
+                    "size": "lg",
+                    "show_name": true
+                  }
+                }
+              ],
+              "layout": {
+                "justify": "center"
+              }
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Site name"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.2"
+          },
+          "bottom": {
+            "$token": "space.2"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                12
+              ],
+              "mobile": [
+                12
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "menu",
+                  "content": {
+                    "menu": "main",
+                    "style": "horizontal",
+                    "aria_label": "Main"
+                  }
+                },
+                {
+                  "type": "search",
+                  "content": {
+                    "style": "icon",
+                    "placeholder": "Search…"
+                  }
+                },
+                {
+                  "type": "account-link",
+                  "content": {
+                    "sign_in_label": "Sign in",
+                    "account_label": "My account"
+                  }
+                }
+              ],
+              "layout": {
+                "justify": "center"
+              }
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Main menu"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

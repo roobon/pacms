@@ -9,8 +9,10 @@ use App\Models\GlobalBlock;
 use App\Models\Media;
 use App\Services\ActivityLog\ActivityLogger;
 use App\Services\Settings\SettingsService;
+use App\Services\Starter\StarterKitService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -28,8 +30,8 @@ class NavigationSettingsController extends Controller
 
         return view('admin.settings.navigation', [
             'navigation' => $navigation,
-            'headers' => GlobalBlock::query()->where('kind', 'header')->orderBy('name')->get(['id', 'name', 'published_revision_id']),
-            'footers' => GlobalBlock::query()->where('kind', 'footer')->orderBy('name')->get(['id', 'name', 'published_revision_id']),
+            'headers' => $this->choices('header'),
+            'footers' => $this->choices('footer'),
             'logo' => $navigation['logo_media_id'] ? Media::query()->find($navigation['logo_media_id']) : null,
             'logoDark' => $navigation['logo_dark_media_id'] ? Media::query()->find($navigation['logo_dark_media_id']) : null,
             'networks' => SocialLinksBlock::NETWORKS,
@@ -69,5 +71,20 @@ class NavigationSettingsController extends Controller
         $logger->log('settings.updated', null, ['group' => 'navigation'], subjectLabel: 'Header & footer');
 
         return back()->with('success', __('Header & footer saved.'));
+    }
+
+    /**
+     * Headers or footers to choose from: the starter kit's in style order (Classic first), then
+     * the site's own by name.
+     *
+     * @return Collection<int, GlobalBlock>
+     */
+    private function choices(string $kind): Collection
+    {
+        $order = array_flip(array_values(app(StarterKitService::class)->manifest()['style_globals'][$kind]));
+
+        return GlobalBlock::query()->where('kind', $kind)->orderBy('name')->get(['id', 'name', 'slug', 'description', 'published_revision_id'])
+            ->sortBy(fn (GlobalBlock $block) => $order[$block->slug] ?? count($order))
+            ->values();
     }
 }

@@ -1,0 +1,198 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Photo gallery: Impact"
+  },
+  "template": {
+    "name": "Photo gallery: Impact",
+    "slug": "kit-page-gallery-impact",
+    "scope": "page",
+    "category": "Gallery pages",
+    "description": "Carousel and grid: the newest albums in a carousel, then every album in a grid."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "boxed",
+        "min_height": {
+          "value": 35,
+          "unit": "vh"
+        },
+        "text_align": "center",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "See the change",
+            "level": "1",
+            "eyebrow": "Gallery"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Moments from our programmes, events and communities.</p>"
+          }
+        }
+      ],
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "New albums",
+            "show_date": true,
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 6
+          },
+          "display": {
+            "mode": "carousel",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "New albums"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "All albums",
+            "show_date": true,
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 12
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "All albums"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

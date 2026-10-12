@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Header: Impact"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.1"
+          },
+          "bottom": {
+            "$token": "space.1"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                8,
+                4
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "contact-info",
+                  "content": {
+                    "show_email": true,
+                    "show_phone": true,
+                    "show_address": false,
+                    "layout": "inline"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "social-links",
+                  "content": {
+                    "style": "icons"
+                  }
+                },
+                {
+                  "type": "search",
+                  "content": {
+                    "style": "icon",
+                    "placeholder": "Search…"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Contact bar"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                3,
+                9
+              ],
+              "mobile": [
+                6,
+                6
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "default",
+                    "size": "md",
+                    "show_name": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "menu",
+                  "content": {
+                    "menu": "main",
+                    "style": "horizontal",
+                    "aria_label": "Main"
+                  }
+                },
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "primary"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Site header"
+      }
+    }
+  ]
+}

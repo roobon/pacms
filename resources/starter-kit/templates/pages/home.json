@@ -3,13 +3,13 @@
   "kind": "template",
   "meta": {
     "generator": "PACMS starter kit",
-    "title": "Home page"
+    "title": "Home: Classic"
   },
   "template": {
-    "name": "Home page",
+    "name": "Home: Classic",
     "slug": "kit-page-home",
     "scope": "page",
-    "category": "Pages",
+    "category": "Home pages",
     "description": "Hero, impact, introduction, news, programmes and events, testimonials, partners and a call to action."
   },
   "blocks": [

@@ -6,6 +6,7 @@ use App\Models\MediaCoverage;
 use App\Models\News;
 use App\Models\Page;
 use App\Models\Testimonial;
+use App\Services\Starter\StarterKitService;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -57,7 +58,7 @@ it('fills every area with linked demo content through the real services', functi
     expect($feed['items'])->toHaveCount(3)->and($feed['items'][0]['meta']['source'])->toBe('Partner news (demo)');
 
     // The starter kit's templates and global blocks are installed too.
-    expect(BlockTemplate::query()->where('is_system', true)->count())->toBe(23);
+    expect(BlockTemplate::query()->where('is_system', true)->count())->toBe(count(app(StarterKitService::class)->manifest()['templates']));
 
     // Running it again on a site with content is refused (use --fresh).
     $this->artisan('pacms:demo')->assertFailed();

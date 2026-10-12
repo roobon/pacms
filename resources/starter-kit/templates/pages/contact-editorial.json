@@ -1,0 +1,242 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact: Editorial"
+  },
+  "template": {
+    "name": "Contact: Editorial",
+    "slug": "kit-page-contact-editorial",
+    "scope": "page",
+    "category": "Contact pages",
+    "description": "Questions first: answers to common questions, then the form for everything else, then the address."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "How can we help?",
+            "level": "1",
+            "eyebrow": "Contact"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Many answers are below. For anything else, send us a message.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "faq",
+          "content": {
+            "heading": "Common questions",
+            "items": [
+              {
+                "question": "Who can take part?",
+                "answer": "<p>Explain who your programmes are for and how to join.</p>"
+              },
+              {
+                "question": "Does it cost anything?",
+                "answer": "<p>Say what is free and what is not.</p>"
+              },
+              {
+                "question": "How can my school or organisation partner with you?",
+                "answer": "<p>Describe the first step, and who to contact.</p>"
+              },
+              {
+                "question": "How do you use donations?",
+                "answer": "<p>Explain how support is spent and how you report on it.</p>"
+              }
+            ]
+          },
+          "display": {
+            "mode": "accordion"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Questions"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "contact-form",
+          "content": {
+            "heading": "Still have a question?",
+            "show_subject": true,
+            "consent_text": "I agree that my message is stored for 90 days and used only to answer me.",
+            "button_label": "Send message",
+            "thank_you": "Thank you! We have received your message and will reply soon."
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Send us a message"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                4,
+                4
+              ],
+              "mobile": [
+                12,
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "icon",
+                  "content": {
+                    "icon": "bi-envelope",
+                    "label": "E-mail",
+                    "size": "lg",
+                    "color": {
+                      "$token": "color.primary"
+                    }
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>info@example.org</p>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "icon",
+                  "content": {
+                    "icon": "bi-telephone",
+                    "label": "Phone",
+                    "size": "lg",
+                    "color": {
+                      "$token": "color.primary"
+                    }
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>+880 1700 000000</p>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "icon",
+                  "content": {
+                    "icon": "bi-geo-alt",
+                    "label": "Address",
+                    "size": "lg",
+                    "color": {
+                      "$token": "color.primary"
+                    }
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>House 1, Road 1, Dhaka 1200</p>"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Contact details"
+      }
+    }
+  ]
+}

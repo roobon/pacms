@@ -105,15 +105,47 @@
                             @if ($pageTemplates->isNotEmpty())
                                 <div class="mb-3">
                                     <label for="field-start" class="form-label">Start from</label>
-                                    <select id="field-start" name="start_template_id" class="form-select @error('start_template_id') is-invalid @enderror" aria-describedby="field-start-help">
+                                    @php($designGroups = $pageTemplates->groupBy(fn ($t) => $t->category ?: 'Other'))
+                                    <select id="field-start" name="start_template_id" class="form-select @error('start_template_id') is-invalid @enderror" aria-describedby="field-start-help" data-design-select>
                                         <option value="">An empty page</option>
-                                        @foreach ($pageTemplates as $pageTemplate)
-                                            <option value="{{ $pageTemplate->id }}" @selected((int) old('start_template_id') === $pageTemplate->id)>{{ $pageTemplate->name }}</option>
+                                        @foreach ($designGroups as $group => $groupTemplates)
+                                            <optgroup label="{{ $group }}">
+                                                @foreach ($groupTemplates as $pageTemplate)
+                                                    <option value="{{ $pageTemplate->id }}" @selected((int) old('start_template_id') === $pageTemplate->id)>{{ $pageTemplate->name }}</option>
+                                                @endforeach
+                                            </optgroup>
                                         @endforeach
                                     </select>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-design-open="design-dialog"><i class="bi bi-grid-3x2-gap me-1" aria-hidden="true"></i>See the designs</button>
                                     <div id="field-start-help" class="form-text">A page template's sections are copied into the new page; change anything afterwards. Ignored if you already added blocks below.</div>
                                     @error('start_template_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
+                                {{-- The designs with their pictures; choosing one sets "Start from" above. --}}
+                                <dialog id="design-dialog" class="pa-design-dialog" aria-labelledby="design-dialog-title">
+                                    <div class="pa-design-dialog__head">
+                                        <h2 id="design-dialog-title" class="h5 mb-0">Start from a design</h2>
+                                        <button type="button" class="btn-close" data-design-close aria-label="Close"></button>
+                                    </div>
+                                    <div class="pa-design-dialog__body">
+                                        @foreach ($designGroups as $group => $groupTemplates)
+                                            <h3 class="h6 mt-3">{{ $group }}</h3>
+                                            <div class="pa-design-cards">
+                                                @foreach ($groupTemplates as $pageTemplate)
+                                                    @php($thumbnail = \App\Services\Starter\StarterKitService::thumbnail($pageTemplate->slug))
+                                                    <button type="button" class="pa-design-card text-start" data-design-value="{{ $pageTemplate->id }}">
+                                                        @if ($thumbnail)
+                                                            <img class="pa-design-card__picture" src="{{ $thumbnail }}" alt="" loading="lazy">
+                                                        @else
+                                                            <span class="pa-design-card__picture pa-design-card__picture--empty" aria-hidden="true"><i class="bi bi-layout-text-window"></i></span>
+                                                        @endif
+                                                        <span class="pa-design-card__name">{{ $pageTemplate->name }}</span>
+                                                        @if ($pageTemplate->description)<span class="pa-design-card__text">{{ $pageTemplate->description }}</span>@endif
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </dialog>
                             @endif
                             <div class="mb-3">
                                 <label for="field-template" class="form-label">Layout</label>

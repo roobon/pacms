@@ -198,7 +198,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 ### Media
 | type | C | Src | content fields |
 |---|---|---|---|
-| `gallery` | – | S, D, E | S: `items` repeater (`image`, `caption`, `credit`); D: via `source` (galleries / one gallery); E: external source |
+| `gallery` | – | S, D, E | S: `items` repeater (`image`, `caption`, `credit`); D: via `source` (galleries / one gallery); E: external source. Display `grid` or `masonry` (photos keep their own shape, Phase 11S) |
 | `video-gallery` | – | S, D, E | S: `items` (`provider`, `url`, `title`, `thumbnail`) |
 | `document-list` | – | S, D | S: `items` (`file` media, `label`, `description`); D: publications |
 
@@ -228,7 +228,7 @@ Shared collection `content` fields: `heading`?, `intro`?, `empty_text`?, `more_l
 | type | C | Meaning |
 |---|---|---|
 | `global-ref` | – | `content.global`: `$ref` to a global block |
-| `menu` | – | `content.menu`: `$ref` to a menu; `content.style`: `horizontal`/`vertical`/`mega-capable` (used in header/footer) |
+| `menu` | – | `content.menu`: `$ref` to a menu; `content.style`: `horizontal`/`vertical`/`drawer` (`drawer`, Phase 11S: only a Menu button, the drawer on every screen width) (used in header/footer) |
 | `site-logo`, `social-links`, `contact-info`, `copyright`, `newsletter` | – | Header/footer building blocks reading site settings |
 | `search` | – | Site search for the header: `style` (`icon` opens a box, `box` shows it), `placeholder`. Goes to `/search?q=` (Phase 11A) |
 | `repeat` | ✔ | Only in custom block structures: `content.field` = repeater field key |

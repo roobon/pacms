@@ -17,6 +17,7 @@ use App\Services\Blocks\GlobalBlockService;
 use App\Services\Navigation\MenuService;
 use App\Services\Pages\PageService;
 use App\Services\Settings\SettingsService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -29,6 +30,8 @@ use RuntimeException;
  * - install() adds what is missing and never changes what exists (edited copies stay).
  * - restore() puts shipped templates back to their original design.
  * - Pages are created only on request, as drafts, and never over existing pages.
+ * - Styles (Phase 11S): five design families; install($style) builds pages and chooses the
+ *   header and footer of one family. Shipped designs have a thumbnail picture.
  */
 class StarterKitService
 {
@@ -48,10 +51,13 @@ class StarterKitService
         return resource_path('starter-kit'.($file === '' ? '' : '/'.$file));
     }
 
+    /** Thumbnails of the shipped designs: public/images/starter-kit/<slug>.webp. */
+    public const THUMBNAILS = 'images/starter-kit';
+
     /**
-     * The kit's manifest: global blocks, templates (in palette order) and pages.
+     * The kit's manifest: styles, global blocks, templates (in palette order) and pages.
      *
-     * @return array{globals: array<string, array<string, string>>, templates: list<string>, pages: list<array<string, mixed>>}
+     * @return array{styles: array<string, string>, style_globals: array<string, array<string, string>>, globals: array<string, array<string, string>>, templates: list<string>, pages: list<array<string, mixed>>}
      */
     public function manifest(): array
     {
@@ -63,18 +69,31 @@ class StarterKitService
      *
      * @return list<array{0: string, 1: string, 2: string}>
      */
-    public function install(User $user, bool $pages = false): array
+    public function install(User $user, bool $pages = false, string $style = 'classic'): array
     {
         $manifest = $this->manifest();
+        if (! isset($manifest['styles'][$style])) {
+            throw new RuntimeException("The starter kit has no style \"{$style}\". Choose one of: ".implode(', ', array_keys($manifest['styles'])).'.');
+        }
         // Menus first: the kit's header and footer show them.
         $done = app(MenuService::class)->prefill($user);
         $done = [...$done, ...$this->installGlobals($user)];
-        $done = [...$done, ...$this->chooseHeaderAndFooter($user)];
+        $done = [...$done, ...$this->chooseHeaderAndFooter($user, $style)];
 
         foreach ($manifest['templates'] as $file) {
             $document = $this->blocks($file, $user, BlockTreeValidator::CONTEXT_TEMPLATE);
             $slug = (string) $document['template']['slug'];
-            if (BlockTemplate::withTrashed()->where('slug', $slug)->exists()) {
+            $existing = BlockTemplate::withTrashed()->where('slug', $slug)->first();
+            if ($existing !== null) {
+                // The design stays as it is; only a shipped template's group moves (e.g. "Pages" →
+                // "Home pages" in 11S), so the pickers group the kit's designs together.
+                $category = $document['template']['category'] ?? null;
+                if ($existing->is_system && $category !== null && $existing->category !== $category) {
+                    $existing->forceFill(['category' => $category])->save();
+                    $done[] = ['Template', $existing->name, "moved to \"{$category}\""];
+
+                    continue;
+                }
                 $done[] = ['Template', (string) $document['template']['name'], 'already there'];
 
                 continue;
@@ -86,7 +105,7 @@ class StarterKitService
 
         if ($pages) {
             foreach ($manifest['pages'] as $definition) {
-                $done[] = ['Page', (string) $definition['title'], $this->page($user, $definition)];
+                $done[] = ['Page', (string) $definition['title'], $this->page($user, $this->styled($definition, $style))];
             }
         }
 
@@ -94,21 +113,40 @@ class StarterKitService
     }
 
     /**
-     * The kit's header and footer become the site's when none is chosen yet.
+     * A page definition with the style's template, when the kit has one (Get involved has one
+     * design, so every style uses it).
+     *
+     * @param  array<string, mixed>  $definition
+     * @return array<string, mixed>
+     */
+    private function styled(array $definition, string $style): array
+    {
+        $slug = "{$definition['template']}-{$style}";
+        if ($style !== 'classic' && BlockTemplate::query()->where('slug', $slug)->exists()) {
+            $definition['template'] = $slug;
+        }
+
+        return $definition;
+    }
+
+    /**
+     * The style's header and footer become the site's when none is chosen yet.
      *
      * @return list<array{0: string, 1: string, 2: string}>
      */
-    private function chooseHeaderAndFooter(User $user): array
+    private function chooseHeaderAndFooter(User $user, string $style): array
     {
         $done = [];
-        foreach (['header' => 'main-header', 'footer' => 'main-footer'] as $role => $slug) {
+        $globals = $this->manifest()['style_globals'];
+        foreach (['header', 'footer'] as $role) {
+            $slug = $globals[$role][$style];
             if ($this->settings->get('navigation', "{$role}_global_block_id")) {
                 continue;
             }
             $id = GlobalBlock::query()->where('slug', $slug)->where('kind', $role)->whereNotNull('published_revision_id')->value('id');
             if ($id) {
                 $this->settings->set('navigation', ["{$role}_global_block_id" => (int) $id], $user);
-                $done[] = ['Setting', ucfirst($role), 'set to the starter kit\'s'];
+                $done[] = ['Setting', ucfirst($role), "set to the starter kit's ({$this->manifest()['styles'][$style]})"];
             }
         }
 
@@ -192,6 +230,43 @@ class StarterKitService
         }
 
         return $done;
+    }
+
+    /**
+     * Templates in the kit's order (Home, About, Contact, Gallery…, each Classic to Minimal),
+     * the site's own after them by name. A kit file's slug is "kit-<file>" ("kit-page-<file>"
+     * for page templates).
+     *
+     * @template T of BlockTemplate
+     *
+     * @param  Collection<int, T>  $templates
+     * @return Collection<int, T>
+     */
+    public function inKitOrder(Collection $templates): Collection
+    {
+        $order = [];
+        foreach ($this->manifest()['templates'] as $index => $file) {
+            $order[(str_contains($file, '/pages/') ? 'kit-page-' : 'kit-').basename($file, '.json')] = $index;
+        }
+
+        return $templates->sortBy([
+            fn (BlockTemplate $a, BlockTemplate $b) => ($order[$a->slug] ?? PHP_INT_MAX) <=> ($order[$b->slug] ?? PHP_INT_MAX),
+            fn (BlockTemplate $a, BlockTemplate $b) => strcasecmp($a->name, $b->name),
+        ])->values();
+    }
+
+    /**
+     * The address of a shipped design's thumbnail picture (a template or global block slug),
+     * or null when there is none (designs made on the site).
+     */
+    public static function thumbnail(?string $slug): ?string
+    {
+        if ($slug === null || ! preg_match('/^[a-z0-9-]+$/', $slug)) {
+            return null;
+        }
+        $file = self::THUMBNAILS."/{$slug}.webp";
+
+        return is_file(public_path($file)) ? asset($file) : null;
     }
 
     /**

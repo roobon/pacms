@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Footer: Editorial"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                12
+              ],
+              "mobile": [
+                12
+              ]
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "default",
+                    "size": "lg",
+                    "show_name": true
+                  }
+                }
+              ],
+              "layout": {
+                "justify": "center"
+              }
+            }
+          ]
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Say in one sentence what your organisation does and for whom.</p>"
+          }
+        },
+        {
+          "type": "social-links",
+          "content": {
+            "style": "labels"
+          }
+        },
+        {
+          "type": "spacer",
+          "content": {
+            "size": "space.4"
+          }
+        },
+        {
+          "type": "contact-info",
+          "content": {
+            "show_email": true,
+            "show_phone": true,
+            "show_address": true,
+            "layout": "inline"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Footer"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.white"
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.heading"
+          }
+        },
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.3"
+          },
+          "bottom": {
+            "$token": "space.3"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "copyright",
+          "content": {}
+        }
+      ],
+      "content": {
+        "aria_label": "Copyright"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.white"
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.muted"
+          }
+        },
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

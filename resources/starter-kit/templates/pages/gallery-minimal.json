@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Photo gallery: Minimal"
+  },
+  "template": {
+    "name": "Photo gallery: Minimal",
+    "slug": "kit-page-gallery-minimal",
+    "scope": "page",
+    "category": "Gallery pages",
+    "description": "Albums by type: photo albums and video albums in two plain sections."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Gallery",
+            "level": "1"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Moments from our programmes, events and communities.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "Photos",
+            "show_date": true,
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 9,
+            "filters": {
+              "gallery_type": "photo"
+            }
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Photos"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "Videos",
+            "show_date": true,
+            "show_excerpt": false,
+            "empty_text": "No video albums yet."
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 6,
+            "filters": {
+              "gallery_type": "video"
+            }
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Videos"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

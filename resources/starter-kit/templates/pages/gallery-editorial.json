@@ -1,0 +1,139 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Photo gallery: Editorial"
+  },
+  "template": {
+    "name": "Photo gallery: Editorial",
+    "slug": "kit-page-gallery-editorial",
+    "scope": "page",
+    "category": "Gallery pages",
+    "description": "Masonry wall: the newest album’s photos in their own shapes, then a list of all albums."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "In pictures",
+            "level": "1",
+            "eyebrow": "Gallery"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Moments from our programmes, events and communities.</p>"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "gallery",
+          "content": {
+            "heading": null,
+            "columns": "3",
+            "show_captions": true,
+            "show_link": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 1
+          },
+          "display": {
+            "mode": "masonry"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Photos"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "All albums",
+            "show_date": true,
+            "show_excerpt": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 12
+          },
+          "display": {
+            "mode": "list"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "All albums"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -70,7 +70,7 @@ export function MenuBlock({ node, preview }) {
         </nav>
     ) : (
         // A new page starts with every sub-menu and the drawer closed.
-        <HorizontalMenu key={pathname} node={node} preview={preview} items={items} ariaLabel={ariaLabel || 'Main'} pathname={pathname} />
+        <HorizontalMenu key={pathname} node={node} preview={preview} items={items} ariaLabel={ariaLabel || 'Main'} pathname={pathname} drawerOnly={style === 'drawer'} />
     );
 }
 
@@ -94,7 +94,7 @@ function VerticalList({ items }) {
  * Disclosure navigation (WAI-ARIA): sub-menus open with buttons, never on hover only; Esc
  * closes and returns focus. Below the desktop width the menu moves into a drawer.
  */
-function HorizontalMenu({ node, preview, items, ariaLabel, pathname }) {
+function HorizontalMenu({ node, preview, items, ariaLabel, pathname, drawerOnly = false }) {
     const [open, setOpen] = useState(null);
     const [drawer, setDrawer] = useState(false);
     const navRef = useRef(null);
@@ -121,18 +121,20 @@ function HorizontalMenu({ node, preview, items, ariaLabel, pathname }) {
     }, []);
 
     return (
-        <nav {...frameProps(node, preview, 'pa-menu pa-menu--horizontal')} aria-label={ariaLabel} ref={navRef}>
-            <ul className="pa-menu__bar">
-                {items.map((item) => (
-                    <TopItem key={item.id} item={item} open={open === item.id} onToggle={() => setOpen(open === item.id ? null : item.id)} onClose={() => setOpen(null)} pathname={pathname} />
-                ))}
-            </ul>
+        <nav {...frameProps(node, preview, `pa-menu pa-menu--horizontal${drawerOnly ? ' pa-menu--drawer' : ''}`)} aria-label={ariaLabel} ref={navRef}>
+            {!drawerOnly && (
+                <ul className="pa-menu__bar">
+                    {items.map((item) => (
+                        <TopItem key={item.id} item={item} open={open === item.id} onToggle={() => setOpen(open === item.id ? null : item.id)} onClose={() => setOpen(null)} pathname={pathname} />
+                    ))}
+                </ul>
+            )}
             <button ref={toggleRef} type="button" className="pa-menu__toggle" aria-expanded={drawer} aria-controls={drawerId} onClick={() => setDrawer(true)}>
                 <i className="bi bi-list" aria-hidden="true" />
                 <span>Menu</span>
             </button>
             {/* At page level: the header's blur would otherwise confine a fixed drawer to the header. */}
-            {drawer && createPortal(<Drawer id={drawerId} items={items} label={ariaLabel} onClose={closeDrawer} pathname={pathname} />, document.body)}
+            {drawer && createPortal(<Drawer id={drawerId} items={items} label={ariaLabel} onClose={closeDrawer} pathname={pathname} keepOnDesktop={drawerOnly} />, document.body)}
         </nav>
     );
 }
@@ -217,7 +219,7 @@ function SubList({ items, pathname }) {
 }
 
 /** The menu on small screens: a modal drawer with accordion sub-levels; focus stays inside. */
-function Drawer({ id, items, label, onClose, pathname }) {
+function Drawer({ id, items, label, onClose, pathname, keepOnDesktop = false }) {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -229,14 +231,14 @@ function Drawer({ id, items, label, onClose, pathname }) {
         };
     }, []);
 
-    // Back on a desktop-width screen, the drawer is not needed.
+    // Back on a desktop-width screen, the drawer is not needed (unless it is the only menu).
     useEffect(() => {
-        const query = window.matchMedia?.(DESKTOP);
+        const query = keepOnDesktop ? null : window.matchMedia?.(DESKTOP);
         if (!query) return undefined;
         const close = () => query.matches && onClose();
         query.addEventListener?.('change', close);
         return () => query.removeEventListener?.('change', close);
-    }, [onClose]);
+    }, [onClose, keepOnDesktop]);
 
     const onKeyDown = (event) => {
         if (event.key === 'Escape') {

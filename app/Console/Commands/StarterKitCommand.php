@@ -16,6 +16,7 @@ class StarterKitCommand extends Command
 {
     protected $signature = 'pacms:starter
         {--pages : Also create draft pages (Home, About us, Contact, Get involved) from the page templates}
+        {--style=classic : Design style for --pages and the header and footer: classic, bold, editorial, impact or minimal}
         {--restore= : Put a shipped template back to its original design (its slug, or "all")}
         {--user= : E-mail of the account recorded as author (default: the first super admin)}';
 
@@ -36,7 +37,7 @@ class StarterKitCommand extends Command
             $restore = $this->option('restore');
             $rows = is_string($restore) && $restore !== ''
                 ? $kit->restore($user, $restore === 'all' ? null : $restore)
-                : $kit->install($user, (bool) $this->option('pages'));
+                : $kit->install($user, (bool) $this->option('pages'), (string) $this->option('style'));
         } catch (RuntimeException $e) {
             $this->components->error($e->getMessage());
 
@@ -47,7 +48,7 @@ class StarterKitCommand extends Command
             $this->components->twoColumnDetail("{$kind}: {$name}", $result);
         }
         $this->newLine();
-        $this->components->info('Templates are in the builder\'s Templates tab and under Design → Templates; "New page" can start from a page template.');
+        $this->components->info('Templates are in the builder\'s Templates tab and under Design → Templates; "New page → See the designs" starts from a page design. Headers and footers: Design → Header & footer.');
 
         return self::SUCCESS;
     }
