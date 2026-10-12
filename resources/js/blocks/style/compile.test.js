@@ -40,6 +40,10 @@ describe('compileTree', () => {
         // Links follow the readable colour (Bootstrap reads an RGB triplet).
         expect(dark).toContain('--bs-link-color-rgb: var(--pa-color-on-bg-dark-rgb);');
 
+        // A menu's current page on a filled bar keeps the readable colour, underlined.
+        expect(dark).toContain('--pa-menu-current: var(--pa-color-on-bg-dark);');
+        expect(dark).toContain('--pa-menu-current-line: underline;');
+
         // A theme text colour is read from its RGB copy, never as "--pa-color-heading: var(--pa-color-heading)",
         // which refers to itself and would be dropped by the browser.
         const themed = compileTree([node({ style: { background: { type: 'color', color: { $token: 'color.white' } }, typography: { color: { $token: 'color.heading' } } } })]);

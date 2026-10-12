@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import BlockRenderer from '../BlockRenderer.jsx';
 import { VisitorContext } from '../common/visitor.js';
@@ -104,6 +104,46 @@ describe('MenuBlock', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Menu' }));
         listeners.forEach((fn) => fn());
         expect(screen.getByRole('dialog', { name: 'Main navigation' })).toBeInTheDocument();
+    });
+
+    it('shows the menu button instead of wrapping when the bar does not fit beside the rest of its row', () => {
+        // jsdom has no layout: fake a 600px row holding the menu and a 120px button.
+        let resize;
+        window.ResizeObserver = class {
+            constructor(fn) { resize = fn; }
+            observe() {}
+            disconnect() {}
+        };
+        let barWidth = 700;
+        const widths = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function () { return this.classList.contains('row') ? 600 : 0; });
+        const offsets = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () { return this.classList.contains('btn') ? 120 : 0; });
+        const scrolls = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function () { return this.classList.contains('pa-menu__bar') ? barWidth : 0; });
+
+        try {
+            render(
+                <MemoryRouter>
+                    <VisitorContext.Provider value={{ signedIn: false }}>
+                        <div className="row" style={{ display: 'flex', columnGap: '20px' }}>
+                            <BlockRenderer nodes={[menu()]} />
+                            <a className="btn" href="/give">Give</a>
+                        </div>
+                    </VisitorContext.Provider>
+                </MemoryRouter>,
+            );
+            const nav = screen.getByRole('navigation', { name: 'Main' });
+            act(() => resize());
+            expect(nav.classList.contains('is-crowded')).toBe(true);
+
+            // Wider again (600 - 120 - 20 = 460px of room): the bar comes back.
+            barWidth = 400;
+            act(() => resize());
+            expect(nav.classList.contains('is-crowded')).toBe(false);
+        } finally {
+            widths.mockRestore();
+            offsets.mockRestore();
+            scrolls.mockRestore();
+            delete window.ResizeObserver;
+        }
     });
 
     it('lists every level in a vertical menu', () => {

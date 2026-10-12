@@ -431,6 +431,8 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     --bs-heading-color: rgb(var(--pa-color-heading-rgb));
     --bs-body-color: rgb(var(--pa-color-body-rgb));
     --pa-btn-outline: rgb(var(--pa-color-primary-rgb));
+    --pa-menu-current: var(--pa-color-primary);
+    --pa-menu-current-line: none;
     color: var(--pa-color-body);
 }
 
@@ -460,10 +462,14 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         font-weight: 600;
         text-decoration: none;
 
+        // On a filled bar (dark header) the section sets these to its readable colour and an
+        // underline (compile.js), since the primary colour would be hard to read there.
         &:hover,
         &.is-current,
         &[aria-current="page"] {
-            color: var(--pa-color-primary);
+            color: var(--pa-menu-current, var(--pa-color-primary));
+            text-decoration: var(--pa-menu-current-line, none);
+            text-underline-offset: .3em;
         }
     }
 
@@ -532,11 +538,22 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     }
 
     @include media-breakpoint-up(lg) {
+        // One line, never wrapped: a menu that does not fit beside the rest of its row shows the
+        // "Menu" button instead (is-crowded, set by the menu block, which keeps measuring the
+        // hidden bar so the menu comes back when there is room).
         &--horizontal &__bar {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             align-items: center;
-            gap: var(--pa-space-5);
+            gap: var(--pa-space-4);
+            white-space: nowrap;
+        }
+
+        &--horizontal.is-crowded &__bar {
+            position: absolute;
+            width: max-content;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         &__toggle {
@@ -544,7 +561,8 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         }
 
         // "Menu button only": the drawer on every screen width.
-        &--drawer &__toggle {
+        &--drawer &__toggle,
+        &--horizontal.is-crowded &__toggle {
             display: inline-flex;
         }
     }

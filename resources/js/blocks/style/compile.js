@@ -149,7 +149,13 @@ function styleDeclarations(style) {
             add(out, '--bs-link-hover-color', on);
         }
         add(out, '--pa-btn-outline', on);
-        if (FILLS.includes(fill)) add(out, '--pa-btn-outline-hover', `var(--pa-color-${fill})`);
+        if (FILLS.includes(fill)) {
+            add(out, '--pa-btn-outline-hover', `var(--pa-color-${fill})`);
+            // The menu's current page and hover: the primary colour would be hard to read on a
+            // filled bar, so they keep the readable colour and are underlined instead.
+            add(out, '--pa-menu-current', on);
+            add(out, '--pa-menu-current-line', 'underline');
+        }
     }
     add(out, 'font-family', token(typography.font));
     add(out, 'font-size', token(typography.size));
