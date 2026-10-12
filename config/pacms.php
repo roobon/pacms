@@ -8,6 +8,7 @@ use App\Cms\Blocks\Types\ButtonGroupBlock;
 use App\Cms\Blocks\Types\CardsBlock;
 use App\Cms\Blocks\Types\ColumnBlock;
 use App\Cms\Blocks\Types\ColumnsBlock;
+use App\Cms\Blocks\Types\ContactFormBlock;
 use App\Cms\Blocks\Types\ContactInfoBlock;
 use App\Cms\Blocks\Types\ContainerBlock;
 use App\Cms\Blocks\Types\CopyrightBlock;
@@ -37,6 +38,7 @@ use App\Cms\Blocks\Types\PublicationsBlock;
 use App\Cms\Blocks\Types\QuoteBlock;
 use App\Cms\Blocks\Types\RepeatBlock;
 use App\Cms\Blocks\Types\RichTextBlock;
+use App\Cms\Blocks\Types\SearchBlock;
 use App\Cms\Blocks\Types\SectionBlock;
 use App\Cms\Blocks\Types\SiteLogoBlock;
 use App\Cms\Blocks\Types\SlideBlock;
@@ -202,6 +204,7 @@ return [
             AccordionBlock::class,
             AccordionItemBlock::class,
             FaqBlock::class,
+            ContactFormBlock::class,
             QuoteBlock::class,
             CtaBlock::class,
             NewsBlock::class,
@@ -224,6 +227,7 @@ return [
             SocialLinksBlock::class,
             ContactInfoBlock::class,
             CopyrightBlock::class,
+            SearchBlock::class,
             AccountLinkBlock::class,
             GlobalRefBlock::class,
             RepeatBlock::class,

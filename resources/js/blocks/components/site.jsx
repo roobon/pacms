@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { frameProps } from '../common/frame.js';
 import SmartLink from '../common/SmartLink.jsx';
 import { VisitorContext, hasPanel, visibleItems } from '../common/visitor.js';
@@ -407,6 +407,73 @@ export function AccountLinkBlock({ node, preview }) {
                 {signedIn && <i className="bi bi-person-circle me-1" aria-hidden="true" />}
                 {signedIn ? account : signIn}
             </Link>
+        </div>
+    );
+}
+
+/** Site search: an icon that opens a box (headers), or a box. Leads to /search?q=…. */
+export function SearchBlock({ node, preview }) {
+    const { style = 'icon', placeholder = 'Search…' } = node.content;
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const panelId = useId();
+    const toggleRef = useRef(null);
+    const wrapperRef = useRef(null);
+
+    // A click or focus elsewhere closes the box.
+    useEffect(() => {
+        if (!open) return undefined;
+        const outside = (event) => {
+            if (!wrapperRef.current?.contains(event.target)) setOpen(false);
+        };
+        document.addEventListener('pointerdown', outside);
+        document.addEventListener('focusin', outside);
+        return () => {
+            document.removeEventListener('pointerdown', outside);
+            document.removeEventListener('focusin', outside);
+        };
+    }, [open]);
+
+    const submit = (event) => {
+        event.preventDefault();
+        if (preview || query.trim().length < 2) return;
+        setOpen(false);
+        navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    };
+    const form = (
+        <form role="search" onSubmit={submit} className={style === 'icon' ? 'pa-site-search__panel' : undefined} id={style === 'icon' ? panelId : undefined}>
+            <label htmlFor={`${panelId}-q`} className="visually-hidden">
+                Search this site
+            </label>
+            <input id={`${panelId}-q`} type="search" className="form-control" placeholder={placeholder} value={query} minLength={2} maxLength={100} autoFocus={style === 'icon'} onChange={(event) => setQuery(event.target.value)} />
+            <button type="submit" className="btn btn-primary">
+                <i className="bi bi-search" aria-hidden="true" />
+                <span className="visually-hidden">Search</span>
+            </button>
+        </form>
+    );
+
+    if (style === 'box') {
+        return <div {...frameProps(node, preview, 'pa-site-search pa-site-search--box')}>{form}</div>;
+    }
+
+    return (
+        <div
+            {...frameProps(node, preview, 'pa-site-search')}
+            ref={wrapperRef}
+            onKeyDown={(event) => {
+                if (event.key === 'Escape' && open) {
+                    setOpen(false);
+                    toggleRef.current?.focus();
+                }
+            }}
+        >
+            <button ref={toggleRef} type="button" className="pa-site-search__toggle" aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(!open)}>
+                <i className={`bi ${open ? 'bi-x-lg' : 'bi-search'}`} aria-hidden="true" />
+                <span className="visually-hidden">{open ? 'Close search' : 'Search'}</span>
+            </button>
+            {open && form}
         </div>
     );
 }

@@ -2,7 +2,7 @@
 
 A content management system for organisations: a **Laravel 12** backend and admin, and a public **React** website built from blocks.
 
-**Status:** Phase 10 (External Providers) complete: feeds, the richer text editor and Facebook Page posts. Latest release: **v0.10.0**. Next: Phase 11, the public React website. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
+**Status:** Phase 11 (public React website) in progress: 11A (search, contact form, account area) ready for review. Latest release: **v0.10.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
 
 ---
 
@@ -18,7 +18,8 @@ A content management system for organisations: a **Laravel 12** backend and admi
 | **Text editor** | Headings, theme colours and highlights, alignment, highlight boxes, images with captions, tables, links, full screen |
 | **Sharing** | JSON Feed of your content (`/feed.json`), reading other sites' feeds (JSON Feed, RSS, Atom, YouTube) and your Facebook Page's posts |
 | **AI-friendly JSON** | Import and export pages, sections and templates as JSON that tools like ChatGPT can write ([format](docs/CMS-BLOCK-SCHEMA.md)) |
-| **Search & SEO** | Site search, sitemaps, redirects, structured data |
+| **Search & SEO** | Site search (page and header search), sitemaps, redirects, structured data |
+| **Visitors** | Contact form with spam protection and a Messages inbox; accounts to send testimonials, change details or delete the account |
 | **Security** | Roles and permissions, two-factor sign-in for staff, HTML cleaning, safe outgoing requests, activity log |
 
 ---

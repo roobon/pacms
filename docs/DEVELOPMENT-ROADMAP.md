@@ -103,6 +103,7 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
 - *Merged in parts (10A feeds, the richer text editor, 10B Facebook); tagged v0.10.0 on 2026-10-12.*
 ### Phase 11 — Public React SPA (L)
 - Homepage from blocks, generic page route, archives and details for all types, search UI, account area (testimonial submission), SEO head sync, JSON-LD, sitemap, galleries + lightbox, external content blocks, loading/error/empty states, accessibility pass, prefetching, code-splitting review, OpenAPI for the public API. A contact form block (spam-protected, e-mail delivery), then used by the starter kit's Contact page.
+  - **11A** (search page and header search, contact form with Messages inbox, account area): *built, in review.* **11B**: states, accessibility, performance, OpenAPI.
 
 ### Phase 12 — Security / Testing audit (M)
 - Audit against SECURITY-ARCHITECTURE.md: authentication, authorization matrix, uploads, JSON import, SSRF, XML, XSS (payload corpus through every input), API leaks, providers, headers/CSP (nonce/hash styles), dependency audit. Playwright E2E for the critical paths.

@@ -65,7 +65,9 @@ class BlockPayloadResolver
                 continue;
             }
 
-            $fields = array_map(fn ($field) => $field->toArray(), $type->fields());
+            // Private fields (e.g. a contact form's recipient) never reach the website.
+            $private = $type->privateFields();
+            $fields = array_values(array_filter(array_map(fn ($field) => $field->toArray(), $type->fields()), fn ($field) => ! in_array($field['key'], $private, true)));
             $out = [
                 'uuid' => $node['uuid'],
                 'type' => $node['type'],

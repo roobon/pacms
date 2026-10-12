@@ -50,6 +50,7 @@ final class PermissionCatalog
         return $groups + [
             'Organization' => ['team.manage', 'partners.manage'],
             'Testimonials' => ['testimonials.view', 'testimonials.moderate', 'testimonials.publish', 'testimonials.delete'],
+            'Messages' => ['messages.manage'],
             'Media' => ['media.view', 'media.upload', 'media.update', 'media.delete', 'media.force_delete', 'media.upload_svg'],
             'Blocks & Design' => [
                 'blocks.custom_css', 'blocks.custom_attributes', 'blocks.custom_html', 'block_types.manage', 'templates.manage',
@@ -124,6 +125,7 @@ final class PermissionCatalog
             [
                 'team.manage', 'partners.manage',
                 'testimonials.view', 'testimonials.moderate', 'testimonials.publish', 'testimonials.delete',
+                'messages.manage',
                 'media.view', 'media.upload', 'media.update', 'media.delete',
                 'templates.manage', 'global_blocks.manage', 'global_blocks.detach', 'menus.manage',
                 'external_sources.sync', 'seo.manage', 'redirects.manage', 'taxonomies.manage',

@@ -60,6 +60,13 @@
                   }
                 },
                 {
+                  "type": "search",
+                  "content": {
+                    "style": "icon",
+                    "placeholder": "Search…"
+                  }
+                },
+                {
                   "type": "account-link",
                   "content": {
                     "sign_in_label": "Sign in",
