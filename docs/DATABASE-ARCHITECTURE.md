@@ -529,6 +529,9 @@ Index: `INDEX(external_source_id, published_at)`.
 
 **Phase 8C.2 (built):** plus `type varchar(32)`, the registry key used by the `type[]` filter (`pages`, `news`, `events`…); the index is `INDEX(type, published_at)`. `searchable_type` is the morph alias. Rows exist only for live pages and published items of searchable modules (those with pages; not partners or testimonials); pages get `boost` 2. Kept current by `SearchObserver` after each commit; `pacms:search:rebuild` rebuilds it.
 
+### contact_messages (Phase 11A)
+`id, name varchar(120), email varchar(191), subject varchar(200) null, message text, recipient varchar(191), page_url varchar(2048) null, block_uuid char(26) null, consent bool, mailed bool, read_at null, timestamps` · Messages from Contact form blocks, shown in the admin inbox (Messages, `messages.manage`). Pruned after 90 days (`model:prune`).
+
 ### activity_logs
 `id, user_id FK users null SET NULL, action varchar(64), subject_type varchar(32) null, subject_id bigint null, subject_label varchar(255) null, ip varchar(45) null, user_agent_hash char(64) null, properties json null, created_at` · `INDEX(subject_type, subject_id)`, `INDEX(user_id, created_at)`, `INDEX(action, created_at)`.
 

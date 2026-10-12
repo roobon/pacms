@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AccountController;
+use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\MenuController;
 use App\Http\Controllers\Api\V1\PageController;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('site', SiteController::class)->name('site');
+    Route::post('contact', ContactController::class)->middleware('throttle:20,1')->name('contact');
     Route::get('menus/{slug}', MenuController::class)->where('slug', '[a-z0-9\-]+')->middleware('cache.headers:public;max_age=300;etag')->name('menus.show');
 
     Route::middleware('cache.headers:public;max_age=60;etag')->group(function () {
@@ -32,6 +35,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', MeController::class)->name('me');
+        Route::delete('me', [AccountController::class, 'destroy'])->middleware('throttle:5,1')->name('me.destroy');
         Route::get('me/testimonials', [TestimonialController::class, 'mine'])->name('me.testimonials');
         // Verified e-mail address required; 3 a day per account and 10 per IP (counted in the controller).
         Route::post('testimonials', [TestimonialController::class, 'store'])

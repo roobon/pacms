@@ -5,6 +5,7 @@ import { authHttp, ensureCsrfCookie } from '../../api/client.js';
 import { useMe } from '../../hooks/useMe.js';
 import PageSkeleton from '../../components/common/PageSkeleton.jsx';
 import TestimonialSection from './TestimonialSection.jsx';
+import { DeleteAccount, PasswordForm, ProfileForm } from './AccountSettings.jsx';
 
 export default function AccountPage() {
     const { data: me, isPending } = useMe();
@@ -54,14 +55,7 @@ export default function AccountPage() {
                 </div>
             )}
 
-            <dl className="row">
-                <dt className="col-sm-3">Name</dt>
-                <dd className="col-sm-9">{me.name}</dd>
-                <dt className="col-sm-3">E-mail</dt>
-                <dd className="col-sm-9">{me.email}</dd>
-            </dl>
-
-            <div className="d-flex flex-wrap gap-2">
+            <div className="d-flex flex-wrap gap-2 mb-2">
                 {me.can_access_admin && (
                     <a href="/admin" className="btn btn-primary">
                         Go to admin
@@ -73,6 +67,10 @@ export default function AccountPage() {
             </div>
 
             <TestimonialSection me={me} />
+            <ProfileForm me={me} />
+            <PasswordForm />
+            {/* Staff accounts are managed by administrators. */}
+            {!me.can_access_admin && <DeleteAccount />}
         </div>
     );
 }

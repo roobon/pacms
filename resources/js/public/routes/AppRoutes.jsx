@@ -10,6 +10,7 @@ import PreviewPage from '../pages/PreviewPage.jsx';
 const LoginPage = lazyWithReload(() => import('../pages/account/LoginPage.jsx'));
 const RegisterPage = lazyWithReload(() => import('../pages/account/RegisterPage.jsx'));
 const AccountPage = lazyWithReload(() => import('../pages/account/AccountPage.jsx'));
+const SearchPage = lazyWithReload(() => import('../pages/SearchPage.jsx'));
 // Only used inside the admin Block Builder.
 const BuilderPreviewPage = lazyWithReload(() => import('../pages/BuilderPreviewPage.jsx'));
 
@@ -33,6 +34,14 @@ export default function AppRoutes() {
             <Route element={<SiteShell />}>
                 <Route index element={<ContentRoute />} />
                 <Route path="preview/:kind/:id" element={<PreviewPage />} />
+                <Route
+                    path="search"
+                    element={
+                        <Suspense fallback={<PageSkeleton />}>
+                            <SearchPage />
+                        </Suspense>
+                    }
+                />
                 <Route
                     path="account"
                     element={

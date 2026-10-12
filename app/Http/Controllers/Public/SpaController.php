@@ -22,6 +22,7 @@ class SpaController extends Controller
 {
     /** Fixed SPA routes: path pattern => page title. */
     private const APP_ROUTES = [
+        '#^search$#' => 'Search',
         '#^account$#' => 'My account',
         '#^account/login$#' => 'Sign in',
         '#^account/register$#' => 'Create an account',

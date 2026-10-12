@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MediaCoverageController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MenuPanelController;
+use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\NavigationSettingsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PagePreviewController;
@@ -146,6 +147,14 @@ Route::post('media-coverage/{item}/check-source', [MediaCoverageController::clas
     ->whereNumber('item')->middleware('throttle:20,1')->name('media_coverage.check-source');
 
 // Reusable blocks (Phase 5): global blocks, templates, custom block types
+// Phase 11A: messages from Contact form blocks.
+Route::middleware('can:messages.manage')->group(function () {
+    Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('messages/{message}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('messages/{message}/unread', [MessageController::class, 'unread'])->name('messages.unread');
+    Route::delete('messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+});
+
 // Phase 10B: connecting the organisation's Facebook Page.
 Route::middleware('can:facebook.connect')->prefix('external-sources/facebook')->name('facebook.')->group(function () {
     Route::get('/', [FacebookController::class, 'show'])->name('show');

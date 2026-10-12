@@ -145,6 +145,17 @@ abstract class BlockType
     }
 
     /**
+     * Fields kept on the server: saved and edited as usual, but left out of the public
+     * payload (e.g. a contact form's recipient address).
+     *
+     * @return list<string>
+     */
+    public function privateFields(): array
+    {
+        return [];
+    }
+
+    /**
      * Default values for a newly inserted block (content/layout/style/display/children).
      *
      * @return array<string, mixed>

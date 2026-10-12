@@ -4,7 +4,8 @@ import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, QuoteBlock, 
 import { CollectionBlock, FacebookFeedBlock, FeedBlock, GalleryBlock, NewsBlock, PartnersBlock, TestimonialsBlock } from './components/collections.jsx';
 import { CustomBlock, GlobalRefBlock } from './components/reusable.jsx';
 import { SlideBlock, SliderBlock } from './components/slider.jsx';
-import { AccountLinkBlock, ContactInfoBlock, CopyrightBlock, MenuBlock, SiteLogoBlock, SocialLinksBlock } from './components/site.jsx';
+import { ContactFormBlock } from './components/forms.jsx';
+import { AccountLinkBlock, ContactInfoBlock, CopyrightBlock, MenuBlock, SearchBlock, SiteLogoBlock, SocialLinksBlock } from './components/site.jsx';
 
 /**
  * Block type slug → React component. Must mirror config('pacms.blocks.types').
@@ -34,6 +35,7 @@ export const components = {
     statistics: StatisticsBlock,
     accordion: AccordionBlock,
     faq: FaqBlock,
+    'contact-form': ContactFormBlock,
     quote: QuoteBlock,
     cta: CtaBlock,
     news: NewsBlock,
@@ -55,6 +57,7 @@ export const components = {
     'contact-info': ContactInfoBlock,
     copyright: CopyrightBlock,
     'account-link': AccountLinkBlock,
+    search: SearchBlock,
     'global-ref': GlobalRefBlock,
     // Every custom block type ("custom/…") shares one component.
     'custom/*': CustomBlock,

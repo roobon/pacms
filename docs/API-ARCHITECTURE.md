@@ -129,6 +129,12 @@ This is Laravel's paginated Resource Collection format, unchanged.
 | `GET /api/v1/me/testimonials` | The user's own submissions with status (no internal notes) |
 | `POST /api/v1/testimonials` | Multipart: fields + photo + `consent=true`. Needs a verified email. Rate limit 3/day/user and 10/day/IP. Returns `201` with status `pending`. |
 | `GET /api/v1/testimonials/options` | Published programs, projects and events for the form's selects |
+| `PUT /auth/user/profile-information`, `PUT /auth/user/password` | Fortify: change name and e-mail (a new address must be verified again) or password |
+| `DELETE /api/v1/me` | `{ password }`. Deletes the visitor's own account for good, with their unpublished testimonials; published ones stay without the account link. Staff accounts get `403`. Throttle 5/min (Phase 11A) |
+
+### 3.1 Contact form (Phase 11A)
+
+`POST /api/v1/contact` (guests welcome): `{ block, name, email, subject?, message, consent?, page?, elapsed, website }`. `block` is the Contact form block's id; the recipient is read from the block on the server (fallback: the site contact e-mail) and never sent by the browser. A filled `website` field (honeypot) or `elapsed` under 3 s returns a normal-looking `202` and keeps nothing. Returns `201` with the block's thank-you text; the message is stored and e-mailed (queued, reply-to the sender).
 
 ---
 
@@ -215,6 +221,7 @@ Server-side, payloads are cached with **cache-version keys** (CMS-ARCHITECTURE.m
 | `search` | 30/min per IP |
 | `auth` (login, register, reset) | 5/min per IP + email key; lockout after 10 failures/hour |
 | `testimonial-submit` | 3/day per user, 10/day per IP |
+| `contact` | 5/min and 20/day per IP (plus route throttle 20/min) |
 | `admin-api` | 300/min per user |
 | `import` | 10/hour per user |
 | `external-sync-now` | 6/hour per source |

@@ -5,8 +5,10 @@ namespace App\Support\Admin;
 use App\Cms\Content\ContentType;
 use App\Cms\Content\ContentTypeRegistry;
 use App\Enums\TestimonialStatus;
+use App\Models\ContactMessage;
 use App\Models\Testimonial;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 
 /**
  * Admin sidebar definition (CMS-ARCHITECTURE.md §23.2). Items appear only when the
@@ -27,6 +29,8 @@ final class AdminNavigation
             // Folding groups keep the menu short however many content types there are (8D.2).
             ['label' => 'Content', 'items' => [
                 ['label' => 'Pages', 'route' => 'admin.pages.index', 'icon' => 'bi-file-earmark-richtext', 'active' => 'admin.pages.*', 'can' => 'pages.view'],
+                ['label' => 'Messages', 'route' => 'admin.messages.index', 'icon' => 'bi-envelope', 'active' => 'admin.messages.*', 'can' => 'messages.manage',
+                    'badge' => $user->can('messages.manage') ? self::unreadMessages() : null, 'badge_label' => 'unread'],
                 ['group' => 'modules', 'label' => 'Modules', 'icon' => 'bi-grid', 'items' => [
                     ...self::contentModules(adminMade: false),
                     ['label' => 'Testimonials', 'route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'active' => 'admin.testimonials.*', 'can' => 'testimonials.view',
@@ -110,6 +114,20 @@ final class AdminNavigation
         }
 
         return $visible;
+    }
+
+    /**
+     * Contact form messages not opened yet (the badge on the menu entry).
+     */
+    private static function unreadMessages(): ?int
+    {
+        try {
+            $count = ContactMessage::query()->whereNull('read_at')->count();
+        } catch (QueryException) {
+            return null; // before the 11A migration
+        }
+
+        return $count > 0 ? $count : null;
     }
 
     /**

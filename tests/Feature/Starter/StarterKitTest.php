@@ -84,6 +84,9 @@ it('lets a new page start from a page template', function () {
     expect(count($blocks))->toBe(count($original))
         ->and($blocks[0]['uuid'])->not->toBe($original[0]['uuid']);
 
+    // The Contact template carries a working contact form.
+    expect(json_encode($blocks))->toContain('"type":"contact-form"');
+
     // Section templates are not offered as a start.
     $section = BlockTemplate::query()->where('slug', 'kit-faq')->firstOrFail();
     $this->actingAs($admin)->post(route('admin.pages.store'), ['title' => 'Other', 'template' => 'default', 'start_template_id' => $section->id])->assertSessionHasErrors('start_template_id');
@@ -106,7 +109,7 @@ it('gives a new site its menus, header and footer, without touching ones already
     // The kit's header and footer are now the site's, and show the logo, menu and copyright.
     $chrome = $this->getJson('/api/v1/site')->json('data.chrome');
     $types = collect($chrome['header'][0]['children'][0]['children'][0]['children'])->flatMap(fn ($column) => array_column($column['children'], 'type'))->all();
-    expect($types)->toBe(['site-logo', 'menu', 'account-link'])
+    expect($types)->toBe(['site-logo', 'menu', 'search', 'account-link'])
         ->and($chrome['footer'])->toHaveCount(1);
 
     // A second run leaves menus with items and a chosen header alone.

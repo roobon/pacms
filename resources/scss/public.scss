@@ -1577,6 +1577,101 @@ img.pa-ratio {
     }
 }
 
+// Contact form (Phase 11A): the spam-trap field is off screen, not display:none (robots skip those).
+.pa-hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.pa-contact-form {
+    max-width: 44rem;
+}
+
+// Account settings (Phase 11A).
+.pa-account-section {
+    margin-top: var(--pa-space-7);
+    padding-top: var(--pa-space-5);
+    border-top: 1px solid var(--pa-color-border);
+}
+
+// Site search (Phase 11) --------------------------------------------------------------------
+.pa-search-page {
+    max-width: 52rem;
+
+    &__form {
+        display: flex;
+        gap: var(--pa-space-2);
+    }
+}
+
+.pa-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pa-space-2);
+
+    button.pa-chip { cursor: pointer; }
+}
+
+.pa-search-result {
+    padding: var(--pa-space-4) 0;
+    border-bottom: 1px solid var(--pa-color-border);
+
+    mark {
+        padding: 0 .1em;
+        background: color-mix(in srgb, var(--pa-color-accent, #F2A93B) 30%, transparent);
+        color: inherit;
+    }
+
+    &.pa-skeleton-block {
+        height: 6rem;
+        border: 0;
+        margin-bottom: var(--pa-space-3);
+        border-radius: var(--pa-radius-sm);
+        background: linear-gradient(90deg, #EEF2F5 25%, #F7F9FA 37%, #EEF2F5 63%);
+        background-size: 400% 100%;
+        animation: pa-shimmer 1.4s ease infinite;
+    }
+}
+
+// The header's search: an icon that opens a box (a full-width bar on phones).
+.pa-site-search {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    &__toggle {
+        min-width: 44px;
+        min-height: 44px;
+        border: 0;
+        background: none;
+        color: var(--pa-color-heading);
+        font-size: 1.125rem;
+    }
+
+    &__panel {
+        position: absolute;
+        top: calc(100% + .5rem);
+        right: 0;
+        z-index: 1040;
+        display: flex;
+        gap: var(--pa-space-2);
+        width: min(24rem, calc(100vw - 2rem));
+        padding: var(--pa-space-3);
+        border: 1px solid var(--pa-color-border);
+        border-radius: var(--pa-radius-md);
+        background: #fff;
+        box-shadow: var(--pa-shadow-md);
+    }
+
+    &--box form {
+        display: flex;
+        gap: var(--pa-space-2);
+    }
+}
+
 .pa-pagination {
     display: flex;
     justify-content: center;

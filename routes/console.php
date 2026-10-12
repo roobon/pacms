@@ -2,6 +2,7 @@
 
 use App\Jobs\QueueHeartbeat;
 use App\Models\ActivityLog;
+use App\Models\ContactMessage;
 use App\Models\ExternalSyncLog;
 use App\Services\System\HealthCheck;
 use Illuminate\Support\Facades\Cache;
@@ -28,7 +29,7 @@ if (! config('pacms.queue.managed_worker')) {
         ->runInBackground();
 }
 
-Schedule::command('model:prune', ['--model' => [ActivityLog::class, ExternalSyncLog::class]])->daily();
+Schedule::command('model:prune', ['--model' => [ActivityLog::class, ExternalSyncLog::class, ContactMessage::class]])->daily();
 
 // Scheduled publishing and revision retention.
 Schedule::command('pacms:publish-scheduled')->everyMinute()->withoutOverlapping();

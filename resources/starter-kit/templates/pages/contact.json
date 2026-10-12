@@ -10,7 +10,7 @@
     "slug": "kit-page-contact",
     "scope": "page",
     "category": "Pages",
-    "description": "Introduction, contact details and common questions."
+    "description": "Introduction, contact details, a contact form and common questions."
   },
   "blocks": [
     {
@@ -175,6 +175,35 @@
       "content": {
         "aria_label": "Contact details"
       }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "content": {
+        "aria_label": "Send us a message"
+      },
+      "children": [
+        {
+          "type": "contact-form",
+          "content": {
+            "heading": "Send us a message",
+            "show_subject": true,
+            "consent_text": "I agree that my message is stored for 90 days and used only to answer me.",
+            "button_label": "Send message",
+            "thank_you": "Thank you! We have received your message and will reply soon."
+          }
+        }
+      ]
     },
     {
       "type": "section",

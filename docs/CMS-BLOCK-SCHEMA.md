@@ -189,6 +189,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 | `accordion` | ✔ [accordion-item] | S | `heading`?, `description`? |
 | `accordion-item` | ✔ [basic, columns] | S | `title` (required). Children = the answer body |
 | `faq` | – | S | `items` repeater: `question`, `answer` (rich text); emits FAQPage JSON-LD |
+| `contact-form` | – | S | `heading`, `recipient` (e-mail, **private**: never in the public payload; empty = site contact e-mail), `show_subject`, `consent_text` (empty = no consent box), `button_label`, `thank_you`. Sends to `POST /api/v1/contact` (Phase 11A) |
 | `tabs` | ✔ [tab] | S | – |
 | `tab` | ✔ [basic, columns] | S | `title` |
 | `quote` | – | S | `text`, `author`, `role`, `image` |
@@ -229,6 +230,7 @@ Shared collection `content` fields: `heading`?, `intro`?, `empty_text`?, `more_l
 | `global-ref` | – | `content.global`: `$ref` to a global block |
 | `menu` | – | `content.menu`: `$ref` to a menu; `content.style`: `horizontal`/`vertical`/`mega-capable` (used in header/footer) |
 | `site-logo`, `social-links`, `contact-info`, `copyright`, `newsletter` | – | Header/footer building blocks reading site settings |
+| `search` | – | Site search for the header: `style` (`icon` opens a box, `box` shows it), `placeholder`. Goes to `/search?q=` (Phase 11A) |
 | `repeat` | ✔ | Only in custom block structures: `content.field` = repeater field key |
 | `custom/<slug>` | per type | Instance of a custom block type; `content` = its field values |
 | `type/<key>` | – | Collection of an admin-made content type (8D.2), e.g. `type/success_stories`; same content, source and display as the built-in collections. Only valid on sites that have the type |
