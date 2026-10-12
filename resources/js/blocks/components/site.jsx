@@ -98,8 +98,10 @@ function HorizontalMenu({ node, preview, items, ariaLabel, pathname, drawerOnly 
     const [open, setOpen] = useState(null);
     const [drawer, setDrawer] = useState(false);
     const navRef = useRef(null);
+    const barRef = useRef(null);
     const toggleRef = useRef(null);
     const drawerId = useId();
+    const crowded = useCrowded(navRef, barRef, !drawerOnly);
 
     // Clicks and focus outside close an open sub-menu.
     useEffect(() => {
@@ -121,9 +123,9 @@ function HorizontalMenu({ node, preview, items, ariaLabel, pathname, drawerOnly 
     }, []);
 
     return (
-        <nav {...frameProps(node, preview, `pa-menu pa-menu--horizontal${drawerOnly ? ' pa-menu--drawer' : ''}`)} aria-label={ariaLabel} ref={navRef}>
+        <nav {...frameProps(node, preview, `pa-menu pa-menu--horizontal${drawerOnly ? ' pa-menu--drawer' : ''}${crowded ? ' is-crowded' : ''}`)} aria-label={ariaLabel} ref={navRef}>
             {!drawerOnly && (
-                <ul className="pa-menu__bar">
+                <ul className="pa-menu__bar" ref={barRef}>
                     {items.map((item) => (
                         <TopItem key={item.id} item={item} open={open === item.id} onToggle={() => setOpen(open === item.id ? null : item.id)} onClose={() => setOpen(null)} pathname={pathname} />
                     ))}
@@ -134,9 +136,42 @@ function HorizontalMenu({ node, preview, items, ariaLabel, pathname, drawerOnly 
                 <span>Menu</span>
             </button>
             {/* At page level: the header's blur would otherwise confine a fixed drawer to the header. */}
-            {drawer && createPortal(<Drawer id={drawerId} items={items} label={ariaLabel} onClose={closeDrawer} pathname={pathname} keepOnDesktop={drawerOnly} />, document.body)}
+            {drawer && createPortal(<Drawer id={drawerId} items={items} label={ariaLabel} onClose={closeDrawer} pathname={pathname} keepOnDesktop={drawerOnly || crowded} />, document.body)}
         </nav>
     );
+}
+
+/**
+ * Whether the menu bar is wider than the room it has: the width of its row (the header column)
+ * less the blocks beside it. The bar is measured even while hidden (is-crowded keeps it in the
+ * page, invisible), so the menu comes back when the window widens. Below the desktop width the
+ * bar is not shown at all and measures 0.
+ */
+function useCrowded(navRef, barRef, enabled) {
+    const [crowded, setCrowded] = useState(false);
+
+    useEffect(() => {
+        const nav = navRef.current;
+        const bar = barRef.current;
+        const row = nav?.parentElement;
+        if (!enabled || !bar || !row || typeof ResizeObserver === 'undefined') return undefined;
+
+        const measure = () => {
+            const style = window.getComputedStyle(row);
+            let room = row.clientWidth - parseFloat(style.paddingLeft || 0) - parseFloat(style.paddingRight || 0);
+            if (style.display.includes('flex') && !style.flexDirection.startsWith('column')) {
+                const others = [...row.children].filter((child) => child !== nav);
+                room -= others.reduce((sum, child) => sum + child.offsetWidth, 0) + others.length * (parseFloat(style.columnGap) || 0);
+            }
+            setCrowded(bar.scrollWidth > Math.ceil(room));
+        };
+        const observer = new ResizeObserver(measure);
+        observer.observe(row);
+        observer.observe(bar);
+        return () => observer.disconnect();
+    }, [navRef, barRef, enabled]);
+
+    return crowded;
 }
 
 function TopItem({ item, open, onToggle, onClose, pathname }) {
