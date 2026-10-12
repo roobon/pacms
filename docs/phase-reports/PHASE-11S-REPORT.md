@@ -3,15 +3,15 @@
 | | |
 |---|---|
 | Date | 2026-10-12 |
-| Branch | `phase/11s-starter-designs` (from `main` after 11A) |
+| Branch | `phase/11s-starter-designs` (from `main` after 11A) → merged into `main` 2026-10-12 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review by the team lead. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-12. |
 
 ```
 PHASE:   11S — more starter kit designs, requested by the team lead (2026-10-12): five designs
          to choose from for the header, footer, Home, About us, Contact and Photo gallery pages,
          with pictures wherever a design is chosen.
-STATUS:  READY FOR REVIEW. 11B (states, accessibility, performance, OpenAPI) follows; v0.11.0
+STATUS:  APPROVED by the team lead (2026-10-12) and merged into main. 11B (states, accessibility, performance, OpenAPI) follows; v0.11.0
          is tagged after 11B.
          Decisions (team lead, 2026-10-12, "use your defaults"): K-1 five style families;
          K-2 grouped pickers with pictures; K-3 no photos shipped; K-4 install adds, never

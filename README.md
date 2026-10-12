@@ -2,7 +2,7 @@
 
 A content management system for organisations: a **Laravel 12** backend and admin, and a public **React** website built from blocks.
 
-**Status:** Phase 11 (public React website) in progress: 11A (search, contact form, account area) merged; 11S (starter kit: five design styles) ready for review; 11B (states, accessibility, performance, OpenAPI) next. Latest release: **v0.10.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
+**Status:** Phase 11 (public React website) in progress: 11A (search, contact form, account area) merged; 11S (starter kit: five design styles) merged; 11B (states, accessibility, performance, OpenAPI) next. Latest release: **v0.10.0**. See the [roadmap](docs/DEVELOPMENT-ROADMAP.md) and the [phase reports](docs/phase-reports/).
 
 ---
 
