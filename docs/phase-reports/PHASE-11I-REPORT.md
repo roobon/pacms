@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-13 |
-| Branch | `starter/institutional-blocks` (from `main` after the Institutional style) |
+| Branch | `starter/institutional-blocks` (from `main` after the Institutional style) → merged into `main` 2026-10-13 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted). Awaiting review by the team lead. |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-13. |
 
 ```
 PHASE:   11I — the blocks and options still missing to build a page like fee.global, and
          the Institutional designs updated to use them.
-STATUS:  READY FOR REVIEW.
+STATUS:  APPROVED by the team lead (2026-10-13) and merged into main.
          Decisions (team lead, 2026-10-13, "use your defaults"): I-1 build the five small
          additions; I-2 use them in the Institutional designs; I-3 no Instagram now (the
          Facebook posts block covers "latest on socials"); I-4 no cookie banner (PACMS sets
