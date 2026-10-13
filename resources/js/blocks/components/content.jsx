@@ -2,6 +2,7 @@ import BlockRenderer from '../BlockRenderer.jsx';
 import Image from '../common/Image.jsx';
 import { containerClass, frameProps } from '../common/frame.js';
 import ItemsDisplay from '../display/ItemsDisplay.jsx';
+import SmartLink from '../common/SmartLink.jsx';
 import Accordion from './Accordion.jsx';
 
 export function HeroBlock({ node, preview, children }) {
@@ -115,5 +116,42 @@ export function QuoteBlock({ node, preview }) {
                 </figcaption>
             )}
         </figure>
+    );
+}
+
+/** Logo row (Phase 11I): chosen logos with a name and an optional link (to a page here or elsewhere). */
+export function LogoRowBlock({ node, preview }) {
+    const { heading, items = [], size = 'lg', show_labels: showLabels = false, grayscale = false } = node.content;
+    if (!items.length) return preview ? <div {...frameProps(node, preview, 'pa-placeholder')}>Add logos</div> : null;
+
+    return (
+        <div {...frameProps(node, preview, 'pa-logo-row')}>
+            {heading && <h2 className="pa-block-heading">{heading}</h2>}
+            <ul className={`pa-logos pa-logos--${size}${grayscale ? ' pa-logos--grayscale' : ''}${showLabels ? ' pa-logos--labelled' : ''} list-unstyled`} aria-label={heading || 'Logos'}>
+                {items.map((item, index) => {
+                    // The name is the logo's text alternative; shown under it only if chosen.
+                    const logo = item.image ? <Image image={{ ...item.image, alt: showLabels ? '' : item.label }} className="pa-logos__image" sizes="12rem" /> : null;
+                    const content = (
+                        <>
+                            {logo}
+                            {/* Without a logo yet, the name stands in, in a tile the size of a logo. */}
+                            {!logo && <span className="pa-logos__tile">{item.label}</span>}
+                            {showLabels && logo && <span className="pa-logos__name">{item.label}</span>}
+                        </>
+                    );
+                    return (
+                        <li key={index} className="pa-logos__item">
+                            {item.link?.href ? (
+                                <SmartLink link={item.link} className="pa-logos__link">
+                                    {content}
+                                </SmartLink>
+                            ) : (
+                                content
+                            )}
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
     );
 }

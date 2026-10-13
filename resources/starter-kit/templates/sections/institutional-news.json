@@ -3,14 +3,14 @@
   "kind": "template",
   "meta": {
     "generator": "PACMS starter kit",
-    "title": "Institutional: news in four columns"
+    "title": "Institutional: news in five columns"
   },
   "template": {
-    "name": "Institutional: news in four columns",
+    "name": "Institutional: news in five columns",
     "slug": "kit-institutional-news",
     "scope": "section",
     "category": "Institutional",
-    "description": "The four newest news items under a title in capitals, with a button."
+    "description": "The five newest news items under a title in capitals, with a button."
   },
   "blocks": [
     {
@@ -47,7 +47,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },
@@ -62,12 +63,12 @@
             "mode": "dynamic",
             "entity": "news",
             "order": "latest",
-            "limit": 4
+            "limit": 5
           },
           "display": {
             "mode": "grid",
             "columns": {
-              "desktop": 4,
+              "desktop": 5,
               "tablet": 3,
               "mobile": 1
             },
@@ -91,7 +92,8 @@
               "style": {
                 "typography": {
                   "transform": "uppercase",
-                  "weight": 700
+                  "weight": 700,
+                  "letter_spacing": "wider"
                 }
               }
             }

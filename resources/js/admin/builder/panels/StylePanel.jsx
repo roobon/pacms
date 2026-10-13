@@ -125,6 +125,18 @@ export default function StylePanel({ node, onChange, errors, disabled = false })
                         </select>
                     </div>
                     <div className="col-6 mb-2">
+                        <label className="form-label small" htmlFor={`${id}-ls`}>
+                            Letter spacing
+                        </label>
+                        <select id={`${id}-ls`} className="form-select form-select-sm" value={style.typography?.letter_spacing ?? ''} disabled={disabled} onChange={(e) => set('typography.letter_spacing', e.target.value || undefined)}>
+                            <option value="">Default</option>
+                            <option value="normal">Normal</option>
+                            <option value="wide">Wide</option>
+                            <option value="wider">Wider</option>
+                            <option value="widest">Widest</option>
+                        </select>
+                    </div>
+                    <div className="col-6 mb-2">
                         <label className="form-label small" htmlFor={`${id}-lh`}>
                             Line height
                         </label>

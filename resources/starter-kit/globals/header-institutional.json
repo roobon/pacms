@@ -46,7 +46,8 @@
                   "content": {
                     "variant": "dark",
                     "size": "md",
-                    "show_name": true
+                    "show_name": true,
+                    "layout": "stacked"
                   }
                 }
               ]
@@ -66,7 +67,8 @@
                       "transform": "uppercase",
                       "size": {
                         "$token": "font-size.sm"
-                      }
+                      },
+                      "letter_spacing": "wide"
                     }
                   }
                 },
@@ -86,7 +88,8 @@
                       "weight": 700,
                       "size": {
                         "$token": "font-size.sm"
-                      }
+                      },
+                      "letter_spacing": "wider"
                     }
                   }
                 }

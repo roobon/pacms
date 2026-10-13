@@ -14,6 +14,8 @@ export default function ItemsDisplay({ items, display = {}, showExcerpt = true, 
         '--pa-cols-d': columns.desktop ?? 3,
         '--pa-cols-t': columns.tablet ?? Math.min(2, columns.desktop ?? 3),
         '--pa-cols-m': columns.mobile ?? 1,
+        // 5 or 6 columns ask for compact items: the usual 15rem minimum would allow only 4 (Phase 11I).
+        ...((columns.desktop ?? 3) >= 5 ? { '--pa-item-min': '10rem' } : {}),
     };
     const cardProps = { showExcerpt, showDate, headingLevel, cardStyle: display.card_style ?? 'elevated', ratio: display.image_ratio ?? '16:9' };
 

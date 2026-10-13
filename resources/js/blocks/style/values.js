@@ -44,6 +44,7 @@ const ENUMS = {
     justify: { start: 'flex-start', center: 'center', end: 'flex-end', between: 'space-between', around: 'space-around', evenly: 'space-evenly' },
     textAlign: { start: 'start', center: 'center', end: 'end' },
     transform: { none: 'none', uppercase: 'uppercase', lowercase: 'lowercase', capitalize: 'capitalize' },
+    letterSpacing: { normal: 'normal', wide: '0.03em', wider: '0.06em', widest: '0.1em' },
     bgPosition: { center: 'center', top: 'center top', bottom: 'center bottom', left: 'left center', right: 'right center' },
     bgSize: { cover: 'cover', contain: 'contain', auto: 'auto' },
     borderStyle: { solid: 'solid', dashed: 'dashed', dotted: 'dotted' },
