@@ -82,6 +82,7 @@ return [
         'templates/pages/home-editorial.json',
         'templates/pages/home-impact.json',
         'templates/pages/home-minimal.json',
+        'templates/pages/home-programmes.json',
         'templates/pages/about.json',
         'templates/pages/about-bold.json',
         'templates/pages/about-editorial.json',
