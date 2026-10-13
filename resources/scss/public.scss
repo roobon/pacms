@@ -482,6 +482,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         padding: 0 var(--pa-space-2);
         color: inherit;
         font: inherit;
+        // Buttons do not inherit capitals by default; a menu set in capitals keeps them.
+        text-transform: inherit;
+        letter-spacing: inherit;
         min-height: 44px;
         min-width: 44px;
         cursor: pointer;

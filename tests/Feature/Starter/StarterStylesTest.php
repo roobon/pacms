@@ -14,16 +14,17 @@ it('ships five designs for each area, each with a picture', function () {
     $this->artisan('pacms:starter')->assertSuccessful();
 
     expect(array_keys($manifest['styles']))->toBe(['classic', 'bold', 'editorial', 'impact', 'minimal']);
-    // Home pages also have "Home: Programmes", which belongs to no style.
-    foreach (['Home pages' => 6, 'About pages' => 5, 'Contact pages' => 5, 'Gallery pages' => 5] as $category => $count) {
+    // Home pages also have "Home: Programmes" and "Home: Institutional", which belong to no style.
+    foreach (['Home pages' => 7, 'About pages' => 5, 'Contact pages' => 5, 'Gallery pages' => 5] as $category => $count) {
         expect(BlockTemplate::query()->where('category', $category)->count())->toBe($count, $category);
     }
+    // Five styles, plus the Institutional header and footer.
     foreach (['header', 'footer'] as $kind) {
-        expect(GlobalBlock::query()->where('kind', $kind)->whereNotNull('published_revision_id')->count())->toBe(5, $kind);
+        expect(GlobalBlock::query()->where('kind', $kind)->whereNotNull('published_revision_id')->count())->toBe(6, $kind);
     }
 
     // Every shipped page design, header and footer has a thumbnail.
-    $slugs = [...BlockTemplate::query()->where('scope', 'page')->pluck('slug')->all(), ...$manifest['style_globals']['header'], ...$manifest['style_globals']['footer']];
+    $slugs = [...BlockTemplate::query()->where('scope', 'page')->pluck('slug')->all(), ...GlobalBlock::query()->whereIn('kind', ['header', 'footer'])->pluck('slug')->all()];
     foreach ($slugs as $slug) {
         expect(StarterKitService::thumbnail($slug))->toEndWith("/images/starter-kit/{$slug}.webp");
     }

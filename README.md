@@ -137,9 +137,9 @@ The kit comes in **five styles**: Classic, Bold, Editorial, Impact and Minimal. 
 
 | Area | Designs |
 |---|---|
-| Header | 5: classic, dark with a Donate button, centred logo, top bar with contact details, menu button only |
-| Footer | 5: classic columns, big call to action, centred, dark "stay in touch", one compact row |
-| Home page | 6: classic, photo slider, story-led, numbers first, community, and **Programmes** (your programmes and projects first; it goes with any style) |
+| Header | 6: classic, dark with a Donate button, centred logo, top bar with contact details, menu button only, and **Institutional** (primary-colour bar, menu in capitals) |
+| Footer | 6: classic columns, big call to action, centred, dark "stay in touch", one compact row, and **Institutional** (partner logos between primary-colour bands) |
+| Home page | 7: classic, photo slider, story-led, numbers first, community, **Programmes** (your programmes and projects first) and **Institutional** (photo strip, capitals titles, initiatives between thin lines); these two go with any style |
 | About us | 5: mission and values, team, story and milestones, impact report, partners and history |
 | Contact | 5: classic, form beside a details panel, questions first, departments and offices, form only |
 | Photo gallery | 5: albums grid, latest album on dark, masonry wall, carousel and grid, photos and videos |
