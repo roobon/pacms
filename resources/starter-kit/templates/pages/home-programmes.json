@@ -1,0 +1,646 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home: Programmes"
+  },
+  "template": {
+    "name": "Home: Programmes",
+    "slug": "kit-page-home-programmes",
+    "scope": "page",
+    "category": "Home pages",
+    "description": "Your work first: a hero beside your newest project, programme cards, impact numbers, featured projects, partners and news."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                7,
+                5
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.7"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Programmes that change lives, projects you can see",
+                    "level": "1",
+                    "eyebrow": "What we do"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Say what your programmes do, who they are for and where you work. Keep it to two lines.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Our programmes",
+                        "link": {
+                          "type": "url",
+                          "url": "/programs"
+                        },
+                        "variant": "accent"
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Current projects",
+                        "link": {
+                          "type": "url",
+                          "url": "/projects"
+                        },
+                        "variant": "outline"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Current project (dark text on the white card)",
+                  "style": {
+                    "typography": {
+                      "color": {
+                        "$token": "color.heading"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "projects",
+                      "content": {
+                        "heading": "",
+                        "empty_text": "Your current project will show here.",
+                        "show_excerpt": true,
+                        "show_date": false
+                      },
+                      "source": {
+                        "mode": "dynamic",
+                        "entity": "projects",
+                        "order": "latest",
+                        "limit": 1,
+                        "filters": {
+                          "project_status": "ongoing"
+                        }
+                      },
+                      "display": {
+                        "mode": "grid",
+                        "columns": {
+                          "desktop": 1,
+                          "tablet": 1,
+                          "mobile": 1
+                        },
+                        "card_style": "elevated",
+                        "image_ratio": "4:3"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary-strong"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.primary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Our programmes",
+            "level": "2",
+            "eyebrow": "What we do"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>One sentence about how your programmes fit together.</p>"
+          },
+          "layout": {
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          }
+        },
+        {
+          "type": "programs",
+          "content": {
+            "heading": "",
+            "show_date": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "programs",
+            "order": "latest",
+            "limit": 3
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "4:3"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "All programmes",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                },
+                "variant": "outline"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center",
+            "margin": {
+              "top": {
+                "$token": "space.6"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Programmes"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.7"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "statistics",
+          "content": {
+            "heading": "",
+            "items": [
+              {
+                "value": 8,
+                "label": "Programmes",
+                "icon": "bi-diagram-3"
+              },
+              {
+                "value": 45,
+                "label": "Projects completed",
+                "icon": "bi-check2-circle"
+              },
+              {
+                "value": 5000,
+                "suffix": "+",
+                "label": "People reached",
+                "icon": "bi-people"
+              },
+              {
+                "value": 12,
+                "label": "Districts",
+                "icon": "bi-geo-alt"
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 2
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our impact"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Projects in action",
+            "level": "2",
+            "eyebrow": "On the ground"
+          }
+        },
+        {
+          "type": "projects",
+          "content": {
+            "heading": "",
+            "show_date": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "projects",
+            "order": "latest",
+            "limit": 4
+          },
+          "display": {
+            "mode": "featured",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "All projects",
+                "link": {
+                  "type": "url",
+                  "url": "/projects"
+                },
+                "variant": "primary"
+              }
+            }
+          ],
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.6"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Projects"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                6,
+                6
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.7"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Work with us on a programme",
+                    "level": "2",
+                    "eyebrow": "Partners"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Say how schools, donors and other organisations can join a programme or fund a project.</p>"
+                  }
+                },
+                {
+                  "type": "list",
+                  "content": {
+                    "style": "check",
+                    "item_padding": "sm",
+                    "items": [
+                      {
+                        "text": "Programmes designed with the community"
+                      },
+                      {
+                        "text": "Clear plans, budgets and timelines"
+                      },
+                      {
+                        "text": "Honest reports on what changed"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Become a partner",
+                        "link": {
+                          "type": "url",
+                          "url": "/get-involved"
+                        },
+                        "variant": "primary"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "quote",
+                  "content": {
+                    "text": "A sentence from a partner about what working with you on a programme has changed.",
+                    "author": "Name Surname",
+                    "role": "Programme partner"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Partner with us"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.7"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "partners",
+          "content": {
+            "heading": "Supported by",
+            "style": "logos",
+            "grayscale": true,
+            "logo_size": "md"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "partners",
+            "order": "position",
+            "limit": 12
+          },
+          "display": {
+            "mode": "carousel",
+            "columns": {
+              "desktop": 6,
+              "tablet": 3,
+              "mobile": 2
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Partners"
+      },
+      "style": {
+        "border": {
+          "width": {
+            "value": 1,
+            "unit": "px"
+          },
+          "style": "solid",
+          "color": {
+            "$token": "color.border"
+          },
+          "sides": [
+            "top"
+          ]
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": "News from our programmes"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 3
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 3,
+              "tablet": 2,
+              "mobile": 1
+            },
+            "card_style": "elevated",
+            "image_ratio": "16:9"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.bg-light"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}
