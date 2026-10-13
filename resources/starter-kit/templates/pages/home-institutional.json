@@ -1,0 +1,1291 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home: Institutional"
+  },
+  "template": {
+    "name": "Home: Institutional",
+    "slug": "kit-page-home-institutional",
+    "scope": "page",
+    "category": "Home pages",
+    "description": "Institutional: a strip of photos, a large title, your programmes, initiatives in rows between thin lines, a report, news in five columns and social links."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "mobile": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ],
+              "tablet": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+              ]
+            },
+            "gap": {
+              "$token": "space.1"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 200,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-people",
+                        "label": "Photo 1",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 200,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-tree",
+                        "label": "Photo 2",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 200,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-mortarboard",
+                        "label": "Photo 3",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 200,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-droplet",
+                        "label": "Photo 4",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 200,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-camera",
+                        "label": "Photo 5",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 200,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-award",
+                        "label": "Photo 6",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Photos"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "The name of your organisation",
+            "level": "1"
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              }
+            }
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Say when you started, how many people and places you reach, and what your plan for the coming years puts first. Two or three sentences are enough.</p><p>Then name your main programmes and link each one to its page, so visitors can go straight to what interests them.</p>"
+          },
+          "style": {
+            "typography": {
+              "size": {
+                "$token": "font-size.lg"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.6"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Find out more about our programmes",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "programs",
+          "content": {
+            "heading": "",
+            "show_date": false,
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "programs",
+            "order": "title",
+            "limit": 6
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 6,
+              "tablet": 3,
+              "mobile": 1
+            },
+            "card_style": "flat",
+            "image_ratio": "1:1"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>One sentence about how the programmes work together and who they are for.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "All programmes",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                },
+                "variant": "primary"
+              },
+              "style": {
+                "typography": {
+                  "transform": "uppercase",
+                  "weight": 700
+                }
+              }
+            }
+          ],
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.5"
+              }
+            },
+            "justify": "center"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Programmes"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        },
+        {
+          "type": "heading",
+          "content": {
+            "text": "Global initiatives",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                8
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 330,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.pill"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-tree",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Join a campaign for nature",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p><strong>Inspire people. Take action. Join a movement.</strong></p><p>Say what the campaign is, who runs it with you and what taking part involves.</p><p>Add what participants get: resources, activities and a community to belong to.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Join the movement",
+                        "link": {
+                          "type": "url",
+                          "url": "/get-involved"
+                        },
+                        "variant": "primary"
+                      },
+                      "style": {
+                        "typography": {
+                          "transform": "uppercase",
+                          "weight": 700
+                        }
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "margin": {
+                      "top": {
+                        "$token": "space.5"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                7,
+                5
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Online learning",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p><strong>Learn at your own pace, wherever you are.</strong></p><p>Describe your courses: who they are for, what people learn and how long they take.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Start learning",
+                        "link": {
+                          "type": "url",
+                          "url": "/programs"
+                        },
+                        "variant": "primary"
+                      },
+                      "style": {
+                        "typography": {
+                          "transform": "uppercase",
+                          "weight": 700
+                        }
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "margin": {
+                      "top": {
+                        "$token": "space.5"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 320,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.md"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-laptop",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                8
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 330,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.pill"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-calendar-event",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Take part in our action days",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p><strong>Discover. Take action. Inspire change.</strong></p><p>Give the dates and say what people can do: practical activities, events near them, and ways to share what they did.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Explore the action days",
+                        "link": {
+                          "type": "url",
+                          "url": "/events"
+                        },
+                        "variant": "primary"
+                      },
+                      "style": {
+                        "typography": {
+                          "transform": "uppercase",
+                          "weight": 700
+                        }
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "margin": {
+                      "top": {
+                        "$token": "space.5"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Initiatives"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Recent publications and reports",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                8,
+                4
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Annual report",
+                    "level": "3"
+                  },
+                  "style": {
+                    "typography": {
+                      "color": {
+                        "$token": "color.primary"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Say what the report shows: results, the people reached and what comes next. One short paragraph.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Read the annual report",
+                        "link": {
+                          "type": "url",
+                          "url": "/publications"
+                        },
+                        "variant": "primary"
+                      },
+                      "style": {
+                        "typography": {
+                          "transform": "uppercase",
+                          "weight": 700
+                        }
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "margin": {
+                      "top": {
+                        "$token": "space.5"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 320,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.sm"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-file-earmark-text",
+                        "label": "Report cover",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Publications"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Latest news",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "news",
+          "content": {
+            "heading": "",
+            "show_excerpt": false,
+            "show_date": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 4
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 3,
+              "mobile": 1
+            },
+            "card_style": "flat",
+            "image_ratio": "1:1"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Read more news",
+                "link": {
+                  "type": "url",
+                  "url": "/news"
+                },
+                "variant": "primary"
+              },
+              "style": {
+                "typography": {
+                  "transform": "uppercase",
+                  "weight": 700
+                }
+              }
+            }
+          ],
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.5"
+              }
+            },
+            "justify": "center"
+          }
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Follow us",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "social-links",
+          "content": {
+            "style": "icons"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Follow us"
+      }
+    }
+  ]
+}

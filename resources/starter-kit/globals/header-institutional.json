@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "kind": "block",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Header: Institutional"
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.5"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                2,
+                10
+              ],
+              "mobile": [
+                6,
+                6
+              ]
+            },
+            "gap": {
+              "$token": "space.4"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "site-logo",
+                  "content": {
+                    "variant": "dark",
+                    "size": "md",
+                    "show_name": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "menu",
+                  "content": {
+                    "menu": "main",
+                    "style": "horizontal",
+                    "aria_label": "Main"
+                  },
+                  "style": {
+                    "typography": {
+                      "transform": "uppercase",
+                      "size": {
+                        "$token": "font-size.sm"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "outline"
+                  },
+                  "style": {
+                    "typography": {
+                      "transform": "uppercase",
+                      "weight": 700,
+                      "size": {
+                        "$token": "font-size.sm"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "content": {
+        "aria_label": "Site header"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        }
+      }
+    }
+  ]
+}

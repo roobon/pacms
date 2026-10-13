@@ -22,7 +22,7 @@ it('installs every template and global block of the kit through the import pipel
     expect(GlobalBlock::query()->whereIn('slug', array_keys($manifest['globals']))->count())->toBe(count($manifest['globals']))
         ->and(GlobalBlock::query()->where('slug', 'call-to-action')->value('status'))->toBe('published')
         ->and(BlockTemplate::query()->where('is_system', true)->count())->toBe(count($manifest['templates']))
-        ->and(BlockTemplate::query()->where('scope', 'page')->count())->toBe(27)
+        ->and(BlockTemplate::query()->where('scope', 'page')->count())->toBe(28)
         ->and(Page::query()->count())->toBe(0);
 });
 
