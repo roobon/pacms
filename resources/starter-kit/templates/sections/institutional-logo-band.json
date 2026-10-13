@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Institutional: logo band"
+  },
+  "template": {
+    "name": "Institutional: logo band",
+    "slug": "kit-institutional-logo-band",
+    "scope": "section",
+    "category": "Institutional",
+    "description": "Partner or programme logos on white between two bands in the primary colour."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [],
+      "content": {
+        "aria_label": "Band"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.6"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "partners",
+          "content": {
+            "heading": "",
+            "style": "logos",
+            "grayscale": false,
+            "logo_size": "lg"
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "partners",
+            "order": "position",
+            "limit": 8
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 6,
+              "tablet": 3,
+              "mobile": 2
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Our programmes and partners"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.white"
+          }
+        },
+        "typography": {
+          "color": {
+            "$token": "color.heading"
+          }
+        }
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [],
+      "content": {
+        "aria_label": "Band"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        }
+      }
+    }
+  ]
+}

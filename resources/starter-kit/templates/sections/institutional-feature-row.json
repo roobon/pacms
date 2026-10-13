@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Institutional: feature row"
+  },
+  "template": {
+    "name": "Institutional: feature row",
+    "slug": "kit-institutional-feature-row",
+    "scope": "section",
+    "category": "Institutional",
+    "description": "A round photo beside a heading, a bold lead, text and a button, between thin lines."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Global initiatives",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                8
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 330,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.pill"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-tree",
+                        "label": "Photo",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Join a campaign for nature",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p><strong>Inspire people. Take action. Join a movement.</strong></p><p>Say what the campaign is, who runs it with you and what taking part involves.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Join the movement",
+                        "link": {
+                          "type": "url",
+                          "url": "/get-involved"
+                        },
+                        "variant": "primary"
+                      },
+                      "style": {
+                        "typography": {
+                          "transform": "uppercase",
+                          "weight": 700
+                        }
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "margin": {
+                      "top": {
+                        "$token": "space.5"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Initiative"
+      }
+    }
+  ]
+}

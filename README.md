@@ -133,16 +133,18 @@ php artisan pacms:starter --pages --style=bold   # the pages, header and footer 
 php artisan pacms:starter --restore=all   # put the shipped templates back to their original design
 ```
 
-The kit comes in **five styles**: Classic, Bold, Editorial, Impact and Minimal. Each style has a matching design for every area below, so a site built in one style looks consistent, and mixing styles also works.
+The kit comes in **six styles**: Classic, Bold, Editorial, Impact, Minimal and Institutional. Each style has a matching design for every area below, so a site built in one style looks consistent, and mixing styles also works.
 
 | Area | Designs |
 |---|---|
-| Header | 6: classic, dark with a Donate button, centred logo, top bar with contact details, menu button only, and **Institutional** (primary-colour bar, menu in capitals) |
-| Footer | 6: classic columns, big call to action, centred, dark "stay in touch", one compact row, and **Institutional** (partner logos between primary-colour bands) |
-| Home page | 7: classic, photo slider, story-led, numbers first, community, **Programmes** (your programmes and projects first) and **Institutional** (photo strip, capitals titles, initiatives between thin lines); these two go with any style |
-| About us | 5: mission and values, team, story and milestones, impact report, partners and history |
-| Contact | 5: classic, form beside a details panel, questions first, departments and offices, form only |
-| Photo gallery | 5: albums grid, latest album on dark, masonry wall, carousel and grid, photos and videos |
+| Header | 6: classic, dark with a Donate button, centred logo, top bar with contact details, menu button only, institutional (primary-colour bar, menu in capitals) |
+| Footer | 6: classic columns, big call to action, centred, dark "stay in touch", one compact row, institutional (partner logos between primary-colour bands) |
+| Home page | 7: classic, photo slider, story-led, numbers first, community, institutional (photo strip, titles in capitals, initiatives between thin lines), and **Programmes** (your programmes and projects first; it goes with any style) |
+| About us | 6: mission and values, team, story and milestones, impact report, partners and history, institutional |
+| Contact | 6: classic, form beside a details panel, questions first, departments and offices, form only, institutional |
+| Photo gallery | 6: albums grid, latest album on dark, masonry wall, carousel and grid, photos and videos, institutional |
+
+The Institutional style also has **section templates** for any page (Templates tab → Institutional): a photo strip, a feature row, a report with its cover, news in four columns and a logo band.
 
 The kit also includes:
 - Get involved and landing pages for News, Events, Projects, Programmes and Publications;

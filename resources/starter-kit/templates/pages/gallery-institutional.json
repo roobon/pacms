@@ -1,0 +1,273 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Photo gallery: Institutional"
+  },
+  "template": {
+    "name": "Photo gallery: Institutional",
+    "slug": "kit-page-gallery-institutional",
+    "scope": "page",
+    "category": "Gallery pages",
+    "description": "Institutional: a large title, the newest album’s photos, then every album in four columns, between thin lines."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Photo gallery",
+            "level": "1"
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              }
+            }
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Moments from our programmes, events and communities.</p>"
+          },
+          "style": {
+            "typography": {
+              "size": {
+                "$token": "font-size.lg"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Latest album",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "gallery",
+          "content": {
+            "heading": null,
+            "columns": "4",
+            "show_captions": true,
+            "show_link": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 1
+          },
+          "display": {
+            "mode": "grid"
+          }
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest album"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "All albums",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "galleries",
+          "content": {
+            "heading": "",
+            "show_date": true,
+            "show_excerpt": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 12
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 3,
+              "mobile": 1
+            },
+            "card_style": "flat",
+            "image_ratio": "4:3"
+          }
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "All albums"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Follow us",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "social-links",
+          "content": {
+            "style": "icons"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Follow us"
+      }
+    }
+  ]
+}
