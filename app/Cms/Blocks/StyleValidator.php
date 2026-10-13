@@ -278,6 +278,8 @@ final class StyleValidator
                 'line_height' => is_numeric($v) && $v >= 0.8 && $v <= 3 ? round((float) $v, 2) : $this->invalid($p),
                 'align' => $this->values->enum($v, ['start', 'center', 'end'], $p),
                 'transform' => $this->values->enum($v, ['none', 'uppercase', 'lowercase', 'capitalize'], $p),
+                // Named steps, not free values (Phase 11I): spaced capitals for titles and buttons.
+                'letter_spacing' => $this->values->enum($v, ['normal', 'wide', 'wider', 'widest'], $p),
                 default => null,
             };
         }

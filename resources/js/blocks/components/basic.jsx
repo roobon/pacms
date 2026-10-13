@@ -29,13 +29,20 @@ export function RichTextBlock({ node, preview }) {
 }
 
 export function ImageBlock({ node, preview }) {
-    const { image, alt, caption, link, ratio } = node.content;
+    const { image, alt, caption, link, ratio, shape = 'square' } = node.content;
     if (!image) return preview ? <div {...frameProps(node, preview, 'pa-placeholder')}>Choose an image</div> : null;
 
     const img = (
         <Image
             image={{ ...image, alt: alt || image.alt }}
-            className={`pa-block-image ${ratio && ratio !== 'auto' ? `pa-ratio pa-ratio--${ratio.replace(':', 'x')}` : ''}`}
+            className={[
+                'pa-block-image',
+                // A circle is always a square crop.
+                shape !== 'circle' && ratio && ratio !== 'auto' ? `pa-ratio pa-ratio--${ratio.replace(':', 'x')}` : '',
+                ['rounded', 'circle'].includes(shape) ? `pa-shape--${shape}` : '',
+            ]
+                .filter(Boolean)
+                .join(' ')}
         />
     );
 

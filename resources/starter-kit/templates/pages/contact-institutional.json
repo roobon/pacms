@@ -224,7 +224,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },
@@ -359,7 +360,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },

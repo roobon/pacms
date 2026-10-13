@@ -418,8 +418,68 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
+          }
+        },
+        {
+          "type": "logos",
+          "content": {
+            "heading": null,
+            "size": "lg",
+            "show_labels": true,
+            "grayscale": false,
+            "items": [
+              {
+                "label": "First programme",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "label": "Second programme",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "label": "Third programme",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "label": "Fourth programme",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "label": "Fifth programme",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              },
+              {
+                "label": "Sixth programme",
+                "link": {
+                  "type": "url",
+                  "url": "/programs"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>One sentence about how the programmes work together and who they are for.</p>"
           }
         },
         {
@@ -427,7 +487,7 @@
           "content": {
             "heading": "",
             "show_date": false,
-            "show_excerpt": false
+            "show_excerpt": true
           },
           "source": {
             "mode": "dynamic",
@@ -436,20 +496,8 @@
             "limit": 6
           },
           "display": {
-            "mode": "grid",
-            "columns": {
-              "desktop": 6,
-              "tablet": 3,
-              "mobile": 1
-            },
-            "card_style": "flat",
-            "image_ratio": "1:1"
-          }
-        },
-        {
-          "type": "rich-text",
-          "content": {
-            "html": "<p>One sentence about how the programmes work together and who they are for.</p>"
+            "mode": "list",
+            "show_image": false
           }
         },
         {
@@ -468,7 +516,8 @@
               "style": {
                 "typography": {
                   "transform": "uppercase",
-                  "weight": 700
+                  "weight": 700,
+                  "letter_spacing": "wider"
                 }
               }
             }
@@ -537,7 +586,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },
@@ -640,7 +690,8 @@
                       "style": {
                         "typography": {
                           "transform": "uppercase",
-                          "weight": 700
+                          "weight": 700,
+                          "letter_spacing": "wider"
                         }
                       }
                     }
@@ -724,7 +775,8 @@
                       "style": {
                         "typography": {
                           "transform": "uppercase",
-                          "weight": 700
+                          "weight": 700,
+                          "letter_spacing": "wider"
                         }
                       }
                     }
@@ -904,7 +956,8 @@
                       "style": {
                         "typography": {
                           "transform": "uppercase",
-                          "weight": 700
+                          "weight": 700,
+                          "letter_spacing": "wider"
                         }
                       }
                     }
@@ -976,7 +1029,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },
@@ -1038,7 +1092,8 @@
                       "style": {
                         "typography": {
                           "transform": "uppercase",
-                          "weight": 700
+                          "weight": 700,
+                          "letter_spacing": "wider"
                         }
                       }
                     }
@@ -1158,7 +1213,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },
@@ -1173,12 +1229,12 @@
             "mode": "dynamic",
             "entity": "news",
             "order": "latest",
-            "limit": 4
+            "limit": 5
           },
           "display": {
             "mode": "grid",
             "columns": {
-              "desktop": 4,
+              "desktop": 5,
               "tablet": 3,
               "mobile": 1
             },
@@ -1202,7 +1258,8 @@
               "style": {
                 "typography": {
                   "transform": "uppercase",
-                  "weight": 700
+                  "weight": 700,
+                  "letter_spacing": "wider"
                 }
               }
             }
@@ -1272,7 +1329,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },

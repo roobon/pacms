@@ -158,7 +158,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 | `heading` | – | S | `text` (≤ 255), `level` (1–6, default 2), `eyebrow`? |
 | `rich-text` | – | S | `html` (§8.3) |
 | `list` | – | S | `style` (bullet/number/check/icon), `icon`?, `columns` (1–3), `item_padding` (none/sm/md/lg), `dividers` bool, `items[]`: `text`, `icon`?, `link`? |
-| `image` | – | S | `image` (media), `alt`?, `caption`?, `link`? (§8.4), `lightbox` bool |
+| `image` | – | S | `image` (media), `alt`?, `caption`?, `link`? (§8.4), `lightbox` bool, `ratio`, `shape` (`square`/`rounded`/`circle`; a circle is a square crop, Phase 11I) |
 | `video` | – | S | `provider` (`youtube`/`vimeo`/`media`), `url` or `media`, `poster`?, `title` (required for a11y) |
 | `button` | – | S | `label`, `link`, `variant` (`primary`/`secondary`/`accent`/`outline`/`link`), `icon`?, `icon_position` |
 | `button-group` | ✔ [button] | S | `align` |
@@ -184,6 +184,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 | `slide` | ✔ [basic, container, columns] | S | `background_image`? |
 | `carousel` | – | S | `items` repeater: `image`, `title`, `text`, `link` |
 | `cards` | – | S | `items` repeater: `image`, `icon`, `title`, `text`, `link` |
+| `logos` | – | S | Logo row (Phase 11I): `heading`?, `items` repeater (`image`? — without one the name shows in a tile, `label` required, `link`?), `size` (`sm`/`md`/`lg`), `show_labels`, `grayscale` |
 | `statistics` | – | S, D | `items` repeater: `value` (number), `prefix`, `suffix`, `label`, `icon`; D = computed counts (entity totals) |
 | `timeline` | – | S | `items` repeater: `date_label`, `title`, `text`, `image` |
 | `accordion` | ✔ [accordion-item] | S | `heading`?, `description`? |
@@ -229,7 +230,7 @@ Shared collection `content` fields: `heading`?, `intro`?, `empty_text`?, `more_l
 |---|---|---|
 | `global-ref` | – | `content.global`: `$ref` to a global block |
 | `menu` | – | `content.menu`: `$ref` to a menu; `content.style`: `horizontal`/`vertical`/`drawer` (`drawer`, Phase 11S: only a Menu button, the drawer on every screen width) (used in header/footer) |
-| `site-logo`, `social-links`, `contact-info`, `copyright`, `newsletter` | – | Header/footer building blocks reading site settings |
+| `site-logo`, `social-links`, `contact-info`, `copyright`, `newsletter` | – | Header/footer building blocks reading site settings. `site-logo.layout`: `inline` or `stacked` (name under the logo, Phase 11I) |
 | `search` | – | Site search for the header: `style` (`icon` opens a box, `box` shows it), `placeholder`. Goes to `/search?q=` (Phase 11A) |
 | `repeat` | ✔ | Only in custom block structures: `content.field` = repeater field key |
 | `custom/<slug>` | per type | Instance of a custom block type; `content` = its field values |
@@ -482,6 +483,7 @@ Modes: `grid, cards, list, masonry, justified, carousel, slider, featured, quote
 | `background.gradient` | `{ "angle": 0–360, "stops": [ {color, at: 0–100} ×2–4 ] }` |
 | `background.video` | media/asset (muted, loop, `poster` required; paused under reduced motion) |
 | `typography.weight` | 300–900 step 100 |
+| `typography.letter_spacing` | `normal, wide, wider, widest` (0.03em, 0.06em, 0.1em; Phase 11I) |
 | `animation.type` | `none, fade, fade-up, fade-down, slide-left, slide-right, zoom` (disabled under reduced motion) |
 | `radius`, `shadow` | token only |
 

@@ -47,7 +47,8 @@
                 "$token": "color.primary"
               },
               "transform": "uppercase",
-              "align": "center"
+              "align": "center",
+              "letter_spacing": "wide"
             }
           }
         },
@@ -150,7 +151,8 @@
                       "style": {
                         "typography": {
                           "transform": "uppercase",
-                          "weight": 700
+                          "weight": 700,
+                          "letter_spacing": "wider"
                         }
                       }
                     }

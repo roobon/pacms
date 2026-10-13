@@ -33,6 +33,7 @@ class SiteLogoBlock extends SiteBlock
             Field::select('variant', ['default' => 'Normal logo', 'dark' => 'Logo for dark backgrounds'])->label('Logo')->default('default'),
             Field::select('size', ['sm' => 'Small', 'md' => 'Medium', 'lg' => 'Large'])->label('Size')->default('md'),
             Field::checkbox('show_name')->label('Show the site name')->default(true)->help('Always shown when no logo is set.'),
+            Field::select('layout', ['inline' => 'Name beside the logo', 'stacked' => 'Name under the logo'])->label('Layout')->default('inline'),
         ];
     }
 

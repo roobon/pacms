@@ -164,6 +164,7 @@ function styleDeclarations(style) {
     if (lineHeight >= 0.8 && lineHeight <= 3) add(out, 'line-height', String(lineHeight));
     add(out, 'text-align', enumValue('textAlign', typography.align));
     add(out, 'text-transform', enumValue('transform', typography.transform));
+    add(out, 'letter-spacing', enumValue('letterSpacing', typography.letter_spacing));
 
     const border = style.border;
     if (border?.width) {

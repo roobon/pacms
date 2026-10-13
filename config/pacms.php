@@ -28,6 +28,7 @@ use App\Cms\Blocks\Types\HtmlBlock;
 use App\Cms\Blocks\Types\IconBlock;
 use App\Cms\Blocks\Types\ImageBlock;
 use App\Cms\Blocks\Types\ListBlock;
+use App\Cms\Blocks\Types\LogoRowBlock;
 use App\Cms\Blocks\Types\MediaCoverageBlock;
 use App\Cms\Blocks\Types\MenuBlock;
 use App\Cms\Blocks\Types\NewsBlock;
@@ -200,6 +201,7 @@ return [
             SliderBlock::class,
             SlideBlock::class,
             CardsBlock::class,
+            LogoRowBlock::class,
             StatisticsBlock::class,
             AccordionBlock::class,
             AccordionItemBlock::class,

@@ -36,11 +36,11 @@ function Label({ item }) {
 }
 
 export function SiteLogoBlock({ node, preview }) {
-    const { size = 'md', show_name: showName = true } = node.content;
+    const { size = 'md', show_name: showName = true, layout = 'inline' } = node.content;
     const { name = '', logo = null } = node.data ?? {};
 
     return (
-        <div {...frameProps(node, preview, `pa-site-logo pa-site-logo--${size}`)}>
+        <div {...frameProps(node, preview, `pa-site-logo pa-site-logo--${size}${layout === 'stacked' ? ' pa-site-logo--stacked' : ''}`)}>
             <Link to="/" className="pa-site-logo__link">
                 {logo && <img src={logo.src} srcSet={logo.srcset || undefined} sizes="240px" width={logo.width} height={logo.height} alt={showName ? '' : name} className="pa-site-logo__image" />}
                 {(showName || !logo) && <span className="pa-site-logo__name">{name}</span>}

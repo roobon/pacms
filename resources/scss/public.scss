@@ -419,6 +419,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         font-size: 1.125rem;
         color: var(--pa-color-heading);
     }
+
+    // The name under the logo (Phase 11I).
+    &--stacked &__link {
+        flex-direction: column;
+        gap: var(--pa-space-1);
+        text-align: center;
+    }
 }
 
 // Menus: disclosure navigation (buttons open sub-menus; never hover only).
@@ -1012,6 +1019,17 @@ main:has(.pa-page-blocks) ~ .pa-site-footer {
 
 img.pa-ratio {
     object-fit: cover;
+}
+
+// Image shapes (Phase 11I).
+img.pa-shape--rounded {
+    border-radius: var(--pa-radius-lg);
+}
+
+img.pa-shape--circle {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .pa-divider {
@@ -1935,7 +1953,7 @@ img.pa-ratio {
 
     &--sm { --pa-logo-width: 7rem; --pa-logo-height: 3rem; }
     &--md { --pa-logo-width: 9rem; --pa-logo-height: 4rem; }
-    &--lg { --pa-logo-width: 12rem; --pa-logo-height: 5.5rem; }
+    &--lg { --pa-logo-width: 10rem; --pa-logo-height: 5.5rem; }
 
     &__item {
         display: flex;
@@ -1967,6 +1985,37 @@ img.pa-ratio {
         font-weight: 600;
         color: var(--pa-color-heading);
         text-align: center;
+    }
+
+    // A logo not added yet: its name in a tile the size of a logo (Logo row, Phase 11I).
+    &__tile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: var(--pa-logo-height, 4rem);
+        padding: var(--pa-space-2);
+        border: 1px dashed var(--pa-color-border-strong);
+        border-radius: var(--pa-radius-md);
+        color: var(--pa-color-heading);
+        font-weight: 600;
+        text-align: center;
+    }
+
+    &__link:has(&__tile) {
+        width: 100%;
+        text-decoration: none;
+    }
+
+    // Names under the logos (Logo row, Phase 11I).
+    &--labelled &__link,
+    &--labelled &__item {
+        flex-direction: column;
+        gap: var(--pa-space-2);
+    }
+
+    &--labelled &__name {
+        font-size: var(--pa-font-size-sm);
     }
 
     &--grayscale &__image { filter: grayscale(1); opacity: .75; }

@@ -35,6 +35,7 @@ class ImageBlock extends BlockType
             Field::textarea('caption')->label('Caption')->max(500),
             Field::link('link')->label('Link (optional)'),
             Field::select('ratio', ['auto' => 'Original', '1:1' => 'Square', '4:3' => '4:3', '16:9' => '16:9', '21:9' => 'Wide'])->label('Crop')->default('auto'),
+            Field::select('shape', ['square' => 'Square corners', 'rounded' => 'Rounded corners', 'circle' => 'Circle (cropped square)'])->label('Shape')->default('square'),
         ];
     }
 }
