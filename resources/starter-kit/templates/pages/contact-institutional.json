@@ -1,0 +1,399 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Contact: Institutional"
+  },
+  "template": {
+    "name": "Contact: Institutional",
+    "slug": "kit-page-contact-institutional",
+    "scope": "page",
+    "category": "Contact pages",
+    "description": "Institutional: a large title, contact details beside the form, your offices in three columns and common questions."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.6"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Contact us",
+            "level": "1"
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              }
+            }
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Questions, ideas or partnership proposals: we reply within two working days.</p>"
+          },
+          "style": {
+            "typography": {
+              "size": {
+                "$token": "font-size.lg"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                5,
+                7
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Get in touch",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "list",
+                  "content": {
+                    "style": "icon",
+                    "dividers": true,
+                    "item_padding": "sm",
+                    "items": [
+                      {
+                        "icon": "bi-envelope",
+                        "text": "info@example.org",
+                        "link": {
+                          "type": "url",
+                          "url": "mailto:info@example.org"
+                        }
+                      },
+                      {
+                        "icon": "bi-telephone",
+                        "text": "+880 1700 000000",
+                        "link": {
+                          "type": "url",
+                          "url": "tel:+8801700000000"
+                        }
+                      },
+                      {
+                        "icon": "bi-geo-alt",
+                        "text": "House 1, Road 1, Dhaka 1200, Bangladesh"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Office hours",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Sunday to Thursday, 9:00 to 17:00. Visits by appointment.</p>"
+                  }
+                },
+                {
+                  "type": "social-links",
+                  "content": {
+                    "style": "icons"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "contact-form",
+                  "content": {
+                    "heading": "Send us a message",
+                    "show_subject": true,
+                    "consent_text": "I agree that my message is stored for 90 days and used only to answer me.",
+                    "button_label": "Send message",
+                    "thank_you": "Thank you! We have received your message and will reply soon."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Contact"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Our offices",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                4,
+                4,
+                4
+              ],
+              "mobile": [
+                12,
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.6"
+            }
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Head office",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>House 1, Road 1, Dhaka 1200</p><p>+880 1700 000000</p>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Regional office",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Address of the regional office</p><p>Phone number</p>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Field office",
+                    "level": "3"
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Address of the field office</p><p>Phone number</p>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Offices"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "narrow",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Frequently asked questions",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "faq",
+          "content": {
+            "heading": "",
+            "items": [
+              {
+                "question": "Who can take part?",
+                "answer": "<p>Explain who your programmes are for and how to join.</p>"
+              },
+              {
+                "question": "Does it cost anything?",
+                "answer": "<p>Say what is free and what is not.</p>"
+              },
+              {
+                "question": "How can my organisation become a member or partner?",
+                "answer": "<p>Describe the first step, and who to contact.</p>"
+              },
+              {
+                "question": "How do you use donations?",
+                "answer": "<p>Explain how support is spent and how you report on it.</p>"
+              }
+            ]
+          },
+          "display": {
+            "mode": "accordion"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Questions"
+      }
+    }
+  ]
+}

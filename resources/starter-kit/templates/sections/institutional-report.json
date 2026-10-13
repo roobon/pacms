@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Institutional: report with cover"
+  },
+  "template": {
+    "name": "Institutional: report with cover",
+    "slug": "kit-institutional-report",
+    "scope": "section",
+    "category": "Institutional",
+    "description": "A report or publication beside its cover, with a button."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Recent publications and reports",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "columns",
+          "layout": {
+            "columns": {
+              "desktop": [
+                8,
+                4
+              ],
+              "mobile": [
+                12,
+                12
+              ]
+            },
+            "gap": {
+              "$token": "space.8"
+            },
+            "align": "center"
+          },
+          "children": [
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "heading",
+                  "content": {
+                    "text": "Annual report",
+                    "level": "3"
+                  },
+                  "style": {
+                    "typography": {
+                      "color": {
+                        "$token": "color.primary"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "rich-text",
+                  "content": {
+                    "html": "<p>Say what the report shows: results, the people reached and what comes next. One short paragraph.</p>"
+                  }
+                },
+                {
+                  "type": "button-group",
+                  "children": [
+                    {
+                      "type": "button",
+                      "content": {
+                        "label": "Read the annual report",
+                        "link": {
+                          "type": "url",
+                          "url": "/publications"
+                        },
+                        "variant": "primary"
+                      },
+                      "style": {
+                        "typography": {
+                          "transform": "uppercase",
+                          "weight": 700
+                        }
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "margin": {
+                      "top": {
+                        "$token": "space.5"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "column",
+              "children": [
+                {
+                  "type": "container",
+                  "name": "Photo spot: replace with an Image block",
+                  "layout": {
+                    "min_height": {
+                      "value": 320,
+                      "unit": "px"
+                    },
+                    "text_align": "center",
+                    "padding": {
+                      "top": {
+                        "$token": "space.7"
+                      },
+                      "bottom": {
+                        "$token": "space.7"
+                      }
+                    }
+                  },
+                  "style": {
+                    "background": {
+                      "type": "color",
+                      "color": {
+                        "$token": "color.bg-light"
+                      }
+                    },
+                    "radius": {
+                      "$token": "radius.sm"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "content": {
+                        "icon": "bi-file-earmark-text",
+                        "label": "Report cover",
+                        "size": "xl",
+                        "color": {
+                          "$token": "color.primary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Publications"
+      }
+    }
+  ]
+}

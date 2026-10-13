@@ -13,18 +13,17 @@ it('ships five designs for each area, each with a picture', function () {
     $manifest = app(StarterKitService::class)->manifest();
     $this->artisan('pacms:starter')->assertSuccessful();
 
-    expect(array_keys($manifest['styles']))->toBe(['classic', 'bold', 'editorial', 'impact', 'minimal']);
-    // Home pages also have "Home: Programmes" and "Home: Institutional", which belong to no style.
-    foreach (['Home pages' => 7, 'About pages' => 5, 'Contact pages' => 5, 'Gallery pages' => 5] as $category => $count) {
+    expect(array_keys($manifest['styles']))->toBe(['classic', 'bold', 'editorial', 'impact', 'minimal', 'institutional']);
+    // Six styles; Home pages also have "Home: Programmes", which belongs to no style.
+    foreach (['Home pages' => 7, 'About pages' => 6, 'Contact pages' => 6, 'Gallery pages' => 6, 'Institutional' => 5] as $category => $count) {
         expect(BlockTemplate::query()->where('category', $category)->count())->toBe($count, $category);
     }
-    // Five styles, plus the Institutional header and footer.
     foreach (['header', 'footer'] as $kind) {
         expect(GlobalBlock::query()->where('kind', $kind)->whereNotNull('published_revision_id')->count())->toBe(6, $kind);
     }
 
     // Every shipped page design, header and footer has a thumbnail.
-    $slugs = [...BlockTemplate::query()->where('scope', 'page')->pluck('slug')->all(), ...GlobalBlock::query()->whereIn('kind', ['header', 'footer'])->pluck('slug')->all()];
+    $slugs = [...BlockTemplate::query()->where('scope', 'page')->orWhere('category', 'Institutional')->pluck('slug')->all(), ...GlobalBlock::query()->whereIn('kind', ['header', 'footer'])->pluck('slug')->all()];
     foreach ($slugs as $slug) {
         expect(StarterKitService::thumbnail($slug))->toEndWith("/images/starter-kit/{$slug}.webp");
     }
@@ -47,6 +46,17 @@ it('builds the pages and chooses the header and footer of a style', function () 
         ->and(Page::query()->where('slug', 'get-involved')->exists())->toBeTrue();
 
     $this->artisan('pacms:starter', ['--style' => 'shiny'])->assertFailed();
+});
+
+it('builds the Institutional pages with its header and footer', function () {
+    userWithRole('super-admin');
+    $this->artisan('pacms:starter', ['--pages' => true, '--style' => 'institutional'])->assertSuccessful();
+
+    $settings = app(SettingsService::class);
+    expect(GlobalBlock::query()->find($settings->get('navigation', 'header_global_block_id'))->slug)->toBe('header-institutional')
+        ->and(GlobalBlock::query()->find($settings->get('navigation', 'footer_global_block_id'))->slug)->toBe('footer-institutional');
+    $about = app(BlockTreeRepository::class)->load(Page::query()->where('slug', 'about')->firstOrFail());
+    expect($about[1]['children'][0]['content']['text'])->toBe('About us');
 });
 
 it('moves shipped templates into their area group without changing the design', function () {

@@ -16,7 +16,7 @@ class StarterKitCommand extends Command
 {
     protected $signature = 'pacms:starter
         {--pages : Also create draft pages (Home, About us, Contact, Get involved) from the page templates}
-        {--style=classic : Design style for --pages and the header and footer: classic, bold, editorial, impact or minimal}
+        {--style=classic : Design style for --pages and the header and footer: classic, bold, editorial, impact, minimal or institutional}
         {--restore= : Put a shipped template back to its original design (its slug, or "all")}
         {--user= : E-mail of the account recorded as author (default: the first super admin)}';
 

@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Institutional: news in four columns"
+  },
+  "template": {
+    "name": "Institutional: news in four columns",
+    "slug": "kit-institutional-news",
+    "scope": "section",
+    "category": "Institutional",
+    "description": "The four newest news items under a title in capitals, with a button."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.4"
+          },
+          "bottom": {
+            "$token": "space.4"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Latest news",
+            "level": "2"
+          },
+          "layout": {
+            "text_align": "center",
+            "margin": {
+              "bottom": {
+                "$token": "space.6"
+              }
+            }
+          },
+          "style": {
+            "typography": {
+              "color": {
+                "$token": "color.primary"
+              },
+              "transform": "uppercase",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "type": "news",
+          "content": {
+            "heading": "",
+            "show_excerpt": false,
+            "show_date": true
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 4
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 3,
+              "mobile": 1
+            },
+            "card_style": "flat",
+            "image_ratio": "1:1"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Read more news",
+                "link": {
+                  "type": "url",
+                  "url": "/news"
+                },
+                "variant": "primary"
+              },
+              "style": {
+                "typography": {
+                  "transform": "uppercase",
+                  "weight": 700
+                }
+              }
+            }
+          ],
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.5"
+              }
+            },
+            "justify": "center"
+          }
+        },
+        {
+          "type": "divider",
+          "content": {
+            "line": "solid"
+          },
+          "layout": {
+            "margin": {
+              "top": {
+                "$token": "space.8"
+              },
+              "bottom": {
+                "$token": "space.8"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      }
+    }
+  ]
+}
