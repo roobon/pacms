@@ -3,14 +3,14 @@
 | | |
 |---|---|
 | Date | 2026-10-17 |
-| Branch | `phase/11w-full-width` (from `main` after 11I) |
+| Branch | `phase/11w-full-width` (from `main` after 11I) → merged into `main` 2026-10-17 |
 | Prepared for | Syed Ziaul Habib, Hasibul Hasan, Khandoker Humayoun Kobir |
-| Prepared with | Claude Code (AI-assisted) |
+| Prepared with | Claude Code (AI-assisted). Approved 2026-10-17. |
 
 ```
 PHASE:   11W — blocks for full-width pages, after leaf.global, and a full-width page design
          built from them.
-STATUS:  AWAITING REVIEW. Not merged.
+STATUS:  APPROVED by the team lead (2026-10-17) and merged into main. 11B follows.
          Decisions (team lead, 2026-10-17): W-1 build all four parts (Split block, image
          filling the width, tiles, templates with pictures); W-2 own branch and report, then
          stop for review. Phase 11B stays next.
