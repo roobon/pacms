@@ -60,7 +60,7 @@ abstract class ContentCollectionBlock extends BlockType
 
     public function displayModes(): array
     {
-        return ['grid', 'list', 'carousel', 'featured'];
+        return ['grid', 'list', 'carousel', 'featured', 'tiles'];
     }
 
     public function defaults(): array

@@ -313,7 +313,7 @@ function MoreMenu({ node, label }) {
                     submitLabel="Save template"
                     fields={[
                         { key: 'name', label: 'Template name', required: true, initial: label },
-                        { key: 'scope', label: 'Type', type: 'select', options: { block: 'Single block', section: 'Section', page: 'Whole page' }, initial: ['section', 'hero', 'container'].includes(node.type) ? 'section' : 'block' },
+                        { key: 'scope', label: 'Type', type: 'select', options: { block: 'Single block', section: 'Section', page: 'Whole page' }, initial: ['section', 'hero', 'split', 'container'].includes(node.type) ? 'section' : 'block' },
                         { key: 'category', label: 'Category (optional)' },
                     ]}
                     onSubmit={saveTemplate}

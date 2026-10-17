@@ -14,8 +14,8 @@ it('ships five designs for each area, each with a picture', function () {
     $this->artisan('pacms:starter')->assertSuccessful();
 
     expect(array_keys($manifest['styles']))->toBe(['classic', 'bold', 'editorial', 'impact', 'minimal', 'institutional']);
-    // Six styles; Home pages also have "Home: Programmes", which belongs to no style.
-    foreach (['Home pages' => 7, 'About pages' => 6, 'Contact pages' => 6, 'Gallery pages' => 6, 'Institutional' => 5] as $category => $count) {
+    // Six styles; Home pages also have "Home: Programmes" and "Home: Full width", which belong to no style.
+    foreach (['Home pages' => 8, 'About pages' => 6, 'Contact pages' => 6, 'Gallery pages' => 6, 'Institutional' => 5, 'Full width' => 5] as $category => $count) {
         expect(BlockTemplate::query()->where('category', $category)->count())->toBe($count, $category);
     }
     foreach (['header', 'footer'] as $kind) {

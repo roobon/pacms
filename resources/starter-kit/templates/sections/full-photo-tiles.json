@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Full width: photo tiles"
+  },
+  "template": {
+    "name": "Full width: photo tiles",
+    "slug": "kit-full-photo-tiles",
+    "scope": "section",
+    "category": "Full width",
+    "description": "The photos of your latest gallery as square tiles, edge to edge, six in a row."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "gallery",
+          "content": {
+            "heading": null,
+            "columns": "6",
+            "show_captions": false,
+            "show_link": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 1
+          },
+          "display": {
+            "mode": "tiles"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Photos"
+      }
+    }
+  ]
+}

@@ -106,6 +106,7 @@ The phases are sized relative to each other (S/M/L/XL) instead of in calendar ti
   - **11A** (search page and header search, contact form with Messages inbox, account area): *approved and merged (2026-10-12).* **11B**: states, accessibility, performance, OpenAPI.
   - **11S** (starter kit designs, requested 2026-10-12): five styles (Classic, Bold, Editorial, Impact, Minimal) with 5 headers, 5 footers and 5 Home, About, Contact and Photo gallery pages; pictures in every design picker; `--style`. *Approved and merged (2026-10-12).* Then (2026-10-13): Institutional as a sixth style, with section templates.
   - **11I** (blocks for the Institutional look, 2026-10-13): image shapes, Logo row block, letter spacing, compact 5–6 column grids, stacked site logo. *Approved and merged (2026-10-13).*
+  - **11W** (full-width blocks, requested 2026-10-17, after leaf.global): Split block (photo to the screen edge beside text), Image → Fill the width at a banner height, Tiles display for galleries, news and module collections; five "Full width" section templates, "Home: Full width" and "Page: Full width". *Awaiting review.*
 
 ### Phase 12 — Security / Testing audit (M)
 - Audit against SECURITY-ARCHITECTURE.md: authentication, authorization matrix, uploads, JSON import, SSRF, XML, XSS (payload corpus through every input), API leaks, providers, headers/CSP (nonce/hash styles), dependency audit. Playwright E2E for the critical paths.

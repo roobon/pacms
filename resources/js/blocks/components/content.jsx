@@ -15,6 +15,34 @@ export function HeroBlock({ node, preview, children }) {
     );
 }
 
+/**
+ * Split (Phase 11W): a photo filling its half of the screen to the edge, and the child blocks
+ * on the other half, lined up with the site width. Phones show the photo first. Without a
+ * photo yet, a quiet panel holds its place.
+ */
+export function SplitBlock({ node, preview, children }) {
+    const { image, alt, image_side: side = 'left', image_width: width = 'half', height = 'md' } = node.content;
+    const classes = `pa-split pa-split--photo-${side === 'right' ? 'right' : 'left'} pa-split--w-${width} pa-split--h-${height}`;
+
+    return (
+        <section {...frameProps(node, preview, classes)}>
+            <div className="pa-split__media">
+                {image ? (
+                    <Image image={{ ...image, alt: alt || image.alt }} className="pa-split__image" sizes="(min-width: 992px) 60vw, 100vw" />
+                ) : (
+                    <div className="pa-split__placeholder">
+                        <i className="bi bi-image" aria-hidden="true" />
+                        {preview && <span>Choose a photo (Content → Photo)</span>}
+                    </div>
+                )}
+            </div>
+            <div className="pa-split__body">
+                <div className="pa-split__content">{children}</div>
+            </div>
+        </section>
+    );
+}
+
 export function CtaBlock({ node, preview, children }) {
     return <div {...frameProps(node, preview, 'pa-cta')}>{children}</div>;
 }

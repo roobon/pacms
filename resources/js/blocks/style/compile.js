@@ -79,7 +79,8 @@ function layoutDeclarations(layout, type) {
     const out = [];
 
     for (const side of SIDES) {
-        add(out, `padding-${side}`, spacing(layout.padding?.[side]));
+        // A split's photo runs to the edges: its padding is the space around the text (Phase 11W).
+        add(out, type === 'split' ? `--pa-split-pad-${side}` : `padding-${side}`, spacing(layout.padding?.[side]));
         add(out, `margin-${side}`, spacing(layout.margin?.[side]));
     }
     add(out, 'min-height', length(layout.min_height));

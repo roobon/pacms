@@ -29,16 +29,21 @@ export function RichTextBlock({ node, preview }) {
 }
 
 export function ImageBlock({ node, preview }) {
-    const { image, alt, caption, link, ratio, shape = 'square' } = node.content;
+    const { image, alt, caption, link, ratio, shape = 'square', size = 'natural', height = 'auto' } = node.content;
     if (!image) return preview ? <div {...frameProps(node, preview, 'pa-placeholder')}>Choose an image</div> : null;
+
+    // Fill the width (Phase 11W): a banner; a chosen height wins over the crop.
+    const fill = size === 'fill' && shape !== 'circle';
+    const banner = fill && ['sm', 'md', 'lg'].includes(height);
 
     const img = (
         <Image
             image={{ ...image, alt: alt || image.alt }}
+            sizes={fill ? '100vw' : undefined}
             className={[
                 'pa-block-image',
                 // A circle is always a square crop.
-                shape !== 'circle' && ratio && ratio !== 'auto' ? `pa-ratio pa-ratio--${ratio.replace(':', 'x')}` : '',
+                shape !== 'circle' && !banner && ratio && ratio !== 'auto' ? `pa-ratio pa-ratio--${ratio.replace(':', 'x')}` : '',
                 ['rounded', 'circle'].includes(shape) ? `pa-shape--${shape}` : '',
             ]
                 .filter(Boolean)
@@ -47,7 +52,7 @@ export function ImageBlock({ node, preview }) {
     );
 
     return (
-        <figure {...frameProps(node, preview, 'pa-figure')}>
+        <figure {...frameProps(node, preview, `pa-figure${fill ? ' pa-figure--fill' : ''}${banner ? ` pa-figure--h-${height}` : ''}`)}>
             {link ? <SmartLink link={link}>{img}</SmartLink> : img}
             {caption && <figcaption className="pa-figure__caption">{caption}</figcaption>}
         </figure>

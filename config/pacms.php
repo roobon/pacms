@@ -46,6 +46,7 @@ use App\Cms\Blocks\Types\SlideBlock;
 use App\Cms\Blocks\Types\SliderBlock;
 use App\Cms\Blocks\Types\SocialLinksBlock;
 use App\Cms\Blocks\Types\SpacerBlock;
+use App\Cms\Blocks\Types\SplitBlock;
 use App\Cms\Blocks\Types\StatisticsBlock;
 use App\Cms\Blocks\Types\TeamBlock;
 use App\Cms\Blocks\Types\TestimonialsBlock;
@@ -198,6 +199,7 @@ return [
             DividerBlock::class,
             SpacerBlock::class,
             HeroBlock::class,
+            SplitBlock::class,
             SliderBlock::class,
             SlideBlock::class,
             CardsBlock::class,

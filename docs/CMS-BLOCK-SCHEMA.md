@@ -158,7 +158,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 | `heading` | – | S | `text` (≤ 255), `level` (1–6, default 2), `eyebrow`? |
 | `rich-text` | – | S | `html` (§8.3) |
 | `list` | – | S | `style` (bullet/number/check/icon), `icon`?, `columns` (1–3), `item_padding` (none/sm/md/lg), `dividers` bool, `items[]`: `text`, `icon`?, `link`? |
-| `image` | – | S | `image` (media), `alt`?, `caption`?, `link`? (§8.4), `lightbox` bool, `ratio`, `shape` (`square`/`rounded`/`circle`; a circle is a square crop, Phase 11I) |
+| `image` | – | S | `image` (media), `alt`?, `caption`?, `link`? (§8.4), `lightbox` bool, `ratio`, `shape` (`square`/`rounded`/`circle`; a circle is a square crop, Phase 11I), `size` (`natural`/`fill`: fill the width, edge to edge in a section whose `layout.container` is `full`), `height` (`auto`/`sm`/`md`/`lg`: a banner at 40/60/80% of the screen, cropped to fit; wins over `ratio`) (Phase 11W) |
 | `video` | – | S | `provider` (`youtube`/`vimeo`/`media`), `url` or `media`, `poster`?, `title` (required for a11y) |
 | `button` | – | S | `label`, `link`, `variant` (`primary`/`secondary`/`accent`/`outline`/`link`), `icon`?, `icon_position` |
 | `button-group` | ✔ [button] | S | `align` |
@@ -179,6 +179,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 | type | C | Src | content fields |
 |---|---|---|---|
 | `hero` | ✔ [container, heading, rich-text, button, button-group, image, icon] | S | `background` via style; `min_height` via layout |
+| `split` | ✔ [heading, rich-text, button, button-group, list, icon, spacer, divider, statistics, quote, image, logos] | S | Page level only (like `hero`). A photo filling half the screen to its edge, the children beside it, lined up with the site width; stacks on phones, photo first (Phase 11W). `image`? (without one a quiet panel holds its place), `alt`?, `image_side` (`left`/`right`), `image_width` (`half`/`wide` 60%/`narrow` 40%), `height` (`auto`/`md` half the screen/`lg` most of it). `layout.padding` is the space around the text, never around the photo |
 | `banner` | ✔ [same as hero] | S | – |
 | `slider` | ✔ [slide] | S | – (behaviour in `display`) |
 | `slide` | ✔ [basic, container, columns] | S | `background_image`? |
@@ -199,7 +200,7 @@ The portable `$ref` / slug / path forms above are used only in import/export doc
 ### Media
 | type | C | Src | content fields |
 |---|---|---|---|
-| `gallery` | – | S, D, E | S: `items` repeater (`image`, `caption`, `credit`); D: via `source` (galleries / one gallery); E: external source. Display `grid` or `masonry` (photos keep their own shape, Phase 11S) |
+| `gallery` | – | S, D, E | S: `items` repeater (`image`, `caption`, `credit`); D: via `source` (galleries / one gallery); E: external source. Display `grid`, `masonry` (photos keep their own shape, Phase 11S) or `tiles` (square photos, no gaps; Phase 11W). `columns` 2–6 |
 | `video-gallery` | – | S, D, E | S: `items` (`provider`, `url`, `title`, `thumbnail`) |
 | `document-list` | – | S, D | S: `items` (`file` media, `label`, `description`); D: publications |
 
@@ -422,7 +423,7 @@ Importing a custom type requires `block_types.manage`. If the site already has a
 }
 ```
 
-Modes: `grid, cards, list, masonry, justified, carousel, slider, featured, quote-slider, thumbnail-large, single, accordion, tabs`. Allowed modes depend on block type (CMS-ARCHITECTURE.md §7). `columns` 1–6; `interval` 3000–20000 ms; `image_ratio` one of `1:1, 4:3, 3:2, 16:9, 21:9, auto`. Autoplay is always suppressed for visitors with `prefers-reduced-motion`.
+Modes: `grid, cards, list, masonry, justified, carousel, slider, featured, quote-slider, thumbnail-large, single, accordion, tabs, tiles`. `tiles` (Phase 11W; galleries, news and module collections): photos edge to edge with no gaps, the title over the photo on a dark gradient, options `columns` and `image_ratio` (default `1:1`); fewer items than columns stretch to fill the row. Allowed modes depend on block type (CMS-ARCHITECTURE.md §7). `columns` 1–6; `interval` 3000–20000 ms; `image_ratio` one of `1:1, 4:3, 3:2, 16:9, 21:9, auto`. Autoplay is always suppressed for visitors with `prefers-reduced-motion`.
 
 ---
 

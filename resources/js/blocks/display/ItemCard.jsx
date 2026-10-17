@@ -52,6 +52,43 @@ export default function ItemCard({ item, layout = 'card', showExcerpt = true, sh
     );
 }
 
+/**
+ * One item as a photo tile (Phase 11W, display mode "tiles"): the photo fills the tile and
+ * the title sits over it on a dark gradient. Items without a photo get a coloured tile. Like
+ * the card, one stretched link on the title makes the whole tile clickable.
+ *
+ * @param {{item: Object, showDate?: boolean, headingLevel?: number, ratio?: string, sizes?: string}} props
+ */
+export function ItemTile({ item, showDate = true, headingLevel = 3, ratio = '1:1', sizes }) {
+    const Heading = `h${Math.min(6, Math.max(2, headingLevel))}`;
+    const link = item.link ?? (item.url ? { href: item.url, external: Boolean(item.external), new_tab: Boolean(item.external) } : null);
+    const date = showDate && item.date ? (item.meta?.when ?? formatDate(item.date)) : null;
+    const label = item.meta?.category ?? item.meta?.status ?? null;
+
+    return (
+        <article className={`pa-tile pa-ratio pa-ratio--${String(ratio === 'auto' ? '1:1' : ratio).replace(':', 'x')}${item.image ? '' : ' pa-tile--plain'}`}>
+            {item.image && <Image image={{ ...item.image, alt: '' }} className="pa-tile__image" sizes={sizes} />}
+            <div className="pa-tile__body">
+                {(label || date) && (
+                    <p className="pa-tile__meta">
+                        {label && <span>{label}</span>}
+                        {date && <time dateTime={item.date}>{date}</time>}
+                    </p>
+                )}
+                <Heading className="pa-tile__title">
+                    {link ? (
+                        <SmartLink link={link} className="stretched-link">
+                            {item.title}
+                        </SmartLink>
+                    ) : (
+                        item.title
+                    )}
+                </Heading>
+            </div>
+        </article>
+    );
+}
+
 function formatDate(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return null;
