@@ -1,0 +1,469 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Home: Full width"
+  },
+  "template": {
+    "name": "Home: Full width",
+    "slug": "kit-page-home-full-width",
+    "scope": "page",
+    "category": "Home pages",
+    "description": "Edge to edge: a centred title, photo-and-text rows that alternate sides, a wide banner, news and photos as tiles."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Learning about the world around us",
+            "level": "1",
+            "eyebrow": "Your organisation"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Introduction"
+      }
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "right",
+        "image_width": "half",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Using nature as a classroom",
+            "level": "2"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Say what your programme does and who it is for. Two short paragraphs are enough.</p><p>Say where you work, and with whom, in one more sentence.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Find your country",
+                "link": {
+                  "type": "url",
+                  "url": "/contact"
+                },
+                "variant": "accent"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "hero",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        },
+        "text_align": "center",
+        "min_height": {
+          "value": 60,
+          "unit": "vh"
+        }
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary-strong"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "container",
+          "layout": {
+            "max_width": {
+              "$token": "container.narrow"
+            },
+            "padding": {
+              "left": {
+                "$token": "space.4"
+              },
+              "right": {
+                "$token": "space.4"
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "A sentence over a wide photo",
+                "level": "2"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Choose a photo under Style → Background → Image, with a dark overlay so this text stays readable.</p>"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "left",
+        "image_width": "half",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Become a partner school",
+            "level": "2",
+            "eyebrow": "Join us"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Inspire your students and join a movement. Say what a school gains, and what it takes to join.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Register your school",
+                "link": {
+                  "type": "url",
+                  "url": "/get-involved"
+                },
+                "variant": "outline"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "right",
+        "image_width": "half",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Explore with our activity book",
+            "level": "2",
+            "eyebrow": "Resources"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>A sentence about a resource people can download. Through it, they can:</p>"
+          }
+        },
+        {
+          "type": "list",
+          "content": {
+            "style": "check",
+            "item_padding": "sm",
+            "items": [
+              {
+                "text": "Explore the outdoors"
+              },
+              {
+                "text": "Get creative with stories and drawing"
+              },
+              {
+                "text": "Learn how to protect nature"
+              }
+            ]
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Download the activity book",
+                "link": {
+                  "type": "url",
+                  "url": "/publications"
+                },
+                "variant": "outline"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "left",
+        "image_width": "narrow",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Activities for schools, using nature as a classroom",
+            "level": "2",
+            "eyebrow": "Publication"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>A sentence about your latest publication and what readers will find in it.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Read the publication",
+                "link": {
+                  "type": "url",
+                  "url": "/publications"
+                },
+                "variant": "primary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Latest news and stories",
+            "level": "2"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest news"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": ""
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 5
+          },
+          "display": {
+            "mode": "tiles",
+            "columns": {
+              "desktop": 5,
+              "tablet": 3,
+              "mobile": 2
+            },
+            "image_ratio": "1:1"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.7"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Contact us in your country",
+                "link": {
+                  "type": "url",
+                  "url": "/contact"
+                },
+                "variant": "outline"
+              }
+            }
+          ],
+          "layout": {
+            "justify": "center"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Contact"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "gallery",
+          "content": {
+            "heading": null,
+            "columns": "6",
+            "show_captions": false,
+            "show_link": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 1
+          },
+          "display": {
+            "mode": "tiles"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Photos"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

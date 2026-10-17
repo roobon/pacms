@@ -1,0 +1,442 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Page: Full width"
+  },
+  "template": {
+    "name": "Page: Full width",
+    "slug": "kit-page-full-width",
+    "scope": "page",
+    "category": "Pages",
+    "description": "For any page, edge to edge: a title banner, photo-and-text rows, numbers, a quote beside a photo, photo and news tiles and a call to action."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        },
+        "text_align": "center",
+        "min_height": {
+          "value": 60,
+          "unit": "vh"
+        }
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary-strong"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "container",
+          "layout": {
+            "max_width": {
+              "$token": "container.narrow"
+            },
+            "padding": {
+              "left": {
+                "$token": "space.4"
+              },
+              "right": {
+                "$token": "space.4"
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "The title of this page",
+                "level": "1",
+                "eyebrow": "Our work"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>One or two sentences that say what this page is about. Choose a photo under Style → Background → Image.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "accent"
+                  }
+                },
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Contact us",
+                    "link": {
+                      "type": "url",
+                      "url": "/contact"
+                    },
+                    "variant": "outline"
+                  }
+                }
+              ],
+              "layout": {
+                "justify": "center"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "left",
+        "image_width": "half",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "What we do",
+            "level": "2",
+            "eyebrow": "About this work"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Say what this work is, who it is for and where it happens. Two short paragraphs are enough.</p><p>Replace the photo with one of your own under Content → Photo.</p>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "right",
+        "image_width": "half",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "How it works",
+            "level": "2",
+            "eyebrow": "Step by step"
+          }
+        },
+        {
+          "type": "list",
+          "content": {
+            "style": "number",
+            "item_padding": "sm",
+            "items": [
+              {
+                "text": "Schools or groups sign up"
+              },
+              {
+                "text": "We train the people who lead it"
+              },
+              {
+                "text": "Together we act, and report what changed"
+              }
+            ]
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Read more",
+                "link": {
+                  "type": "url",
+                  "url": "/about"
+                },
+                "variant": "outline"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.7"
+          },
+          "bottom": {
+            "$token": "space.7"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "statistics",
+          "content": {
+            "heading": "",
+            "items": [
+              {
+                "value": 25,
+                "label": "Years of work",
+                "icon": "bi-calendar-check"
+              },
+              {
+                "value": 120,
+                "label": "Partner schools",
+                "icon": "bi-building"
+              },
+              {
+                "value": 5000,
+                "suffix": "+",
+                "label": "People reached",
+                "icon": "bi-people"
+              },
+              {
+                "value": 12,
+                "label": "Districts",
+                "icon": "bi-geo-alt"
+              }
+            ]
+          },
+          "display": {
+            "mode": "grid",
+            "columns": {
+              "desktop": 4,
+              "tablet": 2,
+              "mobile": 2
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Numbers"
+      },
+      "style": {
+        "background": {
+          "type": "color",
+          "color": {
+            "$token": "color.primary"
+          }
+        }
+      }
+    },
+    {
+      "type": "split",
+      "content": {
+        "image_side": "left",
+        "image_width": "narrow",
+        "height": "auto"
+      },
+      "children": [
+        {
+          "type": "quote",
+          "content": {
+            "text": "A sentence from someone who took part, about what changed for them.",
+            "author": "Name Surname",
+            "role": "Participant"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "In pictures",
+            "level": "2",
+            "eyebrow": "Gallery"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Photos"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "gallery",
+          "content": {
+            "heading": null,
+            "columns": "6",
+            "show_captions": false,
+            "show_link": false
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "galleries",
+            "order": "latest",
+            "limit": 1
+          },
+          "display": {
+            "mode": "tiles"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Photo tiles"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Latest news and stories",
+            "level": "2"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest news"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": ""
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 5
+          },
+          "display": {
+            "mode": "tiles",
+            "columns": {
+              "desktop": 5,
+              "tablet": 3,
+              "mobile": 2
+            },
+            "image_ratio": "1:1"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "boxed",
+        "padding": {
+          "top": {
+            "$token": "space.section"
+          },
+          "bottom": {
+            "$token": "space.section"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "global-ref",
+          "content": {
+            "global": {
+              "$ref": {
+                "entity": "global_blocks",
+                "slug": "call-to-action"
+              }
+            }
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Call to action"
+      }
+    }
+  ]
+}

@@ -57,7 +57,7 @@ class StarterKitService
     /**
      * The kit's manifest: styles, global blocks, templates (in palette order) and pages.
      *
-     * @return array{styles: array<string, string>, style_globals: array<string, array<string, string>>, globals: array<string, array<string, string>>, templates: list<string>, pages: list<array<string, mixed>>}
+     * @return array{styles: array<string, string>, style_globals: array<string, array<string, string>>, globals: array<string, array<string, string>>, templates: list<string>, numbers: array<string, string>, pages: list<array<string, mixed>>}
      */
     public function manifest(): array
     {
@@ -267,6 +267,53 @@ class StarterKitService
         $file = self::THUMBNAILS."/{$slug}.webp";
 
         return is_file(public_path($file)) ? asset($file) : null;
+    }
+
+    /**
+     * A shipped template's serial number ("P-07" for a page, "S-12" for a section), shown beside
+     * its name; null for templates made on the site.
+     */
+    public static function number(?string $slug): ?string
+    {
+        static $numbers = null;
+        $numbers ??= (require self::path('kit.php'))['numbers'] ?? [];
+
+        return $slug === null ? null : ($numbers[$slug] ?? null);
+    }
+
+    /** The two width labels, by the key widths() returns. */
+    public const WIDTHS = ['full' => 'Full width', 'fixed' => 'Fixed width'];
+
+    /**
+     * "full" or "fixed" for each template (by id): full when a top-level block runs edge to edge
+     * (a split or slider, or a section or hero whose width is Full or Fluid). Templates made on
+     * the site are labelled too. One query for the whole list.
+     *
+     * @param  iterable<BlockTemplate>  $templates
+     * @return array<int, string>
+     */
+    public static function widths(iterable $templates): array
+    {
+        $ids = collect($templates)->pluck('id')->all();
+        $widths = array_fill_keys($ids, 'fixed');
+        if ($ids === []) {
+            return $widths;
+        }
+
+        $rows = DB::table('blocks')
+            ->join('block_types', 'block_types.id', '=', 'blocks.block_type_id')
+            ->where('blocks.owner_type', (new BlockTemplate)->getMorphClass())
+            ->whereIn('blocks.owner_id', $ids)
+            ->whereNull('blocks.parent_id')
+            ->get(['blocks.owner_id', 'block_types.slug', 'blocks.layout']);
+        foreach ($rows as $row) {
+            $container = json_decode((string) $row->layout, true)['container'] ?? null;
+            if (in_array($row->slug, ['split', 'slider'], true) || (in_array($row->slug, ['section', 'hero'], true) && in_array($container, ['full', 'fluid'], true))) {
+                $widths[(int) $row->owner_id] = 'full';
+            }
+        }
+
+        return $widths;
     }
 
     /**

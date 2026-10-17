@@ -126,7 +126,8 @@ function Templates({ parentUuid, query, onDone }) {
     }
 
     if (!list) return <p className="small text-body-secondary">Loading templates…</p>;
-    const filtered = list.filter((t) => `${t.name} ${t.category ?? ''}`.toLowerCase().includes(query.toLowerCase()));
+    // The search also finds a serial number ("P-07") or "full width".
+    const filtered = list.filter((t) => `${t.number ?? ''} ${t.name} ${t.category ?? ''} ${t.width === 'full' ? 'full width' : 'fixed width'}`.toLowerCase().includes(query.toLowerCase()));
     if (!filtered.length) return <p className="small text-body-secondary mb-0">No templates yet. Select a block and choose “Save as template”.</p>;
 
     return (
@@ -146,6 +147,14 @@ function Templates({ parentUuid, query, onDone }) {
                                 <button type="button" className={`pa-add-menu__row${template.thumbnail ? ' pa-add-menu__row--picture' : ''}`} onClick={() => insert(template)}>
                                     {template.thumbnail && <img src={template.thumbnail} alt="" loading="lazy" className="pa-add-menu__picture" />}
                                     <span className="d-flex flex-column gap-1">
+                                        {/* Labels: serial number (shipped designs) and width. */}
+                                        <span className="pa-design-labels">
+                                            {template.number && <span className="pa-design-labels__number">{template.number}</span>}
+                                            <span className={`pa-design-labels__width pa-design-labels__width--${template.width === 'full' ? 'full' : 'fixed'}`}>
+                                                <i className={`bi ${template.width === 'full' ? 'bi-arrows-expand-vertical' : 'bi-arrows-collapse-vertical'}`} aria-hidden="true" />
+                                                {template.width === 'full' ? 'Full width' : 'Fixed width'}
+                                            </span>
+                                        </span>
                                         <strong>{template.name}</strong>
                                         <span className="small text-body-secondary">
                                             {template.scope === 'page' ? 'Whole page' : 'Section'}

@@ -1,9 +1,9 @@
 import { useId, useRef } from 'react';
-import ItemCard from './ItemCard.jsx';
+import ItemCard, { ItemTile } from './ItemCard.jsx';
 
 /**
  * Display modes for normalised items (CMS-ARCHITECTURE.md §7): grid, list, carousel,
- * featured. The mode never depends on where the items came from.
+ * featured, tiles. The mode never depends on where the items came from.
  *
  * @param {{items: Array<Object>, display?: Object, showExcerpt?: boolean, showDate?: boolean, headingLevel?: number}} props
  */
@@ -25,6 +25,20 @@ export default function ItemsDisplay({ items, display = {}, showExcerpt = true, 
                 {items.map((item) => (
                     <li key={item.key}>
                         <ItemCard item={item} layout="list" {...cardProps} showImage={display.show_image !== false} />
+                    </li>
+                ))}
+            </ul>
+        );
+    }
+
+    // Tiles (Phase 11W): photos edge to edge, no gaps, titles over the photo.
+    if (mode === 'tiles') {
+        const sizes = `(min-width: 992px) ${Math.round(100 / (columns.desktop ?? 4))}vw, ${Math.round(100 / (columns.mobile ?? 2))}vw`;
+        return (
+            <ul className="pa-tiles list-unstyled" style={{ ...vars, '--pa-cols-d': columns.desktop ?? 4, '--pa-cols-m': columns.mobile ?? 2 }}>
+                {items.map((item) => (
+                    <li key={item.key}>
+                        <ItemTile item={item} showDate={showDate} headingLevel={headingLevel} ratio={display.image_ratio ?? '1:1'} sizes={sizes} />
                     </li>
                 ))}
             </ul>

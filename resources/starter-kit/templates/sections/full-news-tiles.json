@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Full width: news tiles"
+  },
+  "template": {
+    "name": "Full width: news tiles",
+    "slug": "kit-full-news-tiles",
+    "scope": "section",
+    "category": "Full width",
+    "description": "A centred heading, then the five latest news items as photo tiles, edge to edge, in one row."
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "layout": {
+        "container": "wide",
+        "padding": {
+          "top": {
+            "$token": "space.8"
+          },
+          "bottom": {
+            "$token": "space.5"
+          }
+        },
+        "text_align": "center"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "Latest news and stories",
+            "level": "2"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "Latest news"
+      }
+    },
+    {
+      "type": "section",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.0"
+          },
+          "bottom": {
+            "$token": "space.0"
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "news",
+          "content": {
+            "heading": ""
+          },
+          "source": {
+            "mode": "dynamic",
+            "entity": "news",
+            "order": "latest",
+            "limit": 5
+          },
+          "display": {
+            "mode": "tiles",
+            "columns": {
+              "desktop": 5,
+              "tablet": 3,
+              "mobile": 2
+            },
+            "image_ratio": "1:1"
+          }
+        }
+      ],
+      "content": {
+        "aria_label": "News"
+      }
+    }
+  ]
+}

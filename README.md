@@ -139,12 +139,14 @@ The kit comes in **six styles**: Classic, Bold, Editorial, Impact, Minimal and I
 |---|---|
 | Header | 6: classic, dark with a Donate button, centred logo, top bar with contact details, menu button only, institutional (primary-colour bar, menu in capitals) |
 | Footer | 6: classic columns, big call to action, centred, dark "stay in touch", one compact row, institutional (partner logos between primary-colour bands) |
-| Home page | 7: classic, photo slider, story-led, numbers first, community, institutional (photo strip, titles in capitals, initiatives between thin lines), and **Programmes** (your programmes and projects first; it goes with any style) |
+| Home page | 8: classic, photo slider, story-led, numbers first, community, institutional (photo strip, titles in capitals, initiatives between thin lines), **Programmes** (your programmes and projects first) and **Full width** (edge to edge, after leaf.global: photo-and-text rows, a wide banner, news and photos as tiles); the last two go with any style |
 | About us | 6: mission and values, team, story and milestones, impact report, partners and history, institutional |
 | Contact | 6: classic, form beside a details panel, questions first, departments and offices, form only, institutional |
 | Photo gallery | 6: albums grid, latest album on dark, masonry wall, carousel and grid, photos and videos, institutional |
 
 The Institutional style also has **section templates** for any page (Templates tab → Institutional): a photo strip, a feature row, a report with its cover, news in four columns and a logo band.
+
+**Full-width building blocks** (Templates tab → Full width): a photo filling half the screen beside text (photo left or right), a wide banner, news as photo tiles and gallery photos as tiles. They use the **Split** block, the Image block's **Fill the width** option and the **Tiles** display, which you can also use on your own. **Page: Full width** (New page → Start from → Pages) is a whole page built from them, for any page that is not the home page.
 
 The kit also includes:
 - Get involved and landing pages for News, Events, Projects, Programmes and Publications;

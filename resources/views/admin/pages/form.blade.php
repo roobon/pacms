@@ -106,12 +106,15 @@
                                 <div class="mb-3">
                                     <label for="field-start" class="form-label">Start from</label>
                                     @php($designGroups = $pageTemplates->groupBy(fn ($t) => $t->category ?: 'Other'))
+                                    {{-- Labels: a shipped design's serial number (P-07) and its width. --}}
+                                    @php($designWidths = \App\Services\Starter\StarterKitService::widths($pageTemplates))
                                     <select id="field-start" name="start_template_id" class="form-select @error('start_template_id') is-invalid @enderror" aria-describedby="field-start-help" data-design-select>
                                         <option value="">An empty page</option>
                                         @foreach ($designGroups as $group => $groupTemplates)
                                             <optgroup label="{{ $group }}">
                                                 @foreach ($groupTemplates as $pageTemplate)
-                                                    <option value="{{ $pageTemplate->id }}" @selected((int) old('start_template_id') === $pageTemplate->id)>{{ $pageTemplate->name }}</option>
+                                                    @php($designNumber = \App\Services\Starter\StarterKitService::number($pageTemplate->slug))
+                                                    <option value="{{ $pageTemplate->id }}" @selected((int) old('start_template_id') === $pageTemplate->id)>{{ $designNumber ? "{$designNumber} · " : '' }}{{ $pageTemplate->name }} ({{ \App\Services\Starter\StarterKitService::WIDTHS[$designWidths[$pageTemplate->id] ?? 'fixed'] }})</option>
                                                 @endforeach
                                             </optgroup>
                                         @endforeach
@@ -138,6 +141,7 @@
                                                         @else
                                                             <span class="pa-design-card__picture pa-design-card__picture--empty" aria-hidden="true"><i class="bi bi-layout-text-window"></i></span>
                                                         @endif
+                                                        <x-admin.design-labels :number="\App\Services\Starter\StarterKitService::number($pageTemplate->slug)" :width="$designWidths[$pageTemplate->id] ?? 'fixed'" />
                                                         <span class="pa-design-card__name">{{ $pageTemplate->name }}</span>
                                                         @if ($pageTemplate->description)<span class="pa-design-card__text">{{ $pageTemplate->description }}</span>@endif
                                                     </button>

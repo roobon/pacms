@@ -47,14 +47,15 @@ class GalleryBlock extends ContentCollectionBlock
 
     public function displayModes(): array
     {
-        return ['grid', 'masonry'];
+        // Tiles (Phase 11W): square photos with no gaps, edge to edge in a full-width section.
+        return ['grid', 'masonry', 'tiles'];
     }
 
     public function fields(): array
     {
         return [
             Field::text('heading')->label('Heading (optional)'),
-            Field::select('columns', ['2' => '2', '3' => '3', '4' => '4', '5' => '5'])->label('Columns (desktop)')->default('4'),
+            Field::select('columns', ['2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'])->label('Columns (desktop)')->default('4'),
             Field::checkbox('show_captions')->label('Show captions under the photos')->default(false),
             Field::checkbox('show_link')->label('Link to the gallery page')->default(true),
         ];

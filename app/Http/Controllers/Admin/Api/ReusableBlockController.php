@@ -74,9 +74,14 @@ class ReusableBlockController extends Controller
         abort_unless($request->user()->can('pages.view'), 403);
 
         $templates = app(StarterKitService::class)->inKitOrder(BlockTemplate::query()->where('status', 'published')
-            ->get(['id', 'name', 'slug', 'description', 'scope', 'category']))
-            // Shipped designs come with a picture (Phase 11S).
-            ->map(fn (BlockTemplate $template) => $template->only(['id', 'name', 'description', 'scope', 'category']) + ['thumbnail' => StarterKitService::thumbnail($template->slug)]);
+            ->get(['id', 'name', 'slug', 'description', 'scope', 'category']));
+        $widths = StarterKitService::widths($templates);
+        // Shipped designs come with a picture (Phase 11S) and a serial number; every template has a width label.
+        $templates = $templates->map(fn (BlockTemplate $template) => $template->only(['id', 'name', 'description', 'scope', 'category']) + [
+            'thumbnail' => StarterKitService::thumbnail($template->slug),
+            'number' => StarterKitService::number($template->slug),
+            'width' => $widths[$template->id] ?? 'fixed',
+        ]);
 
         return response()->json(['data' => $templates]);
     }

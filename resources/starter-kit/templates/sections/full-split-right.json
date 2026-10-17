@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Full width: text left, photo right"
+  },
+  "template": {
+    "name": "Full width: text left, photo right",
+    "slug": "kit-full-split-right",
+    "scope": "section",
+    "category": "Full width",
+    "description": "Text and a button on the left, a photo filling the right half of the screen to its edge."
+  },
+  "blocks": [
+    {
+      "type": "split",
+      "content": {
+        "image_side": "right",
+        "image_width": "half",
+        "height": "md"
+      },
+      "children": [
+        {
+          "type": "heading",
+          "content": {
+            "text": "A heading about this part of your work",
+            "level": "2",
+            "eyebrow": "Our work"
+          }
+        },
+        {
+          "type": "rich-text",
+          "content": {
+            "html": "<p>Two or three sentences about this part of your work. Replace the photo with one of your own under Content → Photo.</p>"
+          }
+        },
+        {
+          "type": "button-group",
+          "children": [
+            {
+              "type": "button",
+              "content": {
+                "label": "Read more",
+                "link": {
+                  "type": "url",
+                  "url": "/about"
+                },
+                "variant": "primary"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

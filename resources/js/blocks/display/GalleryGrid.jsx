@@ -8,16 +8,19 @@ import Image from '../common/Image.jsx';
  * load their player only when opened (no third-party requests before that).
  *
  * @param {{items: Array<{kind: 'image'|'video', image?: Object, video?: {provider: string, id: string, url: string, thumbnail: string|null}, caption?: string|null, credit?: string|null}>,
- *   columns?: number|string, showCaptions?: boolean, label?: string, masonry?: boolean}} props
+ *   columns?: number|string, showCaptions?: boolean, label?: string, masonry?: boolean, tiles?: boolean}} props
  */
-export default function GalleryGrid({ items, columns = 4, showCaptions = false, label = 'Gallery', masonry = false }) {
+export default function GalleryGrid({ items, columns = 4, showCaptions = false, label = 'Gallery', masonry = false, tiles = false }) {
     const [open, setOpen] = useState(/** @type {number|null} */ (null));
 
     if (!items?.length) return null;
 
+    // Tiles (Phase 11W): square photos with no gaps or corners; captions stay in the viewer.
+    const mode = tiles ? ' pa-gallery--tiles' : masonry ? ' pa-gallery--masonry' : '';
+
     return (
         <>
-            <ul className={`pa-gallery pa-gallery--cols-${columns}${masonry ? ' pa-gallery--masonry' : ''} list-unstyled`} aria-label={label}>
+            <ul className={`pa-gallery pa-gallery--cols-${columns}${mode} list-unstyled`} aria-label={label}>
                 {items.map((item, index) => (
                     <li key={index} className="pa-gallery__item">
                         <button type="button" className="pa-gallery__button" onClick={() => setOpen(index)}>
@@ -34,7 +37,7 @@ export default function GalleryGrid({ items, columns = 4, showCaptions = false, 
                                 {item.caption ? `: ${item.caption}` : ''}
                             </span>
                         </button>
-                        {showCaptions && item.caption && <p className="pa-gallery__caption">{item.caption}</p>}
+                        {showCaptions && !tiles && item.caption && <p className="pa-gallery__caption">{item.caption}</p>}
                     </li>
                 ))}
             </ul>

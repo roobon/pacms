@@ -25,6 +25,8 @@ final class DisplayModeRegistry
             'masonry' => ['label' => 'Masonry', 'options' => ['columns', 'gap', 'card_style']],
             'quote-slider' => ['label' => 'Quote slider (one at a time)', 'options' => []],
             'single' => ['label' => 'Single (first item only)', 'options' => ['card_style']],
+            // Phase 11W: photos edge to edge with no gaps (titles over the photo).
+            'tiles' => ['label' => 'Tiles (photos edge to edge)', 'options' => ['columns', 'image_ratio']],
         ];
     }
 

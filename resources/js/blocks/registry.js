@@ -1,6 +1,6 @@
 import { ButtonBlock, ButtonGroupBlock, DividerBlock, DocumentBlock, HeadingBlock, HtmlBlock, IconBlock, ImageBlock, ListBlock, RichTextBlock, SpacerBlock, VideoBlock } from './components/basic.jsx';
 import { ColumnBlock, ColumnsBlock, ContainerBlock, SectionBlock } from './components/layout.jsx';
-import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, LogoRowBlock, QuoteBlock, StatisticsBlock } from './components/content.jsx';
+import { AccordionBlock, CardsBlock, CtaBlock, FaqBlock, HeroBlock, LogoRowBlock, QuoteBlock, SplitBlock, StatisticsBlock } from './components/content.jsx';
 import { CollectionBlock, FacebookFeedBlock, FeedBlock, GalleryBlock, NewsBlock, PartnersBlock, TestimonialsBlock } from './components/collections.jsx';
 import { CustomBlock, GlobalRefBlock } from './components/reusable.jsx';
 import { SlideBlock, SliderBlock } from './components/slider.jsx';
@@ -29,6 +29,7 @@ export const components = {
     divider: DividerBlock,
     spacer: SpacerBlock,
     hero: HeroBlock,
+    split: SplitBlock,
     slider: SliderBlock,
     slide: SlideBlock,
     cards: CardsBlock,

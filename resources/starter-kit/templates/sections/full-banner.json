@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "kind": "template",
+  "meta": {
+    "generator": "PACMS starter kit",
+    "title": "Full width: banner"
+  },
+  "template": {
+    "name": "Full width: banner",
+    "slug": "kit-full-banner",
+    "scope": "section",
+    "category": "Full width",
+    "description": "Edge to edge, most of the screen tall, with a centred sentence. Add a photo as its background."
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "layout": {
+        "container": "full",
+        "padding": {
+          "top": {
+            "$token": "space.9"
+          },
+          "bottom": {
+            "$token": "space.9"
+          }
+        },
+        "text_align": "center",
+        "min_height": {
+          "value": 60,
+          "unit": "vh"
+        }
+      },
+      "style": {
+        "background": {
+          "type": "gradient",
+          "gradient": {
+            "angle": 135,
+            "stops": [
+              {
+                "color": {
+                  "$token": "color.primary-strong"
+                },
+                "at": 0
+              },
+              {
+                "color": {
+                  "$token": "color.secondary"
+                },
+                "at": 100
+              }
+            ]
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "container",
+          "layout": {
+            "max_width": {
+              "$token": "container.narrow"
+            },
+            "padding": {
+              "left": {
+                "$token": "space.4"
+              },
+              "right": {
+                "$token": "space.4"
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "A sentence over a wide photo",
+                "level": "2"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Choose a photo under Style → Background → Image, with a dark overlay so this text stays readable.</p>"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
