@@ -1588,6 +1588,42 @@ body.pa-rte-open { overflow: hidden; }
     }
 }
 
+// A template's labels: serial number (P-07, S-12) and width (Full / Fixed width).
+.pa-design-labels {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .375rem;
+    font-size: .75rem;
+    line-height: 1.4;
+
+    &__number {
+        padding: .0625rem .375rem;
+        border-radius: $border-radius-sm;
+        background: $gray-800;
+        color: #fff;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: .02em;
+    }
+
+    &__width {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        padding: .0625rem .375rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-sm;
+        color: $text-muted;
+
+        &--full {
+            border-color: rgba($primary, .4);
+            background: rgba($primary, .08);
+            color: shade-color($primary, 20%);
+        }
+    }
+}
+
 // Headers and footers: long strips, one per row, shown whole.
 .pa-design-cards--wide {
     grid-template-columns: 1fr;

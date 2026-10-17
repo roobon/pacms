@@ -16,7 +16,7 @@
     {
       "type": "hero",
       "layout": {
-        "container": "narrow",
+        "container": "full",
         "padding": {
           "top": {
             "$token": "space.9"
@@ -55,17 +55,35 @@
       },
       "children": [
         {
-          "type": "heading",
-          "content": {
-            "text": "A sentence over a wide photo",
-            "level": "2"
-          }
-        },
-        {
-          "type": "rich-text",
-          "content": {
-            "html": "<p>Choose a photo under Style → Background → Image, with a dark overlay so this text stays readable.</p>"
-          }
+          "type": "container",
+          "layout": {
+            "max_width": {
+              "$token": "container.narrow"
+            },
+            "padding": {
+              "left": {
+                "$token": "space.4"
+              },
+              "right": {
+                "$token": "space.4"
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "heading",
+              "content": {
+                "text": "A sentence over a wide photo",
+                "level": "2"
+              }
+            },
+            {
+              "type": "rich-text",
+              "content": {
+                "html": "<p>Choose a photo under Style → Background → Image, with a dark overlay so this text stays readable.</p>"
+              }
+            }
+          ]
         }
       ]
     }

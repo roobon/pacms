@@ -6,7 +6,7 @@
     </x-admin.page-header>
 
     <form method="GET" class="pa-filters" role="search" aria-label="Search templates">
-        <div><label for="filter-q" class="form-label">Search</label><input id="filter-q" type="search" name="q" value="{{ $q }}" class="form-control" placeholder="Name"></div>
+        <div><label for="filter-q" class="form-label">Search</label><input id="filter-q" type="search" name="q" value="{{ $q }}" class="form-control" placeholder="Name or SN, e.g. P-07"></div>
         <div class="pa-filters__actions"><button class="btn btn-secondary" type="submit">Search</button></div>
     </form>
 
@@ -17,15 +17,19 @@
             <div class="table-responsive">
                 <table class="table pa-table align-middle mb-0">
                     <caption class="visually-hidden">Templates</caption>
-                    <thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Category</th><th scope="col">In the builder</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+                    <thead><tr><th scope="col">SN</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Width</th><th scope="col">Category</th><th scope="col">In the builder</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
                     <tbody>
                         @foreach ($items as $item)
+                            @php($number = \App\Services\Starter\StarterKitService::number($item->slug))
+                            @php($width = $widths[$item->id] ?? 'fixed')
                             <tr>
+                                <td class="text-nowrap">@if ($number)<span class="pa-design-labels"><span class="pa-design-labels__number">{{ $number }}</span></span>@else<span class="text-body-secondary">—</span>@endif</td>
                                 <td>
                                     <a href="{{ route('admin.block-templates.edit', $item) }}" class="fw-semibold">{{ $item->name }}</a>
                                     <div class="small text-body-secondary">{{ $item->description ?: '—' }} · {{ $item->creator?->name ?? '—' }}</div>
                                 </td>
                                 <td class="small">{{ \App\Models\BlockTemplate::SCOPES[$item->scope] ?? $item->scope }}</td>
+                                <td class="text-nowrap"><x-admin.design-labels :width="$width" /></td>
                                 <td class="small">{{ $item->category ?: '—' }}</td>
                                 <td>{!! $item->status === 'published' ? '<span class="pa-badge pa-badge--success">Offered</span>' : '<span class="pa-badge pa-badge--neutral">Hidden</span>' !!}</td>
                                 <td class="text-end"><a href="{{ route('admin.block-templates.edit', $item) }}" class="btn btn-sm btn-outline-secondary">Open<span class="visually-hidden"> {{ $item->name }}</span></a></td>

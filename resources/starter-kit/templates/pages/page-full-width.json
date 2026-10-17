@@ -16,7 +16,7 @@
     {
       "type": "hero",
       "layout": {
-        "container": "narrow",
+        "container": "full",
         "padding": {
           "top": {
             "$token": "space.9"
@@ -55,48 +55,66 @@
       },
       "children": [
         {
-          "type": "heading",
-          "content": {
-            "text": "The title of this page",
-            "level": "1",
-            "eyebrow": "Our work"
-          }
-        },
-        {
-          "type": "rich-text",
-          "content": {
-            "html": "<p>One or two sentences that say what this page is about. Choose a photo under Style → Background → Image.</p>"
-          }
-        },
-        {
-          "type": "button-group",
+          "type": "container",
+          "layout": {
+            "max_width": {
+              "$token": "container.narrow"
+            },
+            "padding": {
+              "left": {
+                "$token": "space.4"
+              },
+              "right": {
+                "$token": "space.4"
+              }
+            }
+          },
           "children": [
             {
-              "type": "button",
+              "type": "heading",
               "content": {
-                "label": "Get involved",
-                "link": {
-                  "type": "url",
-                  "url": "/get-involved"
-                },
-                "variant": "accent"
+                "text": "The title of this page",
+                "level": "1",
+                "eyebrow": "Our work"
               }
             },
             {
-              "type": "button",
+              "type": "rich-text",
               "content": {
-                "label": "Contact us",
-                "link": {
-                  "type": "url",
-                  "url": "/contact"
+                "html": "<p>One or two sentences that say what this page is about. Choose a photo under Style → Background → Image.</p>"
+              }
+            },
+            {
+              "type": "button-group",
+              "children": [
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Get involved",
+                    "link": {
+                      "type": "url",
+                      "url": "/get-involved"
+                    },
+                    "variant": "accent"
+                  }
                 },
-                "variant": "outline"
+                {
+                  "type": "button",
+                  "content": {
+                    "label": "Contact us",
+                    "link": {
+                      "type": "url",
+                      "url": "/contact"
+                    },
+                    "variant": "outline"
+                  }
+                }
+              ],
+              "layout": {
+                "justify": "center"
               }
             }
-          ],
-          "layout": {
-            "justify": "center"
-          }
+          ]
         }
       ]
     },

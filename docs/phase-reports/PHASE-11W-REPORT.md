@@ -46,6 +46,17 @@ The banners are **Hero** blocks, so their text stays centred in their height. Fo
 
 Every template has a picture for the design pickers, taken from the real design with the demo content at 1280 × 800. As decided for the kit before (K-3), no photos are shipped: the photo halves show the quiet panel until a photo is chosen.
 
+## Template labels (requested 2026-10-17)
+
+Every template now carries two labels wherever it is chosen: **New page → Start from** (the list and the designs window), the builder's **Templates** tab, and **Design → Templates**.
+
+| Label | What it says |
+|---|---|
+| **SN** | A serial number for each shipped template: **P-01 … P-33** for whole pages, **S-01 … S-24** for sections. The numbers are fixed in `kit.php` (`numbers`): a new design takes the next free number, and a number is never reused or moved. Templates made on the site have none. |
+| **Width** | **Full width** when a top-level block runs edge to edge (a Split or Slider, or a section or hero whose width is Full or Fluid); otherwise **Fixed width**. It is worked out from the design, so templates made on the site are labelled too. |
+
+Design → Templates lists the shipped templates in SN order, then the site's own by name, and its search finds a template by SN ("P-07", "p7"). The builder's search finds an SN or "full width" too. The title banners became Full width themselves (their text keeps to the narrow width), so they are labelled as what they are.
+
 ## Not done
 
 - **Newsletter sign-up** (leaf.global's footer form): PACMS has no newsletter list yet. That would be a feature of its own (storage, consent, export or a provider).

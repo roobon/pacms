@@ -4,6 +4,7 @@ use App\Cms\Blocks\BlockTreeRepository;
 use App\Models\BlockTemplate;
 use App\Models\GlobalBlock;
 use App\Models\Page;
+use App\Services\Blocks\BlockTemplateService;
 use App\Services\Settings\SettingsService;
 use App\Services\Starter\StarterKitService;
 
@@ -92,4 +93,38 @@ it('shows the designs with pictures where they are chosen', function () {
     $bold = collect($templates)->firstWhere('name', 'Home: Bold');
     expect($bold['thumbnail'])->toEndWith('/images/starter-kit/kit-page-home-bold.webp')
         ->and($bold['category'])->toBe('Home pages');
+});
+
+it('labels every template with its serial number and width', function () {
+    $admin = userWithRole('super-admin');
+    $this->artisan('pacms:starter')->assertSuccessful();
+    $manifest = app(StarterKitService::class)->manifest();
+
+    // Every shipped template has its own number, pages P-.., sections S-..
+    $numbers = $manifest['numbers'];
+    expect($numbers)->toHaveCount(count($manifest['templates']))
+        ->and(array_unique($numbers))->toHaveCount(count($numbers))
+        ->and($numbers['kit-page-home'])->toBe('P-01')
+        ->and($numbers['kit-hero-centred'])->toBe('S-01')
+        ->and(StarterKitService::number('made-on-the-site'))->toBeNull();
+
+    $this->actingAs($admin)->get(route('admin.pages.create'))->assertOk()
+        ->assertSee('P-07 · Home: Full width (Full width)')
+        ->assertSee('P-01 · Home: Classic (Fixed width)')
+        ->assertSee('pa-design-labels__width--full', false);
+
+    // The builder's Templates tab; a template made on the site has a width but no number.
+    app(BlockTemplateService::class)->create($admin, ['name' => 'Our own', 'scope' => 'section', 'status' => 'published', 'blocks' => [['type' => 'heading', 'content' => ['text' => 'Ours', 'level' => '2']]]]);
+    $templates = collect($this->actingAs($admin)->getJson(route('admin.api.templates.index'))->assertOk()->json('data'))->keyBy('name');
+    expect($templates['Home: Full width']['number'])->toBe('P-07')
+        ->and($templates['Home: Full width']['width'])->toBe('full')
+        ->and($templates['Full width: banner']['width'])->toBe('full')
+        ->and($templates['Home: Classic']['width'])->toBe('fixed')
+        ->and($templates['Our own']['number'])->toBeNull()
+        ->and($templates['Our own']['width'])->toBe('fixed');
+
+    // Design → Templates finds a template by its number.
+    $this->actingAs($admin)->get(route('admin.block-templates.index', ['q' => 'p7']))->assertOk()
+        ->assertSee('Home: Full width')
+        ->assertDontSee('Home: Bold');
 });
